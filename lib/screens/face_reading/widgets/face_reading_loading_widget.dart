@@ -7,14 +7,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class FaceReadingLoadingWidget extends StatefulWidget {
   final String? message;
-  
-  const FaceReadingLoadingWidget({
-    Key? key,
-    this.message,
-  }) : super(key: key);
+
+  const FaceReadingLoadingWidget({Key? key, this.message}) : super(key: key);
 
   @override
-  State<FaceReadingLoadingWidget> createState() => _FaceReadingLoadingWidgetState();
+  State<FaceReadingLoadingWidget> createState() =>
+      _FaceReadingLoadingWidgetState();
 }
 
 class _FaceReadingLoadingWidgetState extends State<FaceReadingLoadingWidget>
@@ -28,7 +26,7 @@ class _FaceReadingLoadingWidgetState extends State<FaceReadingLoadingWidget>
   @override
   void initState() {
     super.initState();
-    
+
     // Rotation animation for the main circle
     _rotationController = AnimationController(
       vsync: this,
@@ -42,10 +40,7 @@ class _FaceReadingLoadingWidgetState extends State<FaceReadingLoadingWidget>
     )..repeat(reverse: true);
 
     _pulseAnimation = Tween<double>(begin: 0.8, end: 1.2).animate(
-      CurvedAnimation(
-        parent: _pulseController,
-        curve: Curves.easeInOut,
-      ),
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
 
     // Wave animation for the text
@@ -55,10 +50,7 @@ class _FaceReadingLoadingWidgetState extends State<FaceReadingLoadingWidget>
     )..repeat();
 
     _waveAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _waveController,
-        curve: Curves.easeInOut,
-      ),
+      CurvedAnimation(parent: _waveController, curve: Curves.easeInOut),
     );
   }
 
@@ -82,7 +74,7 @@ class _FaceReadingLoadingWidgetState extends State<FaceReadingLoadingWidget>
           borderRadius: BorderRadius.circular(24.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 20,
               spreadRadius: 5,
             ),
@@ -121,7 +113,7 @@ class _FaceReadingLoadingWidgetState extends State<FaceReadingLoadingWidget>
                           width: 50.w,
                           height: 50.w,
                           decoration: BoxDecoration(
-                            color: "#F38B3B".toColor().withOpacity(0.1),
+                            color: "#F38B3B".toColor().withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -146,7 +138,7 @@ class _FaceReadingLoadingWidgetState extends State<FaceReadingLoadingWidget>
                     return LinearGradient(
                       colors: [
                         "#F38B3B".toColor(),
-                        "#F38B3B".toColor().withOpacity(0.5),
+                        "#F38B3B".toColor().withValues(alpha: 0.5),
                         "#F38B3B".toColor(),
                       ],
                       stops: [
@@ -185,13 +177,16 @@ class _FaceReadingLoadingWidgetState extends State<FaceReadingLoadingWidget>
                   builder: (context, child) {
                     final delay = index * 0.2;
                     final animationValue = (_waveAnimation.value + delay) % 1.0;
-                    final opacity = (math.sin(animationValue * math.pi * 2) + 1) / 2;
+                    final opacity =
+                        (math.sin(animationValue * math.pi * 2) + 1) / 2;
                     return Container(
                       margin: EdgeInsets.symmetric(horizontal: 4.w),
                       width: 8.w,
                       height: 8.w,
                       decoration: BoxDecoration(
-                        color: "#F38B3B".toColor().withOpacity(0.3 + opacity * 0.7),
+                        color: "#F38B3B".toColor().withValues(
+                          alpha: 0.3 + opacity * 0.7,
+                        ),
                         shape: BoxShape.circle,
                       ),
                     );
@@ -241,6 +236,3 @@ class _FaceReadingLoaderPainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
-
-
-

@@ -1,5 +1,5 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/transit_today_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -112,11 +112,13 @@ class TransitTodayView extends BasePage<TransitTodayController> {
                               borderRadius: BorderRadius.circular(12.r),
                               border: isSelected
                                   ? null
-                                  : Border.all(color: maroon.withOpacity(0.2)),
+                                  : Border.all(
+                                      color: maroon.withValues(alpha: 0.2),
+                                    ),
                               boxShadow: isSelected
                                   ? [
                                       BoxShadow(
-                                        color: orange.withOpacity(0.25),
+                                        color: orange.withValues(alpha: 0.25),
                                         blurRadius: 4,
                                         offset: const Offset(0, 1),
                                       ),
@@ -162,7 +164,7 @@ class TransitTodayView extends BasePage<TransitTodayController> {
           child: AutoTranslateText(
             'Generate Kundli first to view transit prediction.',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: maroon.withOpacity(0.6),
+              color: maroon.withValues(alpha: 0.6),
             ),
           ),
         );
@@ -231,10 +233,10 @@ class TransitTodayView extends BasePage<TransitTodayController> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: maroon.withOpacity(0.2)),
+                border: Border.all(color: maroon.withValues(alpha: 0.2)),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: Colors.black.withValues(alpha: 0.04),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -312,7 +314,7 @@ class TransitTodayView extends BasePage<TransitTodayController> {
           child: AutoTranslateText(
             'Select planet and tap refresh to load daily transits.',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: maroon.withOpacity(0.6),
+              color: maroon.withValues(alpha: 0.6),
             ),
           ),
         ),
@@ -351,10 +353,10 @@ class TransitTodayView extends BasePage<TransitTodayController> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12.r),
-            border: Border.all(color: maroon.withOpacity(0.15)),
+            border: Border.all(color: maroon.withValues(alpha: 0.15)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -407,7 +409,7 @@ class TransitTodayView extends BasePage<TransitTodayController> {
                 AutoTranslateText(
                   '$startTime – $endTime',
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: maroon.withOpacity(0.8),
+                    color: maroon.withValues(alpha: 0.8),
                     fontSize: 10.sp,
                   ),
                 ),
@@ -429,7 +431,7 @@ class TransitTodayView extends BasePage<TransitTodayController> {
                 AutoTranslateText(
                   'Degrees: $degreeStr',
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: maroon.withOpacity(0.7),
+                    color: maroon.withValues(alpha: 0.7),
                     fontSize: 10.sp,
                   ),
                 ),
@@ -461,7 +463,7 @@ class TransitTodayView extends BasePage<TransitTodayController> {
                     ? 'Unable to load chart. Tap refresh to try again.'
                     : 'Generate Kundli first to view transit chart.',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: maroon.withOpacity(0.6),
+                  color: maroon.withValues(alpha: 0.6),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -493,7 +495,7 @@ class TransitTodayView extends BasePage<TransitTodayController> {
           child: AutoTranslateText(
             'Unable to display chart.',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: const Color(0xFF6F221E).withOpacity(0.6),
+              color: const Color(0xFF6F221E).withValues(alpha: 0.6),
             ),
           ),
         );
@@ -509,10 +511,10 @@ class TransitTodayView extends BasePage<TransitTodayController> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: maroon.withOpacity(0.2)),
+        border: Border.all(color: maroon.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),

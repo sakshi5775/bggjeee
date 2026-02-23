@@ -12,30 +12,25 @@ import 'package:intl/intl.dart';
 class YoginiMahadashaMainWidget extends StatelessWidget {
   final DashaController controller;
 
-  const YoginiMahadashaMainWidget({
-    super.key,
-    required this.controller,
-  });
+  const YoginiMahadashaMainWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingYoginiMain.value) {
         return Center(
-          child: CircularProgressIndicator(
-            color: "#ed6f30".toColor(),
-          ),
+          child: CircularProgressIndicator(color: "#ed6f30".toColor()),
         );
       }
 
       final data = controller.yoginiMainData.value;
-      
+
       if (data == null || data.isEmpty) {
         return Center(
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -47,7 +42,7 @@ class YoginiMahadashaMainWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -68,7 +63,10 @@ class YoginiMahadashaMainWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.cardLight,
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: AppColors.deepOrange.withOpacity(0.5), width: 1),
+                border: Border.all(
+                  color: AppColors.deepOrange.withValues(alpha: 0.5),
+                  width: 1,
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.shadowLight,
@@ -120,15 +118,18 @@ class YoginiMahadashaMainWidget extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             Spacing.h(12),
-            
+
             // Dasha List
             Container(
               decoration: BoxDecoration(
                 color: AppColors.cardLight,
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: AppColors.deepOrange.withOpacity(0.5), width: 1),
+                border: Border.all(
+                  color: AppColors.deepOrange.withValues(alpha: 0.5),
+                  width: 1,
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.shadowLight,
@@ -140,9 +141,12 @@ class YoginiMahadashaMainWidget extends StatelessWidget {
               child: Column(
                 children: [
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 10.h,
+                    ),
                     decoration: BoxDecoration(
-                      color: AppColors.deepOrange.withOpacity(0.1),
+                      color: AppColors.deepOrange.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(12.r),
                         topRight: Radius.circular(12.r),
@@ -188,19 +192,28 @@ class YoginiMahadashaMainWidget extends StatelessWidget {
                       ],
                     ),
                   ),
-                  
+
                   ...List.generate(dashaList.length, (index) {
                     final isLast = index == dashaList.length - 1;
                     final dasha = dashaList[index].toString();
-                    final lord = index < dashaLordList.length ? dashaLordList[index].toString() : '';
-                    final endDate = index < dashaEndDates.length ? dashaEndDates[index].toString() : '';
-                    
+                    final lord = index < dashaLordList.length
+                        ? dashaLordList[index].toString()
+                        : '';
+                    final endDate = index < dashaEndDates.length
+                        ? dashaEndDates[index].toString()
+                        : '';
+
                     return Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 10.h,
+                      ),
                       decoration: BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
-                            color: isLast ? Colors.transparent : AppColors.deepOrange.withOpacity(0.2),
+                            color: isLast
+                                ? Colors.transparent
+                                : AppColors.deepOrange.withValues(alpha: 0.2),
                             width: 1,
                           ),
                         ),
@@ -265,7 +278,7 @@ class YoginiMahadashaMainWidget extends StatelessWidget {
         'MMM dd yyyy',
         'dd/MM/yyyy',
       ];
-      
+
       for (final format in formats) {
         try {
           final date = DateFormat(format).parse(dateStr);
@@ -274,11 +287,10 @@ class YoginiMahadashaMainWidget extends StatelessWidget {
           continue;
         }
       }
-      
+
       return dateStr;
     } catch (e) {
       return dateStr;
     }
   }
 }
-

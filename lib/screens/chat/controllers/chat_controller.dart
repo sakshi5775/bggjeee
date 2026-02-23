@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/chat_model.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/data_model/user_profile_model.dart';
@@ -9,7 +9,6 @@ import 'package:get/get.dart';
 
 class ChatController extends BaseController {
   final ChatService _chatService = ChatService();
-  
   final PersonaModel persona;
   final UserProfileModel? chatProfile;
   final String? preferredLanguage;
@@ -21,32 +20,31 @@ class ChatController extends BaseController {
 
   // Messages
   final RxList<ChatMessage> messages = <ChatMessage>[].obs;
-  
   // Current conversation
   final RxString conversationId = ''.obs;
   final RxString displayedMessage = ''.obs;
   final RxBool isTyping = false.obs;
   final RxBool isLoading = false.obs;
-  
+
   // AutoTranslateText editing
   final TextEditingController messageController = TextEditingController();
   final RxString messageText = ''.obs; // Reactive variable for text field
-  
+
   // Timer for typing animation
   Timer? _typingTimer;
-  
+
   // Profile message tracking
   bool _profileMessageSent = false;
-  
+
   // Topic selection
   final RxString selectedTopic = ''.obs;
   final RxBool showTopicChips = false.obs;
-  
+
   // Listener function reference
   void _onMessageTextChanged() {
     messageText.value = messageController.text;
   }
-  
+
   // Select a topic
   void selectTopic(String topic) {
     selectedTopic.value = topic;
@@ -54,7 +52,7 @@ class ChatController extends BaseController {
     messageController.text = 'I want to know about $topic';
     messageText.value = messageController.text;
   }
-  
+
   @override
   void onInit() {
     super.onInit();
@@ -88,10 +86,10 @@ class ChatController extends BaseController {
         persona.id,
         conversationId,
       );
-      
+
       this.conversationId.value = conversation.id;
       messages.value = conversation.messages;
-      
+
       // Display the last assistant message with typing animation if it exists
       final lastMessage = conversation.messages.lastOrNull;
       if (lastMessage != null && lastMessage.role == 'assistant') {
@@ -123,14 +121,12 @@ class ChatController extends BaseController {
       );
       messages.add(userMessage);
       messageController.clear();
-      
       // Hide topic chips after user sends a message
       showTopicChips.value = false;
       selectedTopic.value = '';
 
       isLoading.value = true;
-
-      // Send message to API
+      // STEP 2 — OPEN RAZORPAY CHECKOUTI
       // On first message, don't send conversationId (it will be null/empty)
       // After first message, use the conversationId from the response
       // Only send profile data for the first message (when conversationId is empty)
@@ -139,7 +135,9 @@ class ChatController extends BaseController {
         messageText,
         conversationId.value.isEmpty ? null : conversationId.value,
         userProfile: conversationId.value.isEmpty ? chatProfile : null,
-        preferredLanguage: conversationId.value.isEmpty ? preferredLanguage : null,
+        preferredLanguage: conversationId.value.isEmpty
+            ? preferredLanguage
+            : null,
       );
 
       // Update conversation ID - use the real conversationId from response for subsequent messages
@@ -154,14 +152,14 @@ class ChatController extends BaseController {
         content: response.response,
         timestamp: DateTime.now(),
       );
-      
+
       // Don't add to messages yet - animate first
       // Animate the assistant response character by character
       await _animateMessage(response.response);
-      
+
       // Add the full message to the list after animation completes
       messages.add(assistantMessage);
-      
+
       // Clear displayed message after adding to list
       await Future.delayed(const Duration(milliseconds: 100));
       displayedMessage.value = '';
@@ -182,9 +180,9 @@ class ChatController extends BaseController {
   Future<void> _animateMessage(String fullMessage) async {
     isTyping.value = true;
     displayedMessage.value = '';
-    
+
     int charIndex = 0;
-    
+
     while (charIndex < fullMessage.length) {
       // Check if we're at a double newline
       if (charIndex + 1 < fullMessage.length &&
@@ -195,7 +193,6 @@ class ChatController extends BaseController {
         await Future.delayed(const Duration(milliseconds: 50));
         continue;
       }
-      
       // Check if we're at a single newline
       if (fullMessage[charIndex] == '\n') {
         displayedMessage.value += '\n';
@@ -203,16 +200,15 @@ class ChatController extends BaseController {
         await Future.delayed(const Duration(milliseconds: 30));
         continue;
       }
-      
+
       // Add character
       displayedMessage.value += fullMessage[charIndex];
       charIndex++;
-      
+
       // Delay between characters (adjust for typing speed)
       // Using 20ms for smoother, more visible typing effect
       await Future.delayed(const Duration(milliseconds: 20));
     }
-    
     // Keep typing state for a brief moment before clearing
     await Future.delayed(const Duration(milliseconds: 200));
     isTyping.value = false;
@@ -256,7 +252,7 @@ class ChatController extends BaseController {
     final minute = timestamp.minute.toString().padLeft(2, '0');
     return '$hour:$minute';
   }
-  
+
   /// Format time string for message (convert 24h to 12h with AM/PM)
   String _formatTimeForMessage(String time24h) {
     try {
@@ -276,7 +272,10 @@ class ChatController extends BaseController {
 
   /// Send profile message automatically when chat starts
   Future<void> _sendProfileMessageIfNeeded() async {
-    if (_profileMessageSent || chatProfile == null || conversationId.value.isNotEmpty) return;
+    if (_profileMessageSent ||
+        chatProfile == null ||
+        conversationId.value.isNotEmpty)
+      return;
     _profileMessageSent = true;
 
     try {
@@ -340,13 +339,13 @@ class ChatController extends BaseController {
 
       // Animate the assistant response
       await _animateMessage(response.response);
-      
+
       // Add the full message to the list after animation completes
       messages.add(assistantMessage);
-      
+
       // Show topic chips after AI's first response
       showTopicChips.value = true;
-      
+
       // Clear displayed message after adding to list
       await Future.delayed(const Duration(milliseconds: 100));
       displayedMessage.value = '';
@@ -354,9 +353,11 @@ class ChatController extends BaseController {
       // Reset flag on error so it can be retried
       _profileMessageSent = false;
       if (Get.isSnackbarOpen == false) {
-        Get.snackbar('Error', 'Failed to send profile message. Please try again.');
+        Get.snackbar(
+          'Error',
+          'Failed to send profile message. Please try again.',
+        );
       }
     }
   }
 }
-

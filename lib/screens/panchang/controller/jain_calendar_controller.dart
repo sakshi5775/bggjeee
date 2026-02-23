@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/panchang/service/panchang_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
 import 'package:flutter/foundation.dart';
@@ -15,27 +15,21 @@ class JainCalendarController extends BaseController {
 
   // Selected tab: 'navkarshi' or 'kalyanak'
   final selectedTab = 'navkarshi'.obs;
-  
+
   // PageController for swipeable tabs
   late PageController pageController;
-  
+
   // Selected year and month
   final selectedYear = DateTime.now().year.obs;
   final selectedMonth = DateTime.now().month.obs;
-  
+
   // Selected section for Kalyanak: 'digambar' or 'shvetambar'
   final selectedSection = 'digambar'.obs;
 
   // Tab options
   final List<Map<String, dynamic>> tabs = [
-    {
-      'id': 'navkarshi',
-      'title': 'Jain Navkarshi',
-    },
-    {
-      'id': 'kalyanak',
-      'title': 'Jain Kalyanak',
-    },
+    {'id': 'navkarshi', 'title': 'Jain Navkarshi'},
+    {'id': 'kalyanak', 'title': 'Jain Kalyanak'},
   ];
 
   // State for Navkarshi
@@ -43,16 +37,16 @@ class JainCalendarController extends BaseController {
   final navkarshiData = Rxn<Map<String, dynamic>>();
   final selectedDate = DateTime.now().obs;
   final selectedLocation = 'Fetching Location...'.obs;
-  
+
   // State for Kalyanak
   final isLoadingKalyanak = false.obs;
   final kalyanakData = <Map<String, dynamic>>[].obs;
-  
+
   // Location coordinates
   double? currentLatitude;
   double? currentLongitude;
   double? currentTimezone;
-  
+
   // Flag to track if controller is disposed
   bool _isDisposed = false;
 
@@ -77,20 +71,20 @@ class JainCalendarController extends BaseController {
       fetchKalyanakData();
     }
   }
-  
+
   @override
   void onClose() {
     pageController.dispose();
     _isDisposed = true;
     super.onClose();
   }
-  
+
   // Handle page change from swipe
   void onPageChanged(int index) {
     final tabId = tabs[index]['id'] as String;
     selectedTab.value = tabId;
   }
-  
+
   // Navigate to specific tab (called from tab tap)
   void onTabSelected(int index) {
     if (pageController.hasClients) {
@@ -106,7 +100,9 @@ class JainCalendarController extends BaseController {
     selectedTab.value = tabId;
     // Find index and sync PageController
     final index = tabs.indexWhere((tab) => tab['id'] == tabId);
-    if (index != -1 && pageController.hasClients && pageController.page?.round() != index) {
+    if (index != -1 &&
+        pageController.hasClients &&
+        pageController.page?.round() != index) {
       pageController.jumpToPage(index);
     }
   }
@@ -182,7 +178,11 @@ class JainCalendarController extends BaseController {
         if (_isDisposed) return;
 
         if (reverseGeocode != null) {
-          final city = reverseGeocode['city'] ?? reverseGeocode['town'] ?? reverseGeocode['village'] ?? '';
+          final city =
+              reverseGeocode['city'] ??
+              reverseGeocode['town'] ??
+              reverseGeocode['village'] ??
+              '';
           final state = reverseGeocode['state'] ?? '';
           if (city.isNotEmpty) {
             selectedLocation.value = state.isNotEmpty ? '$city, $state' : city;
@@ -233,13 +233,10 @@ class JainCalendarController extends BaseController {
       final url = Uri.parse(
         'https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lon&zoom=18&addressdetails=1',
       );
-      
-      final response = await http.get(
-        url,
-        headers: {
-          'User-Agent': 'AstrologyApp',
-        },
-      ).timeout(const Duration(seconds: 10));
+
+      final response = await http
+          .get(url, headers: {'User-Agent': 'AstrologyApp'})
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>;
@@ -255,9 +252,11 @@ class JainCalendarController extends BaseController {
   /// Get timezone offset from timezone string
   Future<double> _getTimezoneOffset(String timezone) async {
     try {
-      final url = Uri.parse('https://timeapi.io/api/TimeZone/zone?timeZone=$timezone');
+      final url = Uri.parse(
+        'https://timeapi.io/api/TimeZone/zone?timeZone=$timezone',
+      );
       final response = await http.get(url).timeout(const Duration(seconds: 10));
-      
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>;
         final offsetString = data['currentUtcOffset'] as String?;
@@ -268,17 +267,22 @@ class JainCalendarController extends BaseController {
     } catch (e) {
       debugPrint('Error getting timezone offset: $e');
     }
-    
+
     // Fallback: return IST
     return 5.5;
   }
 
   /// Get timezone offset from coordinates
-  Future<double> _getTimezoneOffsetFromCoordinates(double lat, double lon) async {
+  Future<double> _getTimezoneOffsetFromCoordinates(
+    double lat,
+    double lon,
+  ) async {
     try {
-      final url = Uri.parse('https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon');
+      final url = Uri.parse(
+        'https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon',
+      );
       final response = await http.get(url).timeout(const Duration(seconds: 10));
-      
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>;
         final offsetString = data['currentUtcOffset'] as String?;
@@ -289,7 +293,7 @@ class JainCalendarController extends BaseController {
     } catch (e) {
       debugPrint('Error getting timezone from coordinates: $e');
     }
-    
+
     // Fallback: return IST
     return 5.5;
   }
@@ -314,7 +318,9 @@ class JainCalendarController extends BaseController {
 
   /// Fetch Jain Navkarshi data
   Future<void> fetchNavkarshiData() async {
-    if (currentLatitude == null || currentLongitude == null || currentTimezone == null) {
+    if (currentLatitude == null ||
+        currentLongitude == null ||
+        currentTimezone == null) {
       // Use default values if location not available
       currentLatitude = 28.6139; // Delhi
       currentLongitude = 77.2090;
@@ -339,7 +345,10 @@ class JainCalendarController extends BaseController {
       if (data != null && data['response'] != null) {
         navkarshiData.value = data['response'] as Map<String, dynamic>;
       } else {
-        showErrorMessage(title: 'Error', message: 'Failed to fetch Navkarshi data');
+        showErrorMessage(
+          title: 'Error',
+          message: 'Failed to fetch Navkarshi data',
+        );
       }
     } catch (e) {
       debugPrint('Error fetching navkarshi data: $e');
@@ -362,10 +371,15 @@ class JainCalendarController extends BaseController {
 
       if (data != null && data['response'] != null) {
         final response = data['response'] as List<dynamic>;
-        kalyanakData.value = response.map((e) => e as Map<String, dynamic>).toList();
+        kalyanakData.value = response
+            .map((e) => e as Map<String, dynamic>)
+            .toList();
       } else {
         kalyanakData.clear();
-        showErrorMessage(title: 'Error', message: 'Failed to fetch Kalyanak data');
+        showErrorMessage(
+          title: 'Error',
+          message: 'Failed to fetch Kalyanak data',
+        );
       }
     } catch (e) {
       debugPrint('Error fetching kalyanak data: $e');

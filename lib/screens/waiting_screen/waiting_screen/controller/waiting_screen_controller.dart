@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:astrobharataiuser/app_manager/user_data.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/services/role_navigation_service.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
@@ -10,7 +10,7 @@ import 'package:get_storage/get_storage.dart';
 class WaitingScreenController extends BaseController {
   Timer? _splashTimer;
   var _navigationTriggered = false;
-  final GetStorage _storage = GetStorage();
+  GetStorage get _storage => GetStorage();
 
   @override
   void onInit() {

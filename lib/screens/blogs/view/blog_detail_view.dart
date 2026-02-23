@@ -191,7 +191,7 @@ class _BlogDetailViewState extends State<BlogDetailView> {
                           : Container(
                               width: double.infinity,
                               height: 280.h,
-                              color: Colors.grey.withOpacity(0.3),
+                              color: Colors.grey.withValues(alpha: 0.3),
                               child: Icon(
                                 Icons.image,
                                 size: 80.w,
@@ -211,7 +211,7 @@ class _BlogDetailViewState extends State<BlogDetailView> {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withValues(alpha: 0.1),
                             blurRadius: 10,
                             offset: const Offset(0, -2),
                           ),
@@ -320,7 +320,7 @@ class _BlogDetailViewState extends State<BlogDetailView> {
                                 //       borderRadius: BorderRadius.circular(16.r),
                                 //       boxShadow: [
                                 //         BoxShadow(
-                                //           color: Colors.black.withOpacity(0.05),
+                                //           color: Colors.black.withValues(alpha: 0.05),
                                 //           blurRadius: 8,
                                 //           offset: const Offset(0, 2),
                                 //         ),
@@ -332,7 +332,7 @@ class _BlogDetailViewState extends State<BlogDetailView> {
                                 //     //       radius: 24.r,
                                 //     //       backgroundColor: "#F38B3B"
                                 //     //           .toColor()
-                                //     //           .withOpacity(0.2),
+                                //     //           .withValues(alpha: 0.2),
                                 //     //       child: Icon(
                                 //     //         Icons.person,
                                 //     //         color: '#3E2723'.toColor(),
@@ -360,7 +360,7 @@ class _BlogDetailViewState extends State<BlogDetailView> {
                                 //     //     //             .copyWith(
                                 //     //     //               color: '#3E2723'
                                 //     //     //                   .toColor()
-                                //     //     //                   .withOpacity(0.7),
+                                //     //     //                   .withValues(alpha: 0.7),
                                 //     //     //             ),
                                 //     //     //       ),
                                 //     //     //     ],
@@ -570,7 +570,9 @@ class _BlogDetailViewState extends State<BlogDetailView> {
                                       borderRadius: BorderRadius.circular(12.r),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.black.withOpacity(0.1),
+                                          color: Colors.black.withValues(
+                                            alpha: 0.1,
+                                          ),
                                           blurRadius: 4,
                                           offset: const Offset(0, 2),
                                         ),
@@ -626,7 +628,9 @@ class _BlogDetailViewState extends State<BlogDetailView> {
                                     borderRadius: BorderRadius.circular(12.r),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withOpacity(0.05),
+                                        color: Colors.black.withValues(
+                                          alpha: 0.05,
+                                        ),
                                         blurRadius: 4,
                                         offset: const Offset(0, 2),
                                       ),
@@ -748,7 +752,7 @@ class _BlogDetailViewState extends State<BlogDetailView> {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -797,7 +801,7 @@ class _BlogDetailViewState extends State<BlogDetailView> {
                           Center(
                             child: Icon(
                               Icons.play_circle_filled,
-                              color: Colors.white.withOpacity(0.8),
+                              color: Colors.white.withValues(alpha: 0.8),
                               size: 32.w,
                             ),
                           ),

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:astrobharataiuser/binding/language_binding/language_binding.dart';
 import 'package:astrobharataiuser/binding/waiting_screen_binding/waiting_screen_binding.dart';
 import 'package:astrobharataiuser/core/models/app_language_model.dart';
@@ -8,117 +9,195 @@ import 'package:astrobharataiuser/core/routes/get_pages.dart';
 import 'package:astrobharataiuser/firebase_options.dart';
 import 'package:astrobharataiuser/theme/app_theme.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
-// import 'package:astrobharataiuser/widgets/global_chat_banner.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart'
-    show defaultTargetPlatform, kDebugMode, kIsWeb, TargetPlatform;
+    show
+        BindingBase,
+        defaultTargetPlatform,
+        kDebugMode,
+        kReleaseMode,
+        kIsWeb,
+        TargetPlatform;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:upgrader/upgrader.dart';
-import 'package:astrobharataiuser/core/services/notification_service.dart';
+// import 'package:astrobharataiuser/core/services/notification_service.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:astrobharataiuser/apihelper/network_service/network_service.dart';
+import 'package:astrobharataiuser/widgets/global_offline_screen.dart';
 import './apihelper/dependencies/dependencies.dart' as dep;
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
-// Cache supported locales globally
 List<Locale>? _cachedSupportedLocales;
 
-void main() async {
-  await runZonedGuarded(
+void main() {
+  runZonedGuarded(
     () async {
-      // Initialize Flutter bindings first (required before Firebase initialization)
+      // 1. Initialize bindings inside the same zone as runApp
       WidgetsFlutterBinding.ensureInitialized();
 
-      // Initialize FlutterDownloader for report downloads
-      if (!kIsWeb) {
-        await FlutterDownloader.initialize(
-          debug:
-              kDebugMode, // optional: set to false to disable printing logs to console (default: true)
-          ignoreSsl:
-              true, // option: set to false to disable HTTP with certificate which can't be verified
-        );
-      }
+      // 2. Prevent zone-related bugs by ensuring consistency
+      BindingBase.debugZoneErrorsAreFatal = true;
 
-      // Initialize Firebase with error handling
-      // Check if platform supports Firebase before initializing
-      final isFirebaseSupported =
-          kIsWeb ||
-          defaultTargetPlatform == TargetPlatform.android ||
-          defaultTargetPlatform == TargetPlatform.iOS ||
-          defaultTargetPlatform == TargetPlatform.macOS ||
-          defaultTargetPlatform == TargetPlatform.windows;
-
-      if (isFirebaseSupported) {
-        try {
-          await Firebase.initializeApp(
-            options: DefaultFirebaseOptions.currentPlatform,
-          );
-          debugPrint('Firebase initialized successfully');
-        } catch (e, stackTrace) {
-          debugPrint('Firebase initialization error: $e');
-          debugPrint('Stack trace: $stackTrace');
-          // Continue app initialization even if Firebase fails
-        }
-      } else {
-        debugPrint(
-          'Firebase not supported on current platform: $defaultTargetPlatform',
-        );
-      }
-
-      await GetStorage.init();
-      await GetStorage.init('loginData');
-      await GetStorage.init('language');
-      await GetStorage.init('personaFollows');
-      await GetStorage.init('guestSession');
-
-      // Load languages
-      await LanguageModelService.loadLanguages();
-
-      // Cache supported locales
-      _cachedSupportedLocales = await _getSupportedLocales();
-
-      // Initialize dependencies (includes NotificationService)
-      await dep.init();
-
-      // Initialize language controller (single source of truth)
-      LanguageBinding().dependencies();
-
-      // Initialize CustomTranslationService globally so it's available for all views
-      // Use Get.put with permanent: true to ensure it stays registered
-      if (!Get.isRegistered<CustomTranslationService>()) {
-        Get.put(CustomTranslationService(), permanent: true);
-      }
-
-      // Request notification permission after the first frame renders
-      // and a short delay (ensures splash screen has passed so the
-      // permission dialog is visible to the user).
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Future.delayed(const Duration(seconds: 3), () {
-          if (Get.isRegistered<NotificationService>()) {
-            NotificationService.instance.requestPermission();
-            // If user is already logged in, link their identity
-            NotificationService.instance.linkCurrentUser();
-          }
-        });
-      });
-
-      // ✅ SET PORTRAIT MODE HERE (Global Default)
+      // 3. Setup global portrait lock
       await SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
         DeviceOrientation.portraitDown,
       ]);
 
+      // 4. Firebase & Crashlytics setup
+      final isFirebaseSupported =
+          !kIsWeb &&
+          (defaultTargetPlatform == TargetPlatform.android ||
+              defaultTargetPlatform == TargetPlatform.iOS ||
+              defaultTargetPlatform == TargetPlatform.macOS);
+
+      if (isFirebaseSupported) {
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
+
+        // Enforce collection enablement ONLY in release mode
+        await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
+          kReleaseMode,
+        );
+
+        FlutterError.onError = (FlutterErrorDetails details) {
+          FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+        };
+
+        PlatformDispatcher.instance.onError = (error, stack) {
+          CrashlyticsService.recordError(
+            error,
+            stack,
+            fatal: true,
+            reason: "PLATFORM_DISPATCHER_ERROR",
+          );
+          return true;
+        };
+
+        // UI-level crash protection
+        ErrorWidget.builder = (FlutterErrorDetails details) {
+          CrashlyticsService.recordError(
+            details.exception,
+            details.stack ?? StackTrace.current,
+            fatal: true,
+            type: CrashErrorType.ui,
+            reason: "WIDGET_TREE_ERROR",
+          );
+
+          return Material(
+            child: Container(
+              color: Colors.white,
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 48,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      "Something went wrong",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: "#6F221E".toColor(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        };
+
+        // Session Stitching & Cold Start Tracing
+        final packageInfo = await PackageInfo.fromPlatform();
+        await CrashlyticsService.initSession(
+          appVersion: packageInfo.version,
+          platform: defaultTargetPlatform.name,
+          buildMode: kReleaseMode ? "release" : "debug",
+        );
+
+        debugPrint("Crashlytics Hardened");
+      }
+
+      // 5. Downloader (Non-web platforms)
+      if (!kIsWeb) {
+        await FlutterDownloader.initialize(debug: kDebugMode, ignoreSsl: true);
+      }
+
+      // 6. Serialized Storage Initialization (Guaranteed sequential to avoid FileSystemException)
+      await _initializeAllStorage();
+
+      // 7. Load Languages & Dependencies
+      await LanguageModelService.loadLanguages();
+      _cachedSupportedLocales = await _getSupportedLocales();
+
+      await dep.init();
+      LanguageBinding().dependencies();
+
+      if (!Get.isRegistered<CustomTranslationService>()) {
+        Get.put(CustomTranslationService(), permanent: true);
+      }
+
       runApp(const MyApp());
     },
     (error, stack) {
-      // Log unhandled exceptions
-      debugPrint('Unhandled exception: $error\nStack trace: $stack');
+      CrashlyticsService.recordError(
+        error,
+        stack,
+        fatal: true,
+        reason: "ZONE_GUARDED_CRITICAL_ERROR",
+      );
+      debugPrint('CRITICAL ERROR caught in runZonedGuarded: $error');
+      debugPrint(stack.toString());
     },
   );
+}
+
+class CrashlyticsNavigatorObserver extends NavigatorObserver {
+  @override
+  void didPush(Route route, Route? previousRoute) {
+    super.didPush(route, previousRoute);
+    CrashlyticsService.setKey("screen", route.settings.name ?? "unknown");
+    CrashlyticsService.log("NAVIGATION:PUSH | screen:${route.settings.name}");
+  }
+
+  @override
+  void didPop(Route route, Route? previousRoute) {
+    super.didPop(route, previousRoute);
+    CrashlyticsNavigatorObserver().didPush(previousRoute!, null);
+  }
+}
+
+/// Helper to ensure all storage containers are initialized sequentially.
+Future<void> _initializeAllStorage() async {
+  try {
+    await GetStorage.init();
+    await GetStorage.init('loginData');
+    await GetStorage.init('language');
+    await GetStorage.init('personaFollows');
+    await GetStorage.init('guestSession');
+    await GetStorage.init('api_cache');
+    await GetStorage.init('onboardingVal');
+    await GetStorage.init('baseUrl');
+    debugPrint("All storage containers initialized successfully");
+  } catch (e) {
+    debugPrint("Storage initialization error: $e");
+    // Depending on the error, we might want to continue or show a fatal error screen
+  }
 }
 
 /// Get all supported locales from languages.json
@@ -252,10 +331,18 @@ class MyApp extends StatelessWidget {
                 getPages: PageRoutes.routes,
                 theme: AppTheme.lightTheme,
                 themeMode: ThemeMode.light,
+                navigatorObservers: [CrashlyticsNavigatorObserver()],
+
                 builder: (context, child) {
-                  return Stack(
-                    children: [child! /* , const GlobalChatBanner() */],
-                  );
+                  return Obx(() {
+                    final isOnline = NetworkService.instance.isConnected.value;
+                    return Stack(
+                      children: [
+                        child!,
+                        if (!isOnline) const GlobalOfflineScreen(),
+                      ],
+                    );
+                  });
                 },
               );
             },

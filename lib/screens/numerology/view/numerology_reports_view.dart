@@ -1,5 +1,5 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/numerology/controller/numerology_reports_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -180,7 +180,7 @@ class NumerologyReportsView extends BasePage<NumerologyReportsController> {
             ),
             if (inputData != null) ...[
               Spacing.h(12),
-              Divider(color: Colors.grey.withOpacity(0.2), height: 1),
+              Divider(color: Colors.grey.withValues(alpha: 0.2), height: 1),
               Spacing.h(12),
               Wrap(
                 spacing: 8.w,

@@ -21,32 +21,31 @@ import 'package:astrobharataiuser/theme/app_typography.dart';
 class ARVastuScreen extends StatefulWidget {
   final VastuRoomConfig? roomConfig;
 
-  const ARVastuScreen({
-    Key? key,
-    this.roomConfig,
-  }) : super(key: key);
+  const ARVastuScreen({Key? key, this.roomConfig}) : super(key: key);
 
   @override
   State<ARVastuScreen> createState() => _ARVastuScreenState();
 }
 
-class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserver {
+class _ARVastuScreenState extends State<ARVastuScreen>
+    with WidgetsBindingObserver {
   late ARController _arController;
   bool _showHeatmap = false;
   bool _showElements = true;
   bool _showRoomGuidance = true; // Room-aware guidance toggle
   VastuRoomConfig? _selectedRoomConfig; // Selected room for standalone AR
-  bool _showRoomSelector = false; // Show room selector when no roomConfig provided
+  bool _showRoomSelector =
+      false; // Show room selector when no roomConfig provided
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    
+
     // CRITICAL: Ensure compass controller exists and is findable for AR mode
     // Get.put() creates/registers the controller
     Get.put(VastuReadingController(), tag: 'vastu_compass', permanent: false);
-    
+
     // Verify controller can be found (GetBuilder will try to find it)
     try {
       Get.find<VastuReadingController>(tag: 'vastu_compass');
@@ -54,8 +53,12 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
       // Controller not findable, recreate it
       Get.put(VastuReadingController(), tag: 'vastu_compass', permanent: false);
     }
-    
-    _arController = Get.put(ARController(), tag: 'ar_controller', permanent: false);
+
+    _arController = Get.put(
+      ARController(),
+      tag: 'ar_controller',
+      permanent: false,
+    );
     _arController.startARMode();
   }
 
@@ -69,7 +72,8 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
       _arController.pauseCamera();
       _arController.pauseSensors();
     } else if (state == AppLifecycleState.resumed) {
@@ -89,26 +93,26 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
       // Controller not findable, recreate it
       Get.put(VastuReadingController(), tag: 'vastu_compass', permanent: false);
     }
-    
     // Show room selector overlay if requested
     if (_showRoomSelector) {
       return _buildRoomSelector();
     }
-    
     return Scaffold(
       backgroundColor: Colors.black,
       body: GetBuilder<ARController>(
         tag: 'ar_controller',
         builder: (arController) {
-            return GetBuilder<VastuReadingController>(
+          return GetBuilder<VastuReadingController>(
             tag: 'vastu_compass',
             builder: (compassController) {
               // Get room config from arguments or use selected room
               final arguments = Get.arguments as Map<String, dynamic>?;
-              final roomConfigFromArgs = arguments?['roomConfig'] as VastuRoomConfig?;
+              final roomConfigFromArgs =
+                  arguments?['roomConfig'] as VastuRoomConfig?;
               // Use provided roomConfig or selected roomConfig
-              final activeRoomConfig = roomConfigFromArgs ?? _selectedRoomConfig;
-              
+              final activeRoomConfig =
+                  roomConfigFromArgs ?? _selectedRoomConfig;
+
               // VR 360° Mode - Full immersive experience
               if (arController.isSemiVRMode) {
                 return VR360Mode(
@@ -122,13 +126,13 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
                   },
                 );
               }
-              
               // Standard AR Mode
               return Stack(
                 fit: StackFit.expand,
                 children: [
                   // Camera preview
-                  if (arController.isCameraInitialized && arController.cameraController != null)
+                  if (arController.isCameraInitialized &&
+                      arController.cameraController != null)
                     CameraPreview(arController.cameraController!)
                   else
                     Container(
@@ -143,15 +147,14 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
                             SizedBox(height: 16.h),
                             AutoTranslateText(
                               'Initializing AR Mode...',
-                              style: MyTextTheme.mediumBCN.copyWith(
-                                color: Colors.white,
-                              ).merge(AppTypography.body1),
+                              style: MyTextTheme.mediumBCN
+                                  .copyWith(color: Colors.white)
+                                  .merge(AppTypography.body1),
                             ),
                           ],
                         ),
                       ),
                     ),
-                  
                   // Heatmap overlay (optional) - Enhanced with gradients
                   if (_showHeatmap && activeRoomConfig != null)
                     HeatmapOverlay(
@@ -159,7 +162,6 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
                       currentDirection: compassController.currentDirection,
                       heading: compassController.heading,
                     ),
-                  
                   // Element overlay - Enhanced with particles
                   if (_showElements && activeRoomConfig != null)
                     ARElementOverlay(
@@ -167,7 +169,6 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
                       currentDirection: compassController.currentDirection,
                       heading: compassController.heading,
                     ),
-                  
                   // Room-aware AR guidance - Visual highlights for ideal/avoid directions
                   if (_showRoomGuidance && activeRoomConfig != null)
                     RoomAwareARGuidance(
@@ -176,31 +177,37 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
                       heading: compassController.heading,
                       gyroRotation: arController.gyroRotation,
                     ),
-                  
+
                   // Energy wave - Subtle background effect
                   if (activeRoomConfig != null)
                     VastuEnergyWave(
-                      waveColor: _getEnergyColor(compassController.currentDirection, activeRoomConfig),
+                      waveColor: _getEnergyColor(
+                        compassController.currentDirection,
+                        activeRoomConfig,
+                      ),
                       intensity: 0.4, // Reduced for subtlety
                     ),
-                  
+
                   // Enhanced direction labels - All 8 directions with room-aware indicators
                   ARDirectionOverlay(
                     heading: compassController.heading,
                     gyroRotation: arController.gyroRotation,
                     roomConfig: activeRoomConfig,
                   ),
-                  
+
                   // Top controls
-                  _buildTopControls(arController, compassController, activeRoomConfig),
-                  
+                  _buildTopControls(
+                    arController,
+                    compassController,
+                    activeRoomConfig,
+                  ),
+
                   // Bottom info panel
                   if (activeRoomConfig != null)
                     _buildBottomPanel(compassController, activeRoomConfig),
-                  
+
                   // Room selector button (if no room selected)
-                  if (activeRoomConfig == null)
-                    _buildRoomSelectorButton(),
+                  if (activeRoomConfig == null) _buildRoomSelectorButton(),
                 ],
               );
             },
@@ -271,7 +278,8 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
                     ),
                     SizedBox(width: 8.w),
                     _buildToggleButton(
-                      icon: Icons.explore, // guidance (no duplicate location icon)
+                      icon: Icons
+                          .explore, // guidance (no duplicate location icon)
                       isActive: _showRoomGuidance,
                       onTap: () {
                         setState(() {
@@ -313,39 +321,32 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
         decoration: BoxDecoration(
           color: isActive
               ? "#F38B3B".toColor()
-              : Colors.black.withOpacity(0.6),
+              : Colors.black.withValues(alpha: 0.6),
           shape: BoxShape.circle,
           border: Border.all(
             color: isActive
-                ? Colors.white.withOpacity(0.3)
+                ? Colors.white.withValues(alpha: 0.3)
                 : Colors.transparent,
             width: 1.5,
           ),
           boxShadow: isActive
               ? [
                   BoxShadow(
-                    color: "#F38B3B".toColor().withOpacity(0.4),
+                    color: "#F38B3B".toColor().withValues(alpha: 0.4),
                     blurRadius: 8,
                     spreadRadius: 1,
                   ),
                 ]
               : null,
         ),
-        child: Icon(
-          icon,
-          color: Colors.white,
-          size: 22.w,
-        ),
+        child: Icon(icon, color: Colors.white, size: 22.w),
       ),
     );
-    
+
     if (tooltip != null) {
-      return Tooltip(
-        message: tooltip,
-        child: button,
-      );
+      return Tooltip(message: tooltip, child: button);
     }
-    
+
     return button;
   }
 
@@ -357,7 +358,6 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
       roomConfig,
       compassController.currentDirection,
     );
-    
     return Positioned(
       bottom: 0,
       left: 0,
@@ -369,10 +369,7 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                Colors.transparent,
-                Colors.black.withOpacity(0.8),
-              ],
+              colors: [Colors.transparent, Colors.black.withValues(alpha: 0.8)],
             ),
           ),
           child: Column(
@@ -382,7 +379,9 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 decoration: BoxDecoration(
-                  color: _getEnergyStatusColor(energyModel.energyStatus).withOpacity(0.9),
+                  color: _getEnergyStatusColor(
+                    energyModel.energyStatus,
+                  ).withValues(alpha: 0.9),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Row(
@@ -396,10 +395,12 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
                     SizedBox(width: 8.w),
                     AutoTranslateText(
                       '${roomConfig.displayName} - ${energyModel.energyStatus} Energy',
-                      style: MyTextTheme.mediumBCB.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ).merge(AppTypography.h3),
+                      style: MyTextTheme.mediumBCB
+                          .copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.h3),
                     ),
                   ],
                 ),
@@ -408,9 +409,9 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
               // Direction info
               AutoTranslateText(
                 'Facing ${compassController.currentDirection} (${compassController.heading.toStringAsFixed(1)}°)',
-                style: MyTextTheme.smallBCN.copyWith(
-                  color: Colors.white.withOpacity(0.9),
-                ).merge(AppTypography.body2),
+                style: MyTextTheme.smallBCN
+                    .copyWith(color: Colors.white.withValues(alpha: 0.9))
+                    .merge(AppTypography.body2),
               ),
             ],
           ),
@@ -463,7 +464,7 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
     ];
 
     return Scaffold(
-      backgroundColor: Colors.black.withOpacity(0.95),
+      backgroundColor: Colors.black.withValues(alpha: 0.95),
       body: SafeArea(
         child: Column(
           children: [
@@ -482,30 +483,27 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
                       width: 40.w,
                       height: 40.w,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
+                        color: Colors.white.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(
-                        Icons.close,
-                        color: Colors.white,
-                        size: 24.w,
-                      ),
+                      child: Icon(Icons.close, color: Colors.white, size: 24.w),
                     ),
                   ),
                   SizedBox(width: 16.w),
                   Expanded(
                     child: AutoTranslateText(
                       'Select Room for AR Vastu',
-                      style: MyTextTheme.largeBCB.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ).merge(AppTypography.h2),
+                      style: MyTextTheme.largeBCB
+                          .copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.h2),
                     ),
                   ),
                 ],
               ),
             ),
-            
             // Room grid
             Expanded(
               child: GridView.builder(
@@ -540,28 +538,23 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
       child: Container(
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha: 0.2),
             width: 1.5,
           ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              _getRoomIcon(room.roomType),
-              color: Colors.white,
-              size: 40.w,
-            ),
+            Icon(_getRoomIcon(room.roomType), color: Colors.white, size: 40.w),
             SizedBox(height: 12.h),
             AutoTranslateText(
               room.displayName,
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ).merge(AppTypography.body1),
+              style: MyTextTheme.mediumBCB
+                  .copyWith(color: Colors.white, fontWeight: FontWeight.bold)
+                  .merge(AppTypography.body1),
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -574,18 +567,30 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
 
   IconData _getRoomIcon(String roomType) {
     switch (roomType) {
-      case 'bathroom': return Icons.bathtub;
-      case 'balcony': return Icons.balcony;
-      case 'bedroom': return Icons.bed;
-      case 'kitchen': return Icons.kitchen;
-      case 'living_room': return Icons.home;
-      case 'dining': return Icons.dining;
-      case 'pooja_room': return Icons.self_improvement;
-      case 'study_room': return Icons.school;
-      case 'cabin': return Icons.person;
-      case 'reception': return Icons.info;
-      case 'pantry': return Icons.coffee;
-      default: return Icons.room;
+      case 'bathroom':
+        return Icons.bathtub;
+      case 'balcony':
+        return Icons.balcony;
+      case 'bedroom':
+        return Icons.bed;
+      case 'kitchen':
+        return Icons.kitchen;
+      case 'living_room':
+        return Icons.home;
+      case 'dining':
+        return Icons.dining;
+      case 'pooja_room':
+        return Icons.self_improvement;
+      case 'study_room':
+        return Icons.school;
+      case 'cabin':
+        return Icons.person;
+      case 'reception':
+        return Icons.info;
+      case 'pantry':
+        return Icons.coffee;
+      default:
+        return Icons.room;
     }
   }
 
@@ -605,11 +610,11 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 14.h),
             decoration: BoxDecoration(
-              color: '#9C27B0'.toColor().withOpacity(0.9),
+              color: '#9C27B0'.toColor().withValues(alpha: 0.9),
               borderRadius: BorderRadius.circular(24.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -618,18 +623,16 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.room,
-                  color: Colors.white,
-                  size: 20.w,
-                ),
+                Icon(Icons.room, color: Colors.white, size: 20.w),
                 SizedBox(width: 8.w),
                 AutoTranslateText(
                   'Select Room for AR Vastu',
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ).merge(AppTypography.body1),
+                  style: MyTextTheme.mediumBCB
+                      .copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      )
+                      .merge(AppTypography.body1),
                 ),
               ],
             ),
@@ -639,4 +642,3 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
     );
   }
 }
-

@@ -69,7 +69,11 @@ class VoiceCallView extends StatelessWidget {
                     errorWidget: (_, __, ___) => Container(
                       color: const Color(0xFFFFF2E5),
                       alignment: Alignment.center,
-                      child: Icon(Icons.person, size: 64.w, color: AppColors.saffron),
+                      child: Icon(
+                        Icons.person,
+                        size: 64.w,
+                        color: AppColors.saffron,
+                      ),
                     ),
                   ),
                 ),
@@ -77,15 +81,11 @@ class VoiceCallView extends StatelessWidget {
               if (isRecording)
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.3),
+                    color: Colors.red.withValues(alpha: 0.3),
                     shape: BoxShape.circle,
                   ),
                   padding: EdgeInsets.all(20.w),
-                  child: Icon(
-                    Icons.mic,
-                    size: 48.w,
-                    color: Colors.red,
-                  ),
+                  child: Icon(Icons.mic, size: 48.w, color: Colors.red),
                 ),
             ],
           );
@@ -93,10 +93,9 @@ class VoiceCallView extends StatelessWidget {
         SizedBox(height: 12.h),
         AutoTranslateText(
           persona.name,
-          style: MyTextTheme.mediumBCB.copyWith(
-            fontWeight: FontWeight.w700,
-            color: Colors.black87,
-          ).merge(AppTypography.h2),
+          style: MyTextTheme.mediumBCB
+              .copyWith(fontWeight: FontWeight.w700, color: Colors.black87)
+              .merge(AppTypography.h2),
         ),
       ],
     );
@@ -108,14 +107,14 @@ class VoiceCallView extends StatelessWidget {
       final timeText = controller.remainingSeconds.value == 600
           ? 'Connecting...'
           : 'Remaining Time: ${controller.formattedRemaining}';
-      
+
       return Column(
         children: [
           AutoTranslateText(
             timeText,
-            style: MyTextTheme.mediumBCB.copyWith(
-              color: Colors.black87,
-            ).merge(AppTypography.h3),
+            style: MyTextTheme.mediumBCB
+                .copyWith(color: Colors.black87)
+                .merge(AppTypography.h3),
           ),
         ],
       );
@@ -144,18 +143,18 @@ class VoiceCallView extends StatelessWidget {
                   SizedBox(width: 8.w),
                   AutoTranslateText(
                     'You said:',
-                    style: MyTextTheme.smallBCB.copyWith(
-                      color: Colors.blue,
-                    ).merge(AppTypography.body2),
+                    style: MyTextTheme.smallBCB
+                        .copyWith(color: Colors.blue)
+                        .merge(AppTypography.body2),
                   ),
                 ],
               ),
               SizedBox(height: 8.h),
               AutoTranslateText(
                 controller.transcription.value,
-                style: MyTextTheme.mediumBCN.copyWith(
-                  color: Colors.black87,
-                ).merge(AppTypography.body1),
+                style: MyTextTheme.mediumBCN
+                    .copyWith(color: Colors.black87)
+                    .merge(AppTypography.body1),
               ),
             ],
           ),
@@ -186,9 +185,9 @@ class VoiceCallView extends StatelessWidget {
                   SizedBox(width: 8.w),
                   AutoTranslateText(
                     '${controller.persona.name}:',
-                    style: MyTextTheme.smallBCB.copyWith(
-                      color: Colors.green,
-                    ).merge(AppTypography.body2),
+                    style: MyTextTheme.smallBCB
+                        .copyWith(color: Colors.green)
+                        .merge(AppTypography.body2),
                   ),
                   if (controller.isPlaying.value) ...[
                     SizedBox(width: 8.w),
@@ -206,9 +205,9 @@ class VoiceCallView extends StatelessWidget {
               SizedBox(height: 8.h),
               AutoTranslateText(
                 controller.aiResponse.value,
-                style: MyTextTheme.mediumBCN.copyWith(
-                  color: Colors.black87,
-                ).merge(AppTypography.body1),
+                style: MyTextTheme.mediumBCN
+                    .copyWith(color: Colors.black87)
+                    .merge(AppTypography.body1),
               ),
             ],
           ),
@@ -227,7 +226,7 @@ class VoiceCallView extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 18,
               offset: const Offset(0, 6),
             ),
@@ -251,15 +250,11 @@ class VoiceCallView extends StatelessWidget {
               final isProcessing = controller.isProcessing.value;
               return _roundButton(
                 icon: isRecording ? Icons.mic : Icons.mic_off,
-                bg: isRecording 
-                    ? Colors.red 
-                    : (isProcessing 
-                        ? Colors.grey 
-                        : const Color(0xFF1F1F1F)),
+                bg: isRecording
+                    ? Colors.red
+                    : (isProcessing ? Colors.grey : const Color(0xFF1F1F1F)),
                 iconColor: Colors.white,
-                onTap: isProcessing 
-                    ? null 
-                    : () => controller.toggleRecording(),
+                onTap: isProcessing ? null : () => controller.toggleRecording(),
               );
             }),
             // End call button
@@ -287,10 +282,7 @@ class VoiceCallView extends StatelessWidget {
       child: Container(
         width: 64.w,
         height: 64.w,
-        decoration: BoxDecoration(
-          color: bg,
-          shape: BoxShape.circle,
-        ),
+        decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
         child: Icon(icon, color: iconColor, size: 28.w),
       ),
     );

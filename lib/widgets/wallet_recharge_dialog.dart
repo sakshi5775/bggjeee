@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/wallet/widgets/recharge_dialog.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -35,7 +35,7 @@ class WalletRechargeDialog extends StatelessWidget {
           borderRadius: BorderRadius.circular(30.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.15),
+              color: Colors.black.withValues(alpha: 0.15),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -73,7 +73,7 @@ class WalletRechargeDialog extends StatelessWidget {
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 13.sp,
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha: 0.9),
                           ),
                         ),
                       ],
@@ -87,7 +87,7 @@ class WalletRechargeDialog extends StatelessWidget {
                       child: Container(
                         padding: EdgeInsets.all(8.w),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -114,13 +114,13 @@ class WalletRechargeDialog extends StatelessWidget {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          Colors.red.withOpacity(0.1),
-                          Colors.red.withOpacity(0.05),
+                          Colors.red.withValues(alpha: 0.1),
+                          Colors.red.withValues(alpha: 0.05),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(16.r),
                       border: Border.all(
-                        color: Colors.red.withOpacity(0.3),
+                        color: Colors.red.withValues(alpha: 0.3),
                         width: 1.5,
                       ),
                     ),
@@ -129,7 +129,7 @@ class WalletRechargeDialog extends StatelessWidget {
                         Container(
                           padding: EdgeInsets.all(12.w),
                           decoration: BoxDecoration(
-                            color: Colors.red.withOpacity(0.2),
+                            color: Colors.red.withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -176,13 +176,13 @@ class WalletRechargeDialog extends StatelessWidget {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          AppColors.templeGold.withOpacity(0.1),
-                          AppColors.templeGold.withOpacity(0.05),
+                          AppColors.templeGold.withValues(alpha: 0.1),
+                          AppColors.templeGold.withValues(alpha: 0.05),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(16.r),
                       border: Border.all(
-                        color: AppColors.templeGold.withOpacity(0.3),
+                        color: AppColors.templeGold.withValues(alpha: 0.3),
                         width: 1.5,
                       ),
                     ),
@@ -191,7 +191,7 @@ class WalletRechargeDialog extends StatelessWidget {
                         Container(
                           padding: EdgeInsets.all(12.w),
                           decoration: BoxDecoration(
-                            color: AppColors.templeGold.withOpacity(0.2),
+                            color: AppColors.templeGold.withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -236,7 +236,7 @@ class WalletRechargeDialog extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(16.w),
                     decoration: BoxDecoration(
-                      color: '#68171E'.toColor().withOpacity(0.05),
+                      color: '#68171E'.toColor().withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(12.r),
                     ),
                     child: Row(
@@ -274,7 +274,7 @@ class WalletRechargeDialog extends StatelessWidget {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(16.r),
                             border: Border.all(
-                              color: Colors.grey.withOpacity(0.3),
+                              color: Colors.grey.withValues(alpha: 0.3),
                               width: 1.5,
                             ),
                           ),
@@ -310,7 +310,7 @@ class WalletRechargeDialog extends StatelessWidget {
                             boxShadow: [
                               BoxShadow(
                                 color: AppColors.orangeGradient.colors.first
-                                    .withOpacity(0.4),
+                                    .withValues(alpha: 0.4),
                                 blurRadius: 12,
                                 offset: const Offset(0, 6),
                               ),

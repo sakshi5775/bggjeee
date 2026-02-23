@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/panchang/service/panchang_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
 import 'package:flutter/foundation.dart';
@@ -18,19 +18,29 @@ class YearlyVratController extends BaseController {
   final selectedYear = DateTime.now().year.obs;
   final selectedLocation = 'Fetching Location...'.obs;
   final yearlyVratData = <Map<String, dynamic>>[].obs;
-  
+
   // Location coordinates
   double? currentLatitude;
   double? currentLongitude;
   double? currentTimezone;
-  
+
   // Flag to track if controller is disposed
   bool _isDisposed = false;
 
   // Month names
   final List<String> monthNames = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
 
   @override
@@ -96,7 +106,11 @@ class YearlyVratController extends BaseController {
         if (_isDisposed) return;
 
         if (reverseGeocode != null) {
-          final city = reverseGeocode['city'] ?? reverseGeocode['town'] ?? reverseGeocode['village'] ?? '';
+          final city =
+              reverseGeocode['city'] ??
+              reverseGeocode['town'] ??
+              reverseGeocode['village'] ??
+              '';
           final state = reverseGeocode['state'] ?? '';
           if (city.isNotEmpty) {
             selectedLocation.value = state.isNotEmpty ? '$city, $state' : city;
@@ -144,10 +158,14 @@ class YearlyVratController extends BaseController {
   /// Reverse geocode coordinates to get address
   Future<Map<String, dynamic>?> _reverseGeocode(double lat, double lon) async {
     try {
-      final response = await http.get(
-        Uri.parse('https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lon'),
-        headers: {'Accept': 'application/json'},
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .get(
+            Uri.parse(
+              'https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lon',
+            ),
+            headers: {'Accept': 'application/json'},
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>;
@@ -182,7 +200,7 @@ class YearlyVratController extends BaseController {
                 for (var festival in festivals) {
                   final festMap = festival as Map<String, dynamic>;
                   final festName = festMap['name']?.toString() ?? '';
-                  
+
                   // Filter vrat types (all vrat-related festivals)
                   if (_isVratType(festName)) {
                     vratData.add({
@@ -203,7 +221,10 @@ class YearlyVratController extends BaseController {
       yearlyVratData.value = vratData;
     } catch (e) {
       debugPrint('Error fetching yearly vrat: $e');
-      showErrorMessage(title: 'Error', message: 'Failed to fetch yearly vrat data');
+      showErrorMessage(
+        title: 'Error',
+        message: 'Failed to fetch yearly vrat data',
+      );
     } finally {
       isLoading.value = false;
     }
@@ -212,15 +233,15 @@ class YearlyVratController extends BaseController {
   /// Check if festival is a vrat type
   bool _isVratType(String festivalName) {
     final nameLower = festivalName.toLowerCase();
-    return nameLower.contains('vrat') || 
-           nameLower.contains('ekadashi') ||
-           nameLower.contains('pradosh') ||
-           nameLower.contains('purnima') ||
-           nameLower.contains('amavasya') ||
-           nameLower.contains('chaturthi') ||
-           nameLower.contains('ashtami') ||
-           nameLower.contains('shivratri') ||
-           nameLower.contains('shivaratri');
+    return nameLower.contains('vrat') ||
+        nameLower.contains('ekadashi') ||
+        nameLower.contains('pradosh') ||
+        nameLower.contains('purnima') ||
+        nameLower.contains('amavasya') ||
+        nameLower.contains('chaturthi') ||
+        nameLower.contains('ashtami') ||
+        nameLower.contains('shivratri') ||
+        nameLower.contains('shivaratri');
   }
 
   /// Select month
@@ -241,7 +262,11 @@ class YearlyVratController extends BaseController {
   }
 
   /// Select city
-  Future<void> selectCity(String cityName, String? state, String? country) async {
+  Future<void> selectCity(
+    String cityName,
+    String? state,
+    String? country,
+  ) async {
     try {
       final coords = await AddressHelper.fetchCoordinatesFromCity(
         city: cityName,
@@ -251,7 +276,7 @@ class YearlyVratController extends BaseController {
       if (coords != null) {
         currentLatitude = coords['latitude'] as double?;
         currentLongitude = coords['longitude'] as double?;
-        
+
         if (currentLatitude != null && currentLongitude != null) {
           try {
             final timezone = await AddressHelper.getTimezoneFromCoordinates(
@@ -330,7 +355,11 @@ class YearlyVratController extends BaseController {
       if (_isDisposed) return;
 
       if (reverseGeocode != null) {
-        final city = reverseGeocode['city'] ?? reverseGeocode['town'] ?? reverseGeocode['village'] ?? '';
+        final city =
+            reverseGeocode['city'] ??
+            reverseGeocode['town'] ??
+            reverseGeocode['village'] ??
+            '';
         final state = reverseGeocode['state'] ?? '';
         if (city.isNotEmpty) {
           selectedLocation.value = state.isNotEmpty ? '$city, $state' : city;
@@ -381,7 +410,9 @@ class YearlyVratController extends BaseController {
   Future<double> _getTimezoneOffset(String timezone) async {
     try {
       final response = await http.get(
-        Uri.parse('https://timeapi.io/api/TimeZone/coordinate?latitude=${currentLatitude ?? 28.6139}&longitude=${currentLongitude ?? 77.2090}'),
+        Uri.parse(
+          'https://timeapi.io/api/TimeZone/coordinate?latitude=${currentLatitude ?? 28.6139}&longitude=${currentLongitude ?? 77.2090}',
+        ),
         headers: {'Accept': 'application/json'},
       );
 
@@ -396,7 +427,7 @@ class YearlyVratController extends BaseController {
     } catch (e) {
       debugPrint('Error getting timezone offset: $e');
     }
-    
+
     return await _getTimezoneOffsetFromCoordinates(
       currentLatitude ?? 28.6139,
       currentLongitude ?? 77.2090,
@@ -404,10 +435,15 @@ class YearlyVratController extends BaseController {
   }
 
   /// Get timezone offset from coordinates
-  Future<double> _getTimezoneOffsetFromCoordinates(double lat, double lon) async {
+  Future<double> _getTimezoneOffsetFromCoordinates(
+    double lat,
+    double lon,
+  ) async {
     try {
       final response = await http.get(
-        Uri.parse('https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon'),
+        Uri.parse(
+          'https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon',
+        ),
         headers: {'Accept': 'application/json'},
       );
 
@@ -422,7 +458,7 @@ class YearlyVratController extends BaseController {
     } catch (e) {
       debugPrint('Error getting timezone from coordinates: $e');
     }
-    
+
     return 5.5;
   }
 
@@ -446,5 +482,3 @@ class YearlyVratController extends BaseController {
     return null;
   }
 }
-
-

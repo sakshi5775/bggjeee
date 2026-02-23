@@ -135,14 +135,14 @@ class PalmReadingFormView extends StatelessWidget {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
               borderSide: BorderSide(
-                color: Colors.grey.withOpacity(0.3),
+                color: Colors.grey.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
               borderSide: BorderSide(
-                color: Colors.grey.withOpacity(0.3),
+                color: Colors.grey.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -173,10 +173,13 @@ class PalmReadingFormView extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
+              border: Border.all(
+                color: Colors.grey.withValues(alpha: 0.3),
+                width: 1,
+              ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -233,10 +236,13 @@ class PalmReadingFormView extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
+              border: Border.all(
+                color: Colors.grey.withValues(alpha: 0.3),
+                width: 1,
+              ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -287,7 +293,7 @@ class PalmReadingFormView extends StatelessWidget {
             borderRadius: BorderRadius.circular(12.r),
             boxShadow: [
               BoxShadow(
-                color: "#F38B3B".toColor().withOpacity(0.35),
+                color: "#F38B3B".toColor().withValues(alpha: 0.35),
                 blurRadius: 6,
                 offset: const Offset(0, 3),
               ),

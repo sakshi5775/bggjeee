@@ -1,6 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/panchang/controller/yearly_vrat_controller.dart';
@@ -40,7 +40,7 @@ class YearlyVratView extends BasePage<YearlyVratController> {
                   style: MyTextTheme.mediumBCN.copyWith(
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
-                    color: "#6F221E".toColor().withOpacity(0.7),
+                    color: "#6F221E".toColor().withValues(alpha: 0.7),
                   ),
                 ),
               ),
@@ -221,7 +221,7 @@ class YearlyVratView extends BasePage<YearlyVratController> {
         child: AutoTranslateText(
           'No vrat found for this year',
           style: MyTextTheme.mediumBCN.copyWith(
-            color: "#6B1B1A".toColor().withOpacity(0.6),
+            color: "#6B1B1A".toColor().withValues(alpha: 0.6),
           ),
         ),
       );
@@ -293,7 +293,7 @@ class YearlyVratView extends BasePage<YearlyVratController> {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 12,
               offset: const Offset(2, 4),
             ),
@@ -361,7 +361,7 @@ class YearlyVratView extends BasePage<YearlyVratController> {
                   AutoTranslateText(
                     dayName,
                     style: MyTextTheme.smallBCN.copyWith(
-                      color: "#6B1B1A".toColor().withOpacity(0.7),
+                      color: "#6B1B1A".toColor().withValues(alpha: 0.7),
                       fontSize: 12,
                     ),
                   ),
@@ -372,7 +372,7 @@ class YearlyVratView extends BasePage<YearlyVratController> {
             // Right arrow icon
             Icon(
               Icons.arrow_forward_ios,
-              color: "#6B1B1A".toColor().withOpacity(0.5),
+              color: "#6B1B1A".toColor().withValues(alpha: 0.5),
               size: 16.h,
             ),
           ],

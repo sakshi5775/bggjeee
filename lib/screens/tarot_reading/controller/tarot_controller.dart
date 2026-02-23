@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:astrobharataiuser/core/localization/language_controller_v2.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/tarot_card_model.dart';
 import 'package:astrobharataiuser/data_model/tarot_reading_models.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/service/tarot_service.dart';
@@ -116,7 +116,7 @@ class TarotController extends BaseController {
     ever(languageController.currentLanguage, (language) {
       if (language != null && selectedLanguage.value != language.code) {
         debugPrint(
-          '🌍 TarotController: Language changed to ${language.code}, triggering reshuffle',
+          '🌐 TarotController: Language changed to ${language.code}, triggering reshuffle',
         );
         selectedLanguage.value = language.code;
         // If cards are already loaded, reshuffle with new language
@@ -224,7 +224,7 @@ class TarotController extends BaseController {
       debugPrint('✅ isShuffling set to false');
 
       // Show cards with fan spread animation (sound will play during expansion)
-      debugPrint('🎴 Starting fan spread animation...');
+      debugPrint('🃏 Starting fan spread animation...');
       await _animateFanSpread();
       debugPrint('✅ Fan spread animation complete');
 
@@ -265,9 +265,9 @@ class TarotController extends BaseController {
 
   Future<void> _animateFanSpread() async {
     try {
-      debugPrint('🎴 _animateFanSpread: Setting showCards to true');
+      debugPrint('🃏 _animateFanSpread: Setting showCards to true');
       showCards.value = true;
-      debugPrint('🎴 _animateFanSpread: showCards is now ${showCards.value}');
+      debugPrint('🃏 _animateFanSpread: showCards is now ${showCards.value}');
 
       // Play sound simultaneously with fan spread animation (don't await)
       TarotAudioHaptic.playShuffleSound(); // Fire and forget - plays in parallel
@@ -287,7 +287,7 @@ class TarotController extends BaseController {
       final safeStepDurationMs = stepDurationMs > 0 ? stepDurationMs : 16;
 
       debugPrint(
-        '🎴 _animateFanSpread: Starting animation with $cardCount cards, duration: ${duration.inMilliseconds}ms, steps: $steps, stepDuration: ${safeStepDurationMs}ms',
+        '🃏 _animateFanSpread: Starting animation with $cardCount cards, duration: ${duration.inMilliseconds}ms, steps: $steps, stepDuration: ${safeStepDurationMs}ms',
       );
 
       // Initialize progress to 0
@@ -309,7 +309,7 @@ class TarotController extends BaseController {
 
           if (step % 10 == 0 || step >= steps) {
             debugPrint(
-              '🎴 _animateFanSpread: Step $step/$steps, progress=${fanSpreadProgress.value}',
+              '🃏 _animateFanSpread: Step $step/$steps, progress=${fanSpreadProgress.value}',
             );
           }
 
@@ -318,7 +318,7 @@ class TarotController extends BaseController {
             timer = null;
             fanSpreadProgress.value = 1.0;
             debugPrint(
-              '🎴 _animateFanSpread: Animation complete at step $step, completing future',
+              '🃏 _animateFanSpread: Animation complete at step $step, completing future',
             );
             if (!completer.isCompleted) {
               completer.complete();
@@ -353,7 +353,7 @@ class TarotController extends BaseController {
       // Wait for animation to complete
       await completer.future;
       debugPrint(
-        '🎴 _animateFanSpread: Future completed, animation finished, final progress=${fanSpreadProgress.value}',
+        '🃏 _animateFanSpread: Future completed, animation finished, final progress=${fanSpreadProgress.value}',
       );
     } catch (e) {
       debugPrint('❌ _animateFanSpread: Error: $e');
@@ -741,7 +741,7 @@ class TarotController extends BaseController {
       selectedLoveType.value = 'triangle';
 
       debugPrint(
-        '🔄 Calling Love Triangle API - self: ${triangleCardSelf.value?.id ?? "null"}, lover1: ${triangleCardLover1.value?.id ?? "null"}, lover2: ${triangleCardLover2.value?.id ?? "null"}',
+        '🔍 Calling Love Triangle API - self: ${triangleCardSelf.value?.id ?? "null"}, lover1: ${triangleCardLover1.value?.id ?? "null"}, lover2: ${triangleCardLover2.value?.id ?? "null"}',
       );
 
       final response = await _tarotService.getLoveTriangleReading(
@@ -800,10 +800,15 @@ class TarotController extends BaseController {
           errorMsg.toLowerCase().contains('not suitable') ||
           errorMsg.toLowerCase().contains('invalid card');
 
-      debugPrint('🔍 Love Triangle Error Detection - fullError: $fullError');
-      debugPrint('🔍 Love Triangle Error Detection - errorMsg: $errorMsg');
+      debugPrint('🔎 Love Triangle Error Detection - fullError: $fullError');
+      debugPrint('🔎 Love Triangle Error Detection - errorMsg: $errorMsg');
       debugPrint(
-        '🔍 Love Triangle Error Detection - isStatus400: $isStatus400, hasSelectedCards: $hasSelectedCards',
+        '🔎 Love Triangle Error Detection - isStatus400: $isStatus400, hasSelectedCards: $hasSelectedCards',
+      );
+      debugPrint('🔎 Love Triangle Error Detection - fullError: $fullError');
+      debugPrint('🔎 Love Triangle Error Detection - errorMsg: $errorMsg');
+      debugPrint(
+        '🔎 Love Triangle Error Detection - isStatus400: $isStatus400, hasSelectedCards: $hasSelectedCards',
       );
 
       if (isStatus400) {
@@ -836,7 +841,7 @@ class TarotController extends BaseController {
 
           // Show animated message
           debugPrint(
-            '🎬 Showing unsuitable card animation - Card: $problematicCardName, Category: Love Triangle',
+            '🎭 Showing unsuitable card animation - Card: $problematicCardName, Category: Love Triangle',
           );
           unsuitableCardName.value = problematicCardName;
           unsuitableCategoryName.value = 'Love Triangle';
@@ -1034,7 +1039,7 @@ class TarotController extends BaseController {
       final loveType = selectedLoveType.value;
       final card = selectedCard;
       debugPrint(
-        '🔄 Getting Love Reading - type: $loveType, card: ${card?.id ?? "auto-select"}',
+        '🔎 Getting Love Reading - type: $loveType, card: ${card?.id ?? "auto-select"}',
       );
 
       if (loveType == 'triangle') {
@@ -1268,7 +1273,7 @@ class TarotController extends BaseController {
       selectedBreakupType.value = 'romantic';
 
       debugPrint(
-        '🔄 Calling Romantic Breakup API - cause: ${breakupCardCause.value?.id ?? "null"}, advise: ${breakupCardAdvise.value?.id ?? "null"}',
+        '🔎 Calling Romantic Breakup API - cause: ${breakupCardCause.value?.id ?? "null"}, advise: ${breakupCardAdvise.value?.id ?? "null"}',
       );
 
       final response = await _tarotService.getRomanticBreakupReading(
@@ -1321,9 +1326,9 @@ class TarotController extends BaseController {
           errorMsg.toLowerCase().contains('not suitable') ||
           errorMsg.toLowerCase().contains('invalid card');
 
-      debugPrint('🔍 Romantic Breakup Error Detection - fullError: $fullError');
+      debugPrint('🔎 Romantic Breakup Error Detection - fullError: $fullError');
       debugPrint(
-        '🔍 Romantic Breakup Error Detection - isStatus400: $isStatus400, hasSelectedCards: $hasSelectedCards',
+        '🔎 Romantic Breakup Error Detection - isStatus400: $isStatus400, hasSelectedCards: $hasSelectedCards',
       );
 
       if (isStatus400) {
@@ -1352,7 +1357,7 @@ class TarotController extends BaseController {
 
           // Show animated message
           debugPrint(
-            '🎬 Showing unsuitable card animation - Card: $problematicCardName, Category: Romantic Breakup',
+            '🎭 Showing unsuitable card animation - Card: $problematicCardName, Category: Romantic Breakup',
           );
           unsuitableCardName.value = problematicCardName;
           unsuitableCategoryName.value = 'Romantic Breakup';
@@ -1459,7 +1464,7 @@ class TarotController extends BaseController {
       selectedBreakupType.value = 'business';
 
       debugPrint(
-        '🔄 Calling Business Breakup API - cause: ${breakupCardCause.value?.id ?? "null"}, advise: ${breakupCardAdvise.value?.id ?? "null"}',
+        '🔎 Calling Business Breakup API - cause: ${breakupCardCause.value?.id ?? "null"}, advise: ${breakupCardAdvise.value?.id ?? "null"}',
       );
 
       final response = await _tarotService.getBusinessBreakupReading(
@@ -1497,10 +1502,6 @@ class TarotController extends BaseController {
       final errorMsg = fullError
           .replaceAll('Exception: ', '')
           .replaceAll('Business Breakup API Error: ', '');
-      debugPrint('❌ Tarot Business Breakup API Error: $errorMsg');
-      debugPrint('❌ Full Exception: $fullError');
-
-      // Check if it's a card suitability error (status 400) - check the full error string
       final hasSelectedCards =
           breakupCardCause.value != null || breakupCardAdvise.value != null;
       final isStatus400 =
@@ -1512,9 +1513,9 @@ class TarotController extends BaseController {
           errorMsg.toLowerCase().contains('not suitable') ||
           errorMsg.toLowerCase().contains('invalid card');
 
-      debugPrint('🔍 Business Breakup Error Detection - fullError: $fullError');
+      debugPrint('🔎 Business Breakup Error Detection - fullError: $fullError');
       debugPrint(
-        '🔍 Business Breakup Error Detection - isStatus400: $isStatus400, hasSelectedCards: $hasSelectedCards',
+        '🔎 Business Breakup Error Detection - isStatus400: $isStatus400, hasSelectedCards: $hasSelectedCards',
       );
 
       if (isStatus400) {
@@ -1543,7 +1544,7 @@ class TarotController extends BaseController {
 
           // Show animated message
           debugPrint(
-            '🎬 Showing unsuitable card animation - Card: $problematicCardName, Category: Business Breakup',
+            '🎭 Showing unsuitable card animation - Card: $problematicCardName, Category: Business Breakup',
           );
           unsuitableCardName.value = problematicCardName;
           unsuitableCategoryName.value = 'Business Breakup';

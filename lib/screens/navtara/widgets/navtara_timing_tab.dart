@@ -53,7 +53,7 @@ class NavtaraTimingTab extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: maroon.withOpacity(0.1)),
+        border: Border.all(color: maroon.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,8 +69,8 @@ class NavtaraTimingTab extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 12.w),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: maroon.withOpacity(0.2)),
-              color: maroon.withOpacity(0.02),
+              border: Border.all(color: maroon.withValues(alpha: 0.2)),
+              color: maroon.withValues(alpha: 0.02),
             ),
             child: Obx(
               () => DropdownButtonHideUnderline(
@@ -105,9 +105,9 @@ class NavtaraTimingTab extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
-                color: maroon.withOpacity(0.05),
+                color: maroon.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: maroon.withOpacity(0.1)),
+                border: Border.all(color: maroon.withValues(alpha: 0.1)),
               ),
               child: Row(
                 children: [
@@ -121,7 +121,11 @@ class NavtaraTimingTab extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Icon(Icons.edit, color: maroon.withOpacity(0.5), size: 16.w),
+                  Icon(
+                    Icons.edit,
+                    color: maroon.withValues(alpha: 0.5),
+                    size: 16.w,
+                  ),
                 ],
               ),
             ),
@@ -210,10 +214,10 @@ class NavtaraTimingTab extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.05),
+            color: color.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -232,7 +236,7 @@ class NavtaraTimingTab extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4.r),
                 ),
                 child: Text(

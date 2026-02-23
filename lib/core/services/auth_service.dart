@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:astrobharataiuser/core/base/api_helper_mixin.dart';
 import 'package:astrobharataiuser/core/services/notification_service.dart';
+import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 import 'package:get/get.dart';
 
 class AuthService with ApiHelperMixin {
@@ -32,7 +33,12 @@ class AuthService with ApiHelperMixin {
           return true;
         }
       }
-    } catch (_) {
+    } catch (e) {
+      CrashlyticsService.trackAction(
+        "AUTH",
+        "TOKEN_REFRESH_FAIL",
+        data: e.toString(),
+      );
       // Swallow errors here; caller will handle session expiration.
     }
     return false;
@@ -107,6 +113,11 @@ class AuthService with ApiHelperMixin {
       }
     } catch (e) {
       // If anything fails, still clear local data
+      CrashlyticsService.trackAction(
+        "AUTH",
+        "LOGOUT_EXCEPTION",
+        data: e.toString(),
+      );
       forceLogout(message: 'Logged out locally.');
       return true;
     }

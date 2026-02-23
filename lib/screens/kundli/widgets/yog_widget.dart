@@ -28,7 +28,7 @@ class YogWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No yog data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -40,7 +40,7 @@ class YogWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No yog data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -56,7 +56,8 @@ class YogWidget extends StatelessWidget {
           children: [
             _buildYogaCard(context, yoga),
             Spacing.h(12),
-            if (panchang != null && panchang.isNotEmpty) _buildPanchangCard(context, panchang),
+            if (panchang != null && panchang.isNotEmpty)
+              _buildPanchangCard(context, panchang),
           ],
         ),
       );
@@ -72,7 +73,7 @@ class YogWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -105,7 +106,7 @@ class YogWidget extends StatelessWidget {
                 AutoTranslateText(
                   'Yoga',
                   style: MyTextTheme.mediumBCB.copyWith(
-                    color: "#6F221E".toColor().withOpacity(0.7),
+                    color: "#6F221E".toColor().withValues(alpha: 0.7),
                     fontWeight: FontWeight.w600,
                     fontSize: 12.sp,
                   ),
@@ -127,7 +128,10 @@ class YogWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildPanchangCard(BuildContext context, Map<String, dynamic> panchang) {
+  Widget _buildPanchangCard(
+    BuildContext context,
+    Map<String, dynamic> panchang,
+  ) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(16.w),
@@ -136,7 +140,7 @@ class YogWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -147,7 +151,11 @@ class YogWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.calendar_today, size: 18.w, color: "#6F221E".toColor()),
+              Icon(
+                Icons.calendar_today,
+                size: 18.w,
+                color: "#6F221E".toColor(),
+              ),
               Spacing.w(8),
               AutoTranslateText(
                 'Panchang Details',
@@ -164,24 +172,39 @@ class YogWidget extends StatelessWidget {
           Spacing.h(8),
           _buildInfoRow('Karana', panchang['karana']?.toString() ?? '--'),
           Spacing.h(8),
-          _buildInfoRow('Day of Birth', panchang['day_of_birth']?.toString() ?? '--'),
+          _buildInfoRow(
+            'Day of Birth',
+            panchang['day_of_birth']?.toString() ?? '--',
+          ),
           Spacing.h(8),
           _buildInfoRow('Day Lord', panchang['day_lord']?.toString() ?? '--'),
           if (panchang['hora_lord'] != null) ...[
             Spacing.h(8),
-            _buildInfoRow('Hora Lord', panchang['hora_lord']?.toString() ?? '--'),
+            _buildInfoRow(
+              'Hora Lord',
+              panchang['hora_lord']?.toString() ?? '--',
+            ),
           ],
           if (panchang['sunrise_at_birth'] != null) ...[
             Spacing.h(8),
-            _buildInfoRow('Sunrise', panchang['sunrise_at_birth']?.toString() ?? '--'),
+            _buildInfoRow(
+              'Sunrise',
+              panchang['sunrise_at_birth']?.toString() ?? '--',
+            ),
           ],
           if (panchang['sunset_at_birth'] != null) ...[
             Spacing.h(8),
-            _buildInfoRow('Sunset', panchang['sunset_at_birth']?.toString() ?? '--'),
+            _buildInfoRow(
+              'Sunset',
+              panchang['sunset_at_birth']?.toString() ?? '--',
+            ),
           ],
           if (panchang['ayanamsa_name'] != null) ...[
             Spacing.h(8),
-            _buildInfoRow('Ayanamsa', panchang['ayanamsa_name']?.toString() ?? '--'),
+            _buildInfoRow(
+              'Ayanamsa',
+              panchang['ayanamsa_name']?.toString() ?? '--',
+            ),
           ],
         ],
       ),
@@ -197,7 +220,7 @@ class YogWidget extends StatelessWidget {
           child: AutoTranslateText(
             label,
             style: MyTextTheme.smallBCB.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.7),
+              color: "#6F221E".toColor().withValues(alpha: 0.7),
               fontWeight: FontWeight.w600,
               fontSize: 11.sp,
             ),

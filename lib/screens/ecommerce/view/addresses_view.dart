@@ -14,7 +14,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class AddressesView extends GetView<AddressController> {
-  const AddressesView({super.key});
+  final bool showBackButton;
+  const AddressesView({super.key, this.showBackButton = true});
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +29,11 @@ class AddressesView extends GetView<AddressController> {
           children: [
             CommonHeader(
               title: 'My Addresses',
+              showBackButton: showBackButton,
               subtitle: AutoTranslateText(
                 'Manage your delivery addresses',
                 style: TextStyle(
-                  color: '#6F221E'.toColor().withOpacity(0.7),
+                  color: '#6F221E'.toColor().withValues(alpha: 0.7),
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
                 ),

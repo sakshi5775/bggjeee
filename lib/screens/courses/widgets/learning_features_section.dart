@@ -43,7 +43,7 @@ class LearningFeaturesSection extends StatelessWidget {
     return Container(
       height: 60.h,
       width: 1,
-      color: Colors.grey.withOpacity(0.3),
+      color: Colors.grey.withValues(alpha: 0.3),
       margin: EdgeInsets.only(top: 8.h),
     );
   }

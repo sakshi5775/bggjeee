@@ -1,6 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/match_making/match_making/controller/match_making_form_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -74,7 +74,9 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: '#F38B3B'.toColor().withOpacity(0.3),
+                                color: '#F38B3B'.toColor().withValues(
+                                  alpha: 0.3,
+                                ),
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
@@ -145,12 +147,12 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: '#68171E'.toColor().withOpacity(0.2),
+          color: '#68171E'.toColor().withValues(alpha: 0.2),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -173,7 +175,7 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
               AutoTranslateText(
                 subLabel,
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: '#68171E'.toColor().withOpacity(0.7),
+                  color: '#68171E'.toColor().withValues(alpha: 0.7),
                 ),
               ),
             ],
@@ -217,7 +219,7 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
               labelText: 'Birth Place',
               hintText: 'Enter birth place',
               labelStyle: MyTextTheme.smallBCN.copyWith(
-                color: '#68171E'.toColor().withOpacity(0.6),
+                color: '#68171E'.toColor().withValues(alpha: 0.6),
               ),
               prefixIcon: Icon(
                 Icons.location_on,
@@ -232,7 +234,7 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.r),
                 borderSide: BorderSide(
-                  color: '#68171E'.toColor().withOpacity(0.2),
+                  color: '#68171E'.toColor().withValues(alpha: 0.2),
                   width: 1,
                 ),
               ),
@@ -248,7 +250,7 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
           AutoTranslateText(
             'Exact time improves accuracy',
             style: MyTextTheme.smallBCN
-                .copyWith(color: '#68171E'.toColor().withOpacity(0.6))
+                .copyWith(color: '#68171E'.toColor().withValues(alpha: 0.6))
                 .merge(AppTypography.label),
           ),
         ],
@@ -276,7 +278,7 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
         decoration: InputDecoration(
           labelText: label,
           labelStyle: MyTextTheme.smallBCN.copyWith(
-            color: '#68171E'.toColor().withOpacity(0.6),
+            color: '#68171E'.toColor().withValues(alpha: 0.6),
           ),
           prefixIcon: Icon(icon, color: AppColors.deepOrange, size: 20.w),
           border: InputBorder.none,
@@ -295,7 +297,7 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(8.r),
         border: Border.all(
-          color: '#68171E'.toColor().withOpacity(0.2),
+          color: '#68171E'.toColor().withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -305,7 +307,7 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
           decoration: InputDecoration(
             labelText: 'Language',
             labelStyle: MyTextTheme.smallBCN.copyWith(
-              color: '#68171E'.toColor().withOpacity(0.6),
+              color: '#68171E'.toColor().withValues(alpha: 0.6),
             ),
             prefixIcon: Icon(
               Icons.language,
@@ -358,7 +360,7 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
                 ? null
                 : [
                     BoxShadow(
-                      color: '#F38B3B'.toColor().withOpacity(0.3),
+                      color: '#F38B3B'.toColor().withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),

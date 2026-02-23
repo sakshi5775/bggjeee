@@ -12,6 +12,9 @@ import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/apihelper/api_provider/networkException/exception.dart';
 import 'package:astrobharataiuser/apihelper/error_handler.dart';
 import 'package:astrobharataiuser/apihelper/api_response.dart';
+import 'package:astrobharataiuser/apihelper/network_service/network_service.dart';
+import 'package:astrobharataiuser/core/services/api_cache_service.dart';
+import 'package:astrobharataiuser/core/services/global_api_store.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
@@ -131,7 +134,37 @@ class ApiClient extends GetConnect
     T Function(dynamic)? decoder,
     bool useAuthHeader = true,
     Duration? timeout,
+    bool useCache = true,
+    int? maxCacheAge,
   }) async {
+    final cacheKey = uri + (query?.toString() ?? '');
+
+    if (useCache) {
+      // 1. Check in-memory cache
+      if (GlobalApiStore.has(cacheKey)) {
+        if (kDebugMode) print('Cache: Memory hit for $uri');
+        final data = GlobalApiStore.get(cacheKey);
+        return Response<T>(
+          body: decoder != null ? decoder(data) : data as T,
+          statusCode: 200,
+        );
+      }
+
+      // 2. Check persistent cache
+      final cachedData = ApiCacheService.get(
+        cacheKey,
+        maxAgeMinutes: maxCacheAge ?? 30,
+      );
+      if (cachedData != null) {
+        if (kDebugMode) print('Cache: Persistent hit for $uri');
+        GlobalApiStore.set(cacheKey, cachedData);
+        return Response<T>(
+          body: decoder != null ? decoder(cachedData) : cachedData as T,
+          statusCode: 200,
+        );
+      }
+    }
+
     return _withRetry(() async {
       Future<Response<T>> _sendRequest() => get<T>(
         uri,
@@ -140,6 +173,15 @@ class ApiClient extends GetConnect
         contentType: contentType ?? 'application/json',
         decoder: decoder,
       ).timeout(timeout ?? const Duration(seconds: 30));
+
+      // 3. Check internet
+      final isOnline = await NetworkService.instance.checkConnectivity();
+      if (!isOnline) {
+        if (kDebugMode) print('Cache: Offline and no cache for $uri');
+        throw FetchDataException(
+          "No internet connection and no cached data available.",
+        );
+      }
 
       Response<T> response = await _sendRequest();
 
@@ -156,6 +198,11 @@ class ApiClient extends GetConnect
       }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        if (useCache && response.body != null) {
+          // 4. Update caches
+          GlobalApiStore.set(cacheKey, response.body);
+          await ApiCacheService.save(cacheKey, response.body);
+        }
         return response;
       }
 

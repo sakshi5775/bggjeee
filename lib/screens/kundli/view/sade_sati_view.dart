@@ -1,6 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/sade_sati_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -108,11 +108,13 @@ class SadeSatiView extends BasePage<SadeSatiController> {
                               borderRadius: BorderRadius.circular(12.r),
                               border: isSelected
                                   ? null
-                                  : Border.all(color: maroon.withOpacity(0.2)),
+                                  : Border.all(
+                                      color: maroon.withValues(alpha: 0.2),
+                                    ),
                               boxShadow: isSelected
                                   ? [
                                       BoxShadow(
-                                        color: orange.withOpacity(0.25),
+                                        color: orange.withValues(alpha: 0.25),
                                         blurRadius: 4,
                                         offset: const Offset(0, 1),
                                       ),
@@ -158,7 +160,7 @@ class SadeSatiView extends BasePage<SadeSatiController> {
           child: AutoTranslateText(
             'No data. Generate Kundli first.',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: '#6F221E'.toColor().withOpacity(0.6),
+              color: '#6F221E'.toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -243,7 +245,7 @@ class SadeSatiView extends BasePage<SadeSatiController> {
           child: AutoTranslateText(
             'No table data. Generate Kundli first.',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: '#6F221E'.toColor().withOpacity(0.6),
+              color: '#6F221E'.toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -268,7 +270,7 @@ class SadeSatiView extends BasePage<SadeSatiController> {
                 borderRadius: BorderRadius.circular(10.r),
                 boxShadow: [
                   BoxShadow(
-                    color: orange.withOpacity(0.2),
+                    color: orange.withValues(alpha: 0.2),
                     blurRadius: 4,
                     offset: const Offset(0, 1),
                   ),
@@ -309,10 +311,10 @@ class SadeSatiView extends BasePage<SadeSatiController> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(color: maroon.withOpacity(0.15)),
+                  border: Border.all(color: maroon.withValues(alpha: 0.15)),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
+                      color: Colors.black.withValues(alpha: 0.04),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -372,10 +374,10 @@ class SadeSatiView extends BasePage<SadeSatiController> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: maroon.withOpacity(0.2)),
+        border: Border.all(color: maroon.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -404,7 +406,7 @@ class SadeSatiView extends BasePage<SadeSatiController> {
             child: AutoTranslateText(
               '$label:',
               style: MyTextTheme.smallBCB.copyWith(
-                color: maroon.withOpacity(0.8),
+                color: maroon.withValues(alpha: 0.8),
                 fontSize: 11.sp,
               ),
             ),
@@ -431,10 +433,10 @@ class SadeSatiView extends BasePage<SadeSatiController> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: maroon.withOpacity(0.2)),
+        border: Border.all(color: maroon.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -472,9 +474,9 @@ class SadeSatiView extends BasePage<SadeSatiController> {
               margin: EdgeInsets.only(bottom: 6.h),
               padding: EdgeInsets.all(10.w),
               decoration: BoxDecoration(
-                color: maroon.withOpacity(0.04),
+                color: maroon.withValues(alpha: 0.04),
                 borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(color: orange.withOpacity(0.2)),
+                border: Border.all(color: orange.withValues(alpha: 0.2)),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,

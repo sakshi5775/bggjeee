@@ -22,7 +22,7 @@ class GlassMenuButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.white.withOpacity(0.7)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.7)),
         ),
         child: Row(
           children: [

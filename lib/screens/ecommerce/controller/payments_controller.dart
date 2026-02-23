@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/payment_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
 import 'package:flutter/material.dart';
@@ -68,9 +68,12 @@ class PaymentsController extends BaseController {
     final query = searchController.text.trim().toLowerCase();
     final filtered = _allPayments.where((payment) {
       if (query.isEmpty) return true;
-      final matchesPaymentId = payment.id?.toLowerCase().contains(query) ?? false;
-      final matchesOrderId = payment.order?.orderId?.toLowerCase().contains(query) ?? false;
-      final matchesTransaction = payment.transactionId?.toLowerCase().contains(query) ?? false;
+      final matchesPaymentId =
+          payment.id?.toLowerCase().contains(query) ?? false;
+      final matchesOrderId =
+          payment.order?.orderId?.toLowerCase().contains(query) ?? false;
+      final matchesTransaction =
+          payment.transactionId?.toLowerCase().contains(query) ?? false;
       return matchesPaymentId || matchesOrderId || matchesTransaction;
     }).toList();
     payments
@@ -122,4 +125,3 @@ class PaymentsController extends BaseController {
     super.onClose();
   }
 }
-

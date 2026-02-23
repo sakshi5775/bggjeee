@@ -4,7 +4,7 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 
 class DevotionalLibraryController extends BaseController {
   final selectedTab = 0.obs;
-  
+
   final List<String> tabs = ["All", "Aarti", "Bhajan", "Chalisa"];
 
   final List<Map<String, String>> songs = [

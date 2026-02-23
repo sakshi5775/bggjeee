@@ -52,7 +52,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBt2-eGlgwpqHQR8YAALwevPCDAH2wY76M',
-    appId: '1:227172104482:android:e2e6a778ca8db293778d7b',
+    appId: '1:227172104482:android:ebe4822c8dc945a4778d7b',
     messagingSenderId: '227172104482',
     projectId: 'astrobharatai-db3cf',
     storageBucket: 'astrobharatai-db3cf.firebasestorage.app',
@@ -60,7 +60,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDKOUS9kg3RGj5achUzZ6oh4RpwsQ5fbIc',
-    appId: '1:227172104482:ios:c5a7e099070be6b7778d7b',
+    appId: '1:227172104482:ios:80125179aa8f3f8c778d7b',
     messagingSenderId: '227172104482',
     projectId: 'astrobharatai-db3cf',
     storageBucket: 'astrobharatai-db3cf.firebasestorage.app',
@@ -69,7 +69,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyDKOUS9kg3RGj5achUzZ6oh4RpwsQ5fbIc',
-    appId: '1:227172104482:ios:c5a7e099070be6b7778d7b',
+    appId: '1:227172104482:ios:80125179aa8f3f8c778d7b',
     messagingSenderId: '227172104482',
     projectId: 'astrobharatai-db3cf',
     storageBucket: 'astrobharatai-db3cf.firebasestorage.app',
@@ -77,12 +77,12 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyAqYfQlCih9M13_WfwW8ccEn8DBx8oVraE',
-    appId: '1:227172104482:web:7a431815cbf2782d778d7b',
+    apiKey: 'AIzaSyBzJ0F9m6SNYKHrcs8O5sRl2LQ7ia1gm3Y',
+    appId: '1:227172104482:web:c714b93ef366900b778d7b',
     messagingSenderId: '227172104482',
     projectId: 'astrobharatai-db3cf',
     authDomain: 'astrobharatai-db3cf.firebaseapp.com',
     storageBucket: 'astrobharatai-db3cf.firebasestorage.app',
-    measurementId: 'G-S48X0Z4WM9',
+    measurementId: 'G-1H1PMRYZPW',
   );
 }

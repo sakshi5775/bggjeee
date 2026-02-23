@@ -1,5 +1,5 @@
 import 'package:astrobharataiuser/app_manager/myButton.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/numerology/service/numerology_service.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -209,7 +209,7 @@ class NumerologyFormController extends BaseController {
         'Validation Error',
         'Please select your date of birth',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
       return;
@@ -220,7 +220,7 @@ class NumerologyFormController extends BaseController {
         'Validation Error',
         'Please select your gender',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
       return;
@@ -231,7 +231,7 @@ class NumerologyFormController extends BaseController {
         'Validation Error',
         'Please select a language',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
       return;
@@ -263,7 +263,7 @@ class NumerologyFormController extends BaseController {
         'Missing Required Fields',
         'Please fill: ${missingFields.join(", ")}',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
       return;
@@ -451,7 +451,7 @@ class NumerologyFormController extends BaseController {
                           'Validation Error',
                           'Please enter your name',
                           snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: Colors.red.withOpacity(0.8),
+                          backgroundColor: Colors.red.withValues(alpha: 0.8),
                           colorText: Colors.white,
                         );
                         return;
@@ -463,7 +463,7 @@ class NumerologyFormController extends BaseController {
                           'Validation Error',
                           'Please enter your phone number',
                           snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: Colors.red.withOpacity(0.8),
+                          backgroundColor: Colors.red.withValues(alpha: 0.8),
                           colorText: Colors.white,
                         );
                         return;
@@ -719,7 +719,7 @@ class NumerologyFormController extends BaseController {
           'Error',
           'Failed to fetch data. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
@@ -728,7 +728,7 @@ class NumerologyFormController extends BaseController {
         'Error',
         'An error occurred: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     } finally {
@@ -849,7 +849,7 @@ class NumerologyFormController extends BaseController {
           'Error',
           'Failed to fetch vehicle analysis. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
@@ -858,7 +858,7 @@ class NumerologyFormController extends BaseController {
         'Error',
         'An error occurred: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     } finally {
@@ -1043,7 +1043,7 @@ class NumerologyFormController extends BaseController {
         'Error',
         'Failed to fetch key points: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     } finally {

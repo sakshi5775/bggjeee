@@ -30,7 +30,7 @@ class CurrentMahadashaWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -42,7 +42,7 @@ class CurrentMahadashaWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -58,7 +58,10 @@ class CurrentMahadashaWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.cardLight,
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: AppColors.deepOrange.withOpacity(0.5), width: 1),
+                border: Border.all(
+                  color: AppColors.deepOrange.withValues(alpha: 0.5),
+                  width: 1,
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.shadowLight,
@@ -112,7 +115,7 @@ class CurrentMahadashaWidget extends StatelessWidget {
                 color: AppColors.cardLight,
                 borderRadius: BorderRadius.circular(12.r),
                 border: Border.all(
-                  color: AppColors.deepOrange.withOpacity(0.5),
+                  color: AppColors.deepOrange.withValues(alpha: 0.5),
                   width: 1,
                 ),
                 boxShadow: [
@@ -159,7 +162,10 @@ class CurrentMahadashaWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.cardLight,
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: AppColors.deepOrange.withOpacity(0.5), width: 1),
+                border: Border.all(
+                  color: AppColors.deepOrange.withValues(alpha: 0.5),
+                  width: 1,
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.shadowLight,
@@ -172,9 +178,12 @@ class CurrentMahadashaWidget extends StatelessWidget {
                 children: [
                   // Table Header
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 10.h,
+                    ),
                     decoration: BoxDecoration(
-                      color: AppColors.deepOrange.withOpacity(0.1),
+                      color: AppColors.deepOrange.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(12.r),
                         topRight: Radius.circular(12.r),
@@ -238,19 +247,25 @@ class CurrentMahadashaWidget extends StatelessWidget {
                       _buildTableRow(
                         'Mahadasha',
                         response['mahadasha'] as Map<String, dynamic>,
-                        response['Pranadasha'] == null && response['Shookshamadasha'] == null && response['paryantardasha'] == null && response['antardasha'] == null,
+                        response['Pranadasha'] == null &&
+                            response['Shookshamadasha'] == null &&
+                            response['paryantardasha'] == null &&
+                            response['antardasha'] == null,
                       ),
                     if (response['antardasha'] != null)
                       _buildTableRow(
                         'Antar Dasha',
                         response['antardasha'] as Map<String, dynamic>,
-                        response['Pranadasha'] == null && response['Shookshamadasha'] == null && response['paryantardasha'] == null,
+                        response['Pranadasha'] == null &&
+                            response['Shookshamadasha'] == null &&
+                            response['paryantardasha'] == null,
                       ),
                     if (response['paryantardasha'] != null)
                       _buildTableRow(
                         'Paryantar Dasha',
                         response['paryantardasha'] as Map<String, dynamic>,
-                        response['Pranadasha'] == null && response['Shookshamadasha'] == null,
+                        response['Pranadasha'] == null &&
+                            response['Shookshamadasha'] == null,
                       ),
                     if (response['Shookshamadasha'] != null)
                       _buildTableRow(
@@ -277,7 +292,7 @@ class CurrentMahadashaWidget extends StatelessWidget {
   Widget _buildOrderOfDashasSection(Map<String, dynamic> orderOfDashas) {
     // Collect all order items
     final List<Map<String, dynamic>> orderItems = [];
-    
+
     if (orderOfDashas['major'] != null) {
       orderItems.add({
         'type': 'Major',
@@ -314,7 +329,7 @@ class CurrentMahadashaWidget extends StatelessWidget {
         color: AppColors.cardLight,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: AppColors.deepOrange.withOpacity(0.5),
+          color: AppColors.deepOrange.withValues(alpha: 0.5),
           width: 1,
         ),
         boxShadow: [
@@ -331,7 +346,7 @@ class CurrentMahadashaWidget extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
             decoration: BoxDecoration(
-              color: AppColors.deepOrange.withOpacity(0.1),
+              color: AppColors.deepOrange.withValues(alpha: 0.1),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(12.r),
                 topRight: Radius.circular(12.r),
@@ -369,10 +384,10 @@ class CurrentMahadashaWidget extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
             decoration: BoxDecoration(
-              color: AppColors.deepOrange.withOpacity(0.05),
+              color: AppColors.deepOrange.withValues(alpha: 0.05),
               border: Border(
                 bottom: BorderSide(
-                  color: AppColors.deepOrange.withOpacity(0.2),
+                  color: AppColors.deepOrange.withValues(alpha: 0.2),
                   width: 1,
                 ),
               ),
@@ -447,7 +462,7 @@ class CurrentMahadashaWidget extends StatelessWidget {
                   bottom: BorderSide(
                     color: isLast
                         ? Colors.transparent
-                        : AppColors.deepOrange.withOpacity(0.2),
+                        : AppColors.deepOrange.withValues(alpha: 0.2),
                     width: 1,
                   ),
                 ),
@@ -457,9 +472,12 @@ class CurrentMahadashaWidget extends StatelessWidget {
                   Expanded(
                     flex: 2,
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 3.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 6.w,
+                        vertical: 3.h,
+                      ),
                       decoration: BoxDecoration(
-                        color: AppColors.deepOrange.withOpacity(0.15),
+                        color: AppColors.deepOrange.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(6.r),
                       ),
                       child: AutoTranslateText(
@@ -515,11 +533,7 @@ class CurrentMahadashaWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildTableRow(
-    String title,
-    Map<String, dynamic> item,
-    bool isLast,
-  ) {
+  Widget _buildTableRow(String title, Map<String, dynamic> item, bool isLast) {
     final name = item['name'] as String? ?? '';
     final start = item['start'] as String? ?? '';
     final end = item['end'] as String? ?? '';
@@ -531,7 +545,7 @@ class CurrentMahadashaWidget extends StatelessWidget {
           bottom: BorderSide(
             color: isLast
                 ? Colors.transparent
-                : AppColors.deepOrange.withOpacity(0.2),
+                : AppColors.deepOrange.withValues(alpha: 0.2),
             width: 1,
           ),
         ),

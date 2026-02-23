@@ -14,25 +14,25 @@ import 'package:video_player/video_player.dart';
 class VideoPlayerWidget extends StatefulWidget {
   /// The URL of the video to play
   final String videoUrl;
-  
+
   /// Whether to auto-play the video when initialized
   final bool autoPlay;
-  
+
   /// Whether to loop the video
   final bool looping;
-  
+
   /// Whether to show controls
   final bool showControls;
-  
+
   /// Callback when video is ready to play
   final VoidCallback? onReady;
-  
+
   /// Callback when video playback ends
   final VoidCallback? onEnded;
-  
+
   /// Callback when video progress updates (position and duration in Duration objects)
   final Function(Duration position, Duration duration)? onProgress;
-  
+
   /// Callback when an error occurs
   final Function(String error)? onError;
 
@@ -55,14 +55,14 @@ class VideoPlayerWidget extends StatefulWidget {
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   VideoPlayerController? _videoController;
   ChewieController? _chewieController;
-  
+
   // State management
   bool _isInitializing = false;
   bool _isInitialized = false;
   String? _errorMessage;
   bool _isDisposed = false;
   bool _isInFullscreen = false;
-  
+
   // Keep track of listeners to remove them properly
   final Set<VoidCallback> _activeListeners = {};
 
@@ -75,10 +75,12 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   @override
   void didUpdateWidget(VideoPlayerWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     // Reinitialize if video URL changed
     // BUT: Don't dispose if we're in fullscreen - fullscreen is using the controllers
-    if (oldWidget.videoUrl != widget.videoUrl && !_isDisposed && !_isInFullscreen) {
+    if (oldWidget.videoUrl != widget.videoUrl &&
+        !_isDisposed &&
+        !_isInFullscreen) {
       _stopAndDisposeAll();
       _initializePlayer();
     }
@@ -99,7 +101,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
     if (_isInitializing || _isDisposed) return;
     if (!mounted) return;
-    
+
     setState(() {
       _isInitializing = true;
       _errorMessage = null;
@@ -109,7 +111,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       _videoController = VideoPlayerController.networkUrl(uri);
       _videoController!.addListener(_videoListener);
       _activeListeners.add(_videoListener);
-      
+
       await _videoController!.initialize().timeout(
         const Duration(seconds: 30),
         onTimeout: () {
@@ -130,9 +132,11 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           _isInitialized = true;
           _isInitializing = false;
         });
-        
+
         // Ensure autoplay works - play video if autoPlay is enabled
-        if (widget.autoPlay && _videoController != null && _chewieController != null) {
+        if (widget.autoPlay &&
+            _videoController != null &&
+            _chewieController != null) {
           try {
             if (_videoController!.value.isInitialized) {
               _videoController!.play();
@@ -144,12 +148,12 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       }
     } catch (e) {
       debugPrint('Video player initialization error: $e');
-      
+
       if (!mounted || _isDisposed) {
         _safeDisposeVideoController();
         return;
       }
-      
+
       _setError('Failed to load video: ${e.toString()}');
       widget.onError?.call('Failed to load video: ${e.toString()}');
     }
@@ -186,8 +190,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         materialProgressColors: ChewieProgressColors(
           playedColor: AppColors.saffron,
           handleColor: AppColors.saffron,
-          backgroundColor: Colors.grey.withOpacity(0.3),
-          bufferedColor: Colors.grey.withOpacity(0.5),
+          backgroundColor: Colors.grey.withValues(alpha: 0.3),
+          bufferedColor: Colors.grey.withValues(alpha: 0.5),
         ),
         placeholder: _buildLoadingPlaceholder(),
         errorBuilder: (context, errorMessage) {
@@ -209,7 +213,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     try {
       if (!_videoController!.value.isInitialized) return;
       if (_videoController!.value.hasError) {
-        final error = _videoController!.value.errorDescription ?? 'Unknown error';
+        final error =
+            _videoController!.value.errorDescription ?? 'Unknown error';
         if (mounted && !_isDisposed) {
           _setError('Video error: $error');
           widget.onError?.call(error);
@@ -223,20 +228,21 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   /// Check if video has completed and track progress
   void _checkVideoCompletion() {
     if (_isDisposed || _videoController == null || !mounted) return;
-    
+
     try {
       if (!_videoController!.value.isInitialized) return;
-      
+
       final position = _videoController!.value.position;
       final duration = _videoController!.value.duration;
-      
+
       // Track progress - report actual position and duration
       if (duration > Duration.zero) {
         widget.onProgress?.call(position, duration);
       }
-      
+
       // Check if video has reached the end (with small tolerance)
-      if (duration > Duration.zero && position >= duration - const Duration(milliseconds: 500)) {
+      if (duration > Duration.zero &&
+          position >= duration - const Duration(milliseconds: 500)) {
         widget.onEnded?.call();
         // Don't pause or stop - let user replay using controls
         // The video will naturally stop at the end and can be replayed via controls
@@ -257,7 +263,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   /// Set error state
   void _setError(String message) {
     if (!mounted || _isDisposed) return;
-    
+
     setState(() {
       _errorMessage = message;
       _isInitializing = false;
@@ -268,11 +274,11 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   /// Enter fullscreen mode
   Future<void> _enterFullscreen() async {
     if (_isInFullscreen || _isDisposed || !mounted) return;
-    
+
     // Get local references to avoid null issues
     final videoController = _videoController;
     final chewieController = _chewieController;
-    
+
     if (videoController == null || chewieController == null) return;
     if (!videoController.value.isInitialized) return;
 
@@ -294,8 +300,11 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     // Use local variables instead of null check operators to avoid null errors
     final currentVideoController = _videoController;
     final currentChewieController = _chewieController;
-    
-    if (mounted && !_isDisposed && currentVideoController != null && currentChewieController != null) {
+
+    if (mounted &&
+        !_isDisposed &&
+        currentVideoController != null &&
+        currentChewieController != null) {
       // Verify controllers are still valid
       try {
         // Safely access controller value - it might be disposed between checks
@@ -307,51 +316,54 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           debugPrint('Error checking video controller initialization: $e');
           return;
         }
-        
+
         if (!isInitialized) {
           return; // Controller became invalid
         }
-        
-        Navigator.of(context).push(
-          _FullScreenRoute(
-            builder: (context) => _FullScreenVideoPlayer(
-              videoController: currentVideoController,
-              chewieController: currentChewieController,
-              onExit: _exitFullscreen,
-              onDispose: () {
-                // If fullscreen widget is disposed, mark as exited
-                if (mounted) {
-                  _isInFullscreen = false;
-                }
-                // If parent widget was disposed while in fullscreen, dispose controllers now
-                if (_isDisposed) {
-                  _disposeControllersAfterFullscreen();
-                }
-              },
-            ),
-          ),
-        ).then((_) {
-          // Called when fullscreen route is popped - defer setState to next frame
-          Future.microtask(() {
-            if (mounted && !_isDisposed) {
-              SchedulerBinding.instance.addPostFrameCallback((_) {
+
+        Navigator.of(context)
+            .push(
+              _FullScreenRoute(
+                builder: (context) => _FullScreenVideoPlayer(
+                  videoController: currentVideoController,
+                  chewieController: currentChewieController,
+                  onExit: _exitFullscreen,
+                  onDispose: () {
+                    // If fullscreen widget is disposed, mark as exited
+                    if (mounted) {
+                      _isInFullscreen = false;
+                    }
+                    // If parent widget was disposed while in fullscreen, dispose controllers now
+                    if (_isDisposed) {
+                      _disposeControllersAfterFullscreen();
+                    }
+                  },
+                ),
+              ),
+            )
+            .then((_) {
+              // Called when fullscreen route is popped - defer setState to next frame
+              Future.microtask(() {
                 if (mounted && !_isDisposed) {
-                  _exitFullscreen();
+                  SchedulerBinding.instance.addPostFrameCallback((_) {
+                    if (mounted && !_isDisposed) {
+                      _exitFullscreen();
+                    }
+                  });
+                } else {
+                  // Widget already disposed, just restore system settings
+                  _exitFullscreen(updateState: false);
+                  // Dispose controllers if parent was disposed
+                  if (_isDisposed) {
+                    _disposeControllersAfterFullscreen();
+                  }
                 }
               });
-            } else {
-              // Widget already disposed, just restore system settings
+            })
+            .catchError((e) {
+              // If route push fails, still exit fullscreen
               _exitFullscreen(updateState: false);
-              // Dispose controllers if parent was disposed
-              if (_isDisposed) {
-                _disposeControllersAfterFullscreen();
-              }
-            }
-          });
-        }).catchError((e) {
-          // If route push fails, still exit fullscreen
-          _exitFullscreen(updateState: false);
-        });
+            });
       } catch (e) {
         // Controller became invalid during async operations
         debugPrint('Error entering fullscreen: $e');
@@ -365,12 +377,10 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     if (!_isInFullscreen && !_isDisposed) return;
 
     _isInFullscreen = false;
-    
+
     // Restore system UI first
     try {
-      await SystemChrome.setEnabledSystemUIMode(
-        SystemUiMode.edgeToEdge,
-      );
+      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     } catch (e) {
       // Ignore errors
     }
@@ -384,7 +394,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     } catch (e) {
       // Ignore errors
     }
-    
+
     // Only call setState if we're allowed to and mounted - defer to next frame
     if (updateState && mounted && !_isDisposed) {
       Future.microtask(() {
@@ -406,7 +416,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     if (_videoController == null) return;
 
     final videoController = _videoController!;
-    
+
     // CRITICAL: Remove listeners FIRST to prevent setState during pause
     // This prevents MaterialControls from trying to update during pause
     for (final listener in _activeListeners) {
@@ -420,7 +430,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
     // After listeners are removed, pause is safe (won't trigger setState)
     try {
-      if (videoController.value.isInitialized && videoController.value.isPlaying) {
+      if (videoController.value.isInitialized &&
+          videoController.value.isPlaying) {
         await videoController.pause();
       }
     } catch (e) {
@@ -436,7 +447,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     if (_chewieController == null) return;
 
     final chewieController = _chewieController!;
-    _chewieController = null; // Clear reference immediately to prevent further use
+    _chewieController =
+        null; // Clear reference immediately to prevent further use
 
     // Dispose immediately if we're already disposed, otherwise defer
     if (_isDisposed) {
@@ -500,7 +512,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     // After listeners are removed, we can try to pause if needed
     // But skip pause if we're disposing - it triggers setState in MaterialControls
     try {
-      if (videoController.value.isInitialized && videoController.value.isPlaying) {
+      if (videoController.value.isInitialized &&
+          videoController.value.isPlaying) {
         // Don't await - just call and continue
         videoController.pause().catchError((e) {
           // Ignore pause errors - we're disposing anyway
@@ -527,7 +540,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     // Dispose Chewie controller first to stop its timers
     final chewieController = _chewieController;
     _chewieController = null;
-    
+
     if (chewieController != null) {
       try {
         chewieController.dispose();
@@ -535,11 +548,11 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         debugPrint('Error disposing Chewie controller after fullscreen: $e');
       }
     }
-    
+
     // Dispose video controller
     final videoController = _videoController;
     _videoController = null;
-    
+
     if (videoController != null) {
       // Remove all listeners
       for (final listener in _activeListeners) {
@@ -550,7 +563,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         }
       }
       _activeListeners.clear();
-      
+
       try {
         videoController.dispose();
       } catch (e) {
@@ -591,7 +604,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     // CRITICAL: Don't pause or exit fullscreen if we're entering fullscreen
     // The widget is deactivated when fullscreen route is pushed, but we need to keep controllers alive
     // Only exit fullscreen if we're not actually entering it (i.e., widget is being removed from tree)
-    
+
     // Don't do anything if we're in fullscreen - let the fullscreen route handle it
     if (_isInFullscreen) {
       // Don't pause or dispose - fullscreen is using the controllers
@@ -605,9 +618,13 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       final videoController = _videoController;
       // Defer pause call to next frame to avoid setState during build
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (videoController != null && !_isDisposed && !_isInFullscreen && mounted) {
+        if (videoController != null &&
+            !_isDisposed &&
+            !_isInFullscreen &&
+            mounted) {
           try {
-            if (videoController.value.isInitialized && videoController.value.isPlaying) {
+            if (videoController.value.isInitialized &&
+                videoController.value.isPlaying) {
               videoController.pause();
             }
           } catch (e) {
@@ -641,14 +658,14 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       super.dispose();
       return;
     }
-    
+
     // Mark as disposed first - this prevents any further widget builds from using controllers
     _isDisposed = true;
-    
+
     // Dispose Chewie controller first to stop its timers and prevent further use
     final chewieController = _chewieController;
     _chewieController = null; // Clear reference immediately
-    
+
     if (chewieController != null) {
       try {
         // Try to pause video first to stop any ongoing operations
@@ -666,11 +683,12 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         debugPrint('Error disposing Chewie controller: $e');
       }
     }
-    
+
     // Stop video and remove listeners before disposing
     final videoController = _videoController;
-    _videoController = null; // Clear reference immediately to prevent further use
-    
+    _videoController =
+        null; // Clear reference immediately to prevent further use
+
     if (videoController != null) {
       // CRITICAL: Remove all listeners FIRST to prevent setState during dispose
       // This must happen BEFORE any pause/dispose operations
@@ -682,12 +700,13 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         }
       }
       _activeListeners.clear();
-      
+
       // After listeners are removed, we can safely dispose
       // DO NOT call pause() here - it triggers setState in MaterialControls
       // Just dispose directly after removing listeners
       try {
-        videoController.dispose(); // Don't await - dispose() must be synchronous
+        videoController
+            .dispose(); // Don't await - dispose() must be synchronous
       } catch (e) {
         // Ignore disposal errors
         debugPrint('Error disposing video controller: $e');
@@ -695,7 +714,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     } else {
       _activeListeners.clear();
     }
-    
+
     super.dispose();
   }
 
@@ -703,11 +722,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   Widget _buildLoadingPlaceholder() {
     return Container(
       color: Colors.black,
-      child: Center(
-        child: CircularProgressIndicator(
-          color: AppColors.saffron,
-        ),
-      ),
+      child: Center(child: CircularProgressIndicator(color: AppColors.saffron)),
     );
   }
 
@@ -719,11 +734,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              color: Colors.white,
-              size: 48.w,
-            ),
+            Icon(Icons.error_outline, color: Colors.white, size: 48.w),
             SizedBox(height: 16.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -755,11 +766,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              color: Colors.white,
-              size: 48.w,
-            ),
+            Icon(Icons.error_outline, color: Colors.white, size: 48.w),
             SizedBox(height: 16.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -812,10 +819,10 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     if (_isDisposed) {
       return _buildLoadingState();
     }
-    
+
     final videoController = _videoController;
     final chewieController = _chewieController;
-    
+
     if (chewieController == null || videoController == null) {
       return _buildLoadingState();
     }
@@ -825,11 +832,11 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       if (_isDisposed) {
         return _buildLoadingState();
       }
-      
+
       // Try to access controller value - if disposed, this will throw
       bool isInitialized = false;
       double aspectRatio = 16 / 9;
-      
+
       try {
         isInitialized = videoController.value.isInitialized;
         if (isInitialized) {
@@ -840,7 +847,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         debugPrint('Error accessing video controller in _buildVideoPlayer: $e');
         return _buildLoadingState();
       }
-      
+
       if (!isInitialized) {
         return _buildLoadingState();
       }
@@ -857,7 +864,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
             if (_isDisposed) {
               return _buildLoadingState();
             }
-            
+
             // Defer Chewie widget construction to next frame to avoid setState during build
             return Stack(
               children: [
@@ -883,11 +890,13 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                         child: Container(
                           padding: EdgeInsets.all(8.w),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.5),
+                            color: Colors.black.withValues(alpha: 0.5),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Icon(
-                            _isInFullscreen ? Icons.fullscreen_exit : Icons.fullscreen,
+                            _isInFullscreen
+                                ? Icons.fullscreen_exit
+                                : Icons.fullscreen,
                             color: Colors.white,
                             size: 24.w,
                           ),
@@ -912,7 +921,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     if (_isDisposed) {
       return _buildLoadingState();
     }
-    
+
     if (_errorMessage != null) {
       return _buildErrorState();
     }
@@ -930,10 +939,7 @@ class _ChewieWrapper extends StatefulWidget {
   final ChewieController controller;
   final bool Function()? isParentDisposed;
 
-  const _ChewieWrapper({
-    required this.controller,
-    this.isParentDisposed,
-  });
+  const _ChewieWrapper({required this.controller, this.isParentDisposed});
 
   @override
   State<_ChewieWrapper> createState() => _ChewieWrapperState();
@@ -964,24 +970,24 @@ class _ChewieWrapperState extends State<_ChewieWrapper> {
 
       final controller = widget.controller;
       final videoController = controller.videoPlayerController;
-      
+
       // Check if video controller is disposed by trying to access its value
       // If it's disposed, accessing value will throw an exception
       try {
         if (!videoController.value.isInitialized) {
           return false;
         }
-        
+
         // Try accessing multiple properties to ensure it's fully valid
         final _ = videoController.value.aspectRatio;
         final _ = videoController.value.duration;
         final _ = videoController.value.position;
-        
+
         // Verify the controller reference hasn't changed
         if (controller.videoPlayerController != videoController) {
           return false;
         }
-        
+
         return true;
       } catch (e) {
         // Controller is disposed or invalid
@@ -1000,9 +1006,7 @@ class _ChewieWrapperState extends State<_ChewieWrapper> {
       return Container(
         color: Colors.black,
         child: Center(
-          child: CircularProgressIndicator(
-            color: AppColors.saffron,
-          ),
+          child: CircularProgressIndicator(color: AppColors.saffron),
         ),
       );
     }
@@ -1024,12 +1028,12 @@ class _ChewieWrapperState extends State<_ChewieWrapper> {
 
     try {
       final controller = widget.controller;
-      
+
       // Final validation right before passing to SafeChewie
       if (!_isControllerValid()) {
         return _buildPlaceholder();
       }
-      
+
       // Wrap Chewie in a SafeChewie widget that catches runtime errors
       return _SafeChewie(
         controller: controller,
@@ -1046,11 +1050,7 @@ class _ChewieWrapperState extends State<_ChewieWrapper> {
   Widget _buildPlaceholder() {
     return Container(
       color: Colors.black,
-      child: Center(
-        child: CircularProgressIndicator(
-          color: AppColors.saffron,
-        ),
-      ),
+      child: Center(child: CircularProgressIndicator(color: AppColors.saffron)),
     );
   }
 }
@@ -1099,23 +1099,23 @@ class _SafeChewieState extends State<_SafeChewie> {
       }
 
       final videoController = widget.controller.videoPlayerController;
-      
+
       // Try to access controller value - if disposed, this will throw
       try {
         if (!videoController.value.isInitialized) {
           return false;
         }
-        
+
         // Try accessing multiple properties to ensure it's fully valid
         final _ = videoController.value.aspectRatio;
         final _ = videoController.value.duration;
         final _ = videoController.value.position;
-        
+
         // Verify the controller reference hasn't changed
         if (widget.controller.videoPlayerController != videoController) {
           return false;
         }
-        
+
         return true;
       } catch (e) {
         // Controller is disposed or invalid
@@ -1152,7 +1152,7 @@ class _SafeChewieState extends State<_SafeChewie> {
   Widget build(BuildContext context) {
     // Validate controller on every build
     _isControllerValid = _isControllerStillValid();
-    
+
     // If we detected an error or controller is invalid, show placeholder
     if (_hasError || !_isControllerValid) {
       // Update error state if needed
@@ -1180,7 +1180,7 @@ class _SafeChewieState extends State<_SafeChewie> {
         if (!_isControllerStillValid()) {
           return widget.placeholder;
         }
-        
+
         try {
           // Use a unique key based on controller to force rebuild when controller changes
           // This ensures Chewie is properly recreated if the controller is replaced
@@ -1233,12 +1233,21 @@ class _FullScreenRoute extends PageRoute<void> {
   bool get opaque => true;
 
   @override
-  Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
     return builder(context);
   }
 
   @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+  Widget buildTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     // Check if animation is valid before using it - wrap in try-catch to handle any invalid states
     try {
       // Access animation.value safely - if animation is invalid this will throw
@@ -1246,9 +1255,11 @@ class _FullScreenRoute extends PageRoute<void> {
       if (value.isNaN || !value.isFinite || value < 0 || value > 1) {
         return child;
       }
-      
+
       // Create opacity animation safely with clamped value
-      final opacityAnimation = AlwaysStoppedAnimation<double>(value.clamp(0.0, 1.0));
+      final opacityAnimation = AlwaysStoppedAnimation<double>(
+        value.clamp(0.0, 1.0),
+      );
       return FadeTransition(opacity: opacityAnimation, child: child);
     } catch (e) {
       // If animation is invalid, just return child without transition
@@ -1307,16 +1318,16 @@ class _FullScreenVideoPlayerState extends State<_FullScreenVideoPlayer> {
     try {
       final videoController = widget.videoController;
       final chewieController = widget.chewieController;
-      
+
       // Validate that widget is not disposed
       if (_isDisposed) {
         return _buildPlaceholder();
       }
-      
+
       // Try to access controller value safely
       bool isInitialized = false;
       double aspectRatio = 16 / 9;
-      
+
       try {
         isInitialized = videoController.value.isInitialized;
         if (isInitialized) {
@@ -1327,7 +1338,7 @@ class _FullScreenVideoPlayerState extends State<_FullScreenVideoPlayer> {
         debugPrint('Error accessing video controller: $e');
         return _buildPlaceholder();
       }
-      
+
       // If not initialized, show placeholder
       if (!isInitialized) {
         return _buildPlaceholder();
@@ -1337,20 +1348,20 @@ class _FullScreenVideoPlayerState extends State<_FullScreenVideoPlayer> {
       if (!aspectRatio.isFinite || aspectRatio <= 0) {
         aspectRatio = 16 / 9;
       }
-      
+
       // Final validation before building Chewie
       // Double-check controllers haven't been disposed between checks and build
       try {
         // Try to access video controller one more time to ensure it's still valid
         final _ = videoController.value.isInitialized;
         final _ = chewieController.videoPlayerController.value.isInitialized;
-        
+
         // Verify the chewie controller still references the same video controller
         if (chewieController.videoPlayerController != videoController) {
           debugPrint('Fullscreen: Chewie controller reference changed');
           return _buildPlaceholder();
         }
-        
+
         // Additional validation: try accessing more properties to ensure controller is fully valid
         final _ = videoController.value.duration;
         final _ = videoController.value.position;
@@ -1360,26 +1371,29 @@ class _FullScreenVideoPlayerState extends State<_FullScreenVideoPlayer> {
         debugPrint('Fullscreen: Controller disposed during validation: $e');
         return _buildPlaceholder();
       }
-      
+
       // One final check right before building the widget tree
       // This ensures controllers are still valid at the moment of building
       bool controllersValid = false;
       try {
-        controllersValid = videoController.value.isInitialized &&
+        controllersValid =
+            videoController.value.isInitialized &&
             chewieController.videoPlayerController.value.isInitialized &&
             chewieController.videoPlayerController == videoController;
       } catch (e) {
         controllersValid = false;
       }
-      
+
       if (!controllersValid) {
-        debugPrint('Fullscreen: Controllers invalid before building widget tree');
+        debugPrint(
+          'Fullscreen: Controllers invalid before building widget tree',
+        );
         return _buildPlaceholder();
       }
-      
+
       // Get current orientation to handle layout properly
       final orientation = MediaQuery.of(context).orientation;
-      
+
       return Scaffold(
         backgroundColor: Colors.black,
         body: SafeArea(
@@ -1396,15 +1410,21 @@ class _FullScreenVideoPlayerState extends State<_FullScreenVideoPlayer> {
                             try {
                               // Check if video controller is still valid
                               final _ = videoController.value.isInitialized;
-                              final _ = chewieController.videoPlayerController.value.isInitialized;
+                              final _ = chewieController
+                                  .videoPlayerController
+                                  .value
+                                  .isInitialized;
                               // Verify they're the same reference
-                              if (chewieController.videoPlayerController != videoController) {
+                              if (chewieController.videoPlayerController !=
+                                  videoController) {
                                 return true; // Reference changed, consider disposed
                               }
                               return false; // Controllers are valid
                             } catch (e) {
                               // Controllers are disposed
-                              debugPrint('Fullscreen: Parent disposal check failed: $e');
+                              debugPrint(
+                                'Fullscreen: Parent disposal check failed: $e',
+                              );
                               return true;
                             }
                           },
@@ -1419,15 +1439,21 @@ class _FullScreenVideoPlayerState extends State<_FullScreenVideoPlayer> {
                             try {
                               // Check if video controller is still valid
                               final _ = videoController.value.isInitialized;
-                              final _ = chewieController.videoPlayerController.value.isInitialized;
+                              final _ = chewieController
+                                  .videoPlayerController
+                                  .value
+                                  .isInitialized;
                               // Verify they're the same reference
-                              if (chewieController.videoPlayerController != videoController) {
+                              if (chewieController.videoPlayerController !=
+                                  videoController) {
                                 return true; // Reference changed, consider disposed
                               }
                               return false; // Controllers are valid
                             } catch (e) {
                               // Controllers are disposed
-                              debugPrint('Fullscreen: Parent disposal check failed: $e');
+                              debugPrint(
+                                'Fullscreen: Parent disposal check failed: $e',
+                              );
                               return true;
                             }
                           },
@@ -1452,7 +1478,7 @@ class _FullScreenVideoPlayerState extends State<_FullScreenVideoPlayer> {
                     child: Container(
                       padding: EdgeInsets.all(8.w),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.5),
+                        color: Colors.black.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Icon(
@@ -1478,9 +1504,7 @@ class _FullScreenVideoPlayerState extends State<_FullScreenVideoPlayer> {
   Widget _buildPlaceholder() {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Center(
-        child: CircularProgressIndicator(color: Colors.white),
-      ),
+      body: Center(child: CircularProgressIndicator(color: Colors.white)),
     );
   }
 }

@@ -103,7 +103,7 @@ class PalmReadingHistoryView extends StatelessWidget {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -354,7 +354,7 @@ class PalmReadingHistoryView extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -415,8 +415,8 @@ class PalmReadingHistoryView extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: isFailed
-                              ? Colors.red.withOpacity(0.1)
-                              : "#F38B3B".toColor().withOpacity(0.1),
+                              ? Colors.red.withValues(alpha: 0.1)
+                              : "#F38B3B".toColor().withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4.r),
                         ),
                         child: AutoTranslateText(

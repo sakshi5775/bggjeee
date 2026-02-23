@@ -1,7 +1,8 @@
 import 'dart:io';
+import 'package:http/http.dart' as http;
 
 import 'package:astrobharataiuser/app_manager/user_data.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/services/auth_service.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
@@ -10,6 +11,9 @@ import 'package:astrobharataiuser/data_model/user_profile_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/wishlist_controller.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/service/report_service.dart';
+import 'package:astrobharataiuser/core/services/pdf_generator_service.dart';
+import 'package:astrobharataiuser/data_model/report_model.dart';
 
 import 'package:astrobharataiuser/screens/user_dashboard/service/user_profile_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
@@ -19,11 +23,20 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:open_file/open_file.dart';
 
 class ProfileController extends BaseController {
   final EcommerceService _ecommerceService = EcommerceService();
   final UserProfileService _profileService = UserProfileService();
   final AstrologerService _astrologerService = AstrologerService();
+  final ReportService _reportService = ReportService();
+
+  final isHistoryLoading = false.obs;
+  final reportHistory = <ReportHistoryItem>[].obs;
+
+  // Filter state for reports
+  final selectedEmailStatus = 'all'.obs;
+  final searchReportType = ''.obs;
 
   final isLoading = false.obs;
   final isUpdatingProfile = false.obs;
@@ -137,6 +150,7 @@ class ProfileController extends BaseController {
         await _loadUserProfile();
         await _loadRecentOrders();
         await _loadCounts();
+        await loadReportHistory();
       }
     } catch (e) {
       showErrorMessage(title: 'Profile', message: e.toString());
@@ -832,11 +846,11 @@ class ProfileController extends BaseController {
   }
 
   void onAddressesTap() {
-    Get.toNamed(AppRoutes.addresses);
+    Get.toNamed(AppRoutes.addresses, id: 1);
   }
 
   void onFollowingTap() {
-    Get.toNamed(AppRoutes.followingAstrologers);
+    Get.toNamed(AppRoutes.followingAstrologers, id: 1);
   }
 
   Future<void> onLogoutTap({bool allDevices = false}) async {
@@ -892,5 +906,78 @@ class ProfileController extends BaseController {
     final second = parts[1].isNotEmpty ? parts[1][0] : '';
     final combined = '$first$second'.toUpperCase();
     return combined.isNotEmpty ? combined : name[0].toUpperCase();
+  }
+
+  Future<void> loadReportHistory() async {
+    try {
+      isHistoryLoading.value = true;
+      final response = await _reportService.getReportHistory(
+        limit: 10,
+        reportType: searchReportType.value,
+        emailStatus: selectedEmailStatus.value,
+      );
+      if (response != null && response.data != null) {
+        reportHistory.assignAll(response.data!.reports ?? []);
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error loading report history: $e');
+      }
+    } finally {
+      isHistoryLoading.value = false;
+    }
+  }
+
+  Future<void> viewReport(ReportHistoryItem item) async {
+    if (item.id == null) return;
+
+    final fileName = "${item.reportName ?? 'Report'}_${item.id}.pdf";
+    try {
+      // 1. Quick check for cached file
+      final cachedFile = await PdfGeneratorService.getReportFile(fileName);
+      if (await cachedFile.exists()) {
+        await OpenFile.open(cachedFile.path);
+        return; // Opened from cache, no need to show loader or download
+      }
+
+      // 2. Not in cache, show loader and download
+      isHistoryLoading.value = true;
+      // prioritize downloadUrl from the item if available
+      String? downloadUrl =
+          item.downloadUrl ?? item.s3DownloadUrl ?? item.thirdPartyDownloadUrl;
+
+      // If not available, fetch via detail API
+      if (downloadUrl == null || downloadUrl.isEmpty) {
+        downloadUrl = await _reportService.getReportUrl(item.id!);
+      }
+
+      if (downloadUrl != null) {
+        // Fetch bytes from URL
+        final response = await http.get(Uri.parse(downloadUrl));
+        if (response.statusCode == 200) {
+          final pdfBytes = response.bodyBytes;
+          // Use PdfGeneratorService to download and open the file
+          final file = await PdfGeneratorService.downloadPdf(
+            pdfBytes: pdfBytes,
+            fileName: fileName,
+          );
+          await OpenFile.open(file.path);
+        } else {
+          showErrorMessage(
+            title: 'Report',
+            message: 'Failed to download report file.',
+          );
+        }
+      } else {
+        showErrorMessage(
+          title: 'Report',
+          message: 'Could not fetch report download link.',
+        );
+      }
+    } catch (e) {
+      showErrorMessage(title: 'Report', message: 'Error opening report: $e');
+    } finally {
+      isHistoryLoading.value = false;
+    }
   }
 }

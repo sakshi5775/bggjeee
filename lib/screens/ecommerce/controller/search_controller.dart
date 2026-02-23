@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/product_model.dart';
 import 'package:astrobharataiuser/data_model/search_model.dart';
@@ -166,10 +166,7 @@ class EcommerceSearchController extends BaseController {
   }
 
   void onSuggestionProductSelected(ProductModel product) {
-    Get.toNamed(
-      AppRoutes.productDetail,
-      arguments: {'product': product},
-    );
+    Get.toNamed(AppRoutes.productDetail, arguments: {'product': product});
   }
 
   String buildResultSummary() {
@@ -179,4 +176,3 @@ class EcommerceSearchController extends BaseController {
     return '$currentCount of $total results';
   }
 }
-

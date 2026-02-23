@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
-import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/data_model/call_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/agora_call_manager.dart';
@@ -11,17 +9,14 @@ import 'package:astrobharataiuser/screens/astrology_services/services/call_servi
 import 'package:astrobharataiuser/screens/astrology_services/widgets/astrologer_review_dialog.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/astrologer_review_controller.dart';
 import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/profile_check_helper.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 
-class AstrologerVideoCallController extends GetxController {
+class AstrologerVideoCallController extends BaseController {
   late AstrologerModel astrologer;
   final CallService _callService = CallService();
   final AgoraCallManager _agoraManager = AgoraCallManager();
@@ -224,10 +219,60 @@ class AstrologerVideoCallController extends GetxController {
     });
 
     // Also listen for call-specific join confirmations
-    _socket!.on('call_joined', (data) {
+    // --- CALL ACCEPTANCE EVENTS (Strict Billing Trigger) ---
+    _socket!.on('call_accepted', (data) async {
       if (kDebugMode) {
-        print('✅ Call room joined confirmation (Video): $data');
+        print('═══════════════════════════════════════════════════════════');
+        print('✅ CALL ACCEPTED BY ASTROLOGER (Video Call)');
+        print('Data: $data');
+        print('═══════════════════════════════════════════════════════════');
       }
+
+      // 1. Call connect API precisely when astrologer accepts to sync billing
+      if (_callId != null && _callId!.isNotEmpty) {
+        try {
+          if (kDebugMode)
+            print('📡 Calling connect API (post-accept) for callId: $_callId');
+          await _callService.connectCall(_callId!);
+          if (kDebugMode)
+            print('✅ Connect API (post-accept) called successfully');
+        } catch (e) {
+          debugPrint('❌ Error calling connect API (post-accept): $e');
+        }
+      }
+
+      // 2. Update call status to connected
+      isRinging.value = false;
+      isCallConnected.value = true;
+      callStatus.value = 'Connected';
+      isLoading.value = false;
+
+      // 3. Show notification
+      Get.snackbar(
+        'Connected',
+        'Astrologer accepted the call!',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2),
+      );
+    });
+
+    _socket!.on('call_rejected', (data) {
+      if (kDebugMode) print('❌ Call rejected by astrologer: $data');
+      callStatus.value = 'Call Rejected';
+      isRinging.value = false;
+      isLoading.value = false;
+
+      Get.snackbar(
+        'Call Rejected',
+        data['reason'] ?? 'Astrologer is currently unavailable.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+
+      Future.delayed(const Duration(seconds: 2), () => Get.back());
     });
 
     // --- SESSION STARTED EVENT (like chat) - This triggers billing ---
@@ -993,32 +1038,6 @@ class AstrologerVideoCallController extends GetxController {
   }
 
   /// Sync wallet balance with backend
-  Future<void> _syncWalletBalanceWithBackend() async {
-    try {
-      final backendBalance = await _profileHelper.getWalletBalance();
-      // Always update with backend value (backend is authoritative)
-      if (backendBalance >= 0) {
-        if (backendBalance != walletBalance.value) {
-          if (kDebugMode) {
-            print(
-              '💰 Syncing wallet balance (Video): Local ₹${walletBalance.value} → Backend ₹$backendBalance',
-            );
-          }
-        }
-        walletBalance.value = backendBalance;
-        _walletBalance = backendBalance;
-
-        // Sync the Money Anchor for visual smoothness
-        _syncMoneyAnchor(backendBalance, pricePerMinute.value);
-
-        // Update global WalletController
-        _updateGlobalWalletBalance(backendBalance);
-      }
-    } catch (e) {
-      if (kDebugMode) print('⚠️ Error syncing wallet balance: $e');
-    }
-  }
-
   Future<void> toggleMute() async {
     await _agoraManager.toggleMute();
     isMuted.value = _agoraManager.isMuted;

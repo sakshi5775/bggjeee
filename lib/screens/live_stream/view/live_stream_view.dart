@@ -1,4 +1,4 @@
-import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+﻿import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
@@ -360,15 +360,15 @@ class LiveStreamView extends StatelessWidget {
                       vertical: 8.h,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.75),
+                      color: Colors.black.withValues(alpha: 0.75),
                       borderRadius: BorderRadius.circular(20.r),
                       border: Border.all(
-                        color: Colors.red.withOpacity(0.6),
+                        color: Colors.red.withValues(alpha: 0.6),
                         width: 1.5,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
+                          color: Colors.black.withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -575,7 +575,7 @@ class LiveStreamView extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.black.withOpacity(0.7), Colors.transparent],
+            colors: [Colors.black.withValues(alpha: 0.7), Colors.transparent],
           ),
         ),
         child: Wrap(
@@ -815,8 +815,8 @@ class LiveStreamView extends StatelessWidget {
               end: Alignment.bottomCenter,
               colors: [
                 Colors.transparent,
-                Colors.black.withOpacity(0.1),
-                Colors.black.withOpacity(0.2),
+                Colors.black.withValues(alpha: 0.1),
+                Colors.black.withValues(alpha: 0.2),
               ],
               stops: const [0.0, 0.5, 1.0],
             ),
@@ -928,7 +928,7 @@ class LiveStreamView extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
-            colors: [Colors.black.withOpacity(0.7), Colors.transparent],
+            colors: [Colors.black.withValues(alpha: 0.7), Colors.transparent],
           ),
         ),
         child: Row(
@@ -941,7 +941,7 @@ class LiveStreamView extends StatelessWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(25.r),
                   border: Border.all(
-                    color: const Color(0xFFF38B3B).withOpacity(0.5),
+                    color: const Color(0xFFF38B3B).withValues(alpha: 0.5),
                     width: 1,
                   ),
                 ),
@@ -1347,7 +1347,7 @@ class LiveStreamView extends StatelessWidget {
         child: GestureDetector(
           onTap: () => controller.hideLeaveModal(),
           child: Container(
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.black.withValues(alpha: 0.5),
             child: GestureDetector(
               onTap: () {}, // Prevent dismiss when tapping inside
               child: Align(

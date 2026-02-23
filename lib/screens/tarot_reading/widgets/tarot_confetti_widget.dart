@@ -37,15 +37,19 @@ class _TarotConfettiWidgetState extends State<TarotConfettiWidget>
     _particles.clear();
 
     for (int i = 0; i < _particleCount; i++) {
-      _particles.add(ConfettiParticle(
-        x: random.nextDouble(),
-        y: -0.1,
-        angle: random.nextDouble() * 2 * math.pi,
-        speed: 0.3 + random.nextDouble() * 0.5,
-        color: _getRandomColor(random),
-        size: 4 + random.nextDouble() * 6,
-        shape: random.nextBool() ? ParticleShape.circle : ParticleShape.rectangle,
-      ));
+      _particles.add(
+        ConfettiParticle(
+          x: random.nextDouble(),
+          y: -0.1,
+          angle: random.nextDouble() * 2 * math.pi,
+          speed: 0.3 + random.nextDouble() * 0.5,
+          color: _getRandomColor(random),
+          size: 4 + random.nextDouble() * 6,
+          shape: random.nextBool()
+              ? ParticleShape.circle
+              : ParticleShape.rectangle,
+        ),
+      );
     }
   }
 
@@ -65,19 +69,14 @@ class _TarotConfettiWidgetState extends State<TarotConfettiWidget>
   void _startAnimation() {
     _controllers = List.generate(
       _particleCount,
-      (index) => AnimationController(
-        vsync: this,
-        duration: widget.duration,
-      ),
+      (index) => AnimationController(vsync: this, duration: widget.duration),
     );
 
     _animations = _controllers.map((controller) {
-      return Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(
-          parent: controller,
-          curve: Curves.easeOut,
-        ),
-      );
+      return Tween<double>(
+        begin: 0.0,
+        end: 1.0,
+      ).animate(CurvedAnimation(parent: controller, curve: Curves.easeOut));
     }).toList();
 
     // Start all animations
@@ -146,10 +145,7 @@ class ConfettiPainter extends CustomPainter {
   final List<ConfettiParticle> particles;
   final List<Animation<double>> animations;
 
-  ConfettiPainter({
-    required this.particles,
-    required this.animations,
-  });
+  ConfettiPainter({required this.particles, required this.animations});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -164,7 +160,7 @@ class ConfettiPainter extends CustomPainter {
 
       // Draw particle
       final paint = Paint()
-        ..color = particle.color.withOpacity(1.0 - progress * 0.5)
+        ..color = particle.color.withValues(alpha: 1.0 - progress * 0.5)
         ..style = PaintingStyle.fill;
 
       canvas.save();
@@ -172,11 +168,7 @@ class ConfettiPainter extends CustomPainter {
       canvas.rotate(rotation);
 
       if (particle.shape == ParticleShape.circle) {
-        canvas.drawCircle(
-          Offset.zero,
-          particle.size,
-          paint,
-        );
+        canvas.drawCircle(Offset.zero, particle.size, paint);
       } else {
         canvas.drawRRect(
           RRect.fromRectAndRadius(
@@ -200,4 +192,3 @@ class ConfettiPainter extends CustomPainter {
     return true;
   }
 }
-

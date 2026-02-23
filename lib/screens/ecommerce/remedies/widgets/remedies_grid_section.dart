@@ -69,7 +69,7 @@ class RemediesGridSection extends GetView<RemediesController> {
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 15,
             offset: const Offset(0, 5),
             spreadRadius: 2,
@@ -114,7 +114,7 @@ class RemediesGridSection extends GetView<RemediesController> {
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
-                          Colors.black.withOpacity(0.3),
+                          Colors.black.withValues(alpha: 0.3),
                         ],
                       ),
                     ),
@@ -164,7 +164,7 @@ class RemediesGridSection extends GetView<RemediesController> {
                         borderRadius: BorderRadius.circular(25.r),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.deepOrange.withOpacity(0.3),
+                            color: AppColors.deepOrange.withValues(alpha: 0.3),
                             blurRadius: 5,
                             offset: const Offset(0, 3),
                           ),

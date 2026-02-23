@@ -31,14 +31,11 @@ class VastuZoneOverlay extends StatelessWidget {
         currentDirection: currentDirection,
       ),
     );
-    
+
     if (rotation != 0) {
-      child = Transform.rotate(
-        angle: rotation,
-        child: child,
-      );
+      child = Transform.rotate(angle: rotation, child: child);
     }
-    
+
     return child;
   }
 }
@@ -47,17 +44,26 @@ class VastuZonePainter extends CustomPainter {
   final VastuRoomConfig roomConfig;
   final String currentDirection;
 
-  VastuZonePainter({
-    required this.roomConfig,
-    required this.currentDirection,
-  });
+  VastuZonePainter({required this.roomConfig, required this.currentDirection});
 
   // 16 directions mapping
   static const List<String> _directions = [
-    'N', 'NNE', 'NE', 'ENE',
-    'E', 'ESE', 'SE', 'SSE',
-    'S', 'SSW', 'SW', 'WSW',
-    'W', 'WNW', 'NW', 'NNW',
+    'N',
+    'NNE',
+    'NE',
+    'ENE',
+    'E',
+    'ESE',
+    'SE',
+    'SSE',
+    'S',
+    'SSW',
+    'SW',
+    'WSW',
+    'W',
+    'WNW',
+    'NW',
+    'NNW',
   ];
 
   // Color definitions
@@ -69,15 +75,15 @@ class VastuZonePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
-    
+
     // Inner radius for zone ring (between direction ring and star)
     final innerRadius = radius * 0.35; // Start from 35% of radius
     final outerRadius = radius * 0.75; // End at 75% of radius
-    
+
     // Draw 16 segments (one for each direction)
     for (int i = 0; i < 16; i++) {
       final direction = _directions[i];
-      
+
       // Determine zone color
       Color zoneColor;
       if (roomConfig.isIdealDirection(direction)) {
@@ -87,12 +93,12 @@ class VastuZonePainter extends CustomPainter {
       } else {
         zoneColor = _neutralColor;
       }
-      
+
       // Calculate angle for this segment
       // Each segment is 22.5 degrees (360 / 16)
       final startAngle = (i * 22.5 - 90) * math.pi / 180.0; // Start from North
       final sweepAngle = 22.5 * math.pi / 180.0;
-      
+
       // Create path for segment
       final path = Path()
         ..moveTo(
@@ -116,7 +122,7 @@ class VastuZonePainter extends CustomPainter {
           false,
         )
         ..close();
-      
+
       // Draw segment with gradient for depth (premium look)
       // Use semi-transparent colors to blend with base zone_ring.png image
       // Lower opacity so zone_ring.png texture shows through clearly
@@ -126,23 +132,23 @@ class VastuZonePainter extends CustomPainter {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            zoneColor.withOpacity(0.65), // More transparent to show zone_ring.png texture
-            zoneColor.withOpacity(0.50),
-            zoneColor.withOpacity(0.60),
+            zoneColor.withValues(
+              alpha: 0.65,
+            ), // More transparent to show zone_ring.png texture
+            zoneColor.withValues(alpha: 0.50),
+            zoneColor.withValues(alpha: 0.60),
           ],
           stops: const [0.0, 0.5, 1.0],
-        ).createShader(
-          Rect.fromCircle(center: center, radius: outerRadius),
-        );
-      
+        ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
+
       canvas.drawPath(path, paint);
-      
+
       // Add subtle gold border between segments (premium detail)
       final borderPaint = Paint()
         ..style = PaintingStyle.stroke
-        ..color = '#D4AF37'.toColor().withOpacity(0.4)
+        ..color = '#D4AF37'.toColor().withValues(alpha: 0.4)
         ..strokeWidth = 1.0;
-      
+
       canvas.drawPath(path, borderPaint);
     }
   }
@@ -153,4 +159,3 @@ class VastuZonePainter extends CustomPainter {
         oldDelegate.currentDirection != currentDirection;
   }
 }
-

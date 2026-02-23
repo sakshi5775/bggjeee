@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/widgets/common_header.dart';
+﻿import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/booking_controller.dart';
@@ -124,7 +124,7 @@ class BookingView extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -190,7 +190,7 @@ class BookingView extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFDFB343).withOpacity(0.2),
+                    color: const Color(0xFFDFB343).withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8.r),
                   ),
                   child: Row(
@@ -365,7 +365,7 @@ class BookingView extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -569,7 +569,7 @@ class BookingView extends StatelessWidget {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -633,7 +633,7 @@ class BookingView extends StatelessWidget {
         color: const Color(0xFFf8f0be),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -692,7 +692,7 @@ class BookingView extends StatelessWidget {
       return Container(
         width: size.w,
         height: size.h,
-        color: Colors.grey.withOpacity(0.3),
+        color: Colors.grey.withValues(alpha: 0.3),
         child: Icon(Icons.person, size: (size / 2).w, color: Colors.grey),
       );
     }
@@ -707,7 +707,7 @@ class BookingView extends StatelessWidget {
           return Container(
             width: size.w,
             height: size.h,
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Icon(Icons.person, size: (size / 2).w, color: Colors.grey),
           );
         },
@@ -716,7 +716,7 @@ class BookingView extends StatelessWidget {
           return Container(
             width: size.w,
             height: size.h,
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Center(
               child: CircularProgressIndicator(
                 value: loadingProgress.expectedTotalBytes != null
@@ -739,7 +739,7 @@ class BookingView extends StatelessWidget {
           return Container(
             width: size.w,
             height: size.h,
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Icon(Icons.person, size: (size / 2).w, color: Colors.grey),
           );
         },

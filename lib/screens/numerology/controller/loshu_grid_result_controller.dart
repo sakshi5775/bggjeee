@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/numerology/service/numerology_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -92,7 +92,7 @@ class LoShuGridResultController extends BaseController {
       gridData[8] = loShuGridMap['8']?.toString();
       gridData[1] = loShuGridMap['1']?.toString();
       gridData[6] = loShuGridMap['6']?.toString();
-      
+
       // Convert "null" strings to actual null
       gridData.forEach((key, value) {
         if (value == 'null' || value == null || value.isEmpty) {
@@ -116,7 +116,9 @@ class LoShuGridResultController extends BaseController {
     // Load plane percentages
     final planePercentagesData = data['planePercentages'];
     if (planePercentagesData != null && planePercentagesData is Map) {
-      final planePercentagesMap = Map<String, dynamic>.from(planePercentagesData);
+      final planePercentagesMap = Map<String, dynamic>.from(
+        planePercentagesData,
+      );
       planePercentages.clear();
       planePercentagesMap.forEach((key, value) {
         planePercentages[key] = _safeInt(value) ?? 0;
@@ -137,7 +139,9 @@ class LoShuGridResultController extends BaseController {
     final realDigitsData = data['realDigits'];
     if (realDigitsData != null && realDigitsData is List) {
       realDigits.clear();
-      realDigits.addAll(realDigitsData.map((e) => _safeInt(e) ?? 0).where((e) => e != 0));
+      realDigits.addAll(
+        realDigitsData.map((e) => _safeInt(e) ?? 0).where((e) => e != 0),
+      );
     }
   }
 
@@ -209,7 +213,7 @@ class LoShuGridResultController extends BaseController {
 
       if (response != null && response['response'] != null) {
         final responseData = response['response'] as Map<String, dynamic>?;
-        
+
         // Map plane key (handle outlook/action - they are the same)
         String apiKey = planeKey;
         if (planeKey == 'outlook') {
@@ -254,4 +258,3 @@ class LoShuGridResultController extends BaseController {
     return null;
   }
 }
-

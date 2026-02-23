@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 
 import 'package:astrobharataiuser/app_manager/common/image_picker.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:astrobharataiuser/data_model/report_model.dart';
 
 class ProfileView extends GetView<ProfileController> {
   final bool showBackButton;
@@ -35,6 +36,7 @@ class ProfileView extends GetView<ProfileController> {
               // Header using CommonHeader
               CommonHeader(
                 title: 'My Profile',
+                showBackButton: showBackButton,
 
                 customActions: [
                   if (LoginGuard.isLoggedIn)
@@ -539,7 +541,7 @@ class ProfileView extends GetView<ProfileController> {
         icon: Icons.shopping_bag_outlined,
         label: 'Orders',
         subtitle: '${controller.ordersCount} Orders',
-        onTap: () => Get.toNamed(AppRoutes.orders),
+        onTap: () => Get.toNamed(AppRoutes.orders, id: 1),
       ),
       _ProfileAction(
         icon: Icons.local_florist_outlined,
@@ -551,7 +553,7 @@ class ProfileView extends GetView<ProfileController> {
         icon: Icons.auto_awesome_outlined,
         label: 'Wishlist',
         subtitle: '${controller.wishlistCount} Items',
-        onTap: () => Get.toNamed(AppRoutes.wishlist),
+        onTap: () => Get.toNamed(AppRoutes.wishlist, id: 1),
       ),
       _ProfileAction(
         icon: Icons.favorite,
@@ -569,7 +571,13 @@ class ProfileView extends GetView<ProfileController> {
         icon: Icons.percent,
         label: 'Coupons',
         subtitle: '${controller.couponCount} Coupons',
-        onTap: () => Get.toNamed(AppRoutes.coupons),
+        onTap: () => Get.toNamed(AppRoutes.coupons, id: 1),
+      ),
+      _ProfileAction(
+        icon: Icons.history_edu_outlined,
+        label: 'Kundli Reports',
+        subtitle: '${controller.reportHistory.length} Reports',
+        onTap: () => Get.toNamed(AppRoutes.kundliReportHistory, id: 1),
       ),
     ];
 
@@ -885,7 +893,7 @@ class ProfileView extends GetView<ProfileController> {
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  onTap: () => Get.toNamed(AppRoutes.supportTickets),
+                  onTap: () => Get.toNamed(AppRoutes.supportTickets, id: 1),
                   borderRadius: BorderRadius.circular(14.r),
                   child: Padding(
                     padding: EdgeInsets.symmetric(
@@ -917,6 +925,233 @@ class ProfileView extends GetView<ProfileController> {
       ),
     );
   }
+
+  // Widget _buildReportHistory() {
+  //   return Container(
+  //     width: double.infinity,
+  //     decoration: BoxDecoration(
+  //       color: Colors.white,
+  //       borderRadius: BorderRadius.circular(20.r),
+  //       boxShadow: [
+  //         BoxShadow(
+  //           color: AppColors.deepOrange.withValues(alpha: 0.1),
+  //           blurRadius: 15,
+  //           offset: const Offset(0, 5),
+  //           spreadRadius: 0,
+  //         ),
+  //         BoxShadow(
+  //           color: Colors.black.withValues(alpha: 0.05),
+  //           blurRadius: 10,
+  //           offset: const Offset(0, 3),
+  //         ),
+  //       ],
+  //     ),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         // Header with gradient
+  //         Container(
+  //           padding: EdgeInsets.all(18.w),
+  //           decoration: BoxDecoration(
+  //             gradient: AppColors.primaryGradient,
+  //             borderRadius: BorderRadius.only(
+  //               topLeft: Radius.circular(20.r),
+  //               topRight: Radius.circular(20.r),
+  //             ),
+  //           ),
+  //           child: Row(
+  //             children: [
+  //               Container(
+  //                 padding: EdgeInsets.all(8.w),
+  //                 decoration: BoxDecoration(
+  //                   color: AppColors.templeGold.withValues(alpha: 0.2),
+  //                   borderRadius: BorderRadius.circular(10.r),
+  //                 ),
+  //                 child: Icon(
+  //                   Icons.picture_as_pdf_outlined,
+  //                   color: AppColors.templeGold,
+  //                   size: 24.w,
+  //                 ),
+  //               ),
+  //               SizedBox(width: 12.w),
+  //               Expanded(
+  //                 child: AutoTranslateText(
+  //                   'Kundali Reports',
+  //                   style: TextStyle(
+  //                     fontWeight: FontWeight.w700,
+  //                     fontSize: 18,
+  //                     color: Colors.white,
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //         Padding(
+  //           padding: EdgeInsets.all(16.w),
+  //           child: Column(
+  //             children: [
+  //               // Filters Row
+  //               SingleChildScrollView(
+  //                 scrollDirection: Axis.horizontal,
+  //                 child: Row(
+  //                   children: [
+  //                     _buildFilterChip('All', 'all'),
+  //                     SizedBox(width: 8.w),
+  //                     _buildFilterChip('Sent', 'sent'),
+  //                     SizedBox(width: 8.w),
+  //                     _buildFilterChip('Pending', 'pending'),
+  //                     SizedBox(width: 8.w),
+  //                     _buildFilterChip('Failed', 'failed'),
+  //                   ],
+  //                 ),
+  //               ),
+  //               SizedBox(height: 16.h),
+  //               // Report Type Search/Filter
+  //               Container(
+  //                 padding: EdgeInsets.symmetric(horizontal: 12.w),
+  //                 decoration: BoxDecoration(
+  //                   color: AppColors.lightBackground,
+  //                   borderRadius: BorderRadius.circular(12.r),
+  //                   border: Border.all(
+  //                     color: AppColors.deepOrange.withValues(alpha: 0.1),
+  //                   ),
+  //                 ),
+  //                 child: Row(
+  //                   children: [
+  //                     Icon(
+  //                       Icons.search,
+  //                       size: 18,
+  //                       color: AppColors.textSecondary,
+  //                     ),
+  //                     SizedBox(width: 8.w),
+  //                     Expanded(
+  //                       child: TextField(
+  //                         onChanged: (v) {
+  //                           controller.searchReportType.value = v;
+  //                           controller.loadReportHistory();
+  //                         },
+  //                         style: TextStyle(fontSize: 13),
+  //                         decoration: InputDecoration(
+  //                           hintText: 'Filter by report type...',
+  //                           hintStyle: TextStyle(
+  //                             color: AppColors.textSecondary.withValues(
+  //                               alpha: 0.6,
+  //                             ),
+  //                             fontSize: 13,
+  //                           ),
+  //                           border: InputBorder.none,
+  //                           isDense: true,
+  //                           contentPadding: EdgeInsets.symmetric(
+  //                             vertical: 12.h,
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //               SizedBox(height: 16.h),
+  //               Obx(
+  //                 () => controller.isHistoryLoading.value
+  //                     ? Center(
+  //                         child: Padding(
+  //                           padding: EdgeInsets.all(20.w),
+  //                           child: CircularProgressIndicator(
+  //                             color: AppColors.deepOrange,
+  //                           ),
+  //                         ),
+  //                       )
+  //                     : controller.reportHistory.isEmpty
+  //                     ? Container(
+  //                         width: double.infinity,
+  //                         padding: EdgeInsets.all(24.w),
+  //                         decoration: BoxDecoration(
+  //                           color: AppColors.lightBackground.withValues(
+  //                             alpha: 0.5,
+  //                           ),
+  //                           borderRadius: BorderRadius.circular(12.r),
+  //                           border: Border.all(
+  //                             color: AppColors.deepOrange.withValues(
+  //                               alpha: 0.1,
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         child: Column(
+  //                           children: [
+  //                             Icon(
+  //                               Icons.history_edu_outlined,
+  //                               size: 40.w,
+  //                               color: AppColors.textSecondary.withValues(
+  //                                 alpha: 0.5,
+  //                               ),
+  //                             ),
+  //                             SizedBox(height: 12.h),
+  //                             AutoTranslateText(
+  //                               'No reports found',
+  //                               style: TextStyle(
+  //                                 color: AppColors.textColorMaroon,
+  //                                 fontWeight: FontWeight.w600,
+  //                                 fontSize: 14,
+  //                               ),
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       )
+  //                     : Column(
+  //                         children: controller.reportHistory
+  //                             .map(
+  //                               (report) => _ReportHistoryTile(
+  //                                 report: report,
+  //                                 onTap: () => controller.viewReport(report),
+  //                               ),
+  //                             )
+  //                             .toList(),
+  //                       ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  // Widget _buildFilterChip(String label, String value) {
+  //   return Obx(
+  //     () => ChoiceChip(
+  //       label: AutoTranslateText(
+  //         label,
+  //         style: TextStyle(
+  //           color: controller.selectedEmailStatus.value == value
+  //               ? Colors.white
+  //               : AppColors.textColorMaroon,
+  //           fontSize: 12,
+  //           fontWeight: FontWeight.w600,
+  //         ),
+  //       ),
+  //       selected: controller.selectedEmailStatus.value == value,
+  //       onSelected: (selected) {
+  //         if (selected) {
+  //           controller.selectedEmailStatus.value = value;
+  //           controller.loadReportHistory();
+  //         }
+  //       },
+  //       selectedColor: AppColors.deepOrange,
+  //       backgroundColor: Colors.white,
+  //       side: BorderSide(
+  //         color: controller.selectedEmailStatus.value == value
+  //             ? Colors.transparent
+  //             : AppColors.deepOrange.withValues(alpha: 0.2),
+  //       ),
+  //       shape: RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.circular(20.r),
+  //       ),
+  //       showCheckmark: false,
+  //       padding: EdgeInsets.symmetric(horizontal: 4.w),
+  //     ),
+  //   );
+  // }
 
   String _formatMemberSinceDate(String? isoString) {
     if (isoString == null || isoString.isEmpty) return 'Not available';
@@ -1053,7 +1288,7 @@ class ProfileView extends GetView<ProfileController> {
                               fontFamily: 'Poppins',
                               fontWeight: FontWeight.w400,
                               fontSize: 13,
-                              color: Colors.white.withOpacity(0.9),
+                              color: Colors.white.withValues(alpha: 0.9),
                             ),
                           ),
                         ],
@@ -1077,7 +1312,7 @@ class ProfileView extends GetView<ProfileController> {
                         child: Container(
                           padding: EdgeInsets.all(8.w),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -1130,7 +1365,7 @@ class ProfileView extends GetView<ProfileController> {
                                   radius: 48.r,
                                   backgroundColor: '#68171E'
                                       .toColor()
-                                      .withOpacity(0.1),
+                                      .withValues(alpha: 0.1),
                                   backgroundImage:
                                       imageChanged && selectedImage != null
                                       ? FileImage(selectedImage!)
@@ -1243,12 +1478,14 @@ class ProfileView extends GetView<ProfileController> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(16.r),
                               border: Border.all(
-                                color: '#68171E'.toColor().withOpacity(0.1),
+                                color: '#68171E'.toColor().withValues(
+                                  alpha: 0.1,
+                                ),
                                 width: 1.5,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.03),
+                                  color: Colors.black.withValues(alpha: 0.03),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),
@@ -1377,12 +1614,14 @@ class ProfileView extends GetView<ProfileController> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(16.r),
                               border: Border.all(
-                                color: '#68171E'.toColor().withOpacity(0.1),
+                                color: '#68171E'.toColor().withValues(
+                                  alpha: 0.1,
+                                ),
                                 width: 1.5,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.03),
+                                  color: Colors.black.withValues(alpha: 0.03),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),
@@ -1446,7 +1685,9 @@ class ProfileView extends GetView<ProfileController> {
                             borderRadius: BorderRadius.circular(20.r),
                             boxShadow: [
                               BoxShadow(
-                                color: '#F38B3B'.toColor().withOpacity(0.4),
+                                color: '#F38B3B'.toColor().withValues(
+                                  alpha: 0.4,
+                                ),
                                 blurRadius: 16,
                                 offset: const Offset(0, 8),
                               ),
@@ -1571,12 +1812,12 @@ class ProfileView extends GetView<ProfileController> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: '#68171E'.toColor().withOpacity(0.1),
+          color: '#68171E'.toColor().withValues(alpha: 0.1),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -1638,12 +1879,12 @@ class ProfileView extends GetView<ProfileController> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: '#68171E'.toColor().withOpacity(0.1),
+          color: '#68171E'.toColor().withValues(alpha: 0.1),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -1847,6 +2088,7 @@ class _RecentOrderTile extends StatelessWidget {
           onTap: () {
             Get.toNamed(
               AppRoutes.orderDetail,
+              id: 1,
               arguments: {'orderId': order.id ?? order.orderId},
             );
           },
@@ -1878,7 +2120,7 @@ class _RecentOrderTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.r),
                   child: Container(
                     decoration: BoxDecoration(
-                      gradient: AppColors.orangeGradient.withOpacity(0.1),
+                      color: AppColors.deepOrange.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12.r),
                     ),
                     child: imageUrl != null
@@ -1891,8 +2133,8 @@ class _RecentOrderTile extends StatelessWidget {
                             height: 50.h,
                             width: 50.w,
                             decoration: BoxDecoration(
-                              gradient: AppColors.orangeGradient.withOpacity(
-                                0.1,
+                              color: AppColors.deepOrange.withValues(
+                                alpha: 0.1,
                               ),
                               borderRadius: BorderRadius.circular(12.r),
                             ),
@@ -1984,5 +2226,143 @@ class _RecentOrderTile extends StatelessWidget {
         ),
       );
     }
+  }
+}
+
+class _ReportHistoryTile extends StatelessWidget {
+  final ReportHistoryItem report;
+  final VoidCallback onTap;
+
+  const _ReportHistoryTile({required this.report, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 12.h),
+      decoration: BoxDecoration(
+        color: AppColors.lightBackground.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.05)),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12.r),
+          child: Padding(
+            padding: EdgeInsets.all(12.w),
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(8.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.02),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.description_outlined,
+                    color: AppColors.deepOrange,
+                    size: 20.w,
+                  ),
+                ),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AutoTranslateText(
+                        report.reportName ?? 'Kundali Report',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                          color: AppColors.textColorMaroon,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 4.h),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.calendar_today,
+                            size: 10,
+                            color: AppColors.textSecondary,
+                          ),
+                          SizedBox(width: 4.w),
+                          Text(
+                            report.generatedAt != null
+                                ? DateFormat('dd MMM yyyy, hh:mm a').format(
+                                    DateTime.parse(
+                                      report.generatedAt!,
+                                    ).toLocal(),
+                                  )
+                                : '',
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                          if (report.emailStatus != null &&
+                              report.emailStatus!.isNotEmpty) ...[
+                            SizedBox(width: 8.w),
+                            _buildStatusBadge(report.emailStatus!),
+                          ],
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 14.w,
+                  color: AppColors.textSecondary.withValues(alpha: 0.5),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatusBadge(String status) {
+    Color color = Colors.grey;
+    String label = status.capitalizeFirst ?? status;
+
+    switch (status.toLowerCase()) {
+      case 'sent':
+        color = Colors.green;
+        break;
+      case 'pending':
+        color = Colors.orange;
+        break;
+      case 'failed':
+        color = Colors.red;
+        break;
+    }
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(4.r),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 0.5),
+      ),
+      child: AutoTranslateText(
+        label,
+        style: TextStyle(
+          color: color,
+          fontSize: 9,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
   }
 }

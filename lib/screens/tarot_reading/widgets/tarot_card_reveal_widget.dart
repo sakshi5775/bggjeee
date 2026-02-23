@@ -33,7 +33,8 @@ class TarotCardRevealWidget extends StatefulWidget {
 class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
     with TickerProviderStateMixin {
   late AnimationController _controller;
-  late AnimationController _flipController; // Separate controller for flip animation
+  late AnimationController
+  _flipController; // Separate controller for flip animation
   late Animation<double> _scaleAnimation;
   late Animation<double> _glowAnimation;
   late Animation<double> _auraAnimation;
@@ -48,13 +49,15 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
-    
+
     // Separate controller for flip animation - smoother and longer
     _flipController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800), // Longer for smoother animation
+      duration: const Duration(
+        milliseconds: 800,
+      ), // Longer for smoother animation
     );
-    
+
     // Flip animation - rotates from 0 to 180 degrees (flip over) with better curve
     _flipAnimation = Tween<double>(begin: 0.0, end: math.pi).animate(
       CurvedAnimation(
@@ -89,15 +92,16 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
     );
 
     // Rotation animation for reversed cards
-    _rotationAnimation = Tween<double>(
-      begin: 0.0,
-      end: widget.card.isReversed ? math.pi : 0.0,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.0, 0.8, curve: Curves.easeInOut),
-      ),
-    );
+    _rotationAnimation =
+        Tween<double>(
+          begin: 0.0,
+          end: widget.card.isReversed ? math.pi : 0.0,
+        ).animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(0.0, 0.8, curve: Curves.easeInOut),
+          ),
+        );
 
     // Start animation
     if (widget.isOpen) {
@@ -144,7 +148,10 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: Listenable.merge([_controller, _flipController]), // Listen to both controllers
+      animation: Listenable.merge([
+        _controller,
+        _flipController,
+      ]), // Listen to both controllers
       builder: (context, child) {
         return Center(
           child: Stack(
@@ -153,7 +160,10 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
               // Aura effect - expanding circles (reduced glow)
               ...List.generate(3, (index) {
                 final delay = index * 0.2;
-                final auraProgress = (_auraAnimation.value - delay).clamp(0.0, 1.0);
+                final auraProgress = (_auraAnimation.value - delay).clamp(
+                  0.0,
+                  1.0,
+                );
                 final cardWidth = widget.isOpen ? 180.w : 200.w;
                 final cardHeight = widget.isOpen ? 270.h : 300.h;
                 return Transform.scale(
@@ -168,9 +178,11 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                         borderRadius: BorderRadius.circular(14.r),
                         gradient: RadialGradient(
                           colors: [
-                            "#F38B3B".toColor().withOpacity(0.0),
-                            "#F38B3B".toColor().withOpacity(0.2), // Reduced from 0.4
-                            '#820B17'.toColor().withOpacity(0.0),
+                            "#F38B3B".toColor().withValues(alpha: 0.0),
+                            "#F38B3B".toColor().withValues(
+                              alpha: 0.2,
+                            ), // Reduced from 0.4
+                            '#820B17'.toColor().withValues(alpha: 0.0),
                           ],
                         ),
                       ),
@@ -184,41 +196,79 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                 alignment: Alignment.center,
                 transform: Matrix4.identity()
                   ..setEntry(3, 2, 0.001) // Perspective for 3D effect
-                  ..rotateY(_isClosing ? _flipAnimation.value : 0.0), // Smooth flip on Y-axis when closing
+                  ..rotateY(
+                    _isClosing ? _flipAnimation.value : 0.0,
+                  ), // Smooth flip on Y-axis when closing
                 child: Transform(
                   alignment: Alignment.center,
                   transform: Matrix4.identity()
-                    ..setEntry(0, 0, _isClosing 
-                        ? math.cos(_flipAnimation.value).abs() // Scale X to simulate 3D flip (0 to 1)
-                        : (widget.isOpen ? _scaleAnimation.value * 0.9 : _scaleAnimation.value)) // Normal scale or smaller when open
-                    ..setEntry(1, 1, _isClosing 
-                        ? (0.95 + 0.05 * math.cos(_flipAnimation.value).abs()) // Slight scale variation for depth
-                        : (widget.isOpen ? _scaleAnimation.value * 0.9 : _scaleAnimation.value)), // 10% smaller when open
+                    ..setEntry(
+                      0,
+                      0,
+                      _isClosing
+                          ? math
+                                .cos(_flipAnimation.value)
+                                .abs() // Scale X to simulate 3D flip (0 to 1)
+                          : (widget.isOpen
+                                ? _scaleAnimation.value * 0.9
+                                : _scaleAnimation.value),
+                    ) // Normal scale or smaller when open
+                    ..setEntry(
+                      1,
+                      1,
+                      _isClosing
+                          ? (0.95 +
+                                0.05 *
+                                    math
+                                        .cos(_flipAnimation.value)
+                                        .abs()) // Slight scale variation for depth
+                          : (widget.isOpen
+                                ? _scaleAnimation.value * 0.9
+                                : _scaleAnimation.value),
+                    ), // 10% smaller when open
                   child: Opacity(
-                    opacity: _isClosing 
-                        ? (0.3 + 0.7 * (1.0 - _flipController.value)) // Smooth fade out during flip
+                    opacity: _isClosing
+                        ? (0.3 +
+                              0.7 *
+                                  (1.0 -
+                                      _flipController
+                                          .value)) // Smooth fade out during flip
                         : 1.0,
                     child: Transform.rotate(
                       angle: _rotationAnimation.value,
                       child: Container(
-                        width: widget.isOpen ? 180.w : 200.w, // Smaller when open
-                        height: widget.isOpen ? 270.h : 300.h, // Smaller when open
+                        width: widget.isOpen
+                            ? 180.w
+                            : 200.w, // Smaller when open
+                        height: widget.isOpen
+                            ? 270.h
+                            : 300.h, // Smaller when open
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16.r),
                           boxShadow: [
                             // Reduced glow effect
                             BoxShadow(
-                              color: "#F38B3B".toColor().withOpacity(0.3 * _glowAnimation.value), // Reduced from 0.8
-                              blurRadius: 20 * _glowAnimation.value, // Reduced from 30
-                              spreadRadius: 5 * _glowAnimation.value, // Reduced from 10
+                              color: "#F38B3B".toColor().withValues(
+                                alpha: 0.3 * _glowAnimation.value,
+                              ), // Reduced from 0.8
+                              blurRadius:
+                                  20 * _glowAnimation.value, // Reduced from 30
+                              spreadRadius:
+                                  5 * _glowAnimation.value, // Reduced from 10
                             ),
                             BoxShadow(
-                              color: '#820B17'.toColor().withOpacity(0.25 * _glowAnimation.value), // Reduced from 0.6
-                              blurRadius: 25 * _glowAnimation.value, // Reduced from 40
-                              spreadRadius: 8 * _glowAnimation.value, // Reduced from 15
+                              color: '#820B17'.toColor().withValues(
+                                alpha: 0.25 * _glowAnimation.value,
+                              ), // Reduced from 0.6
+                              blurRadius:
+                                  25 * _glowAnimation.value, // Reduced from 40
+                              spreadRadius:
+                                  8 * _glowAnimation.value, // Reduced from 15
                             ),
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.3), // Reduced from 0.5
+                              color: Colors.black.withValues(
+                                alpha: 0.3,
+                              ), // Reduced from 0.5
                               blurRadius: 15, // Reduced from 20
                               offset: const Offset(0, 8), // Reduced from 10
                             ),
@@ -226,7 +276,8 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(16.r),
-                          child: _isClosing && _flipAnimation.value > math.pi / 2
+                          child:
+                              _isClosing && _flipAnimation.value > math.pi / 2
                               ? _buildCardBack() // Show back during second half of flip
                               : _buildCardImage(), // Show front normally
                         ),
@@ -253,9 +304,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
         child: Center(
           child: AutoTranslateText(
             widget.card.name,
-            style: AppTypography.h2.copyWith(
-              color: '#820B17'.toColor(),
-            ),
+            style: AppTypography.h2.copyWith(color: '#820B17'.toColor()),
             textAlign: TextAlign.center,
           ),
         ),
@@ -266,15 +315,14 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
       imageUrl: imageUrl,
       width: widget.isOpen ? 180.w : 200.w, // Smaller when open
       height: widget.isOpen ? 270.h : 300.h, // Smaller when open
-      fit: BoxFit.contain, // Changed from cover to contain to show full image without cutting
+      fit: BoxFit
+          .contain, // Changed from cover to contain to show full image without cutting
       placeholder: (context, url) => Container(
         width: widget.isOpen ? 180.w : 200.w, // Smaller when open
         height: widget.isOpen ? 270.h : 300.h, // Smaller when open
         color: '#ede7c8'.toColor(),
         child: Center(
-          child: CircularProgressIndicator(
-            color: "#F38B3B".toColor(),
-          ),
+          child: CircularProgressIndicator(color: "#F38B3B".toColor()),
         ),
       ),
       errorWidget: (context, url, error) => Container(
@@ -285,17 +333,11 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.error,
-                color: '#820B17'.toColor(),
-                size: 40.w,
-              ),
+              Icon(Icons.error, color: '#820B17'.toColor(), size: 40.w),
               Spacing.h(12),
               AutoTranslateText(
                 widget.card.name,
-                style: AppTypography.h3.copyWith(
-                  color: '#820B17'.toColor(),
-                ),
+                style: AppTypography.h3.copyWith(color: '#820B17'.toColor()),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -308,12 +350,15 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
   Widget _buildCardBack() {
     // Use controller to get selected back type, fallback to 'classic'
     final controller = Get.find<TarotController>();
-    final backImageUrl = widget.card.getBackImageUrl(backType: controller.selectedBackType.value);
+    final backImageUrl = widget.card.getBackImageUrl(
+      backType: controller.selectedBackType.value,
+    );
 
     return backImageUrl.isNotEmpty
         ? CachedNetworkImage(
             imageUrl: backImageUrl,
-            fit: BoxFit.contain, // Changed from cover to contain to show full image without cutting
+            fit: BoxFit
+                .contain, // Changed from cover to contain to show full image without cutting
             width: widget.isOpen ? 180.w : 200.w,
             height: widget.isOpen ? 270.h : 300.h,
             placeholder: (context, url) => Container(
@@ -321,10 +366,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
               height: widget.isOpen ? 270.h : 300.h,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    '#820B17'.toColor(),
-                    "#F38B3B".toColor(),
-                  ],
+                  colors: ['#820B17'.toColor(), "#F38B3B".toColor()],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -341,10 +383,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
               height: widget.isOpen ? 270.h : 300.h,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    '#820B17'.toColor(),
-                    "#F38B3B".toColor(),
-                  ],
+                  colors: ['#820B17'.toColor(), "#F38B3B".toColor()],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -359,9 +398,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
         : Container(
             width: widget.isOpen ? 180.w : 200.w,
             height: widget.isOpen ? 270.h : 300.h,
-            decoration: BoxDecoration(
-              gradient: AppColors.orangeGradient,
-            ),
+            decoration: BoxDecoration(gradient: AppColors.orangeGradient),
             child: Icon(
               Icons.auto_awesome,
               color: '#ede7c8'.toColor(),
@@ -370,4 +407,3 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
           );
   }
 }
-

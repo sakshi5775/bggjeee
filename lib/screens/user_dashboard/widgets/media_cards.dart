@@ -36,7 +36,7 @@ class YouTubeMediaCard extends StatelessWidget {
           border: Border.all(color: const Color(0xFFE0E0E0), width: 0.8),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -197,7 +197,7 @@ class InstagramMediaCard extends StatelessWidget {
           border: Border.all(color: const Color(0xFFE0E0E0), width: 0.8),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -229,7 +229,7 @@ class InstagramMediaCard extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.all(4.w),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withValues(alpha: 0.5),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -246,7 +246,7 @@ class InstagramMediaCard extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.all(4.w),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withValues(alpha: 0.5),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -263,7 +263,7 @@ class InstagramMediaCard extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.all(4.w),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.8),
+                  color: Colors.white.withValues(alpha: 0.8),
                   borderRadius: BorderRadius.circular(6.r),
                 ),
                 child: Image.network(
@@ -290,11 +290,11 @@ class _PlayButton extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: AppColors.deepOrange.withOpacity(0.9),
+        color: AppColors.deepOrange.withValues(alpha: 0.9),
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),

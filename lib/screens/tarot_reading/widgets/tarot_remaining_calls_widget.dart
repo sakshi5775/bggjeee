@@ -32,18 +32,15 @@ class TarotRemainingCallsWidget extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.6),
+            color: Colors.black.withValues(alpha: 0.6),
             borderRadius: BorderRadius.circular(8.r),
           ),
           child: AutoTranslateText(
             'API Calls: $remaining',
-            style: AppTypography.label.copyWith(
-              color: Colors.white70,
-            ),
+            style: AppTypography.label.copyWith(color: Colors.white70),
           ),
         ),
       );
     });
   }
 }
-

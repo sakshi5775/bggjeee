@@ -3,7 +3,7 @@ import 'package:get_storage/get_storage.dart';
 /// Manages guest session state in the app.
 /// Tracks whether user is browsing as a guest.
 class GuestSessionManager {
-  static final GetStorage _storage = GetStorage('guestSession');
+  static GetStorage get _storage => GetStorage('guestSession');
   static const String _isGuestKey = 'isGuest';
 
   /// Check if user is currently in guest mode

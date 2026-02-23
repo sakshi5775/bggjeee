@@ -56,7 +56,7 @@ class TarotLoveWidget extends StatelessWidget {
               controller.closeReading();
             },
             behavior: HitTestBehavior.opaque,
-            child: Container(color: Colors.black.withOpacity(0.7)),
+            child: Container(color: Colors.black.withValues(alpha: 0.7)),
           ),
           // Content - not tappable to close
           Center(
@@ -80,7 +80,7 @@ class TarotLoveWidget extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20.r),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
+                            color: Colors.black.withValues(alpha: 0.3),
                             blurRadius: 20,
                             offset: const Offset(0, 10),
                           ),
@@ -404,7 +404,7 @@ class TarotLoveWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.pink.withOpacity(0.3)),
+        border: Border.all(color: Colors.pink.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -431,7 +431,7 @@ class TarotLoveWidget extends StatelessWidget {
                 return Container(
                   padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                   decoration: BoxDecoration(
-                    color: Colors.pink.withOpacity(0.1),
+                    color: Colors.pink.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8.r),
                   ),
                   child: AutoTranslateText(

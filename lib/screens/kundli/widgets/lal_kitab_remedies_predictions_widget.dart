@@ -12,7 +12,10 @@ import 'package:get/get.dart';
 class LalKitabRemediesPredictionsWidget extends StatelessWidget {
   final PredictionsController controller;
 
-  const LalKitabRemediesPredictionsWidget({super.key, required this.controller});
+  const LalKitabRemediesPredictionsWidget({
+    super.key,
+    required this.controller,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +27,10 @@ class LalKitabRemediesPredictionsWidget extends StatelessWidget {
         return Center(
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 24.h),
-            child: CircularProgressIndicator(color: '#ed6f30'.toColor(), strokeWidth: 2),
+            child: CircularProgressIndicator(
+              color: '#ed6f30'.toColor(),
+              strokeWidth: 2,
+            ),
           ),
         );
       }
@@ -35,7 +41,9 @@ class LalKitabRemediesPredictionsWidget extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 24.h),
             child: AutoTranslateText(
               'No data available',
-              style: MyTextTheme.mediumBCN.copyWith(color: '#6F221E'.toColor().withOpacity(0.6)),
+              style: MyTextTheme.mediumBCN.copyWith(
+                color: '#6F221E'.toColor().withValues(alpha: 0.6),
+              ),
             ),
           ),
         );
@@ -48,7 +56,9 @@ class LalKitabRemediesPredictionsWidget extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 16.h),
             child: AutoTranslateText(
               'No data available',
-              style: MyTextTheme.mediumBCN.copyWith(color: '#6F221E'.toColor().withOpacity(0.6)),
+              style: MyTextTheme.mediumBCN.copyWith(
+                color: '#6F221E'.toColor().withValues(alpha: 0.6),
+              ),
             ),
           ),
         );
@@ -64,7 +74,10 @@ class LalKitabRemediesPredictionsWidget extends StatelessWidget {
               AutoTranslateText(
                 'Lal Kitab Remedies',
                 style: MyTextTheme.mediumBCB
-                    .copyWith(color: '#6F221E'.toColor(), fontWeight: FontWeight.bold)
+                    .copyWith(
+                      color: '#6F221E'.toColor(),
+                      fontWeight: FontWeight.bold,
+                    )
                     .merge(AppTypography.h3),
               ),
             ],
@@ -93,9 +106,16 @@ class LalKitabRemediesPredictionsWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: '#ed6f30'.toColor().withOpacity(0.2), width: 1),
+        border: Border.all(
+          color: '#ed6f30'.toColor().withValues(alpha: 0.2),
+          width: 1,
+        ),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 8, offset: const Offset(0, 2)),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: Column(
@@ -114,23 +134,35 @@ class LalKitabRemediesPredictionsWidget extends StatelessWidget {
                 child: AutoTranslateText(
                   planet,
                   style: MyTextTheme.mediumBCB
-                      .copyWith(color: Colors.white, fontWeight: FontWeight.bold)
+                      .copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      )
                       .merge(AppTypography.h3),
                 ),
               ),
               if (house.isNotEmpty) ...[
                 Spacing.w(12),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 6.h,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8.r),
-                    border: Border.all(color: '#ed6f30'.toColor().withOpacity(0.3), width: 1),
+                    border: Border.all(
+                      color: '#ed6f30'.toColor().withValues(alpha: 0.3),
+                      width: 1,
+                    ),
                   ),
                   child: AutoTranslateText(
                     'House: $house',
                     style: MyTextTheme.smallBCB
-                        .copyWith(color: '#6F221E'.toColor(), fontWeight: FontWeight.w600)
+                        .copyWith(
+                          color: '#6F221E'.toColor(),
+                          fontWeight: FontWeight.w600,
+                        )
                         .merge(AppTypography.body2),
                   ),
                 ),
@@ -141,12 +173,19 @@ class LalKitabRemediesPredictionsWidget extends StatelessWidget {
             Spacing.h(16),
             Row(
               children: [
-                Icon(Icons.info_outline, color: '#ed6f30'.toColor(), size: 18.w),
+                Icon(
+                  Icons.info_outline,
+                  color: '#ed6f30'.toColor(),
+                  size: 18.w,
+                ),
                 Spacing.w(8),
                 AutoTranslateText(
                   'Effects',
                   style: MyTextTheme.mediumBCB
-                      .copyWith(color: '#6F221E'.toColor(), fontWeight: FontWeight.bold)
+                      .copyWith(
+                        color: '#6F221E'.toColor(),
+                        fontWeight: FontWeight.bold,
+                      )
                       .merge(AppTypography.body1),
                 ),
               ],
@@ -176,7 +215,10 @@ class LalKitabRemediesPredictionsWidget extends StatelessWidget {
                 AutoTranslateText(
                   'Remedies',
                   style: MyTextTheme.mediumBCB
-                      .copyWith(color: '#6F221E'.toColor(), fontWeight: FontWeight.bold)
+                      .copyWith(
+                        color: '#6F221E'.toColor(),
+                        fontWeight: FontWeight.bold,
+                      )
                       .merge(AppTypography.body1),
                 ),
               ],
@@ -191,7 +233,9 @@ class LalKitabRemediesPredictionsWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(14.r),
-                  border: Border.all(color: '#ed6f30'.toColor().withOpacity(0.18)),
+                  border: Border.all(
+                    color: '#ed6f30'.toColor().withValues(alpha: 0.18),
+                  ),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,7 +245,10 @@ class LalKitabRemediesPredictionsWidget extends StatelessWidget {
                       height: 26.w,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: ['#ed6f30'.toColor().withOpacity(0.9), '#ff9f68'.toColor()],
+                          colors: [
+                            '#ed6f30'.toColor().withValues(alpha: 0.9),
+                            '#ff9f68'.toColor(),
+                          ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
@@ -212,7 +259,10 @@ class LalKitabRemediesPredictionsWidget extends StatelessWidget {
                         '${index + 1}',
                         style: MyTextTheme.smallBCB
                             .merge(AppTypography.body2)
-                            .copyWith(color: Colors.white, fontWeight: FontWeight.w600),
+                            .copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
                       ),
                     ),
                     Spacing.w(14),

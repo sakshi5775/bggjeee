@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/ecommerce/remedies/controllers/remedies_controller.dart';
 import 'package:astrobharataiuser/screens/ecommerce/remedies/widgets/remedies_banner_slider.dart';
 import 'package:astrobharataiuser/screens/ecommerce/remedies/widgets/remedies_grid_section.dart';

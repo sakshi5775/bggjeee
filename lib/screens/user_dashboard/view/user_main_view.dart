@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_co
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/user_bottom_nav.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 class UserMainView extends GetView<UserMainController> {
   const UserMainView({super.key});
 
@@ -18,9 +19,7 @@ class UserMainView extends GetView<UserMainController> {
           initialRoute: controller.initialRoute,
           onGenerateRoute: controller.onGenerateRoute,
         ),
-        bottomNavigationBar: UserBottomNav(
-          onTap: controller.changePage,
-        ),
+        bottomNavigationBar: UserBottomNav(onTap: controller.changePage),
       ),
     );
   }

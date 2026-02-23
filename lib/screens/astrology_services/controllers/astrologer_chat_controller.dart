@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:astrobharataiuser/controllers/global_chat_controller.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/astrologer_chat_model.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/data_model/user_profile_model.dart';
@@ -14,8 +14,8 @@ import 'package:astrobharataiuser/utils/profile_check_helper.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/astrologer_review_controller.dart';
-import 'package:uuid/uuid.dart';
 import 'package:astrobharataiuser/screens/astrology_services/widgets/astrologer_review_dialog.dart';
+import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 
 class AstrologerChatController extends BaseController
     with WidgetsBindingObserver {
@@ -102,6 +102,22 @@ class AstrologerChatController extends BaseController
   final RxBool showRatingDialog = false.obs;
   bool _ratingDialogShown = false;
 
+  // Formatted timer string (mm:ss)
+  // Formatted timer string (mm:ss)
+  String get formattedTimer {
+    // If we have seconds remaining use that for precision
+    int seconds = visualSecondsRemaining.value;
+
+    // If seconds is 0 but we have availableMinutes, convert
+    if (seconds == 0 && availableMinutes.value > 0) {
+      seconds = availableMinutes.value * 60;
+    }
+
+    final m = (seconds / 60).floor();
+    final s = seconds % 60;
+    return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
+  }
+
   // Session ending state
   bool _isEndingSession = false;
   Completer<void>? _sessionEndCompleter;
@@ -154,6 +170,11 @@ class AstrologerChatController extends BaseController
   Future<void> _initializeChat() async {
     try {
       isLoading.value = true;
+      CrashlyticsService.trackAction(
+        "CHAT",
+        "INIT",
+        data: "astrologer:${_astrologer?.astrologerId}, chatId:$initialChatId",
+      );
 
       AstrologerChatSession? session;
 
@@ -345,24 +366,14 @@ class AstrologerChatController extends BaseController
         if (kDebugMode) print('Session is already ACTIVE. Resuming...');
         _handleSessionActive();
       }
-    } catch (e) {
+    } catch (e, s) {
       if (kDebugMode) print('Init Chat Error: $e');
+      reportError(e, s, type: CrashErrorType.auth, reason: "CHAT_INIT_FAILED");
       showErrorMessage(message: 'Failed to initialize chat: ${e.toString()}');
       Get.back();
     } finally {
       isLoading.value = false;
     }
-  }
-
-  void onBackPressed() {
-    // Non-destructive leave - only leave the room, don't disconnect socket
-    // This allows the session to stay active when user returns
-    if (_socket?.connected == true && chatId.value.isNotEmpty) {
-      _socket?.emit('leave_chat', {'chatId': chatId.value});
-      isInChatRoom.value = false;
-    }
-    Get.find<GlobalChatController>().setChatScreenStatus(false);
-    Get.back();
   }
 
   void _updateSessionState(AstrologerChatSession session) {
@@ -472,6 +483,11 @@ class AstrologerChatController extends BaseController
 
   Future<void> _connectSocket() async {
     try {
+      CrashlyticsService.trackAction(
+        "CHAT",
+        "SOCKET_CONNECT",
+        data: "url:$chatSocketUrl",
+      );
       final token = UserData().accessToken ?? '';
       if (token.isEmpty) throw Exception('No authentication token');
 
@@ -491,6 +507,11 @@ class AstrologerChatController extends BaseController
 
       _socket!.onConnect((_) {
         if (kDebugMode) print('Socket connected successfully');
+        CrashlyticsService.trackAction(
+          "CHAT",
+          "SOCKET_CONNECTED",
+          data: "socketId:${_socket!.id}",
+        );
         isConnected.value = true;
         if (chatId.value.isNotEmpty) {
           _joinChatRoom();
@@ -508,6 +529,11 @@ class AstrologerChatController extends BaseController
 
       _socket!.onError((error) {
         if (kDebugMode) print('Socket error: $error');
+        CrashlyticsService.trackAction(
+          "CHAT",
+          "SOCKET_ERROR",
+          data: error.toString(),
+        );
         isConnected.value = false;
       });
 
@@ -518,92 +544,116 @@ class AstrologerChatController extends BaseController
 
       // --- CHAT EVENTS ---
       _socket!.on('join_success', (data) {
-        if (kDebugMode) print('Joined chat room: $data');
+        if (kDebugMode) print('Joined room: $data');
         isInChatRoom.value = true;
+        isOtherPartyOnline.value = data['isOtherPartyOnline'] ?? false;
         if (data['sessionStatus'] != null) {
           sessionStatus.value = data['sessionStatus'];
-          if (sessionStatus.value == 'ACTIVE') {
-            _handleSessionActive();
-          }
         }
+      });
+
+      _socket!.on('chat_accepted', (data) {
+        if (kDebugMode) print('Chat accepted: $data');
+        sessionStatus.value = 'ACTIVE';
+        _handleSessionActive();
+        _joinChatRoom();
+      });
+
+      _socket!.on('chat_rejected', (data) {
+        if (kDebugMode) print('Chat rejected: $data');
+        sessionStatus.value = 'CANCELLED';
+        showErrorMessage(message: data['reason'] ?? 'Chat request rejected');
+        Get.back();
+      });
+
+      _socket!.on('participant_joined', (data) {
+        if (data['role'] == 'astrologer') {
+          isOtherPartyOnline.value = true;
+          if (kDebugMode) print('Astrologer joined');
+        }
+      });
+
+      _socket!.on('participant_left', (data) {
+        isOtherPartyOnline.value = false;
+        showInfoMessage(message: 'Astrologer left the chat');
+      });
+
+      _socket!.on('participant_offline', (data) {
+        isOtherPartyOnline.value = false;
+        showInfoMessage(message: 'Astrologer went offline');
       });
 
       _socket!.on('new_message', (data) {
-        if (kDebugMode) {
-          print('=== RECEIVED new_message EVENT ===');
-          print('Full data: $data');
-          print('Data type: ${data.runtimeType}');
-          if (data is Map) {
-            print('Keys: ${data.keys.toList()}');
-            print('senderId: ${data['senderId']}');
-            print('chatId: ${data['chatId']}');
-            print('content: ${data['content']}');
-            print('tempId: ${data['tempId']}');
-          }
-        }
+        if (kDebugMode) print('New message: $data');
         _handleNewMessage(data);
       });
 
-      // Also listen for message acknowledgment events
       _socket!.on('message_sent', (data) {
-        if (kDebugMode) {
-          print('=== RECEIVED message_sent ACKNOWLEDGMENT ===');
-          print('Data: $data');
-        }
+        if (kDebugMode) print('Message sent acknowledgment: $data');
+        _handleMessageSentAck(data);
+      });
 
-        // Update message status when server acknowledges
-        // Server sends: {success: true, messageId: "...", sentAt: "..."}
-        // We need to find the most recent SENDING message and update it
-        if (data is Map &&
-            data['messageId'] != null &&
-            data['success'] == true) {
-          final serverMessageId = data['messageId'] as String;
+      _socket!.on('message_failed', (data) {
+        if (kDebugMode) print('Message failed: $data');
+        _handleMessageFailed(data);
+      });
 
-          if (kDebugMode) {
-            print(
-              'Server acknowledged message. Server messageId: $serverMessageId',
-            );
-            print('Looking for message to update...');
-          }
+      _socket!.on('message_status_updated', (data) {
+        if (kDebugMode) print('Status updated: $data');
+        _handleMessageStatusUpdate(data);
+      });
 
-          // Find the most recent message with status 'SENDING' (should be the one we just sent)
-          // Messages are stored with newest at index 0
-          final sendingIndex = messages.indexWhere(
-            (m) => m.status == 'SENDING',
-          );
+      _socket!.on('messages_read', (data) {
+        if (kDebugMode) print('Messages read: $data');
+        _handleMessagesReadAck(data);
+      });
 
-          if (sendingIndex != -1) {
-            if (kDebugMode) {
-              print(
-                'Found SENDING message at index $sendingIndex. Updating...',
-              );
-            }
-            messages[sendingIndex] = messages[sendingIndex].copyWith(
-              status: 'SENT',
-              messageId: serverMessageId, // Update with server's messageId
-            );
-            messages.refresh();
-            if (kDebugMode) {
-              print(
-                '✓ Updated message status to SENT. New messageId: $serverMessageId',
-              );
-            }
-          } else {
-            if (kDebugMode) {
-              print('⚠ No message with SENDING status found to update');
-              print(
-                'Current messages statuses: ${messages.map((m) => '${m.messageId}: ${m.status}').toList()}',
-              );
-            }
-          }
+      _socket!.on('typing_indicator', (data) {
+        if (data['userId'] != UserData().getLoginData.user?.userId) {
+          isAstrologerTyping.value = data['typing'] ?? false;
         }
       });
 
+      _socket!.on('billing_update', (data) {
+        if (kDebugMode) print('Billing update: $data');
+        _handleBillingUpdate(data);
+      });
+
+      _socket!.on('low_balance_warning', (data) {
+        showLowBalanceWarning.value = true;
+        showInfoMessage(message: data['message'] ?? 'Low balance warning');
+      });
+
+      _socket!.on('session_expiring', (data) {
+        sessionStatus.value = 'EXPIRING';
+        showInfoMessage(message: data['message'] ?? 'Session expiring');
+      });
+
+      _socket!.on('session_expired', (data) {
+        sessionStatus.value = 'COMPLETED';
+        _handleSessionEnd(
+          'COMPLETED',
+          reason: data['message'] ?? 'Session expired',
+        );
+        _socket?.emit('leave_chat', {'chatId': chatId.value});
+      });
+
+      _socket!.on('chat_force_ended', (data) {
+        sessionStatus.value = 'COMPLETED';
+        _handleSessionEnd(
+          'COMPLETED',
+          reason: data['message'] ?? 'Session force ended',
+        );
+        _socket?.emit('leave_chat', {'chatId': chatId.value});
+      });
+
       _socket!.on('error', (error) {
-        if (kDebugMode) {
-          print('=== SOCKET ERROR ===');
-          print('Error: $error');
-        }
+        reportError(
+          error,
+          StackTrace.current,
+          type: CrashErrorType.socket,
+          reason: "SOCKET_ON_ERROR",
+        );
       });
       _socket!.on(
         'message_status_updated',
@@ -619,6 +669,11 @@ class AstrologerChatController extends BaseController
 
       _socket!.on('session_started', (data) {
         if (kDebugMode) print('Session Started Event: $data');
+        CrashlyticsService.trackAction(
+          "CHAT",
+          "SESSION_STARTED",
+          data: data.toString(),
+        );
         sessionStatus.value = 'ACTIVE';
         _handleSessionActive();
         _refreshSessionAndSync();
@@ -731,10 +786,13 @@ class AstrologerChatController extends BaseController
           return;
         }
 
-        // If astrologer ended it (we're not in ending state), handle it immediately
-        if (kDebugMode) print('📨 Astrologer ended the chat');
-        sessionStatus.value = 'COMPLETED';
-        _handleSessionEnd('COMPLETED', reason: 'Astrologer ended the chat');
+        // Astrologer ended the chat
+        if (sessionStatus.value != 'COMPLETED') {
+          if (kDebugMode) print('ℹ️ Astrologer ended the chat session');
+          sessionStatus.value = 'COMPLETED';
+          isSendingMessage.value = false;
+          _handleAstrologerEndedSession();
+        }
       });
     } catch (e) {
       if (kDebugMode) print('Socket connection error: $e');
@@ -822,6 +880,7 @@ class AstrologerChatController extends BaseController
     }
 
     _startVisualCountdown();
+    // Only send profile message after session is ACTIVE
     _sendProfileMessageIfNeeded();
     _notifyGlobalOnSessionActive();
   }
@@ -1104,9 +1163,11 @@ class AstrologerChatController extends BaseController
       if (kDebugMode) print('Message is empty, returning');
       return;
     }
-    if (sessionStatus.value != 'ACTIVE') {
+    if (sessionStatus.value != 'ACTIVE' && sessionStatus.value != 'CREATED') {
       if (kDebugMode)
-        print('Session is not ACTIVE (${sessionStatus.value}), cannot send');
+        print(
+          'Session is not ACTIVE or CREATED (${sessionStatus.value}), cannot send',
+        );
       showErrorMessage(message: 'Chat is not active');
       return;
     }
@@ -1124,12 +1185,12 @@ class AstrologerChatController extends BaseController
     isSendingMessage.value = true;
     final userData = UserData();
     final userId = userData.getLoginData.user?.userId;
-    final tempId = const Uuid().v4(); // This is the tempId we send to server
+    // clientMessageId = timestamp-based id as per guide
+    final clientMsgId = 'msg_${DateTime.now().millisecondsSinceEpoch}';
     final replyToMessage = replyingToMessage.value;
 
     final newMessage = AstrologerChatMessage(
-      messageId:
-          tempId, // Store tempId as messageId initially, will be updated by server
+      messageId: clientMsgId, // Store clientMessageId as messageId initially
       chatId: chatId.value,
       senderId: userId ?? 'unknown',
       senderType: 'USER',
@@ -1165,7 +1226,7 @@ class AstrologerChatController extends BaseController
         'chatId': chatId.value,
         'content': text,
         'messageType': 'TEXT',
-        'clientMessageId': tempId,
+        'clientMessageId': clientMsgId,
         'replyToId': newMessage.replyTo?.messageId,
       };
 
@@ -1193,7 +1254,7 @@ class AstrologerChatController extends BaseController
         }
         showErrorMessage(message: 'Failed to send message. Please try again.');
         // Remove optimistic message
-        final index = messages.indexWhere((m) => m.messageId == tempId);
+        final index = messages.indexWhere((m) => m.messageId == clientMsgId);
         if (index != -1) {
           messages.removeAt(index);
         }
@@ -1220,7 +1281,7 @@ class AstrologerChatController extends BaseController
               'chatId': chatId.value,
               'content': text,
               'messageType': 'TEXT',
-              'clientMessageId': tempId,
+              'clientMessageId': clientMsgId,
               'replyToId': newMessage.replyTo?.messageId,
             });
             if (kDebugMode) print('Retried sending message after joining room');
@@ -1257,7 +1318,7 @@ class AstrologerChatController extends BaseController
                     'chatId': chatId.value,
                     'content': text,
                     'messageType': 'TEXT',
-                    'clientMessageId': tempId,
+                    'clientMessageId': clientMsgId,
                     'replyToId': newMessage.replyTo?.messageId,
                   });
                 } else if (attempts >= 10) {
@@ -1287,55 +1348,109 @@ class AstrologerChatController extends BaseController
   }
 
   void _handleNewMessage(dynamic data) {
-    if (kDebugMode) {
-      print('=== _handleNewMessage called ===');
-      print('Data received: $data');
-    }
+    if (kDebugMode) print('Handling new message: $data');
 
     final userData = UserData();
     final userId = userData.getLoginData.user?.userId;
 
     if (data['senderId'] == userId) {
       // Confirm own message sent
-      if (kDebugMode)
-        print(
-          'Received acknowledgment for own message (tempId: ${data['tempId']})',
-        );
-      final index = messages.indexWhere((m) => m.messageId == data['tempId']);
-      if (index != -1) {
-        messages[index] = messages[index].copyWith(
-          status: 'SENT',
-          messageId: data['_id'],
-        );
-        messages.refresh();
-        if (kDebugMode) print('Updated message status to SENT');
-      } else {
-        if (kDebugMode)
-          print(
-            'Warning: Could not find message with tempId: ${data['tempId']}',
-          );
-      }
+      _handleMessageSentAck(data);
     } else {
       // Incoming message from astrologer
-      if (kDebugMode) print('Received message from astrologer');
       final message = AstrologerChatMessage.fromJson(data);
       if (!messages.any((m) => m.messageId == message.messageId)) {
         messages.insert(0, message);
-        _markMessageAsRead(message.messageId);
-        if (kDebugMode) print('Added new message from astrologer to list');
-      } else {
-        if (kDebugMode) print('Message already exists, skipping duplicate');
+        messages.refresh();
+
+        // Emit message_delivered immediately as per guide
+        _socket?.emit('message_delivered', {
+          'chatId': chatId.value,
+          'messageId': message.messageId,
+        });
+
+        // Automatically mark as read if in room
+        if (isInChatRoom.value) {
+          _markMessageAsRead(message.messageId);
+        }
+
+        // Transition from CREATED to ACTIVE if needed
+        if (sessionStatus.value == 'CREATED') {
+          _refreshSessionAndSync();
+        }
       }
     }
   }
 
+  void _handleMessageSentAck(dynamic data) {
+    // guid: clientMessageId should match what we sent
+    final clientMsgId = data['clientMessageId'];
+    final serverMsgId = data['messageId'] ?? data['_id'];
+
+    if (clientMsgId != null) {
+      final index = messages.indexWhere((m) => m.messageId == clientMsgId);
+      if (index != -1) {
+        messages[index] = messages[index].copyWith(
+          status: 'SENT',
+          messageId: serverMsgId,
+        );
+        messages.refresh();
+        if (kDebugMode) print('Message confirmed SENT: $serverMsgId');
+      }
+    }
+  }
+
+  void _handleMessageFailed(dynamic data) {
+    final clientMsgId = data['clientMessageId'];
+    if (clientMsgId != null) {
+      final index = messages.indexWhere((m) => m.messageId == clientMsgId);
+      if (index != -1) {
+        messages[index] = messages[index].copyWith(status: 'FAILED');
+        messages.refresh();
+      }
+    }
+    showErrorMessage(message: data['message'] ?? 'Failed to send message');
+  }
+
   void _handleMessageStatusUpdate(dynamic data) {
     final messageId = data['messageId'];
-    final status = data['status'];
+    final status = data['status']; // e.g., 'DELIVERED', 'READ'
     final index = messages.indexWhere((m) => m.messageId == messageId);
     if (index != -1) {
       messages[index] = messages[index].copyWith(status: status);
       messages.refresh();
+      if (kDebugMode) print('Message $messageId status updated to $status');
+    }
+  }
+
+  void _handleMessagesReadAck(dynamic data) {
+    final List<dynamic>? messageIds = data['messageIds'];
+    if (messageIds != null) {
+      for (var id in messageIds) {
+        final index = messages.indexWhere((m) => m.messageId == id);
+        if (index != -1) {
+          messages[index] = messages[index].copyWith(status: 'READ');
+        }
+      }
+      messages.refresh();
+    }
+  }
+
+  void _handleBillingUpdate(dynamic data) {
+    if (data['remainingBalance'] != null) {
+      final newBalance = (data['remainingBalance'] as num).toDouble();
+      walletBalance.value = newBalance;
+      _updateGlobalWalletBalance(newBalance);
+      _syncMoneyAnchor(walletBalance.value, pricePerMinute.value);
+    }
+    if (data['minutesRemaining'] != null) {
+      availableMinutes.value = (data['minutesRemaining'] as num).toInt();
+    }
+    if (data['minutesBilled'] != null) {
+      totalMinutes.value = (data['minutesBilled'] as num).toInt();
+    }
+    if (data['totalAmount'] != null) {
+      totalCost.value = (data['totalAmount'] as num).toDouble();
     }
   }
 
@@ -1550,7 +1665,8 @@ class AstrologerChatController extends BaseController
           'Place of Birth: $pob\n'
           'Occupation: $occupation';
 
-      final tempId = const Uuid().v4();
+      // clientMessageId = timestamp-based id as per guide
+      final clientMsgId = 'msg_${DateTime.now().millisecondsSinceEpoch}';
 
       // Send via socket - ensure we're connected AND in the chat room
       final canSend =
@@ -1568,7 +1684,7 @@ class AstrologerChatController extends BaseController
           'chatId': chatId.value,
           'content': messageContent,
           'messageType': 'TEXT',
-          'tempId': tempId,
+          'clientMessageId': clientMsgId,
         });
 
         if (kDebugMode) {
@@ -1578,7 +1694,7 @@ class AstrologerChatController extends BaseController
         // OPTIMISTIC UPDATE: Add to local list so user sees it
         // Use SENDING status so message_sent handler can update it
         final newMessage = AstrologerChatMessage(
-          messageId: tempId,
+          messageId: clientMsgId,
           chatId: chatId.value,
           senderId: UserData().getLoginData.user?.userId ?? 'user',
           senderType: 'USER',
@@ -1601,7 +1717,6 @@ class AstrologerChatController extends BaseController
         }
 
         // Wait for socket to be ready, then retry
-        // Check periodically if we can send
         int attempts = 0;
         Timer.periodic(const Duration(milliseconds: 500), (timer) {
           attempts++;
@@ -1616,31 +1731,27 @@ class AstrologerChatController extends BaseController
               'chatId': chatId.value,
               'content': messageContent,
               'messageType': 'TEXT',
-              'clientMessageId': tempId,
+              'clientMessageId': clientMsgId,
             });
 
             // Add optimistic message
-            // Use SENDING status so message_sent handler can update it
-            final newMessage = AstrologerChatMessage(
-              messageId: tempId,
+            final retryMessage = AstrologerChatMessage(
+              messageId: clientMsgId,
               chatId: chatId.value,
               senderId: UserData().getLoginData.user?.userId ?? 'user',
               senderType: 'USER',
               content: messageContent,
               messageType: 'TEXT',
-              status: 'SENDING', // Changed to SENDING so handler can update it
+              status: 'SENDING',
               sentAt: DateTime.now(),
             );
             if (!messages.any((m) => m.content == messageContent)) {
-              messages.insert(0, newMessage);
+              messages.insert(0, retryMessage);
             }
           } else if (attempts >= 20) {
-            // Timeout after 10 seconds
             timer.cancel();
             if (kDebugMode)
-              print(
-                'Timeout waiting for socket to be ready for auto-profile message',
-              );
+              print('Timeout waiting for socket for auto-profile message');
           }
         });
       }
@@ -1685,5 +1796,47 @@ class AstrologerChatController extends BaseController
     Future.delayed(const Duration(milliseconds: 500), () {
       messageToScrollTo.value = '';
     });
+  }
+
+  Future<void> onBackPressed() async {
+    if (sessionStatus.value == 'ACTIVE' || sessionStatus.value == 'CREATED') {
+      final shouldEnd = await Get.dialog<bool>(
+        AlertDialog(
+          title: const Text('End Chat?'),
+          content: const Text(
+            'Do you want to end the chat session? Your balance will be updated.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Get.back(result: false),
+              child: const Text('No'),
+            ),
+            ElevatedButton(
+              onPressed: () => Get.back(result: true),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text(
+                'Yes, End Chat',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      );
+
+      if (shouldEnd == true) {
+        await endChat();
+        // endChat will navigate back or update state
+        // If endChat doesn't navigate, do it here
+        if (Get.currentRoute.contains('chat')) {
+          Get.back();
+        }
+      }
+    } else {
+      Get.back();
+    }
+  }
+
+  void _handleAstrologerEndedSession() {
+    _handleSessionEnd('COMPLETED', reason: 'Astrologer ended the chat session');
   }
 }

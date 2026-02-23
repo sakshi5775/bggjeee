@@ -35,13 +35,13 @@ class NakshatraPredictionWidget extends StatelessWidget {
               Icon(
                 Icons.info_outline,
                 size: 48.w,
-                color: "#6F221E".toColor().withOpacity(0.5),
+                color: "#6F221E".toColor().withValues(alpha: 0.5),
               ),
               Spacing.h(16),
               AutoTranslateText(
                 'No data available',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.6),
+                  color: "#6F221E".toColor().withValues(alpha: 0.6),
                 ),
               ),
               Spacing.h(8),
@@ -49,7 +49,7 @@ class NakshatraPredictionWidget extends StatelessWidget {
                 'Please select Nakshatra Report from the table',
                 textAlign: TextAlign.center,
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.5),
+                  color: "#6F221E".toColor().withValues(alpha: 0.5),
                 ),
               ),
             ],
@@ -63,7 +63,7 @@ class NakshatraPredictionWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -88,7 +88,7 @@ class NakshatraPredictionWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12.r),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.deepOrange.withOpacity(0.2),
+                    color: AppColors.deepOrange.withValues(alpha: 0.2),
                     blurRadius: 6,
                     offset: const Offset(0, 2),
                   ),
@@ -121,7 +121,7 @@ class NakshatraPredictionWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16.r),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -242,7 +242,7 @@ class NakshatraPredictionWidget extends StatelessWidget {
           AutoTranslateText(
             'Discover how current planetary transits affect your Janma Nakshatra.',
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.7),
+              color: "#6F221E".toColor().withValues(alpha: 0.7),
             ),
           ),
           Spacing.h(16),
@@ -304,11 +304,13 @@ class NakshatraPredictionWidget extends StatelessWidget {
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
         color: isAuspicious
-            ? Colors.green.withOpacity(0.05)
-            : Colors.red.withOpacity(0.05),
+            ? Colors.green.withValues(alpha: 0.05)
+            : Colors.red.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: (isAuspicious ? Colors.green : Colors.red).withOpacity(0.2),
+          color: (isAuspicious ? Colors.green : Colors.red).withValues(
+            alpha: 0.2,
+          ),
           width: 1.5,
         ),
       ),
@@ -362,7 +364,7 @@ class NakshatraPredictionWidget extends StatelessWidget {
             maxLines: 3,
             overflow: TextOverflow.ellipsis,
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.8),
+              color: "#6F221E".toColor().withValues(alpha: 0.8),
               fontSize: 10.sp,
             ),
           ),
@@ -383,9 +385,9 @@ class NakshatraPredictionWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: "#6F221E".toColor().withOpacity(0.03),
+        color: "#6F221E".toColor().withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: "#6F221E".toColor().withOpacity(0.1)),
+        border: Border.all(color: "#6F221E".toColor().withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -417,7 +419,7 @@ class NakshatraPredictionWidget extends StatelessWidget {
                         child: AutoTranslateText(
                           remedy,
                           style: MyTextTheme.smallBCN.copyWith(
-                            color: "#6F221E".toColor().withOpacity(0.8),
+                            color: "#6F221E".toColor().withValues(alpha: 0.8),
                           ),
                         ),
                       ),
@@ -437,20 +439,20 @@ class NakshatraPredictionWidget extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            "#ed6f30".toColor().withOpacity(0.1),
-            "#ed6f30".toColor().withOpacity(0.05),
+            "#ed6f30".toColor().withValues(alpha: 0.1),
+            "#ed6f30".toColor().withValues(alpha: 0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: "#ed6f30".toColor().withOpacity(0.2),
+          color: "#ed6f30".toColor().withValues(alpha: 0.2),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

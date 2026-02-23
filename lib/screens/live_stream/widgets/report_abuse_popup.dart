@@ -9,10 +9,7 @@ import 'package:get/get.dart';
 class ReportAbusePopup extends StatefulWidget {
   final String streamId;
 
-  const ReportAbusePopup({
-    Key? key,
-    required this.streamId,
-  }) : super(key: key);
+  const ReportAbusePopup({Key? key, required this.streamId}) : super(key: key);
 
   @override
   State<ReportAbusePopup> createState() => _ReportAbusePopupState();
@@ -25,26 +22,11 @@ class _ReportAbusePopupState extends State<ReportAbusePopup> {
 
   // Report categories mapping
   final List<Map<String, String>> _reportCategories = [
-    {
-      'value': 'UNPROFESSIONAL_BEHAVIOUR',
-      'label': 'Unprofessional Behaviour',
-    },
-    {
-      'value': 'ABUSIVE_CONTENT',
-      'label': 'Abusive Content/Harmful',
-    },
-    {
-      'value': 'MISGUIDANCE',
-      'label': 'Misguidance',
-    },
-    {
-      'value': 'CONTACT_SHARING',
-      'label': 'Contact Sharing',
-    },
-    {
-      'value': 'OTHERS',
-      'label': 'Others',
-    },
+    {'value': 'UNPROFESSIONAL_BEHAVIOUR', 'label': 'Unprofessional Behaviour'},
+    {'value': 'ABUSIVE_CONTENT', 'label': 'Abusive Content/Harmful'},
+    {'value': 'MISGUIDANCE', 'label': 'Misguidance'},
+    {'value': 'CONTACT_SHARING', 'label': 'Contact Sharing'},
+    {'value': 'OTHERS', 'label': 'Others'},
   ];
 
   Future<void> _submitReport() async {
@@ -53,7 +35,7 @@ class _ReportAbusePopupState extends State<ReportAbusePopup> {
         'Error',
         'Please select a report category',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
       return;
@@ -75,7 +57,7 @@ class _ReportAbusePopupState extends State<ReportAbusePopup> {
           'Success',
           'Report submitted successfully',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green.withOpacity(0.8),
+          backgroundColor: Colors.green.withValues(alpha: 0.8),
           colorText: Colors.white,
           duration: const Duration(seconds: 2),
         );
@@ -84,7 +66,7 @@ class _ReportAbusePopupState extends State<ReportAbusePopup> {
           'Error',
           'Failed to submit report. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
@@ -96,7 +78,7 @@ class _ReportAbusePopupState extends State<ReportAbusePopup> {
         'Info',
         message.isEmpty ? 'You have already reported this stream' : message,
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.orange.withOpacity(0.8),
+        backgroundColor: Colors.orange.withValues(alpha: 0.8),
         colorText: Colors.white,
         duration: const Duration(seconds: 3),
       );
@@ -105,7 +87,7 @@ class _ReportAbusePopupState extends State<ReportAbusePopup> {
         'Error',
         'An error occurred. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     } finally {
@@ -129,9 +111,7 @@ class _ReportAbusePopupState extends State<ReportAbusePopup> {
             Color(0xFFFFE5CC), // Light orange/peach at bottom
           ],
         ),
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(30.r),
-        ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
       ),
       child: SafeArea(
         child: Padding(
@@ -149,7 +129,9 @@ class _ReportAbusePopupState extends State<ReportAbusePopup> {
                       'Report Abuse',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: const Color(0xFF5D2B1F), // Dark brown/reddish-brown
+                        color: const Color(
+                          0xFF5D2B1F,
+                        ), // Dark brown/reddish-brown
                       ).merge(AppTypography.h1),
                     ),
                   ),
@@ -166,58 +148,64 @@ class _ReportAbusePopupState extends State<ReportAbusePopup> {
               SizedBox(height: 32.h),
 
               // Report category options
-              ..._reportCategories.map((category) => Padding(
-                    padding: EdgeInsets.only(bottom: 20.h),
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _selectedCategory = category['value'];
-                        });
-                      },
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 24.w,
-                            height: 24.w,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: _selectedCategory == category['value']
-                                    ? const Color(0xFFF38B3B)
-                                    : const Color(0xFFF38B3B).withOpacity(0.6),
-                                width: 2,
-                              ),
+              ..._reportCategories.map(
+                (category) => Padding(
+                  padding: EdgeInsets.only(bottom: 20.h),
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedCategory = category['value'];
+                      });
+                    },
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 24.w,
+                          height: 24.w,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
                               color: _selectedCategory == category['value']
                                   ? const Color(0xFFF38B3B)
-                                  : Colors.transparent,
+                                  : const Color(
+                                      0xFFF38B3B,
+                                    ).withValues(alpha: 0.6),
+                              width: 2,
                             ),
-                            child: _selectedCategory == category['value']
-                                ? Center(
-                                    child: Container(
-                                      width: 10.w,
-                                      height: 10.w,
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.white,
-                                      ),
+                            color: _selectedCategory == category['value']
+                                ? const Color(0xFFF38B3B)
+                                : Colors.transparent,
+                          ),
+                          child: _selectedCategory == category['value']
+                              ? Center(
+                                  child: Container(
+                                    width: 10.w,
+                                    height: 10.w,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.white,
                                     ),
-                                  )
-                                : null,
+                                  ),
+                                )
+                              : null,
+                        ),
+                        SizedBox(width: 16.w),
+                        Expanded(
+                          child: AutoTranslateText(
+                            category['label']!,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: const Color(
+                                0xFF5D2B1F,
+                              ), // Dark brown/reddish-brown
+                            ).merge(AppTypography.h3),
                           ),
-                          SizedBox(width: 16.w),
-                          Expanded(
-                            child: AutoTranslateText(
-                              category['label']!,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFF5D2B1F), // Dark brown/reddish-brown
-                              ).merge(AppTypography.h3),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  )),
+                  ),
+                ),
+              ),
 
               SizedBox(height: 32.h),
 
@@ -254,7 +242,9 @@ class _ReportAbusePopupState extends State<ReportAbusePopup> {
                               height: 24.w,
                               child: const CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
                               ),
                             )
                           : AutoTranslateText(

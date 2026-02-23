@@ -1,6 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/gemstones_report_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
@@ -45,7 +45,7 @@ class GemstonesReportView extends BasePage<GemstonesReportController> {
           child: AutoTranslateText(
             'No data. Generate Kundli first.',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: '#6F221E'.toColor().withOpacity(0.6),
+              color: '#6F221E'.toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -220,7 +220,7 @@ class GemstonesReportView extends BasePage<GemstonesReportController> {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: orange.withOpacity(0.2),
+            color: orange.withValues(alpha: 0.2),
             blurRadius: 4,
             offset: const Offset(0, 1),
           ),
@@ -246,7 +246,7 @@ class GemstonesReportView extends BasePage<GemstonesReportController> {
                   AutoTranslateText(
                     '${otherName.isNotEmpty ? '$otherName • ' : ''}$gem${planet.isNotEmpty ? ' • $planet' : ''}',
                     style: MyTextTheme.smallBCN.copyWith(
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                       fontSize: 11.sp,
                     ),
                   ),
@@ -266,10 +266,10 @@ class GemstonesReportView extends BasePage<GemstonesReportController> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: maroon.withOpacity(0.2)),
+        border: Border.all(color: maroon.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -323,10 +323,10 @@ class GemstonesReportView extends BasePage<GemstonesReportController> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: maroon.withOpacity(0.2)),
+        border: Border.all(color: maroon.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -418,10 +418,10 @@ class GemstonesReportView extends BasePage<GemstonesReportController> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: maroon.withOpacity(0.2)),
+        border: Border.all(color: maroon.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),

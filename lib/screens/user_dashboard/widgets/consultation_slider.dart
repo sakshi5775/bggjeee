@@ -51,7 +51,7 @@ class ConsultationSlider extends StatelessWidget {
         color: const Color(0xFFFFF8F0),
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: const Color(0xFF9C27B0).withOpacity(0.5),
+          color: const Color(0xFF9C27B0).withValues(alpha: 0.5),
           width: 2,
         ),
       ),

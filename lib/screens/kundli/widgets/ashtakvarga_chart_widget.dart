@@ -31,7 +31,7 @@ class AshtakvargaChartWidget extends StatelessWidget {
               AutoTranslateText(
                 'Loading Ashtakvarga Chart...',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.7),
+                  color: "#6F221E".toColor().withValues(alpha: 0.7),
                 ),
               ),
             ],
@@ -48,13 +48,13 @@ class AshtakvargaChartWidget extends StatelessWidget {
               Icon(
                 Icons.error_outline,
                 size: 48.w,
-                color: "#6F221E".toColor().withOpacity(0.5),
+                color: "#6F221E".toColor().withValues(alpha: 0.5),
               ),
               Spacing.h(16),
               AutoTranslateText(
                 'No Ashtakvarga Chart data available',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.7),
+                  color: "#6F221E".toColor().withValues(alpha: 0.7),
                 ),
               ),
             ],
@@ -82,13 +82,13 @@ class AshtakvargaChartWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12.r),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.06),
+                    color: Colors.black.withValues(alpha: 0.06),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
                 ],
                 border: Border.all(
-                  color: "#ed6f30".toColor().withOpacity(0.2),
+                  color: "#ed6f30".toColor().withValues(alpha: 0.2),
                   width: 1,
                 ),
               ),
@@ -111,7 +111,7 @@ class AshtakvargaChartWidget extends StatelessWidget {
                                 height: chartSize,
                                 fit: BoxFit.contain,
                                 placeholderBuilder: (context) => Container(
-                                  color: Colors.grey.withOpacity(0.08),
+                                  color: Colors.grey.withValues(alpha: 0.08),
                                   child: Center(
                                     child: CircularProgressIndicator(
                                       color: "#ed6f30".toColor(),

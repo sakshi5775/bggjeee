@@ -1,5 +1,5 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/otp/controller/otp_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -28,13 +28,13 @@ class OTPView extends BasePage<OTPController> {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadowLight.withOpacity(0.2),
+            color: AppColors.shadowLight.withValues(alpha: 0.2),
             blurRadius: 20.r,
             offset: const Offset(0, 4),
           ),
         ],
         border: Border.all(
-          color: AppColors.saffron.withOpacity(0.3),
+          color: AppColors.saffron.withValues(alpha: 0.3),
           width: 1.5,
         ),
       ),
@@ -44,7 +44,7 @@ class OTPView extends BasePage<OTPController> {
       border: Border.all(color: AppColors.saffron, width: 2),
       boxShadow: [
         BoxShadow(
-          color: AppColors.saffron.withOpacity(0.3),
+          color: AppColors.saffron.withValues(alpha: 0.3),
           blurRadius: 12.r,
           offset: const Offset(0, 6),
         ),
@@ -78,7 +78,9 @@ class OTPView extends BasePage<OTPController> {
                           borderRadius: BorderRadius.circular(24.r),
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.shadowMedium.withOpacity(0.1),
+                              color: AppColors.shadowMedium.withValues(
+                                alpha: 0.1,
+                              ),
                               blurRadius: 20,
                               offset: const Offset(0, 10),
                             ),
@@ -225,7 +227,9 @@ class OTPView extends BasePage<OTPController> {
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.orange.withOpacity(0.45),
+                                        color: Colors.orange.withValues(
+                                          alpha: 0.45,
+                                        ),
                                         blurRadius: 18,
                                         offset: const Offset(0, 8),
                                       ),

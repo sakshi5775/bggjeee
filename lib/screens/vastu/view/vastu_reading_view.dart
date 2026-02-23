@@ -164,7 +164,7 @@ class _VastuReadingViewState extends State<VastuReadingView>
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
@@ -213,7 +213,7 @@ class _VastuReadingViewState extends State<VastuReadingView>
                 borderRadius: BorderRadius.circular(12.r),
                 boxShadow: [
                   BoxShadow(
-                    color: "#F38B3B".toColor().withOpacity(0.35),
+                    color: "#F38B3B".toColor().withValues(alpha: 0.35),
                     blurRadius: 6,
                     offset: const Offset(0, 3),
                   ),

@@ -31,19 +31,15 @@ class CorrectionStepCard extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 12.h),
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: isCompleted 
-            ? '#E8F5E9'.toColor()
-            : '#ffffff'.toColor(),
+        color: isCompleted ? '#E8F5E9'.toColor() : '#ffffff'.toColor(),
         borderRadius: BorderRadius.circular(14.r),
         border: Border.all(
-          color: isCompleted
-              ? '#4CAF50'.toColor()
-              : '#F5D7B8'.toColor(),
+          color: isCompleted ? '#4CAF50'.toColor() : '#F5D7B8'.toColor(),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -56,24 +52,20 @@ class CorrectionStepCard extends StatelessWidget {
             width: 40.w,
             height: 40.w,
             decoration: BoxDecoration(
-              color: isCompleted
-                  ? '#4CAF50'.toColor()
-                  : "#F38B3B".toColor(),
+              color: isCompleted ? '#4CAF50'.toColor() : "#F38B3B".toColor(),
               shape: BoxShape.circle,
             ),
             child: Center(
               child: isCompleted
-                  ? Icon(
-                      Icons.check,
-                      color: Colors.white,
-                      size: 20.w,
-                    )
+                  ? Icon(Icons.check, color: Colors.white, size: 20.w)
                   : AutoTranslateText(
                       stepNumber.toString(),
-                      style: MyTextTheme.mediumBCB.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ).merge(AppTypography.h3),
+                      style: MyTextTheme.mediumBCB
+                          .copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.h3),
                     ),
             ),
           ),
@@ -84,19 +76,17 @@ class CorrectionStepCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(
-                      icon,
-                      color: "#F38B3B".toColor(),
-                      size: 20.w,
-                    ),
+                    Icon(icon, color: "#F38B3B".toColor(), size: 20.w),
                     Spacing.w(8),
                     Expanded(
                       child: AutoTranslateText(
                         title,
-                        style: MyTextTheme.mediumBCB.copyWith(
-                          color: '#3E2723'.toColor(),
-                          fontWeight: FontWeight.bold,
-                        ).merge(AppTypography.h3),
+                        style: MyTextTheme.mediumBCB
+                            .copyWith(
+                              color: '#3E2723'.toColor(),
+                              fontWeight: FontWeight.bold,
+                            )
+                            .merge(AppTypography.h3),
                       ),
                     ),
                   ],
@@ -104,9 +94,9 @@ class CorrectionStepCard extends StatelessWidget {
                 Spacing.h(8),
                 AutoTranslateText(
                   description,
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: '#666666'.toColor(),
-                  ).merge(AppTypography.body1),
+                  style: MyTextTheme.smallBCN
+                      .copyWith(color: '#666666'.toColor())
+                      .merge(AppTypography.body1),
                 ),
               ],
             ),
@@ -116,12 +106,3 @@ class CorrectionStepCard extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
-
-
-

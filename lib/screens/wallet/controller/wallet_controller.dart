@@ -1,6 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/wallet_model.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/user_profile_service.dart';
@@ -11,6 +11,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 
 class WalletController extends BaseController {
   final WalletService _walletService = WalletService();
@@ -41,6 +42,7 @@ class WalletController extends BaseController {
 
   // Filters
   final RxString selectedStatus = ''.obs; // Empty means all statuses
+  final RxString sortOrder = 'NEWEST'.obs; // NEWEST, OLDEST
   final List<String> statusOptions = [
     '',
     'INITIATED',
@@ -77,9 +79,19 @@ class WalletController extends BaseController {
     _razorpayService.initialize(
       onSuccess: _handlePaymentSuccess,
       onError: (message) {
+        CrashlyticsService.trackAction(
+          "PAYMENT",
+          "FAIL",
+          data: "reason: $message",
+        );
         showErrorMessage(title: 'Recharge Failed', message: message);
       },
       onFailure: (response) {
+        CrashlyticsService.trackAction(
+          "PAYMENT",
+          "FAIL_GATEWAY",
+          data: "code: ${response.code}, message: ${response.message}",
+        );
         showErrorMessage(
           title: 'Recharge Failed',
           message: '${response.code}: ${response.message}',
@@ -93,7 +105,14 @@ class WalletController extends BaseController {
     final orderId = data['orderId']?.toString() ?? ''; // Razorpay Order ID
     final signature = data['signature']?.toString() ?? '';
 
+    CrashlyticsService.trackAction(
+      "PAYMENT",
+      "CALLBACK",
+      data: "paymentId:$paymentId, orderId:$orderId",
+    );
+
     if (_pendingRechargeId == null) {
+      CrashlyticsService.trackAction("PAYMENT", "SESSION_LOST");
       showErrorMessage(
         title: "Error",
         message: "Recharge session lost. Please try again.",
@@ -114,6 +133,11 @@ class WalletController extends BaseController {
       if (Get.isDialogOpen == true) {
         Get.back(); // Close recharge dialog
       }
+      CrashlyticsService.trackAction(
+        "PAYMENT",
+        "SUCCESS",
+        data: "rechargeId:$_pendingRechargeId",
+      );
       // Show success modal
       _showPaymentSuccessModal();
       // Refresh wallet balance and history
@@ -139,7 +163,7 @@ class WalletController extends BaseController {
               borderRadius: BorderRadius.circular(30.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.15),
+                  color: Colors.black.withValues(alpha: 0.15),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),
@@ -186,7 +210,7 @@ class WalletController extends BaseController {
                         width: 80.w,
                         height: 80.w,
                         decoration: BoxDecoration(
-                          color: AppColors.success.withOpacity(0.1),
+                          color: AppColors.success.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -246,87 +270,151 @@ class WalletController extends BaseController {
 
     if (response != null && response.razorpay != null) {
       _pendingRechargeId = response.rechargeId;
+      CrashlyticsService.trackAction(
+        "PAYMENT",
+        "INIT",
+        data: "amount:$amount, rechargeId:${response.rechargeId}",
+      );
       _razorpayService.openCheckout(razorpayData: response.razorpay!);
     } else {
+      CrashlyticsService.trackAction(
+        "PAYMENT",
+        "INIT_FAIL",
+        data: "amount:$amount",
+      );
       showErrorMessage(title: "Error", message: "Failed to initiate recharge.");
     }
   }
 
-  /// Load wallet balance from user profile
+  /// Load wallet balance and transaction history from user profile
   Future<void> loadWalletBalance() async {
     final userId = UserData().getLoginData.user?.userId;
     if (userId == null) return;
 
     await runWithLoading(
       () async {
-        // Try new wallet balance API
-        final balanceResponse = await _walletService.getWalletBalance(userId);
-        if (balanceResponse != null && balanceResponse.data != null) {
-          walletBalance.value = balanceResponse.data!.balance.toDouble();
-          currency.value = balanceResponse.data!.currency;
-        }
+        // Fetch Profile Data (PRIMARY SOURCE of balance and transactions)
+        try {
+          print("DEBUG: Fetching profile for wallet balance, userId: $userId");
+          final profile = await _profileService.getProfile(userId);
 
-        // Fetch profile to get transactions
-        final profile = await _profileService.getProfile(userId);
-        if (profile?.wallet != null) {
-          // If walletBalance wasn't updated by API, use profile one
-          if (balanceResponse == null) {
-            walletBalance.value = profile!.wallet!.balance ?? 0.0;
+          if (profile != null && profile.wallet != null) {
+            walletBalance.value = profile.wallet!.balance ?? 0.0;
             currency.value = profile.wallet!.currency ?? 'INR';
-          }
 
-          _updateCombinedHistory(profile!.wallet!.transactions ?? []);
+            // Get.snackbar(
+            //   "Debug: Profile OK",
+            //   "Bal: ${walletBalance.value} ${currency.value}",
+            //   snackPosition: SnackPosition.BOTTOM,
+            // );
+
+            // Update history from profile transactions
+            _updateHistoryFromProfile(profile.wallet!.transactions ?? []);
+
+            // If profile balance is 0, try fallback just in case profile data is stale/limited
+            if (walletBalance.value == 0.0) {
+              await _fallbackToBalanceApi(userId);
+            }
+          } else {
+            // Get.snackbar("Debug: Profile/Wallet NULL", "Trying fallback API");
+            await _fallbackToBalanceApi(userId);
+          }
+        } catch (e) {
+          ///   Get.snackbar("Debug: Profile Catch", e.toString());
+          await _fallbackToBalanceApi(userId);
         }
       },
       showBusy: false,
-      showError: false,
+      showError: true,
     );
+
+    isLoadingHistory.value = false;
   }
 
-  /// Merge recharge history with profile transactions
-  void _updateCombinedHistory(List<WalletTransaction> transactions) {
-    // Start with all recharges
-    List<dynamic> merged = List.from(rechargeHistory);
+  Future<void> _fallbackToBalanceApi(String userId) async {
+    try {
+      print("DEBUG: Fetching fallback balance for userId: $userId");
+      final balanceResponse = await _walletService.getWalletBalance(userId);
+      if (balanceResponse != null && balanceResponse.data != null) {
+        double newBalance = balanceResponse.data!.balance.toDouble();
+        if (walletBalance.value == 0.0 || walletBalance.value != newBalance) {
+          walletBalance.value = newBalance;
+          currency.value = balanceResponse.data!.currency;
 
-    // Add deductions from profile if they are not already in merged
-    // (Recharges are handled by getRechargeHistory API which has more info)
-    for (var tx in transactions) {
-      // if (tx.type == 'DEDUCTION') {
-      // Check if already exists by transactionId or id
-      bool exists = merged.any((e) {
-        if (e is WalletRechargeHistoryItem)
-          return e.transactionId == tx.transactionId;
-        if (e is WalletTransaction) return e.transactionId == tx.transactionId;
-        return false;
-      });
-
-      if (!exists) {
-        merged.add(tx);
+          // Get.snackbar(
+          //   "Debug: Fallback Success",
+          //   "Bal: ${walletBalance.value} ${currency.value}",
+          //   snackPosition: SnackPosition.BOTTOM,
+          // );
+        }
+      } else {
+        Get.snackbar("Debug: Fallback FAIL", "No data returned");
       }
-      // }
+    } catch (e) {
+      print("DEBUG: Error fetching fallback wallet balance: $e");
+      Get.snackbar("Debug: Fallback Exception", e.toString());
+    }
+  }
+
+  /// Update combined history using only transactions from profile
+  void _updateHistoryFromProfile(List<WalletTransaction> transactions) {
+    print(
+      "DEBUG: Updating history from profile, count: ${transactions.length}",
+    );
+
+    // DEBUG SNACKBAR
+    // Get.snackbar(
+    //   "Debug: History Loaded",
+    //   "Found ${transactions.length} transactions in profile",
+    //   snackPosition: SnackPosition.BOTTOM,
+    //   duration: const Duration(seconds: 5),
+    // );
+
+    for (var tx in transactions) {
+      print(
+        "DEBUG: Transaction - Type: ${tx.type}, Amount: ${tx.amount}, Status: ${tx.status}, Description: ${tx.description}",
+      );
     }
 
-    // Sort combined history by date descending
-    merged.sort((a, b) {
-      DateTime? dateA = (a is WalletRechargeHistoryItem)
-          ? (a.initiatedAtDate ?? a.createdAtDate)
-          : (a as WalletTransaction).createdAtDate;
-      DateTime? dateB = (b is WalletRechargeHistoryItem)
-          ? (b.initiatedAtDate ?? b.createdAtDate)
-          : (b as WalletTransaction).createdAtDate;
+    // We use transactions directly from profile as they contain both recharges and deductions
+    List<dynamic> list = List.from(transactions);
+
+    // Sort transactions based on sortOrder
+    _sortTransactions(list);
+
+    _allTransactions = list;
+    _applyFilterAndPaginate();
+
+    print(
+      "DEBUG: _allTransactions populated, count: ${_allTransactions.length}",
+    );
+    print("DEBUG: combinedHistory populated, count: ${combinedHistory.length}");
+  }
+
+  void _sortTransactions(List<dynamic> list) {
+    list.sort((a, b) {
+      DateTime? dateA = (a as WalletTransaction).createdAtDate;
+      DateTime? dateB = (b as WalletTransaction).createdAtDate;
 
       if (dateA == null) return 1;
       if (dateB == null) return -1;
-      return dateB.compareTo(dateA);
-    });
 
-    _allTransactions = merged;
+      if (sortOrder.value == 'NEWEST') {
+        return dateB.compareTo(dateA); // Descending
+      } else {
+        return dateA.compareTo(dateB); // Ascending
+      }
+    });
+  }
+
+  void setSortOrder(String order) {
+    sortOrder.value = order;
+    _sortTransactions(_allTransactions);
     _applyFilterAndPaginate();
   }
 
-  /// Load recharge history
+  /// Load recharge history (Now just a wrapper for loadWalletBalance)
   Future<void> loadRechargeHistory({bool refresh = false}) async {
-    // Instead just reload wallet balance to get profile transactions
     if (refresh) {
       await loadWalletBalance();
     }
@@ -430,6 +518,12 @@ class WalletController extends BaseController {
               razorpayOrderId: razorpayOrderId,
               razorpayPaymentId: razorpayPaymentId,
               razorpaySignature: razorpaySignature,
+            );
+
+            CrashlyticsService.trackAction(
+              "PAYMENT",
+              "VERIFY",
+              data: "rechargeId:$rechargeId, success:${response?.success}",
             );
 
             if (response?.success == true && response?.data != null) {

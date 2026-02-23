@@ -149,7 +149,7 @@ class WalletBalanceData {
   factory WalletBalanceData.fromJson(Map<String, dynamic> json) {
     return WalletBalanceData(
       balance: json['balance'] != null
-          ? int.tryParse(json['balance'].toString()) ?? 0
+          ? (double.tryParse(json['balance'].toString()) ?? 0).round()
           : 0,
       currency: json['currency']?.toString() ?? 'INR',
     );

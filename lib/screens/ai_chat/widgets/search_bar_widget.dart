@@ -1,5 +1,5 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/ai_chat/controllers/ai_chat_controller.dart';
 
@@ -17,10 +17,7 @@ class SearchBarWidget extends BasePage<AiChatController> {
       decoration: BoxDecoration(
         color: AppColors.lightBackground,
         borderRadius: AppRadius.all(12),
-        border: Border.all(
-          color: AppColors.dividerLight,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.dividerLight, width: 1),
       ),
       child: TextField(
         controller: controller.searchController,
@@ -53,11 +50,8 @@ class SearchBarWidget extends BasePage<AiChatController> {
           border: InputBorder.none,
           contentPadding: AppPaddings.symmetric(h: 16, v: 12),
         ),
-        style: MyTextTheme.smallBCN.copyWith(
-          color: AppColors.textPrimary,
-        ),
+        style: MyTextTheme.smallBCN.copyWith(color: AppColors.textPrimary),
       ),
     );
   }
 }
-

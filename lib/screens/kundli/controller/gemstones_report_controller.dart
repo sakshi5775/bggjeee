@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -36,15 +36,27 @@ class GemstonesReportController extends BaseController {
     final lat = form['latitude'] as double?;
     final lng = form['longitude'] as double?;
     final tz = form['timezone'] as double?;
-    if (date == null || time == null || lat == null || lng == null || tz == null) return;
+    if (date == null ||
+        time == null ||
+        lat == null ||
+        lng == null ||
+        tz == null)
+      return;
     try {
       isLoadingSuggestion.value = true;
       gemDetailsData.value = null;
-      final data = await _kundliService.getGemSuggestion(date: date, time: time, latitude: lat, longitude: lng, tz: tz);
+      final data = await _kundliService.getGemSuggestion(
+        date: date,
+        time: time,
+        latitude: lat,
+        longitude: lng,
+        tz: tz,
+      );
       gemSuggestionData.value = data;
       final response = data?['data']?['response'] as Map<String, dynamic>?;
       if (response != null) {
-        final gemKey = response['key']?.toString() ?? response['gem']?.toString();
+        final gemKey =
+            response['key']?.toString() ?? response['gem']?.toString();
         if (gemKey != null && gemKey.isNotEmpty) {
           final details = await _kundliService.getGemDetails(gem: gemKey);
           if (details != null) {

@@ -263,7 +263,7 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
                   backgroundColor: const Color(0xFFFDF3E6),
                   shape: StadiumBorder(
                     side: BorderSide(
-                      color: "#6F221E".toColor().withOpacity(0.3),
+                      color: "#6F221E".toColor().withValues(alpha: 0.3),
                       width: 0.8,
                     ),
                   ),

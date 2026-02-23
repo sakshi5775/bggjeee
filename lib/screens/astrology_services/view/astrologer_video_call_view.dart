@@ -1,10 +1,10 @@
-import 'package:astrobharataiuser/widgets/common_header.dart';
-import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+﻿import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/astrologer_video_call_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -23,61 +23,107 @@ class AstrologerVideoCallView extends StatelessWidget {
         child: Column(
           children: [
             // Header
-            CommonHeader(
-              title: controller.astrologer.displayName,
-              showDrawer: false, // No drawer on video call screen
-              showHome: true,
-              subtitle: Obx(
-                () => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            // Custom Header Implementation (Replaces CommonHeader)
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              decoration: BoxDecoration(color: Colors.transparent),
+              child: SafeArea(
+                bottom: false,
+                child: Row(
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 8.w,
-                          height: 8.h,
-                          decoration: BoxDecoration(
-                            color: controller.isCallConnected.value
-                                ? const Color(0xFF4CAF50)
-                                : Colors.orange,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        Spacing.w(4),
-                        AutoTranslateText(
-                          controller.isRinging.value
-                              ? 'Ringing...'
-                              : controller.isCallConnected.value
-                              ? 'Connected'
-                              : 'Online',
-                          style: MyTextTheme.smallBCN.copyWith(
-                            color: const Color(0xFF6F221E),
-                          ),
-                        ),
-                      ],
+                    // Back Button
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.black),
+                      onPressed: () => Get.back(),
                     ),
-                    if (controller.isCallConnected.value) ...[
-                      Spacing.h(4),
-                      Row(
+                    // Astrologer Details
+                    Expanded(
+                      child: Row(
                         children: [
-                          if (controller.pricePerMinute.value > 0)
-                            AutoTranslateText(
-                              '₹${controller.pricePerMinute.value.toStringAsFixed(0)}/min • ',
-                              style: MyTextTheme.smallBCB.copyWith(
-                                color: const Color(0xFF6F221E),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          AutoTranslateText(
-                            controller.callDuration.value,
-                            style: MyTextTheme.smallBCB.copyWith(
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold,
+                          CircleAvatar(
+                            radius: 18.r,
+                            backgroundImage:
+                                controller.astrologer.profilePicture != null &&
+                                    controller
+                                        .astrologer
+                                        .profilePicture!
+                                        .isNotEmpty
+                                ? CachedNetworkImageProvider(
+                                    controller.astrologer.profilePicture!,
+                                  )
+                                : null,
+                            child:
+                                controller.astrologer.profilePicture == null ||
+                                    controller
+                                        .astrologer
+                                        .profilePicture!
+                                        .isEmpty
+                                ? const Icon(Icons.person)
+                                : null,
+                          ),
+                          Spacing.w(8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                AutoTranslateText(
+                                  controller.astrologer.displayName,
+                                  style: MyTextTheme.mediumBCB,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Obx(
+                                  () => AutoTranslateText(
+                                    controller.callStatus.value,
+                                    style: MyTextTheme.smallBCN.copyWith(
+                                      fontSize: 10.sp,
+                                      color: controller.isCallConnected.value
+                                          ? Colors.green
+                                          : Colors.orange,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
-                    ],
+                    ),
+                    // Timer & Balance (Hidden as per request)
+                    // Column(
+                    //   crossAxisAlignment: CrossAxisAlignment.end,
+                    //   mainAxisSize: MainAxisSize.min,
+                    //   children: [
+                    //     Obx(
+                    //       () => AutoTranslateText(
+                    //         controller.remainingTime.value,
+                    //         style: MyTextTheme.mediumBCB.copyWith(
+                    //           color:
+                    //               (controller.remainingTime.value !=
+                    //                       '00:00:00' &&
+                    //                   !controller.remainingTime.value
+                    //                       .startsWith('00:00:'))
+                    //               ? Colors.black
+                    //               : Colors.red,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     Obx(
+                    //       () => AutoTranslateText(
+                    //         '₹${controller.walletBalance.value.toStringAsFixed(1)}',
+                    //         style: MyTextTheme.smallBCN.copyWith(
+                    //           color: Colors.indigo[900],
+                    //           fontSize: 10.sp,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    const SizedBox.shrink(),
+                    Spacing.w(12),
+                    // Red End Session Button Removed as per request
+                    const SizedBox.shrink(),
                   ],
                 ),
               ),
@@ -211,7 +257,7 @@ class AstrologerVideoCallView extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(0.8),
+        color: Colors.grey.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: Column(
@@ -310,7 +356,7 @@ class AstrologerVideoCallView extends StatelessWidget {
                 }
                 // Placeholder when video is off
                 return Container(
-                  color: Colors.grey.withOpacity(0.5),
+                  color: Colors.grey.withValues(alpha: 0.5),
                   child: Center(
                     child: Icon(Icons.person, size: 60.w, color: Colors.white),
                   ),
@@ -324,7 +370,7 @@ class AstrologerVideoCallView extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.all(4.w),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withValues(alpha: 0.5),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -433,12 +479,12 @@ class AstrologerVideoCallView extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8.r),
         border: Border.all(
           color: controller.showLowBalanceWarning.value
               ? Colors.orange
-              : Colors.white.withOpacity(0.2),
+              : Colors.white.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -454,7 +500,7 @@ class AstrologerVideoCallView extends StatelessWidget {
                   AutoTranslateText(
                     'Rate/Min:',
                     style: MyTextTheme.smallBCN.copyWith(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                     ),
                   ),
                   Obx(
@@ -474,7 +520,7 @@ class AstrologerVideoCallView extends StatelessWidget {
                   AutoTranslateText(
                     'Wallet:',
                     style: MyTextTheme.smallBCN.copyWith(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                     ),
                   ),
                   Obx(
@@ -503,7 +549,7 @@ class AstrologerVideoCallView extends StatelessWidget {
                   AutoTranslateText(
                     'Charges So Far:',
                     style: MyTextTheme.smallBCN.copyWith(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                     ),
                   ),
                   Obx(
@@ -524,7 +570,7 @@ class AstrologerVideoCallView extends StatelessWidget {
                     AutoTranslateText(
                       'Available:',
                       style: MyTextTheme.smallBCN.copyWith(
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                       ),
                     ),
                     Obx(
@@ -558,10 +604,13 @@ class AstrologerVideoCallView extends StatelessWidget {
         width: 48.w,
         height: 48.h,
         decoration: BoxDecoration(
-          color: isActive
-              ? Colors.white.withOpacity(0.2)
-              : Colors.white.withOpacity(0.1),
+          // Active (On state) -> Red, Inactive (Off state) -> Black
+          color: isActive ? Colors.red : Colors.black,
           shape: BoxShape.circle,
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.2),
+            width: 1,
+          ),
         ),
         child: Icon(icon, color: Colors.white, size: 24.w),
       ),
@@ -579,7 +628,7 @@ class AstrologerVideoCallView extends StatelessWidget {
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: Colors.red.withOpacity(0.3),
+              color: Colors.red.withValues(alpha: 0.3),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -595,7 +644,7 @@ class AstrologerVideoCallView extends StatelessWidget {
       return Container(
         width: size == double.infinity ? null : size.w,
         height: size == double.infinity ? null : size.h,
-        color: Colors.grey.withOpacity(0.3),
+        color: Colors.grey.withValues(alpha: 0.3),
         child: Center(
           child: Icon(
             Icons.person,
@@ -616,7 +665,7 @@ class AstrologerVideoCallView extends StatelessWidget {
           return Container(
             width: size == double.infinity ? null : size.w,
             height: size == double.infinity ? null : size.h,
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Center(
               child: Icon(
                 Icons.person,
@@ -654,7 +703,7 @@ class AstrologerVideoCallView extends StatelessWidget {
           return Container(
             width: size == double.infinity ? null : size.w,
             height: size == double.infinity ? null : size.h,
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Center(
               child: Icon(
                 Icons.person,

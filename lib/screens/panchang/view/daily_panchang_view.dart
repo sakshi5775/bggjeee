@@ -1,6 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/panchang/controller/daily_panchang_controller.dart';
@@ -43,7 +43,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                     'Vedic Details for the selected date',
                     style: MyTextTheme.smallBCN.copyWith(
                       fontSize: 12,
-                      color: "#6F221E".toColor().withOpacity(0.7),
+                      color: "#6F221E".toColor().withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -105,17 +105,17 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
       color: Colors.white,
       borderRadius: BorderRadius.circular(16.r),
       border: Border.all(
-        color: AppColors.deepOrange.withOpacity(0.2),
+        color: AppColors.deepOrange.withValues(alpha: 0.2),
         width: 1.5,
       ),
       boxShadow: [
         BoxShadow(
-          color: AppColors.deepOrange.withOpacity(0.08),
+          color: AppColors.deepOrange.withValues(alpha: 0.08),
           blurRadius: 16,
           offset: const Offset(0, 4),
         ),
         BoxShadow(
-          color: Colors.black.withOpacity(0.04),
+          color: Colors.black.withValues(alpha: 0.04),
           blurRadius: 8,
           offset: const Offset(0, 2),
         ),
@@ -133,7 +133,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
       contentPadding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 14.w),
       hintText: hint,
       hintStyle: MyTextTheme.smallBCN.copyWith(
-        color: AppColors.textSecondary.withOpacity(0.6),
+        color: AppColors.textSecondary.withValues(alpha: 0.6),
         fontSize: 13.sp,
       ),
       prefixIcon: Padding(
@@ -143,11 +143,15 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
       suffixIcon: suffix,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(color: AppColors.deepOrange.withOpacity(0.2)),
+        borderSide: BorderSide(
+          color: AppColors.deepOrange.withValues(alpha: 0.2),
+        ),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(color: AppColors.deepOrange.withOpacity(0.2)),
+        borderSide: BorderSide(
+          color: AppColors.deepOrange.withValues(alpha: 0.2),
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
@@ -211,10 +215,10 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
+        border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepOrange.withOpacity(0.05),
+            color: AppColors.deepOrange.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -251,10 +255,12 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
+          border: Border.all(
+            color: AppColors.deepOrange.withValues(alpha: 0.2),
+          ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.deepOrange.withOpacity(0.05),
+              color: AppColors.deepOrange.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -314,10 +320,10 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
+        border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepOrange.withOpacity(0.05),
+            color: AppColors.deepOrange.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -328,7 +334,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
         hint: AutoTranslateText(
           hint,
           style: MyTextTheme.smallBCN.copyWith(
-            color: AppColors.textSecondary.withOpacity(0.6),
+            color: AppColors.textSecondary.withValues(alpha: 0.6),
             fontSize: 13.sp,
           ),
         ),
@@ -357,13 +363,13 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: AppColors.deepOrange.withOpacity(0.4),
+              color: AppColors.deepOrange.withValues(alpha: 0.4),
               blurRadius: 20,
               offset: const Offset(0, 8),
               spreadRadius: 0,
             ),
             BoxShadow(
-              color: AppColors.deepOrange.withOpacity(0.2),
+              color: AppColors.deepOrange.withValues(alpha: 0.2),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -387,8 +393,8 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
               gradient: controller.isLoading.value
                   ? LinearGradient(
                       colors: [
-                        AppColors.deepOrange.withOpacity(0.5),
-                        AppColors.templeGold.withOpacity(0.5),
+                        AppColors.deepOrange.withValues(alpha: 0.5),
+                        AppColors.templeGold.withValues(alpha: 0.5),
                       ],
                     )
                   : AppColors.orangeGradient,
@@ -1605,7 +1611,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                   borderRadius: BorderRadius.circular(12.r),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -1651,7 +1657,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                   borderRadius: BorderRadius.circular(12.r),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),

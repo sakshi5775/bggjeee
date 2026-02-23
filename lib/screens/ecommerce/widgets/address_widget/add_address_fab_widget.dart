@@ -7,10 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class AddAddressFabWidget extends StatelessWidget {
   final VoidCallback onPressed;
 
-  const AddAddressFabWidget({
-    super.key,
-    required this.onPressed,
-  });
+  const AddAddressFabWidget({super.key, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +17,7 @@ class AddAddressFabWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(30.r),
         boxShadow: [
           BoxShadow(
-            color: '#F38B3B'.toColor().withOpacity(0.4),
+            color: '#F38B3B'.toColor().withValues(alpha: 0.4),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
@@ -36,11 +33,7 @@ class AddAddressFabWidget extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.add_rounded,
-                  color: Colors.white,
-                  size: 22.sp,
-                ),
+                Icon(Icons.add_rounded, color: Colors.white, size: 22.sp),
                 SizedBox(width: 8.w),
                 AutoTranslateText(
                   'Add Address',

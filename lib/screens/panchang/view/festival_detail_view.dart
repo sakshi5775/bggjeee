@@ -1,6 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/panchang/controller/festival_detail_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -142,7 +142,7 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
         borderRadius: BorderRadius.circular(14.04.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 15.04,
             offset: const Offset(0, 3.01),
           ),
@@ -210,7 +210,7 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 12,
             offset: const Offset(2, 4),
           ),
@@ -299,7 +299,7 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 12,
             offset: const Offset(2, 4),
           ),
@@ -370,7 +370,7 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

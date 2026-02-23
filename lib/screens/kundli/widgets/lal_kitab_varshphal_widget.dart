@@ -13,30 +13,24 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 class LalKitabVarshphalWidget extends StatelessWidget {
   final LalKitabController controller;
 
-  const LalKitabVarshphalWidget({
-    super.key,
-    required this.controller,
-  });
+  const LalKitabVarshphalWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingLalKitabVarshphalChart.value) {
         return Center(
-          child: CircularProgressIndicator(
-            color: "#ed6f30".toColor(),
-          ),
+          child: CircularProgressIndicator(color: "#ed6f30".toColor()),
         );
       }
 
       final data = controller.lalKitabVarshphalChartData.value;
-      
       if (data == null || data.isEmpty) {
         return Center(
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -48,7 +42,7 @@ class LalKitabVarshphalWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No chart data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -71,7 +65,7 @@ class LalKitabVarshphalWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12.r),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -82,24 +76,32 @@ class LalKitabVarshphalWidget extends StatelessWidget {
                 children: [
                   AutoTranslateText(
                     'Select Varshphal Year',
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      color: "#6F221E".toColor(),
-                      fontWeight: FontWeight.bold,
-                    ).merge(AppTypography.body1),
+                    style: MyTextTheme.mediumBCB
+                        .copyWith(
+                          color: "#6F221E".toColor(),
+                          fontWeight: FontWeight.bold,
+                        )
+                        .merge(AppTypography.body1),
                   ),
                   Spacing.h(12),
                   Obx(() {
                     // Generate list of years (current year ± 10 years)
                     final currentYear = DateTime.now().year;
-                    final years = List.generate(21, (index) => currentYear - 10 + index);
-                    
+                    final years = List.generate(
+                      21,
+                      (index) => currentYear - 10 + index,
+                    );
+
                     return Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 4.h,
+                      ),
                       decoration: BoxDecoration(
-                        color: "#ed6f30".toColor().withOpacity(0.1),
+                        color: "#ed6f30".toColor().withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8.r),
                         border: Border.all(
-                          color: "#ed6f30".toColor().withOpacity(0.3),
+                          color: "#ed6f30".toColor().withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -111,10 +113,12 @@ class LalKitabVarshphalWidget extends StatelessWidget {
                           Icons.arrow_drop_down,
                           color: "#ed6f30".toColor(),
                         ),
-                        style: MyTextTheme.mediumBCB.copyWith(
-                          color: "#6F221E".toColor(),
-                          fontWeight: FontWeight.w600,
-                        ).merge(AppTypography.body1),
+                        style: MyTextTheme.mediumBCB
+                            .copyWith(
+                              color: "#6F221E".toColor(),
+                              fontWeight: FontWeight.w600,
+                            )
+                            .merge(AppTypography.body1),
                         items: years.map((year) {
                           return DropdownMenuItem<int>(
                             value: year,
@@ -134,10 +138,10 @@ class LalKitabVarshphalWidget extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(12.w),
                     decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.1),
+                      color: Colors.grey.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8.r),
                       border: Border.all(
-                        color: Colors.grey.withOpacity(0.3),
+                        color: Colors.grey.withValues(alpha: 0.3),
                         width: 1,
                       ),
                     ),
@@ -155,9 +159,9 @@ class LalKitabVarshphalWidget extends StatelessWidget {
                             children: [
                               AutoTranslateText(
                                 'Varshphal Date (Auto-Generated)',
-                                style: MyTextTheme.smallBCN.copyWith(
-                                  color: Colors.grey,
-                                ).merge(AppTypography.label),
+                                style: MyTextTheme.smallBCN
+                                    .copyWith(color: Colors.grey)
+                                    .merge(AppTypography.label),
                               ),
                               Spacing.h(2),
                               Obx(() {
@@ -166,14 +170,17 @@ class LalKitabVarshphalWidget extends StatelessWidget {
                                 if (dobParts.length >= 2) {
                                   final day = dobParts[0].padLeft(2, '0');
                                   final month = dobParts[1].padLeft(2, '0');
-                                  displayDate = '$day/$month/${controller.selectedVarshphalYear.value}';
+                                  displayDate =
+                                      '$day/$month/${controller.selectedVarshphalYear.value}';
                                 }
                                 return AutoTranslateText(
                                   displayDate,
-                                  style: MyTextTheme.mediumBCB.copyWith(
-                                    color: "#6F221E".toColor(),
-                                    fontWeight: FontWeight.bold,
-                                  ).merge(AppTypography.h3),
+                                  style: MyTextTheme.mediumBCB
+                                      .copyWith(
+                                        color: "#6F221E".toColor(),
+                                        fontWeight: FontWeight.bold,
+                                      )
+                                      .merge(AppTypography.h3),
                                 );
                               }),
                             ],
@@ -186,15 +193,14 @@ class LalKitabVarshphalWidget extends StatelessWidget {
               ),
             ),
             Spacing.h(16),
-            
             // Info Label
             Container(
               padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
-                color: "#ed6f30".toColor().withOpacity(0.1),
+                color: "#ed6f30".toColor().withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8.r),
                 border: Border.all(
-                  color: "#ed6f30".toColor().withOpacity(0.2),
+                  color: "#ed6f30".toColor().withValues(alpha: 0.2),
                   width: 1,
                 ),
               ),
@@ -213,10 +219,9 @@ class LalKitabVarshphalWidget extends StatelessWidget {
                       Expanded(
                         child: AutoTranslateText(
                           'Varshphal is calculated from birthday to birthday. Date is auto-selected based on your birth date (DD/MM) + selected year.',
-                          style: MyTextTheme.smallBCN.copyWith(
-                            color: "#6F221E".toColor(),
-                            height: 1.4,
-                          ).merge(AppTypography.body2),
+                          style: MyTextTheme.smallBCN
+                              .copyWith(color: "#6F221E".toColor(), height: 1.4)
+                              .merge(AppTypography.body2),
                         ),
                       ),
                     ],
@@ -231,10 +236,10 @@ class LalKitabVarshphalWidget extends StatelessWidget {
                         return Container(
                           padding: EdgeInsets.all(8.w),
                           decoration: BoxDecoration(
-                            color: Colors.orange.withOpacity(0.1),
+                            color: Colors.orange.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(6.r),
                             border: Border.all(
-                              color: Colors.orange.withOpacity(0.3),
+                              color: Colors.orange.withValues(alpha: 0.3),
                               width: 1,
                             ),
                           ),
@@ -249,10 +254,12 @@ class LalKitabVarshphalWidget extends StatelessWidget {
                               Expanded(
                                 child: AutoTranslateText(
                                   'Note: Year matches birth year. System will auto-adjust to next year.',
-                                    style: MyTextTheme.smallBCN.copyWith(
-                                      color: Colors.orange.shade800,
-                                      height: 1.3,
-                                    ).merge(AppTypography.label),
+                                  style: MyTextTheme.smallBCN
+                                      .copyWith(
+                                        color: Colors.orange.shade800,
+                                        height: 1.3,
+                                      )
+                                      .merge(AppTypography.label),
                                 ),
                               ),
                             ],
@@ -266,7 +273,6 @@ class LalKitabVarshphalWidget extends StatelessWidget {
               ),
             ),
             Spacing.h(16),
-            
             // Chart Container
             Container(
               width: double.infinity,
@@ -275,7 +281,7 @@ class LalKitabVarshphalWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16.r),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -304,4 +310,3 @@ class LalKitabVarshphalWidget extends StatelessWidget {
     });
   }
 }
-

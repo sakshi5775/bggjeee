@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/onboarding/controller/onboarding_controller.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:flutter/material.dart';
@@ -43,9 +43,9 @@ class OnboardingView extends BasePage<OnboardingController> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    const Color(0xFFFE9A00).withOpacity(0.75),
-                    const Color(0xFF6900).withOpacity(0.55),
-                    const Color(0xFFE7000B).withOpacity(0.35),
+                    const Color(0xFFFE9A00).withValues(alpha: 0.75),
+                    const Color(0xFF6900).withValues(alpha: 0.55),
+                    const Color(0xFFE7000B).withValues(alpha: 0.35),
                     Colors.transparent,
                   ],
                 ),
@@ -67,10 +67,10 @@ class OnboardingView extends BasePage<OnboardingController> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black.withOpacity(0.0),
-                    Colors.black.withOpacity(0.3),
-                    Colors.black.withOpacity(0.5),
-                    Colors.black.withOpacity(0.7),
+                    Colors.black.withValues(alpha: 0.0),
+                    Colors.black.withValues(alpha: 0.3),
+                    Colors.black.withValues(alpha: 0.5),
+                    Colors.black.withValues(alpha: 0.7),
                   ],
                   stops: const [0.0, 0.3, 0.6, 1.0],
                 ),

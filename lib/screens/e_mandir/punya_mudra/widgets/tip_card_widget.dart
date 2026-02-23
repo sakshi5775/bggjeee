@@ -8,11 +8,7 @@ class TipCardWidget extends StatelessWidget {
   final String title;
   final String subtitle;
 
-  const TipCardWidget({
-    super.key,
-    required this.title,
-    required this.subtitle,
-  });
+  const TipCardWidget({super.key, required this.title, required this.subtitle});
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +33,7 @@ class TipCardWidget extends StatelessWidget {
                 children: [
                   AutoTranslateText(
                     title,
-                    style: AppTypography.h3.copyWith(
-                      fontSize: 16,
-                    ),
+                    style: AppTypography.h3.copyWith(fontSize: 16),
                   ),
                   const SizedBox(height: 2),
                   AutoTranslateText(
@@ -67,7 +61,11 @@ class TipCardWidget extends StatelessWidget {
                       fontSize: 15,
                     ),
                   ),
-                  const Icon(Icons.arrow_forward, color: Colors.white, size: 18)
+                  const Icon(
+                    Icons.arrow_forward,
+                    color: Colors.white,
+                    size: 18,
+                  ),
                 ],
               ),
             ),

@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/app_manager/network_image.dart';
+﻿import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/data_model/product_model.dart';
 import 'package:astrobharataiuser/data_model/search_model.dart';
@@ -69,7 +69,7 @@ class EcommerceSearchView extends StatelessWidget {
             borderRadius: BorderRadius.circular(12.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 6,
                 offset: const Offset(0, 3),
               ),
@@ -205,7 +205,7 @@ class EcommerceSearchView extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20.r),
                       border: Border.all(
-                        color: AppColors.textSecondary.withOpacity(0.2),
+                        color: AppColors.textSecondary.withValues(alpha: 0.2),
                       ),
                     ),
                     child: AutoTranslateText(
@@ -297,7 +297,7 @@ class EcommerceSearchView extends StatelessWidget {
           ),
         ],
         SizedBox(height: 12.h),
-        Divider(color: AppColors.textSecondary.withOpacity(0.1)),
+        Divider(color: AppColors.textSecondary.withValues(alpha: 0.1)),
         SizedBox(height: 12.h),
       ],
     );
@@ -409,7 +409,7 @@ class _SearchResultCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 3),
             ),

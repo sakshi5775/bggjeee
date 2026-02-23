@@ -124,7 +124,7 @@ class KundliChartWidget extends StatelessWidget {
                         return Container(
                           width: chartSize,
                           height: chartSize,
-                          color: Colors.grey.withOpacity(0.1),
+                          color: Colors.grey.withValues(alpha: 0.1),
                           child: Center(
                             child: AutoTranslateText(
                               'Kundli Image',
@@ -161,7 +161,9 @@ class KundliChartWidget extends StatelessWidget {
                             height: 50.w,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: AppColors.deepOrange.withOpacity(0.2),
+                              color: AppColors.deepOrange.withValues(
+                                alpha: 0.2,
+                              ),
                             ),
                             child: Icon(
                               Icons.person,

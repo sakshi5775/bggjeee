@@ -120,12 +120,12 @@ class PalmReadingHandGenderView extends StatelessWidget {
             border: Border.all(
               color: isSelected
                   ? "#F38B3B".toColor()
-                  : Colors.grey.withOpacity(0.3),
+                  : Colors.grey.withValues(alpha: 0.3),
               width: isSelected ? 2 : 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -148,7 +148,7 @@ class PalmReadingHandGenderView extends StatelessWidget {
                       size: 48.w,
                       color: isSelected
                           ? "#F38B3B".toColor()
-                          : "#F38B3B".toColor().withOpacity(0.5),
+                          : "#F38B3B".toColor().withValues(alpha: 0.5),
                     ),
                   );
                 },
@@ -232,12 +232,12 @@ class PalmReadingHandGenderView extends StatelessWidget {
             border: Border.all(
               color: isSelected
                   ? "#F38B3B".toColor()
-                  : Colors.grey.withOpacity(0.3),
+                  : Colors.grey.withValues(alpha: 0.3),
               width: isSelected ? 2 : 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -271,7 +271,7 @@ class PalmReadingHandGenderView extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: "#F38B3B".toColor().withOpacity(0.35),
+              color: "#F38B3B".toColor().withValues(alpha: 0.35),
               blurRadius: 6,
               offset: const Offset(0, 3),
             ),

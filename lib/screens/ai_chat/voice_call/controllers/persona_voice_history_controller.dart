@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/ai_chat/voice_call/services/persona_voice_call_service.dart';
 
 import 'package:get/get.dart';
@@ -11,7 +11,8 @@ class PersonaVoiceHistoryController extends BaseController {
 
   final RxList<Map<String, dynamic>> calls = <Map<String, dynamic>>[].obs;
   final RxInt total = 0.obs;
-  final RxString status = ''.obs; // INITIATED, CONNECTED, IN_PROGRESS, COMPLETED, FAILED, CANCELLED
+  final RxString status =
+      ''.obs; // INITIATED, CONNECTED, IN_PROGRESS, COMPLETED, FAILED, CANCELLED
   final RxString sortBy = 'createdAt'.obs;
   final RxString sortOrder = 'desc'.obs;
   final RxInt limit = 20.obs;
@@ -32,7 +33,8 @@ class PersonaVoiceHistoryController extends BaseController {
         sortOrder: sortOrder.value,
         status: status.value.isEmpty ? null : status.value,
       );
-      final list = (data?['calls'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+      final list =
+          (data?['calls'] as List?)?.cast<Map<String, dynamic>>() ?? [];
       total.value = data?['total'] as int? ?? list.length;
       calls.addAll(list);
     } finally {
@@ -56,7 +58,10 @@ class PersonaVoiceHistoryController extends BaseController {
     if (s == 'INITIATED' || s == 'CONNECTED' || s == 'IN_PROGRESS') {
       final createdAt = DateTime.tryParse((call['createdAt'] ?? '').toString());
       if (createdAt != null) {
-        final elapsed = DateTime.now().toUtc().difference(createdAt.toUtc()).inSeconds;
+        final elapsed = DateTime.now()
+            .toUtc()
+            .difference(createdAt.toUtc())
+            .inSeconds;
         final remain = 600 - elapsed;
         final r = remain.clamp(0, 600);
         final m = (r ~/ 60).toString().padLeft(2, '0');
@@ -67,9 +72,3 @@ class PersonaVoiceHistoryController extends BaseController {
     return '';
   }
 }
-
-
-
-
-
-

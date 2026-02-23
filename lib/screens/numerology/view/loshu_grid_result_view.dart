@@ -1,6 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/numerology/controller/loshu_grid_result_controller.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -63,7 +63,7 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -152,11 +152,11 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
       margin: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
         color: isMissing
-            ? Colors.grey.withOpacity(0.1)
-            : color.withOpacity(0.2),
+            ? Colors.grey.withValues(alpha: 0.1)
+            : color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: isMissing ? Colors.grey.withOpacity(0.3) : color,
+          color: isMissing ? Colors.grey.withValues(alpha: 0.3) : color,
           width: isMissing ? 1 : 2,
           style: isMissing ? BorderStyle.solid : BorderStyle.solid,
         ),
@@ -208,7 +208,7 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -296,7 +296,7 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
         Container(
           padding: EdgeInsets.all(12.w),
           decoration: BoxDecoration(
-            color: iconColor.withOpacity(0.1),
+            color: iconColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8.r),
           ),
           child: AutoTranslateText(
@@ -311,7 +311,7 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
         AutoTranslateText(
           description,
           style: MyTextTheme.smallBCN.copyWith(
-            color: "#6F221E".toColor().withOpacity(0.7),
+            color: "#6F221E".toColor().withValues(alpha: 0.7),
           ),
         ),
       ],
@@ -326,7 +326,7 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -356,12 +356,12 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
                   padding: EdgeInsets.only(bottom: 16.h),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.05),
+                      color: Colors.grey.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(12.r),
                       border: Border.all(
                         color: isExpanded
-                            ? color.withOpacity(0.3)
-                            : Colors.grey.withOpacity(0.2),
+                            ? color.withValues(alpha: 0.3)
+                            : Colors.grey.withValues(alpha: 0.2),
                         width: isExpanded ? 1.5 : 1,
                       ),
                     ),
@@ -393,7 +393,7 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
                                         vertical: 4.h,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: color.withOpacity(0.1),
+                                        color: color.withValues(alpha: 0.1),
                                         borderRadius: BorderRadius.circular(
                                           6.r,
                                         ),
@@ -427,7 +427,9 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
                             borderRadius: BorderRadius.circular(4.r),
                             child: LinearProgressIndicator(
                               value: percentage / 100,
-                              backgroundColor: Colors.grey.withOpacity(0.2),
+                              backgroundColor: Colors.grey.withValues(
+                                alpha: 0.2,
+                              ),
                               valueColor: AlwaysStoppedAnimation<Color>(color),
                               minHeight: 8.h,
                             ),
@@ -452,7 +454,7 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
                                   vertical: 6.h,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: color.withOpacity(0.05),
+                                  color: color.withValues(alpha: 0.05),
                                   borderRadius: BorderRadius.circular(6.r),
                                 ),
                                 child: Row(
@@ -467,9 +469,9 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
                                       child: AutoTranslateText(
                                         'Numbers: $planeNums',
                                         style: MyTextTheme.smallBCN.copyWith(
-                                          color: "#6F221E"
-                                              .toColor()
-                                              .withOpacity(0.8),
+                                          color: "#6F221E".toColor().withValues(
+                                            alpha: 0.8,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -518,7 +520,7 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Divider(
-                                  color: Colors.grey.withOpacity(0.2),
+                                  color: Colors.grey.withValues(alpha: 0.2),
                                   thickness: 1,
                                 ),
                                 Spacing.h(12),
@@ -542,7 +544,7 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
                                     child: Container(
                                       padding: EdgeInsets.all(12.w),
                                       decoration: BoxDecoration(
-                                        color: color.withOpacity(0.08),
+                                        color: color.withValues(alpha: 0.08),
                                         borderRadius: BorderRadius.circular(
                                           8.r,
                                         ),
@@ -595,12 +597,12 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
                                     child: Container(
                                       padding: EdgeInsets.all(12.w),
                                       decoration: BoxDecoration(
-                                        color: color.withOpacity(0.1),
+                                        color: color.withValues(alpha: 0.1),
                                         borderRadius: BorderRadius.circular(
                                           8.r,
                                         ),
                                         border: Border.all(
-                                          color: color.withOpacity(0.3),
+                                          color: color.withValues(alpha: 0.3),
                                         ),
                                       ),
                                       child: Row(
@@ -635,7 +637,9 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
                                     child: Container(
                                       padding: EdgeInsets.all(12.w),
                                       decoration: BoxDecoration(
-                                        color: Colors.blue.withOpacity(0.05),
+                                        color: Colors.blue.withValues(
+                                          alpha: 0.05,
+                                        ),
                                         borderRadius: BorderRadius.circular(
                                           8.r,
                                         ),
@@ -705,7 +709,7 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -765,7 +769,10 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Spacing.h(24),
-                Divider(color: Colors.grey.withOpacity(0.2), thickness: 1),
+                Divider(
+                  color: Colors.grey.withValues(alpha: 0.2),
+                  thickness: 1,
+                ),
                 Spacing.h(16),
                 Row(
                   children: [

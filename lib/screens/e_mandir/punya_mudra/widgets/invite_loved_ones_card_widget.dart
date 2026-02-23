@@ -15,10 +15,7 @@ class InviteLovedOnesCardWidget extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 6,
-          ),
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6),
         ],
       ),
       child: Column(
@@ -43,6 +40,7 @@ class InviteLovedOnesCardWidget extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
+
           /// TITLE
           AutoTranslateText(
             "Connect Your Loved Ones With Astro E-Mandir",
@@ -52,6 +50,7 @@ class InviteLovedOnesCardWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
+
           /// SUBTITLE
           AutoTranslateText(
             "For Every Member You Add You will Get 30 Punya Mudra",
@@ -62,13 +61,17 @@ class InviteLovedOnesCardWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
+
           /// ACTION ROW
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               /// +10 CHIP
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   border: Border.all(color: AppColors.deepOrange),
                   borderRadius: BorderRadius.circular(10),
@@ -98,9 +101,13 @@ class InviteLovedOnesCardWidget extends StatelessWidget {
                   ],
                 ),
               ),
+
               /// SHARE BUTTON
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey.shade300),
                   borderRadius: BorderRadius.circular(10),
@@ -114,11 +121,7 @@ class InviteLovedOnesCardWidget extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 6),
-                    const Icon(
-                      Icons.message,
-                      color: Colors.green,
-                      size: 18,
-                    ),
+                    const Icon(Icons.message, color: Colors.green, size: 18),
                   ],
                 ),
               ),

@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/panchang/service/panchang_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
 import 'package:flutter/foundation.dart';
@@ -19,12 +19,12 @@ class HoraController extends BaseController {
   final selectedLocation = 'Fetching Location...'.obs;
   final horas = <Map<String, dynamic>>[].obs;
   final currentHora = Rxn<Map<String, dynamic>>();
-  
+
   // Location coordinates
   double? currentLatitude;
   double? currentLongitude;
   double? currentTimezone;
-  
+
   // Flag to track if controller is disposed
   bool _isDisposed = false;
 
@@ -91,7 +91,11 @@ class HoraController extends BaseController {
         if (_isDisposed) return;
 
         if (reverseGeocode != null) {
-          final city = reverseGeocode['city'] ?? reverseGeocode['town'] ?? reverseGeocode['village'] ?? '';
+          final city =
+              reverseGeocode['city'] ??
+              reverseGeocode['town'] ??
+              reverseGeocode['village'] ??
+              '';
           final state = reverseGeocode['state'] ?? '';
           if (city.isNotEmpty) {
             selectedLocation.value = state.isNotEmpty ? '$city, $state' : city;
@@ -139,10 +143,14 @@ class HoraController extends BaseController {
   /// Reverse geocode coordinates to get address
   Future<Map<String, dynamic>?> _reverseGeocode(double lat, double lon) async {
     try {
-      final response = await http.get(
-        Uri.parse('https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lon'),
-        headers: {'Accept': 'application/json'},
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .get(
+            Uri.parse(
+              'https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lon',
+            ),
+            headers: {'Accept': 'application/json'},
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>;
@@ -156,7 +164,9 @@ class HoraController extends BaseController {
 
   /// Fetch hora data
   Future<void> fetchHoraData() async {
-    if (currentLatitude == null || currentLongitude == null || currentTimezone == null) {
+    if (currentLatitude == null ||
+        currentLongitude == null ||
+        currentTimezone == null) {
       // Use default values if location not available
       currentLatitude = 28.6139; // Delhi default
       currentLongitude = 77.2090;
@@ -183,27 +193,32 @@ class HoraController extends BaseController {
         // The API returns: { "success": true, "data": { "status": 200, "response": { "horas": [...] } } }
         // Service returns: data['data'] which is { "status": 200, "response": { "horas": [...] } }
         final response = data['response'] as Map<String, dynamic>?;
-        
+
         if (response != null) {
           final horasList = response['horas'] as List<dynamic>?;
-          
+
           if (horasList != null && horasList.isNotEmpty) {
-            horas.value = horasList.map((h) => h as Map<String, dynamic>).toList();
-            
+            horas.value = horasList
+                .map((h) => h as Map<String, dynamic>)
+                .toList();
+
             // Find current hora based on current time (only if selected date is today)
-            final isToday = selectedDate.value.year == DateTime.now().year &&
-                           selectedDate.value.month == DateTime.now().month &&
-                           selectedDate.value.day == DateTime.now().day;
-            
+            final isToday =
+                selectedDate.value.year == DateTime.now().year &&
+                selectedDate.value.month == DateTime.now().month &&
+                selectedDate.value.day == DateTime.now().day;
+
             if (isToday) {
               _findCurrentHora();
             } else {
               // For other dates, show the first hora
               currentHora.value = horas.first;
             }
-            
+
             if (kDebugMode) {
-              debugPrint('Hora data fetched successfully: ${horas.length} horas');
+              debugPrint(
+                'Hora data fetched successfully: ${horas.length} horas',
+              );
             }
           } else {
             if (kDebugMode) {
@@ -235,15 +250,15 @@ class HoraController extends BaseController {
   void _findCurrentHora() {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    
+
     for (var hora in horas) {
       final startStr = hora['start']?.toString() ?? '';
       final endStr = hora['end']?.toString() ?? '';
-      
+
       try {
         final startTime = _parseDateTime(startStr);
         final endTime = _parseDateTime(endStr);
-        
+
         if (startTime != null && endTime != null) {
           // Normalize times to today for comparison
           final startToday = DateTime(
@@ -260,12 +275,12 @@ class HoraController extends BaseController {
             endTime.hour,
             endTime.minute,
           );
-          
+
           // Handle case where end time is next day (e.g., 11:44 PM - 0:44 AM)
-          final endTimeAdjusted = endToday.isBefore(startToday) 
+          final endTimeAdjusted = endToday.isBefore(startToday)
               ? endToday.add(const Duration(days: 1))
               : endToday;
-          
+
           // Check if current time is within this hora
           if (now.isAfter(startToday) && now.isBefore(endTimeAdjusted)) {
             currentHora.value = hora;
@@ -276,7 +291,7 @@ class HoraController extends BaseController {
         debugPrint('Error parsing hora time: $e');
       }
     }
-    
+
     // If no current hora found, use the first one
     if (horas.isNotEmpty) {
       currentHora.value = horas.first;
@@ -291,28 +306,30 @@ class HoraController extends BaseController {
       if (parts.length == 2) {
         final datePart = parts[0].trim(); // "17/12/2025"
         final timePart = parts[1].trim(); // "6:44:20 am"
-        
+
         final dateParts = datePart.split('/');
         if (dateParts.length == 3) {
           final day = int.parse(dateParts[0]);
           final month = int.parse(dateParts[1]);
           final year = int.parse(dateParts[2]);
-          
+
           // Parse time
           final isPM = timePart.toLowerCase().contains('pm');
-          final timeOnly = timePart.replaceAll(RegExp(r'[ap]m', caseSensitive: false), '').trim();
+          final timeOnly = timePart
+              .replaceAll(RegExp(r'[ap]m', caseSensitive: false), '')
+              .trim();
           final timeParts = timeOnly.split(':');
-          
+
           if (timeParts.length >= 2) {
             var hour = int.parse(timeParts[0]);
             final minute = int.parse(timeParts[1]);
-            
+
             if (isPM && hour != 12) {
               hour += 12;
             } else if (!isPM && hour == 12) {
               hour = 0;
             }
-            
+
             return DateTime(year, month, day, hour, minute);
           }
         }
@@ -364,7 +381,9 @@ class HoraController extends BaseController {
   Future<double> _getTimezoneOffset(String timezone) async {
     try {
       final response = await http.get(
-        Uri.parse('https://timeapi.io/api/TimeZone/coordinate?latitude=${currentLatitude ?? 28.6139}&longitude=${currentLongitude ?? 77.2090}'),
+        Uri.parse(
+          'https://timeapi.io/api/TimeZone/coordinate?latitude=${currentLatitude ?? 28.6139}&longitude=${currentLongitude ?? 77.2090}',
+        ),
         headers: {'Accept': 'application/json'},
       );
 
@@ -379,7 +398,7 @@ class HoraController extends BaseController {
     } catch (e) {
       debugPrint('Error getting timezone offset: $e');
     }
-    
+
     return await _getTimezoneOffsetFromCoordinates(
       currentLatitude ?? 28.6139,
       currentLongitude ?? 77.2090,
@@ -387,10 +406,15 @@ class HoraController extends BaseController {
   }
 
   /// Get timezone offset from coordinates
-  Future<double> _getTimezoneOffsetFromCoordinates(double lat, double lon) async {
+  Future<double> _getTimezoneOffsetFromCoordinates(
+    double lat,
+    double lon,
+  ) async {
     try {
       final response = await http.get(
-        Uri.parse('https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon'),
+        Uri.parse(
+          'https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon',
+        ),
         headers: {'Accept': 'application/json'},
       );
 
@@ -405,7 +429,7 @@ class HoraController extends BaseController {
     } catch (e) {
       debugPrint('Error getting timezone from coordinates: $e');
     }
-    
+
     return 5.5;
   }
 
@@ -429,4 +453,3 @@ class HoraController extends BaseController {
     return null;
   }
 }
-

@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -47,17 +47,17 @@ class NumerologyController extends BaseController {
       'icon': Icons.spa,
       'route': null, // Coming soon
     },
-     {
+    {
       'title': 'Lucky Things',
       'icon': Icons.spa,
       'route': null, // Coming soon
     },
-     {
+    {
       'title': 'Personal Year',
       'icon': Icons.spa,
       'route': null, // Coming soon
     },
-     {
+    {
       'title': 'Karmic Numbers',
       'icon': Icons.spa,
       'route': null, // Coming soon
@@ -72,7 +72,7 @@ class NumerologyController extends BaseController {
       'icon': Icons.grid_view,
       'route': AppRoutes.loshuGridForm,
     },
-     {
+    {
       'title': 'Reports',
       'icon': Icons.spa,
       'route': null, // Coming soon
@@ -84,5 +84,3 @@ class NumerologyController extends BaseController {
     Get.toNamed('/numerology-form');
   }
 }
-
-

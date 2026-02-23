@@ -61,7 +61,7 @@ class TarotBreakupWidget extends StatelessWidget {
       // Show loading if currently loading API
       if (isLoading) {
         return Container(
-          color: Colors.black.withOpacity(0.7),
+          color: Colors.black.withValues(alpha: 0.7),
           child: const Center(child: CircularProgressIndicator()),
         );
       }
@@ -87,7 +87,7 @@ class TarotBreakupWidget extends StatelessWidget {
               controller.closeReading();
             },
             behavior: HitTestBehavior.opaque,
-            child: Container(color: Colors.black.withOpacity(0.7)),
+            child: Container(color: Colors.black.withValues(alpha: 0.7)),
           ),
           // Content - not tappable to close
           Center(
@@ -111,7 +111,7 @@ class TarotBreakupWidget extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20.r),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
+                            color: Colors.black.withValues(alpha: 0.3),
                             blurRadius: 20,
                             offset: const Offset(0, 10),
                           ),
@@ -228,7 +228,7 @@ class TarotBreakupWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: color.withOpacity(0.3), width: 2),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

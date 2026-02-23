@@ -1,11 +1,20 @@
+<<<<<<< HEAD
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
+=======
+import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
+>>>>>>> origin/astrobharatai_user_new
 import 'package:astrobharataiuser/data_model/astrologer_chat_model.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controllers/astrologer_chat_controller.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+<<<<<<< HEAD
+=======
+import 'package:astrobharataiuser/core/value/dimension.dart';
+>>>>>>> origin/astrobharatai_user_new
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -88,6 +97,7 @@ class _AstrologerChatViewState extends State<AstrologerChatView> {
             bottom: false,
             child: Column(
               children: [
+<<<<<<< HEAD
                 CommonHeader(
                   title: '',
                   showDrawer: false,
@@ -205,6 +215,127 @@ class _AstrologerChatViewState extends State<AstrologerChatView> {
                             ],
                           );
                         }),
+=======
+                // Custom Header Replacement for CommonHeader
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 8.h,
+                  ),
+                  decoration: BoxDecoration(color: Colors.transparent),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.black),
+                        onPressed: controller.onBackPressed,
+                      ),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 18.r,
+                              backgroundImage:
+                                  controller.astrologer.profilePicture !=
+                                          null &&
+                                      controller
+                                          .astrologer
+                                          .profilePicture!
+                                          .isNotEmpty
+                                  ? CachedNetworkImageProvider(
+                                      controller.astrologer.profilePicture!,
+                                    )
+                                  : null,
+                              child:
+                                  controller.astrologer.profilePicture ==
+                                          null ||
+                                      controller
+                                          .astrologer
+                                          .profilePicture!
+                                          .isEmpty
+                                  ? const Icon(Icons.person)
+                                  : null,
+                            ),
+                            Spacing.w(8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  AutoTranslateText(
+                                    controller.astrologer.displayName,
+                                    style: MyTextTheme.mediumBCB,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Obx(
+                                    () => AutoTranslateText(
+                                      controller.isOtherPartyOnline.value
+                                          ? 'Online'
+                                          : 'Offline',
+                                      style: MyTextTheme.smallBCN.copyWith(
+                                        fontSize: 10.sp,
+                                        color:
+                                            controller.isOtherPartyOnline.value
+                                            ? Colors.green
+                                            : Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Obx(
+                            () => AutoTranslateText(
+                              controller.formattedTimer,
+                              style: MyTextTheme.mediumBCB.copyWith(
+                                color:
+                                    (controller.visualSecondsRemaining.value <
+                                        60)
+                                    ? Colors.red
+                                    : Colors.black,
+                              ),
+                            ),
+                          ),
+                          Obx(
+                            () => AutoTranslateText(
+                              '₹${controller.walletBalance.value.toStringAsFixed(1)}',
+                              style: MyTextTheme.smallBCN.copyWith(
+                                color: Colors.indigo[900],
+                                fontSize: 10.sp,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Spacing.w(12),
+                      Obx(
+                        () =>
+                            controller.sessionStatus.value == 'ACTIVE' ||
+                                controller.sessionStatus.value == 'EXPIRING'
+                            ? GestureDetector(
+                                onTap: _showEndChatDialog,
+                                child: Container(
+                                  padding: EdgeInsets.all(8.r),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.close,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+>>>>>>> origin/astrobharatai_user_new
                       ),
                     ],
                   ),
@@ -212,6 +343,7 @@ class _AstrologerChatViewState extends State<AstrologerChatView> {
 
                 // LOW BALANCE WARNING BANNER
                 Obx(() {
+<<<<<<< HEAD
                   // CRITICAL: Only show warning if:
                   // 1. Explicitly set by socket event (server confirmed low balance), AND
                   // 2. Balance/minutes are actually loaded AND low (not just uninitialized)
@@ -223,6 +355,13 @@ class _AstrologerChatViewState extends State<AstrologerChatView> {
                           0 && // Minutes are calculated
                       controller.availableMinutes.value <
                           2 && // Actually less than 2 minutes
+=======
+                  final hasLowBalance =
+                      controller.showLowBalanceWarning.value &&
+                      controller.walletBalance.value > 0 &&
+                      controller.availableMinutes.value >= 0 &&
+                      controller.availableMinutes.value < 2 &&
+>>>>>>> origin/astrobharatai_user_new
                       controller.sessionStatus.value == 'ACTIVE';
 
                   if (hasLowBalance) {
@@ -256,9 +395,13 @@ class _AstrologerChatViewState extends State<AstrologerChatView> {
                           SizedBox(width: 8.w),
                           ElevatedButton(
                             onPressed: () {
+<<<<<<< HEAD
                               Get.toNamed(
                                 '/wallet',
                               ); // Assuming /wallet is the route
+=======
+                              Get.toNamed('/wallet');
+>>>>>>> origin/astrobharatai_user_new
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red[700],
@@ -301,6 +444,7 @@ class _AstrologerChatViewState extends State<AstrologerChatView> {
     );
   }
 
+<<<<<<< HEAD
   Widget _buildPill(String text, Color color) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
@@ -329,6 +473,8 @@ class _AstrologerChatViewState extends State<AstrologerChatView> {
     return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
+=======
+>>>>>>> origin/astrobharatai_user_new
   Widget _buildChatArea() {
     return Container(
       color: Colors.transparent,
@@ -342,7 +488,11 @@ class _AstrologerChatViewState extends State<AstrologerChatView> {
           controller: scrollController,
           itemCount: controller.messages.length,
           padding: EdgeInsets.all(16.w),
+<<<<<<< HEAD
           reverse: true, // Messages are stored newest at index 0
+=======
+          reverse: true,
+>>>>>>> origin/astrobharatai_user_new
           itemBuilder: (context, index) {
             final message = controller.messages[index];
             return _buildMessageBubble(
@@ -361,17 +511,30 @@ class _AstrologerChatViewState extends State<AstrologerChatView> {
       color: Colors.white,
       child: Row(
         children: [
+<<<<<<< HEAD
           // REMOVED IMAGE PICKER
+=======
+>>>>>>> origin/astrobharatai_user_new
           Expanded(
             child: Obx(
               () => TextField(
                 controller: controller.messageController,
                 enabled:
+<<<<<<< HEAD
                     controller.sessionStatus.value == 'ACTIVE' &&
+=======
+                    (controller.sessionStatus.value == 'ACTIVE' ||
+                        controller.sessionStatus.value == 'CREATED') &&
+>>>>>>> origin/astrobharatai_user_new
                     !controller.isSendingMessage.value,
                 decoration: InputDecoration(
                   hintText: controller.sessionStatus.value == 'ACTIVE'
                       ? 'Type message...'
+<<<<<<< HEAD
+=======
+                      : controller.sessionStatus.value == 'CREATED'
+                      ? 'Type message...'
+>>>>>>> origin/astrobharatai_user_new
                       : 'Chat ended',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24.r),
@@ -392,7 +555,13 @@ class _AstrologerChatViewState extends State<AstrologerChatView> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : Icon(Icons.send, color: AppColors.saffron),
+<<<<<<< HEAD
               onPressed: controller.sessionStatus.value == 'ACTIVE'
+=======
+              onPressed:
+                  (controller.sessionStatus.value == 'ACTIVE' ||
+                      controller.sessionStatus.value == 'CREATED')
+>>>>>>> origin/astrobharatai_user_new
                   ? controller.sendMessage
                   : null,
             ),
@@ -521,7 +690,11 @@ class _AstrologerChatViewState extends State<AstrologerChatView> {
           TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
           TextButton(
             onPressed: () {
+<<<<<<< HEAD
               Get.back(); // close dialog
+=======
+              Get.back();
+>>>>>>> origin/astrobharatai_user_new
               controller.endChat();
             },
             child: const Text('End', style: TextStyle(color: Colors.red)),

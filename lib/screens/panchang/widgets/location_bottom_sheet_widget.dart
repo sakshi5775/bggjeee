@@ -9,7 +9,15 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
 
 class LocationBottomSheetWidget extends StatefulWidget {
-  final Function(String city, String? state, String? country, [double? latitude, double? longitude, double? timezone]) onCitySelected;
+  final Function(
+    String city,
+    String? state,
+    String? country, [
+    double? latitude,
+    double? longitude,
+    double? timezone,
+  ])
+  onCitySelected;
   final String selectedCity;
   final VoidCallback? onUseCurrentLocation;
 
@@ -21,7 +29,8 @@ class LocationBottomSheetWidget extends StatefulWidget {
   });
 
   @override
-  State<LocationBottomSheetWidget> createState() => _LocationBottomSheetWidgetState();
+  State<LocationBottomSheetWidget> createState() =>
+      _LocationBottomSheetWidgetState();
 }
 
 class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
@@ -56,9 +65,9 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
 
   Future<void> _searchPlaces() async {
     if (!mounted) return;
-    
+
     final query = _searchController.text.trim();
-    
+
     if (query.isEmpty) {
       if (mounted) {
         setState(() {
@@ -99,7 +108,6 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
           _filteredPlaces = [];
         });
       }
-      
     }
   }
 
@@ -110,7 +118,7 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
     final mainText = place['mainText'] as String? ?? '';
     final secondaryText = place['secondaryText'] as String? ?? '';
     final description = place['description'] as String? ?? '';
-    
+
     // Parse location from description
     String? city, state, country;
     if (description.isNotEmpty) {
@@ -122,7 +130,7 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
       city = mainText;
       state = secondaryText;
     }
-    
+
     // Call callback immediately with available data
     // The controller will handle fetching coordinates and timezone in the background
     if (mounted && city.isNotEmpty) {
@@ -157,11 +165,7 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
               ),
               IconButton(
                 onPressed: () => Get.back(),
-                icon: Icon(
-                  Icons.close,
-                  color: "#6F221E".toColor(),
-                  size: 24.w,
-                ),
+                icon: Icon(Icons.close, color: "#6F221E".toColor(), size: 24.w),
               ),
             ],
           ),
@@ -173,14 +177,21 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
             controller: _searchController,
             decoration: InputDecoration(
               hintText: 'Search city, state, or country...',
-              prefixIcon: Icon(Icons.search, color: "#6F221E".toColor().withOpacity(0.5)),
+              prefixIcon: Icon(
+                Icons.search,
+                color: "#6F221E".toColor().withValues(alpha: 0.5),
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12.r),
-                borderSide: BorderSide(color: "#DFB343".toColor().withOpacity(0.5)),
+                borderSide: BorderSide(
+                  color: "#DFB343".toColor().withValues(alpha: 0.5),
+                ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12.r),
-                borderSide: BorderSide(color: "#DFB343".toColor().withOpacity(0.5)),
+                borderSide: BorderSide(
+                  color: "#DFB343".toColor().withValues(alpha: 0.5),
+                ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12.r),
@@ -249,9 +260,7 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
           ),
         if (widget.onUseCurrentLocation != null) Spacing.h(16),
         // Places List
-        Expanded(
-          child: _buildPlacesList(),
-        ),
+        Expanded(child: _buildPlacesList()),
       ],
     );
   }
@@ -264,14 +273,12 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(
-                color: "#DFB343".toColor(),
-              ),
+              CircularProgressIndicator(color: "#DFB343".toColor()),
               Spacing.h(16),
               AutoTranslateText(
                 'Searching locations...',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.6),
+                  color: "#6F221E".toColor().withValues(alpha: 0.6),
                   fontSize: 14.sp,
                 ),
               ),
@@ -288,11 +295,7 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.error_outline,
-                color: Colors.red,
-                size: 48.w,
-              ),
+              Icon(Icons.error_outline, color: Colors.red, size: 48.w),
               Spacing.h(16),
               AutoTranslateText(
                 _errorMessage!,
@@ -317,14 +320,14 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
             children: [
               Icon(
                 Icons.search,
-                color: "#6F221E".toColor().withOpacity(0.3),
+                color: "#6F221E".toColor().withValues(alpha: 0.3),
                 size: 64.w,
               ),
               Spacing.h(16),
               AutoTranslateText(
                 'Search for any city, state, or country worldwide',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.6),
+                  color: "#6F221E".toColor().withValues(alpha: 0.6),
                   fontSize: 14.sp,
                 ),
                 textAlign: TextAlign.center,
@@ -344,14 +347,14 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
             children: [
               Icon(
                 Icons.location_off,
-                color: "#6F221E".toColor().withOpacity(0.3),
+                color: "#6F221E".toColor().withValues(alpha: 0.3),
                 size: 64.w,
               ),
               Spacing.h(16),
               AutoTranslateText(
                 'No locations found',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.6),
+                  color: "#6F221E".toColor().withValues(alpha: 0.6),
                   fontSize: 14.sp,
                 ),
                 textAlign: TextAlign.center,
@@ -360,7 +363,7 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
               AutoTranslateText(
                 'Try searching with a different term',
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.5),
+                  color: "#6F221E".toColor().withValues(alpha: 0.5),
                   fontSize: 12.sp,
                 ),
                 textAlign: TextAlign.center,
@@ -380,19 +383,19 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
         final secondaryText = place['secondaryText'] as String? ?? '';
         final description = place['description'] as String? ?? '';
         final isSelected = mainText == widget.selectedCity;
-        
+
         return Container(
           margin: EdgeInsets.only(bottom: 12.h),
           padding: EdgeInsets.all(16.w),
           decoration: BoxDecoration(
             color: isSelected
-                ? "#DFB343".toColor().withOpacity(0.1)
+                ? "#DFB343".toColor().withValues(alpha: 0.1)
                 : Colors.white,
             borderRadius: BorderRadius.circular(12.r),
             border: Border.all(
               color: isSelected
                   ? "#DFB343".toColor()
-                  : "#DFB343".toColor().withOpacity(0.3),
+                  : "#DFB343".toColor().withValues(alpha: 0.3),
               width: isSelected ? 2 : 1,
             ),
           ),
@@ -403,7 +406,7 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
                 Container(
                   padding: EdgeInsets.all(10.w),
                   decoration: BoxDecoration(
-                    color: "#DFB343".toColor().withOpacity(0.1),
+                    color: "#DFB343".toColor().withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -430,16 +433,17 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
                         AutoTranslateText(
                           secondaryText,
                           style: MyTextTheme.smallBCN.copyWith(
-                            color: "#6F221E".toColor().withOpacity(0.6),
+                            color: "#6F221E".toColor().withValues(alpha: 0.6),
                             fontSize: 12.sp,
                           ),
                         ),
-                      ] else if (description.isNotEmpty && description != mainText) ...[
+                      ] else if (description.isNotEmpty &&
+                          description != mainText) ...[
                         Spacing.h(2),
                         AutoTranslateText(
                           description,
                           style: MyTextTheme.smallBCN.copyWith(
-                            color: "#6F221E".toColor().withOpacity(0.6),
+                            color: "#6F221E".toColor().withValues(alpha: 0.6),
                             fontSize: 12.sp,
                           ),
                           maxLines: 2,
@@ -462,8 +466,4 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
       },
     );
   }
-
 }
-
-
-

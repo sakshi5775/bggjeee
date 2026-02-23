@@ -190,7 +190,7 @@ class AstrologerReviewDialog {
                           width: 40.w,
                           height: 40.w,
                           decoration: BoxDecoration(
-                            color: AppColors.saffron.withOpacity(0.2),
+                            color: AppColors.saffron.withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(

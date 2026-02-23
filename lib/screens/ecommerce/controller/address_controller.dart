@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/address_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
 import 'package:get/get.dart';
@@ -38,7 +38,10 @@ class AddressController extends BaseController {
     }
   }
 
-  Future<void> saveAddress(AddressModel address, {bool setAsDefault = false}) async {
+  Future<void> saveAddress(
+    AddressModel address, {
+    bool setAsDefault = false,
+  }) async {
     try {
       isSaving.value = true;
       final saved = await _service.upsertAddress(address);
@@ -85,5 +88,3 @@ class AddressController extends BaseController {
     }
   }
 }
-
-

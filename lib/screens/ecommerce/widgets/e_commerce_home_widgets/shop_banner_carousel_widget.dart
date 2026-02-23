@@ -172,7 +172,7 @@ class _ShopBannerCarouselWidgetState extends State<ShopBannerCarouselWidget> {
           //               : null,
           //           color: activeIndex == index
           //               ? null
-          //               : Colors.white.withOpacity(0.3),
+          //               : Colors.white.withValues(alpha: 0.3),
           //         ),
           //       );
           //     }),

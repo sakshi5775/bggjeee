@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/app_manager/network_image.dart';
+﻿import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/data_model/order_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/order_detail_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -10,7 +10,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class OrderDetailView extends GetView<OrderDetailController> {
-  const OrderDetailView({super.key});
+  final bool showBackButton;
+  const OrderDetailView({super.key, this.showBackButton = true});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,10 @@ class OrderDetailView extends GetView<OrderDetailController> {
             if (order == null) {
               return Column(
                 children: [
-                  CommonHeader(title: 'Order Details'),
+                  CommonHeader(
+                    title: 'Order Details',
+                    showBackButton: showBackButton,
+                  ),
                   Expanded(
                     child: Center(
                       child: AutoTranslateText(
@@ -48,7 +52,10 @@ class OrderDetailView extends GetView<OrderDetailController> {
 
             return Column(
               children: [
-                CommonHeader(title: 'Order Details'),
+                CommonHeader(
+                  title: 'Order Details',
+                  showBackButton: showBackButton,
+                ),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: EdgeInsets.all(16.w),
@@ -103,12 +110,12 @@ class OrderDetailView extends GetView<OrderDetailController> {
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepOrange.withOpacity(0.15),
+            color: AppColors.deepOrange.withValues(alpha: 0.15),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -202,7 +209,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                 Divider(
                   height: 24.h,
                   thickness: 1,
-                  color: AppColors.textSecondary.withOpacity(0.2),
+                  color: AppColors.textSecondary.withValues(alpha: 0.2),
                 ),
                 _AmountRow(
                   label: 'Total',
@@ -232,12 +239,12 @@ class OrderDetailView extends GetView<OrderDetailController> {
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepOrange.withOpacity(0.15),
+            color: AppColors.deepOrange.withValues(alpha: 0.15),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -289,12 +296,12 @@ class OrderDetailView extends GetView<OrderDetailController> {
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepOrange.withOpacity(0.15),
+            color: AppColors.deepOrange.withValues(alpha: 0.15),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -411,12 +418,12 @@ class OrderDetailView extends GetView<OrderDetailController> {
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepOrange.withOpacity(0.15),
+            color: AppColors.deepOrange.withValues(alpha: 0.15),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -498,7 +505,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                   Container(
                     padding: EdgeInsets.all(12.w),
                     decoration: BoxDecoration(
-                      color: AppColors.error.withOpacity(0.1),
+                      color: AppColors.error.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     child: Row(
@@ -559,7 +566,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                       borderRadius: BorderRadius.circular(12.r),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.deepOrange.withOpacity(0.3),
+                          color: AppColors.deepOrange.withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),
@@ -613,7 +620,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
             borderRadius: BorderRadius.circular(20.r),
             boxShadow: [
               BoxShadow(
-                color: AppColors.error.withOpacity(0.15),
+                color: AppColors.error.withValues(alpha: 0.15),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
@@ -624,7 +631,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
               Container(
                 padding: EdgeInsets.all(12.w),
                 decoration: BoxDecoration(
-                  color: AppColors.error.withOpacity(0.1),
+                  color: AppColors.error.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -675,12 +682,12 @@ class OrderDetailView extends GetView<OrderDetailController> {
           borderRadius: BorderRadius.circular(20.r),
           boxShadow: [
             BoxShadow(
-              color: AppColors.deepOrange.withOpacity(0.15),
+              color: AppColors.deepOrange.withValues(alpha: 0.15),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -788,12 +795,12 @@ class OrderDetailView extends GetView<OrderDetailController> {
           borderRadius: BorderRadius.circular(20.r),
           boxShadow: [
             BoxShadow(
-              color: AppColors.deepOrange.withOpacity(0.15),
+              color: AppColors.deepOrange.withValues(alpha: 0.15),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -1006,7 +1013,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
               borderRadius: BorderRadius.circular(12.r),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.deepOrange.withOpacity(0.3),
+                  color: AppColors.deepOrange.withValues(alpha: 0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -1056,7 +1063,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               decoration: BoxDecoration(
-                color: AppColors.error.withOpacity(0.1),
+                color: AppColors.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12.r),
               ),
               child: Row(
@@ -1181,7 +1188,7 @@ class _OrderItemTile extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: AppColors.textSecondary.withOpacity(0.1),
+            color: AppColors.textSecondary.withValues(alpha: 0.1),
             width: 1,
           ),
         ),
@@ -1194,7 +1201,7 @@ class _OrderItemTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(12.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -1320,7 +1327,7 @@ class _StatusChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepOrange.withOpacity(0.3),
+            color: AppColors.deepOrange.withValues(alpha: 0.3),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -1379,7 +1386,7 @@ class _TimelineEntryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = entry.completed
         ? AppColors.deepOrange
-        : AppColors.textSecondary.withOpacity(0.4);
+        : AppColors.textSecondary.withValues(alpha: 0.4);
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 12.h),
       child: Row(
@@ -1401,7 +1408,7 @@ class _TimelineEntryTile extends StatelessWidget {
                   boxShadow: entry.completed
                       ? [
                           BoxShadow(
-                            color: AppColors.deepOrange.withOpacity(0.4),
+                            color: AppColors.deepOrange.withValues(alpha: 0.4),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
@@ -1422,8 +1429,8 @@ class _TimelineEntryTile extends StatelessWidget {
                         ? AppColors.orangeGradient
                         : LinearGradient(
                             colors: [
-                              AppColors.textSecondary.withOpacity(0.3),
-                              AppColors.textSecondary.withOpacity(0.3),
+                              AppColors.textSecondary.withValues(alpha: 0.3),
+                              AppColors.textSecondary.withValues(alpha: 0.3),
                             ],
                           ),
                     borderRadius: BorderRadius.circular(1),
@@ -1478,10 +1485,10 @@ class _HistoryTile extends StatelessWidget {
       padding: EdgeInsets.all(12.w),
       margin: EdgeInsets.only(bottom: 8.h),
       decoration: BoxDecoration(
-        color: AppColors.gradientBackground.colors.first.withOpacity(0.3),
+        color: AppColors.gradientBackground.colors.first.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: AppColors.deepOrange.withOpacity(0.2),
+          color: AppColors.deepOrange.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -1523,7 +1530,7 @@ class _HistoryTile extends StatelessWidget {
                   date,
                   style: TextStyle(
                     fontSize: 11,
-                    color: AppColors.textSecondary.withOpacity(0.7),
+                    color: AppColors.textSecondary.withValues(alpha: 0.7),
                   ),
                 ),
               ],

@@ -11,6 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 /// Skeleton shimmer placeholder for banner while image loads.
 class _BannerSkeletonShimmer extends StatefulWidget {
@@ -66,7 +67,7 @@ class _BannerSkeletonShimmerState extends State<_BannerSkeletonShimmer>
                       end: Alignment(_animation.value + 0.3, 0),
                       colors: [
                         Colors.transparent,
-                        Colors.white.withOpacity(0.5),
+                        Colors.white.withValues(alpha: 0.5),
                         Colors.transparent,
                       ],
                       stops: const [0.0, 0.5, 1.0],
@@ -116,6 +117,7 @@ class _BannerVideoWidgetState extends State<_BannerVideoWidget> {
   bool _isInitialized = false;
   bool _isMuted = true;
   bool _hasNotifiedCompletion = false;
+  bool _hasInitializationError = false;
 
   @override
   void initState() {
@@ -148,12 +150,13 @@ class _BannerVideoWidgetState extends State<_BannerVideoWidget> {
       if (mounted) {
         setState(() {
           _isInitialized = true;
+          _hasInitializationError = true;
         });
 
         // Auto-advance carousel after 3 seconds if video fails
         Future.delayed(const Duration(seconds: 3), () {
           if (mounted && !_hasNotifiedCompletion) {
-            debugPrint('⏭️ Video failed, auto-advancing carousel');
+            debugPrint('⭐ Video failed, auto-advancing carousel');
             _hasNotifiedCompletion = true;
             widget.onVideoComplete?.call();
           }
@@ -179,6 +182,25 @@ class _BannerVideoWidgetState extends State<_BannerVideoWidget> {
     });
   }
 
+  void _handleVisibilityChanged(VisibilityInfo info) {
+    if (!mounted || !_isInitialized) return;
+
+    if (info.visibleFraction == 0) {
+      // Not visible at all, pause to prevent leak/background playback
+      if (_controller.value.isPlaying) {
+        debugPrint('⏸️ Banner video paused (not visible): ${widget.url}');
+        _controller.pause();
+      }
+    } else if (info.visibleFraction > 0.5) {
+      // More than 50% visible, resume if it was supposed to play
+      // Note: we check if it was playing or just reached a visible threshold
+      if (!_controller.value.isPlaying && !_hasNotifiedCompletion) {
+        debugPrint('▶️ Banner video resumed (visible): ${widget.url}');
+        _controller.play();
+      }
+    }
+  }
+
   @override
   void dispose() {
     _controller.removeListener(_videoListener);
@@ -192,15 +214,15 @@ class _BannerVideoWidgetState extends State<_BannerVideoWidget> {
       return const _BannerSkeletonShimmer();
     }
 
-    if (_controller.value.hasError) {
+    if (_hasInitializationError || _controller.value.hasError) {
       return Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              "#F38B3B".toColor().withOpacity(0.2),
-              "#6F221E".toColor().withOpacity(0.2),
+              "#F38B3B".toColor().withValues(alpha: 0.2),
+              "#6F221E".toColor().withValues(alpha: 0.2),
             ],
           ),
         ),
@@ -214,39 +236,43 @@ class _BannerVideoWidgetState extends State<_BannerVideoWidget> {
       );
     }
 
-    return Stack(
-      // fit: StackFit.expand,
-      children: [
-        SizedBox.expand(
-          child: FittedBox(
-            fit: BoxFit.cover,
-            child: SizedBox(
-              width: _controller.value.size.width,
-              height: _controller.value.size.height,
-              child: VideoPlayer(_controller),
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: 8.h,
-          right: 8.w,
-          child: GestureDetector(
-            onTap: _toggleMute,
-            child: Container(
-              padding: EdgeInsets.all(6.w),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.5),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                _isMuted ? Icons.volume_off : Icons.volume_up,
-                color: Colors.white,
-                size: 18.w,
+    return VisibilityDetector(
+      key: Key('banner_video_${widget.url}'),
+      onVisibilityChanged: _handleVisibilityChanged,
+      child: Stack(
+        // fit: StackFit.expand,
+        children: [
+          SizedBox.expand(
+            child: FittedBox(
+              fit: BoxFit.cover,
+              child: SizedBox(
+                width: _controller.value.size.width,
+                height: _controller.value.size.height,
+                child: VideoPlayer(_controller),
               ),
             ),
           ),
-        ),
-      ],
+          Positioned(
+            bottom: 8.h,
+            right: 8.w,
+            child: GestureDetector(
+              onTap: _toggleMute,
+              child: Container(
+                padding: EdgeInsets.all(6.w),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.5),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  _isMuted ? Icons.volume_off : Icons.volume_up,
+                  color: Colors.white,
+                  size: 18.w,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -392,7 +418,7 @@ class _BannerCarouselWidgetState extends State<BannerCarouselWidget> {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        Colors.black.withOpacity(0.7),
+                        Colors.black.withValues(alpha: 0.7),
                       ],
                     ),
                   ),
@@ -416,11 +442,11 @@ class _BannerCarouselWidgetState extends State<BannerCarouselWidget> {
 
   /// Build the appropriate media widget based on banner type
   Widget _buildMediaWidget(BannerItem banner) {
-    print('🎨 Building media widget for banner: ${banner.toString()}');
+    print('🎨 Rendering IMAGE widget (PNG/JPG/JPEG)');
 
     // Check if it's a video
     if (banner.isVideo) {
-      print('🎨 Rendering VIDEO widget');
+      print('🎥 Rendering VIDEO widget');
       return _BannerVideoWidget(
         url: banner.mediaUrl,
         onVideoComplete: _onVideoComplete,
@@ -429,17 +455,17 @@ class _BannerCarouselWidgetState extends State<BannerCarouselWidget> {
 
     // Check if it's an SVG
     if (banner.isSvg) {
-      print('🎨 Rendering SVG widget');
+      print('🖼️ Rendering SVG widget');
       return _BannerSvgWidget(url: banner.mediaUrl);
     }
 
     // Default: render as image (PNG, JPG, JPEG)
-    print('🎨 Rendering IMAGE widget (PNG/JPG/JPEG)');
+    print('🖼️ Rendering IMAGE widget (PNG/JPG/JPEG)');
     return CachedNetworkImage(
       imageUrl: banner.mediaUrl,
       width: double.infinity,
       height: double.infinity,
-      fit: BoxFit.fill,
+      fit: BoxFit.cover,
       placeholder: (context, url) {
         print('🖼️ Loading image: $url');
         return const _BannerSkeletonShimmer();
@@ -447,7 +473,7 @@ class _BannerCarouselWidgetState extends State<BannerCarouselWidget> {
       errorWidget: (context, url, error) {
         print('❌ Error loading banner image: $url - $error');
         return Container(
-          color: "#6F221E".toColor().withOpacity(0.1),
+          color: "#6F221E".toColor().withValues(alpha: 0.1),
           child: Center(
             child: Icon(
               Icons.image_not_supported,

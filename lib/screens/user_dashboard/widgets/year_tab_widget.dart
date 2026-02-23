@@ -220,10 +220,10 @@ class _YearTabWidgetState extends State<YearTabWidget> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: '#DBCCA8'.toColor().withOpacity(0.6)),
+          border: Border.all(color: '#DBCCA8'.toColor().withValues(alpha: 0.6)),
           boxShadow: [
             BoxShadow(
-              color: '#6F221E'.toColor().withOpacity(0.06),
+              color: '#6F221E'.toColor().withValues(alpha: 0.06),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),

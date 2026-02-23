@@ -103,7 +103,11 @@ class DailyPredictionWidget extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Icon(Icons.arrow_forward_ios, size: 14.w, color: AppColors.deepOrange),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14.w,
+                      color: AppColors.deepOrange,
+                    ),
                   ],
                 ),
               ),
@@ -160,11 +164,15 @@ class DailyPredictionWidget extends StatelessWidget {
                       width: 40.w,
                       height: 40.w,
                       decoration: BoxDecoration(
-                        color: colorCode.isNotEmpty ? colorCode.toColor() : null,
-                        gradient: colorCode.isEmpty ? AppColors.orangeGradient : null,
+                        color: colorCode.isNotEmpty
+                            ? colorCode.toColor()
+                            : null,
+                        gradient: colorCode.isEmpty
+                            ? AppColors.orangeGradient
+                            : null,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: Colors.grey.withOpacity(0.3),
+                          color: Colors.grey.withValues(alpha: 0.3),
                           width: 2,
                         ),
                       ),
@@ -174,8 +182,7 @@ class DailyPredictionWidget extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
+                          Row(children: [
 
                             ],
                           ),
@@ -212,7 +219,10 @@ class DailyPredictionWidget extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        PredictionStyle.iconBadge(Icons.numbers_outlined, size: 22),
+                        PredictionStyle.iconBadge(
+                          Icons.numbers_outlined,
+                          size: 22,
+                        ),
                         Spacing.w(12),
                         AutoTranslateText(
                           'Lucky Numbers',
@@ -232,7 +242,7 @@ class DailyPredictionWidget extends StatelessWidget {
                           width: 40.w,
                           height: 40.w,
                           decoration: BoxDecoration(
-                            color: AppColors.deepOrange.withOpacity(0.1),
+                            color: AppColors.deepOrange.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12.r),
                             border: Border.all(
                               color: AppColors.deepOrange,
@@ -303,7 +313,8 @@ class DailyPredictionWidget extends StatelessWidget {
 
   List<Widget> _buildProkeralaDailySection(PredictionsController controller) {
     final data = controller.prokeralaDailyData.value;
-    final dailyPred = data?['data']?['daily_prediction'] as Map<String, dynamic>?;
+    final dailyPred =
+        data?['data']?['daily_prediction'] as Map<String, dynamic>?;
     if (dailyPred == null) return [];
     final prediction = dailyPred['prediction']?.toString() ?? '';
     if (prediction.isEmpty) return [];
@@ -327,13 +338,22 @@ class DailyPredictionWidget extends StatelessWidget {
                     children: [
                       AutoTranslateText(
                         'Prokerala Daily',
-                        style: MyTextTheme.mediumBCB.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
+                        style: MyTextTheme.mediumBCB.copyWith(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       if (signName.isNotEmpty || date.isNotEmpty) ...[
                         Spacing.h(4),
                         AutoTranslateText(
-                          [if (signName.isNotEmpty) signName, if (date.isNotEmpty) date].join(' • '),
-                          style: MyTextTheme.smallBCN.copyWith(color: AppColors.textSecondary, fontSize: 11.sp),
+                          [
+                            if (signName.isNotEmpty) signName,
+                            if (date.isNotEmpty) date,
+                          ].join(' • '),
+                          style: MyTextTheme.smallBCN.copyWith(
+                            color: AppColors.textSecondary,
+                            fontSize: 11.sp,
+                          ),
                         ),
                       ],
                     ],
@@ -344,7 +364,10 @@ class DailyPredictionWidget extends StatelessWidget {
             Spacing.h(8),
             AutoTranslateText(
               prediction,
-              style: MyTextTheme.smallBCN.copyWith(color: AppColors.textPrimary, height: 1.55),
+              style: MyTextTheme.smallBCN.copyWith(
+                color: AppColors.textPrimary,
+                height: 1.55,
+              ),
             ),
           ],
         ),
@@ -352,7 +375,9 @@ class DailyPredictionWidget extends StatelessWidget {
     ];
   }
 
-  List<Widget> _buildProkeralaAdvancedSection(PredictionsController controller) {
+  List<Widget> _buildProkeralaAdvancedSection(
+    PredictionsController controller,
+  ) {
     final prokeralaData = controller.prokeralaDailyAdvancedData.value;
     final dataMap = prokeralaData?['data'] as Map<String, dynamic>?;
     final dailyPredictions = dataMap?['daily_predictions'] as List<dynamic>?;
@@ -378,14 +403,8 @@ class DailyPredictionWidget extends StatelessWidget {
         _buildSignInfoCard(signInfo),
         Spacing.h(10),
       ],
-      if (aspects.isNotEmpty) ...[
-        _buildAspectsCard(aspects),
-        Spacing.h(10),
-      ],
-      if (transits.isNotEmpty) ...[
-        _buildTransitsCard(transits),
-        Spacing.h(10),
-      ],
+      if (aspects.isNotEmpty) ...[_buildAspectsCard(aspects), Spacing.h(10)],
+      if (transits.isNotEmpty) ...[_buildTransitsCard(transits), Spacing.h(10)],
       ...predictions.map((p) {
         final m = p as Map<String, dynamic>;
         final type = m['type']?.toString() ?? '';
@@ -405,20 +424,62 @@ class DailyPredictionWidget extends StatelessWidget {
                 Row(
                   children: [
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                        vertical: 4.h,
+                      ),
                       decoration: BoxDecoration(
                         gradient: AppColors.orangeGradient,
                         borderRadius: BorderRadius.circular(8.r),
                       ),
-                      child: AutoTranslateText(type, style: MyTextTheme.smallBCB.copyWith(color: Colors.white, fontWeight: FontWeight.w600)),
+                      child: AutoTranslateText(
+                        type,
+                        style: MyTextTheme.smallBCB.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ],
                 ),
                 Spacing.h(8),
-                AutoTranslateText(prediction, style: MyTextTheme.smallBCN.copyWith(color: AppColors.textPrimary, height: 1.5)),
-                if (seek.isNotEmpty) ...[Spacing.h(6), AutoTranslateText('Seek: $seek', style: MyTextTheme.smallBCN.copyWith(color: AppColors.textSecondary, fontSize: 11.sp))],
-                if (challenge.isNotEmpty) ...[Spacing.h(4), AutoTranslateText('Challenge: $challenge', style: MyTextTheme.smallBCN.copyWith(color: AppColors.textSecondary, fontSize: 11.sp))],
-                if (insight.isNotEmpty) ...[Spacing.h(4), AutoTranslateText('Insight: $insight', style: MyTextTheme.smallBCN.copyWith(color: AppColors.textSecondary, fontSize: 11.sp))],
+                AutoTranslateText(
+                  prediction,
+                  style: MyTextTheme.smallBCN.copyWith(
+                    color: AppColors.textPrimary,
+                    height: 1.5,
+                  ),
+                ),
+                if (seek.isNotEmpty) ...[
+                  Spacing.h(6),
+                  AutoTranslateText(
+                    'Seek: $seek',
+                    style: MyTextTheme.smallBCN.copyWith(
+                      color: AppColors.textSecondary,
+                      fontSize: 11.sp,
+                    ),
+                  ),
+                ],
+                if (challenge.isNotEmpty) ...[
+                  Spacing.h(4),
+                  AutoTranslateText(
+                    'Challenge: $challenge',
+                    style: MyTextTheme.smallBCN.copyWith(
+                      color: AppColors.textSecondary,
+                      fontSize: 11.sp,
+                    ),
+                  ),
+                ],
+                if (insight.isNotEmpty) ...[
+                  Spacing.h(4),
+                  AutoTranslateText(
+                    'Insight: $insight',
+                    style: MyTextTheme.smallBCN.copyWith(
+                      color: AppColors.textSecondary,
+                      fontSize: 11.sp,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -437,11 +498,20 @@ class DailyPredictionWidget extends StatelessWidget {
           Spacing.w(8),
           AutoTranslateText(
             signName,
-            style: MyTextTheme.mediumBCB.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
+            style: MyTextTheme.mediumBCB.copyWith(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           if (lordName.isNotEmpty) ...[
             Spacing.w(6),
-            AutoTranslateText('(Lord: $lordName)', style: MyTextTheme.smallBCN.copyWith(color: AppColors.textSecondary, fontSize: 11.sp)),
+            AutoTranslateText(
+              '(Lord: $lordName)',
+              style: MyTextTheme.smallBCN.copyWith(
+                color: AppColors.textSecondary,
+                fontSize: 11.sp,
+              ),
+            ),
           ],
         ],
       ),
@@ -453,7 +523,11 @@ class DailyPredictionWidget extends StatelessWidget {
     final triplicity = signInfo['triplicity']?.toString() ?? '';
     final quadruplicity = signInfo['quadruplicity']?.toString() ?? '';
     final symbol = signInfo['unicode_symbol']?.toString() ?? '';
-    if (modality.isEmpty && triplicity.isEmpty && quadruplicity.isEmpty && symbol.isEmpty) return const SizedBox.shrink();
+    if (modality.isEmpty &&
+        triplicity.isEmpty &&
+        quadruplicity.isEmpty &&
+        symbol.isEmpty)
+      return const SizedBox.shrink();
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: PredictionStyle.cardDecoration(),
@@ -464,15 +538,33 @@ class DailyPredictionWidget extends StatelessWidget {
             children: [
               PredictionStyle.iconBadge(Icons.info_outline, size: 20),
               Spacing.w(8),
-              AutoTranslateText('Sign Info', style: MyTextTheme.mediumBCB.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
-              if (symbol.isNotEmpty) ...[Spacing.w(8), Text(symbol, style: TextStyle(fontSize: 16.sp))],
+              AutoTranslateText(
+                'Sign Info',
+                style: MyTextTheme.mediumBCB.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              if (symbol.isNotEmpty) ...[
+                Spacing.w(8),
+                Text(symbol, style: TextStyle(fontSize: 16.sp)),
+              ],
             ],
           ),
-          if (modality.isNotEmpty || triplicity.isNotEmpty || quadruplicity.isNotEmpty) ...[
+          if (modality.isNotEmpty ||
+              triplicity.isNotEmpty ||
+              quadruplicity.isNotEmpty) ...[
             Spacing.h(8),
             AutoTranslateText(
-              [if (modality.isNotEmpty) 'Modality: $modality', if (triplicity.isNotEmpty) 'Triplicity: $triplicity', if (quadruplicity.isNotEmpty) 'Quadruplicity: $quadruplicity'].join(' • '),
-              style: MyTextTheme.smallBCN.copyWith(color: AppColors.textSecondary, fontSize: 11.sp),
+              [
+                if (modality.isNotEmpty) 'Modality: $modality',
+                if (triplicity.isNotEmpty) 'Triplicity: $triplicity',
+                if (quadruplicity.isNotEmpty) 'Quadruplicity: $quadruplicity',
+              ].join(' • '),
+              style: MyTextTheme.smallBCN.copyWith(
+                color: AppColors.textSecondary,
+                fontSize: 11.sp,
+              ),
             ),
           ],
         ],
@@ -491,22 +583,40 @@ class DailyPredictionWidget extends StatelessWidget {
             children: [
               PredictionStyle.iconBadge(Icons.timeline, size: 20),
               Spacing.w(8),
-              AutoTranslateText('Aspects', style: MyTextTheme.mediumBCB.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
+              AutoTranslateText(
+                'Aspects',
+                style: MyTextTheme.mediumBCB.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
           Spacing.h(8),
           ...aspects.map((a) {
             final m = a as Map<String, dynamic>;
-            final p1 = m['planet_one']?['name']?.toString() ?? m['planet_one']?.toString() ?? '';
-            final p2 = m['planet_two']?['name']?.toString() ?? m['planet_two']?.toString() ?? '';
-            final aspect = m['aspect']?['name']?.toString() ?? m['aspect']?.toString() ?? '';
+            final p1 =
+                m['planet_one']?['name']?.toString() ??
+                m['planet_one']?.toString() ??
+                '';
+            final p2 =
+                m['planet_two']?['name']?.toString() ??
+                m['planet_two']?.toString() ??
+                '';
+            final aspect =
+                m['aspect']?['name']?.toString() ??
+                m['aspect']?.toString() ??
+                '';
             final effect = m['effect']?.toString() ?? '';
             if (p1.isEmpty && p2.isEmpty) return const SizedBox.shrink();
             return Padding(
               padding: EdgeInsets.only(bottom: 4.h),
               child: AutoTranslateText(
                 '$p1 – $p2: $aspect${effect.isNotEmpty ? ' – $effect' : ''}',
-                style: MyTextTheme.smallBCN.copyWith(color: AppColors.textSecondary, fontSize: 11.sp),
+                style: MyTextTheme.smallBCN.copyWith(
+                  color: AppColors.textSecondary,
+                  fontSize: 11.sp,
+                ),
               ),
             );
           }),
@@ -526,7 +636,13 @@ class DailyPredictionWidget extends StatelessWidget {
             children: [
               PredictionStyle.iconBadge(Icons.public, size: 20),
               Spacing.w(8),
-              AutoTranslateText('Transits', style: MyTextTheme.mediumBCB.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
+              AutoTranslateText(
+                'Transits',
+                style: MyTextTheme.mediumBCB.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
           Spacing.h(8),
@@ -541,11 +657,22 @@ class DailyPredictionWidget extends StatelessWidget {
               padding: EdgeInsets.only(bottom: 4.h),
               child: Row(
                 children: [
-                  if (retro) Padding(padding: EdgeInsets.only(right: 4.w), child: Icon(Icons.replay, size: 12.w, color: AppColors.deepOrange)),
+                  if (retro)
+                    Padding(
+                      padding: EdgeInsets.only(right: 4.w),
+                      child: Icon(
+                        Icons.replay,
+                        size: 12.w,
+                        color: AppColors.deepOrange,
+                      ),
+                    ),
                   Expanded(
                     child: AutoTranslateText(
                       '$name: $zodiac${house.isNotEmpty ? ' (House $house)' : ''}',
-                      style: MyTextTheme.smallBCN.copyWith(color: AppColors.textSecondary, fontSize: 11.sp),
+                      style: MyTextTheme.smallBCN.copyWith(
+                        color: AppColors.textSecondary,
+                        fontSize: 11.sp,
+                      ),
                     ),
                   ),
                 ],
@@ -644,12 +771,14 @@ class DailyPredictionWidget extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         gradient: isSelected ? AppColors.orangeGradient : null,
-                        color: isSelected ? null : AppColors.dividerLight.withOpacity(0.5),
+                        color: isSelected
+                            ? null
+                            : AppColors.dividerLight.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(12.r),
                         border: Border.all(
                           color: isSelected
                               ? AppColors.deepOrange
-                              : AppColors.deepOrange.withOpacity(0.3),
+                              : AppColors.deepOrange.withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),

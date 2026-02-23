@@ -1,5 +1,5 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
@@ -64,7 +64,7 @@ class HistorySectionWidget extends BasePage<UserDashboardController> {
           border: Border.all(color: '#DBCCA8'.toColor(), width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -105,7 +105,7 @@ class HistorySectionWidget extends BasePage<UserDashboardController> {
                   AutoTranslateText(
                     'View your chat, call & video history',
                     style: AppTypography.body2.copyWith(
-                      color: '#6F221E'.toColor().withOpacity(0.7),
+                      color: '#6F221E'.toColor().withValues(alpha: 0.7),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

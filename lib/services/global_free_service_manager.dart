@@ -1,14 +1,11 @@
 import 'dart:async';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/service/free_services_service.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/widgets/free_service_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 /// Global service to manage free service popup across the entire app
 /// Shows popup every 3 minutes until free services are used
 class GlobalFreeServiceManager extends GetxService {
-  final FreeServicesService _freeServicesService = FreeServicesService();
   Timer? _checkTimer;
   bool _isDialogShowing = false;
   DateTime? _lastShownTime;
@@ -95,6 +92,7 @@ class GlobalFreeServiceManager extends GetxService {
         return;
       }
 
+      /*
       print("GlobalFreeServiceManager: Calling API...");
       final statusData = await _freeServicesService.getFreeServicesStatus();
       print('statissss  ' + statusData.toString());
@@ -121,6 +119,9 @@ class GlobalFreeServiceManager extends GetxService {
         // No free services available - stop checking
         stop();
       }
+      */
+      print("GlobalFreeServiceManager: API check disabled for now.");
+      stop(); // Stop periodic check if API is disabled
     } catch (e) {
       debugPrint('Error in GlobalFreeServiceManager: $e');
       _isDialogShowing = false;

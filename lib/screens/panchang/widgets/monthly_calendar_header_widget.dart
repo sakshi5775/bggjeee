@@ -37,7 +37,7 @@ class MonthlyCalendarHeaderWidget extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 5.75,
             offset: const Offset(0, 3.83),
           ),
@@ -108,10 +108,7 @@ class MonthlyCalendarHeaderWidget extends StatelessWidget {
                           shaderCallback: (bounds) => LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
-                            colors: [
-                              Color(0xFFE3B341),
-                              Color(0xFFC9A033),
-                            ],
+                            colors: [Color(0xFFE3B341), Color(0xFFC9A033)],
                           ).createShader(bounds),
                           child: AutoTranslateText(
                             'Traditional Indian Calendar System',
@@ -234,4 +231,3 @@ class MonthlyCalendarHeaderWidget extends StatelessWidget {
     );
   }
 }
-

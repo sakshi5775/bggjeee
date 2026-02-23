@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,7 +10,7 @@ import 'package:get_storage/get_storage.dart';
 class OnboardingController extends BaseController {
   final PageController pageController = PageController();
   var currentPage = 0.obs;
-  final GetStorage _storage = GetStorage();
+  GetStorage get _storage => GetStorage();
 
   final titles = ["Title for page 1", "Title for page 2", "Title for page 3"];
 

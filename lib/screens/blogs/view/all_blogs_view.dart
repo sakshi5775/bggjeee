@@ -1,7 +1,7 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/no_data_found_widget.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/blog_model.dart';
@@ -455,7 +455,7 @@ class AllBlogsView extends BasePage<AllBlogsController> {
                       AutoTranslateText(
                         _formatDate(blog.publishDate ?? blog.createdAt ?? ''),
                         style: MyTextTheme.smallBCN.copyWith(
-                          color: '#3E2723'.toColor().withOpacity(0.7),
+                          color: '#3E2723'.toColor().withValues(alpha: 0.7),
                         ),
                       ),
                     ],

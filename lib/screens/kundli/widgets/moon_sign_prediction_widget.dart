@@ -12,24 +12,19 @@ import 'package:get/get.dart';
 class MoonSignPredictionWidget extends StatelessWidget {
   final PredictionsController controller;
 
-  const MoonSignPredictionWidget({
-    super.key,
-    required this.controller,
-  });
+  const MoonSignPredictionWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingMoonSign.value) {
         return Center(
-          child: CircularProgressIndicator(
-            color: "#ed6f30".toColor(),
-          ),
+          child: CircularProgressIndicator(color: "#ed6f30".toColor()),
         );
       }
 
       final data = controller.moonSignPredictionData.value;
-      
+
       if (data == null || data.isEmpty) {
         return Center(
           child: Column(
@@ -38,13 +33,13 @@ class MoonSignPredictionWidget extends StatelessWidget {
               Icon(
                 Icons.info_outline,
                 size: 48.w,
-                color: "#6F221E".toColor().withOpacity(0.5),
+                color: "#6F221E".toColor().withValues(alpha: 0.5),
               ),
               Spacing.h(16),
               AutoTranslateText(
                 'No data available',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.6),
+                  color: "#6F221E".toColor().withValues(alpha: 0.6),
                 ),
               ),
               Spacing.h(8),
@@ -52,7 +47,7 @@ class MoonSignPredictionWidget extends StatelessWidget {
                 'Please select Moon Sign from the table',
                 textAlign: TextAlign.center,
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.5),
+                  color: "#6F221E".toColor().withValues(alpha: 0.5),
                 ),
               ),
             ],
@@ -66,7 +61,7 @@ class MoonSignPredictionWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -90,16 +85,16 @@ class MoonSignPredictionWidget extends StatelessWidget {
                 gradient: AppColors.orangeGradient,
                 borderRadius: BorderRadius.circular(12.r),
                 boxShadow: [
-                  BoxShadow(color: AppColors.deepOrange.withOpacity(0.2), blurRadius: 6, offset: const Offset(0, 2)),
+                  BoxShadow(
+                    color: AppColors.deepOrange.withValues(alpha: 0.2),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
                 ],
               ),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.nightlight_round,
-                    color: Colors.white,
-                    size: 24.w,
-                  ),
+                  Icon(Icons.nightlight_round, color: Colors.white, size: 24.w),
                   Spacing.w(12),
                   Expanded(
                     child: AutoTranslateText(
@@ -114,7 +109,7 @@ class MoonSignPredictionWidget extends StatelessWidget {
               ),
             ),
             Spacing.h(10),
-            
+
             // Explanation
             if (explanation.isNotEmpty) ...[
               Container(
@@ -124,7 +119,7 @@ class MoonSignPredictionWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16.r),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -162,13 +157,13 @@ class MoonSignPredictionWidget extends StatelessWidget {
               ),
               Spacing.h(10),
             ],
-            
+
             // Health
             if (health.isNotEmpty) ...[
               _buildSectionCard('Health', health, Icons.favorite),
               Spacing.h(16),
             ],
-            
+
             // Temperament
             if (temp.isNotEmpty) ...[
               _buildSectionCard('Temperament', temp, Icons.psychology),
@@ -191,20 +186,20 @@ class MoonSignPredictionWidget extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            "#ed6f30".toColor().withOpacity(0.1),
-            "#ed6f30".toColor().withOpacity(0.05),
+            "#ed6f30".toColor().withValues(alpha: 0.1),
+            "#ed6f30".toColor().withValues(alpha: 0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: "#ed6f30".toColor().withOpacity(0.2),
+          color: "#ed6f30".toColor().withValues(alpha: 0.2),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -215,17 +210,11 @@ class MoonSignPredictionWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                icon,
-                color: "#ed6f30".toColor(),
-                size: 20.w,
-              ),
+              Icon(icon, color: "#ed6f30".toColor(), size: 20.w),
               Spacing.w(8),
               AutoTranslateText(
                 title,
-                style: AppTypography.h2.copyWith(
-                  color: "#6F221E".toColor(),
-                ),
+                style: AppTypography.h2.copyWith(color: "#6F221E".toColor()),
               ),
             ],
           ),
@@ -242,4 +231,3 @@ class MoonSignPredictionWidget extends StatelessWidget {
     );
   }
 }
-

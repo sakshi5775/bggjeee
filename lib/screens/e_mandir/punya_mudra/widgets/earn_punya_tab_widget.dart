@@ -25,10 +25,7 @@ class EarnPunyaTabWidget extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 6,
-                ),
+                BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6),
               ],
             ),
             child: Column(
@@ -36,18 +33,15 @@ class EarnPunyaTabWidget extends StatelessWidget {
               children: [
                 AutoTranslateText(
                   "Thank You For Visiting AstroBharat E-Mandir",
-                  style: AppTypography.h3.copyWith(
-                    fontSize: 14,
-                  ),
+                  style: AppTypography.h3.copyWith(fontSize: 14),
                 ),
                 const SizedBox(height: 4),
                 AutoTranslateText(
                   "Your Today's Attendance Has Been Marked",
-                  style: AppTypography.body2.copyWith(
-                    color: Colors.grey,
-                  ),
+                  style: AppTypography.body2.copyWith(color: Colors.grey),
                 ),
                 const SizedBox(height: 14),
+
                 /// DAYS ROW
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -65,6 +59,7 @@ class EarnPunyaTabWidget extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
+
                 /// PROGRESS LINE
                 Row(
                   children: List.generate(
@@ -94,6 +89,7 @@ class EarnPunyaTabWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
+
         /// ================= SHUBH MANTRA =================
         const SectionTitleWidget(text: "Listen to Today's Shubh Mantra"),
         Padding(
@@ -151,6 +147,7 @@ class EarnPunyaTabWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
+
         /// ================= TIPS =================
         const SectionTitleWidget(text: "Tips to earn Punya Mudra"),
         TipCardWidget(
@@ -178,6 +175,7 @@ class EarnPunyaTabWidget extends StatelessWidget {
           subtitle: "Earn 2 Punya Mudras Now",
         ),
         const SizedBox(height: 16),
+
         /// ================= INVITE =================
         const SectionTitleWidget(text: "Invite Your Loved Ones"),
         const InviteLovedOnesCardWidget(),
@@ -194,9 +192,7 @@ class EarnPunyaTabWidget extends StatelessWidget {
       ),
       child: AutoTranslateText(
         text,
-        style: AppTypography.body2.copyWith(
-          color: Colors.white,
-        ),
+        style: AppTypography.body2.copyWith(color: Colors.white),
       ),
     );
   }

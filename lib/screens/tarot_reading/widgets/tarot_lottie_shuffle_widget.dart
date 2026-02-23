@@ -19,7 +19,8 @@ class TarotLottieShuffleWidget extends StatefulWidget {
   });
 
   @override
-  State<TarotLottieShuffleWidget> createState() => _TarotLottieShuffleWidgetState();
+  State<TarotLottieShuffleWidget> createState() =>
+      _TarotLottieShuffleWidgetState();
 }
 
 class _TarotLottieShuffleWidgetState extends State<TarotLottieShuffleWidget>
@@ -36,7 +37,7 @@ class _TarotLottieShuffleWidgetState extends State<TarotLottieShuffleWidget>
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     );
-    
+
     _lottieController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
@@ -84,7 +85,7 @@ class _TarotLottieShuffleWidgetState extends State<TarotLottieShuffleWidget>
     if (_lottieError) {
       return _buildFallbackAnimation();
     }
-    
+
     // Try to load Lottie, but fallback if it fails
     return Lottie.asset(
       'assets/lottie/tarot_shuffle.json',
@@ -140,7 +141,9 @@ class _TarotLottieShuffleWidgetState extends State<TarotLottieShuffleWidget>
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: "#F38B3B".toColor().withOpacity(0.3 * progress),
+                      color: "#F38B3B".toColor().withValues(
+                        alpha: 0.3 * progress,
+                      ),
                       width: 3,
                     ),
                   ),
@@ -148,7 +151,13 @@ class _TarotLottieShuffleWidgetState extends State<TarotLottieShuffleWidget>
               ),
               // Inner pulsing circle
               Transform.scale(
-                scale: (0.7 + (0.3 * math.sin(_fallbackController.value * 2 * math.pi))) * progress,
+                scale:
+                    (0.7 +
+                        (0.3 *
+                            math.sin(
+                              _fallbackController.value * 2 * math.pi,
+                            ))) *
+                    progress,
                 child: Container(
                   width: 90.w,
                   height: 90.w,
@@ -156,13 +165,15 @@ class _TarotLottieShuffleWidgetState extends State<TarotLottieShuffleWidget>
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        "#F38B3B".toColor().withOpacity(0.9 * progress),
-                        '#820B17'.toColor().withOpacity(0.7 * progress),
+                        "#F38B3B".toColor().withValues(alpha: 0.9 * progress),
+                        '#820B17'.toColor().withValues(alpha: 0.7 * progress),
                       ],
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: "#F38B3B".toColor().withOpacity(0.6 * progress),
+                        color: "#F38B3B".toColor().withValues(
+                          alpha: 0.6 * progress,
+                        ),
                         blurRadius: 25,
                         spreadRadius: 8,
                       ),
@@ -170,7 +181,7 @@ class _TarotLottieShuffleWidgetState extends State<TarotLottieShuffleWidget>
                   ),
                   child: Icon(
                     Icons.shuffle,
-                    color: Colors.white.withOpacity(progress),
+                    color: Colors.white.withValues(alpha: progress),
                     size: 50.w,
                   ),
                 ),
@@ -182,7 +193,7 @@ class _TarotLottieShuffleWidgetState extends State<TarotLottieShuffleWidget>
                   child: AutoTranslateText(
                     'Shuffling...',
                     style: TextStyle(
-                      color: '#820B17'.toColor().withOpacity(0.7),
+                      color: '#820B17'.toColor().withValues(alpha: 0.7),
                     ),
                   ),
                 ),
@@ -193,4 +204,3 @@ class _TarotLottieShuffleWidgetState extends State<TarotLottieShuffleWidget>
     );
   }
 }
-

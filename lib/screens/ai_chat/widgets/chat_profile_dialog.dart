@@ -181,7 +181,7 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
             borderRadius: BorderRadius.circular(24.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -208,7 +208,9 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
                   AutoTranslateText(
                     'Share them with your persona to avoid typing during chat.',
                     style: MyTextTheme.smallBCN
-                        .copyWith(color: AppColors.saffron.withOpacity(0.8))
+                        .copyWith(
+                          color: AppColors.saffron.withValues(alpha: 0.8),
+                        )
                         .merge(AppTypography.body2),
                   ),
                   Spacing.h(20),
@@ -580,7 +582,7 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -600,23 +602,23 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
           labelText: label,
           hintText: hint,
           hintStyle: MyTextTheme.smallBCN.copyWith(
-            color: AppColors.textColorMaroon.withOpacity(0.4),
+            color: AppColors.textColorMaroon.withValues(alpha: 0.4),
           ),
           labelStyle: MyTextTheme.smallBCN.copyWith(
-            color: AppColors.deepOrange.withOpacity(0.8),
+            color: AppColors.deepOrange.withValues(alpha: 0.8),
           ),
           filled: true,
           fillColor: Colors.transparent, // Controlled by container
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.r),
             borderSide: BorderSide(
-              color: AppColors.deepOrange.withOpacity(0.1),
+              color: AppColors.deepOrange.withValues(alpha: 0.1),
             ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.r),
             borderSide: BorderSide(
-              color: AppColors.deepOrange.withOpacity(0.1),
+              color: AppColors.deepOrange.withValues(alpha: 0.1),
             ),
           ),
           focusedBorder: OutlineInputBorder(
@@ -653,7 +655,7 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -663,7 +665,7 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
         decoration: InputDecoration(
           labelText: label,
           labelStyle: MyTextTheme.smallBCN.copyWith(
-            color: AppColors.deepOrange.withOpacity(0.8),
+            color: AppColors.deepOrange.withValues(alpha: 0.8),
           ),
           filled: true,
           fillColor: Colors.transparent, // Controlled by container
@@ -671,13 +673,13 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.r),
             borderSide: BorderSide(
-              color: AppColors.deepOrange.withOpacity(0.1),
+              color: AppColors.deepOrange.withValues(alpha: 0.1),
             ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.r),
             borderSide: BorderSide(
-              color: AppColors.deepOrange.withOpacity(0.1),
+              color: AppColors.deepOrange.withValues(alpha: 0.1),
             ),
           ),
           focusedBorder: OutlineInputBorder(
@@ -718,7 +720,7 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -728,7 +730,7 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
         decoration: InputDecoration(
           labelText: 'Language',
           labelStyle: MyTextTheme.smallBCN.copyWith(
-            color: AppColors.deepOrange.withOpacity(0.8),
+            color: AppColors.deepOrange.withValues(alpha: 0.8),
           ),
           filled: true,
           fillColor: Colors.transparent, // Controlled by container
@@ -736,13 +738,13 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.r),
             borderSide: BorderSide(
-              color: AppColors.deepOrange.withOpacity(0.1),
+              color: AppColors.deepOrange.withValues(alpha: 0.1),
             ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.r),
             borderSide: BorderSide(
-              color: AppColors.deepOrange.withOpacity(0.1),
+              color: AppColors.deepOrange.withValues(alpha: 0.1),
             ),
           ),
           focusedBorder: OutlineInputBorder(
@@ -788,9 +790,11 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
         decoration: BoxDecoration(
-          color: AppColors.deepOrange.withOpacity(0.1),
+          color: AppColors.deepOrange.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(color: AppColors.deepOrange.withOpacity(0.3)),
+          border: Border.all(
+            color: AppColors.deepOrange.withValues(alpha: 0.3),
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

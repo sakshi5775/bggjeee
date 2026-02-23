@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/data_model/coupon_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/coupons_controller.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -11,7 +11,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class CouponsView extends GetView<CouponsController> {
-  const CouponsView({super.key});
+  final bool showBackButton;
+  const CouponsView({super.key, this.showBackButton = true});
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +26,11 @@ class CouponsView extends GetView<CouponsController> {
           children: [
             CommonHeader(
               title: 'Available Coupons',
+              showBackButton: showBackButton,
               subtitle: AutoTranslateText(
                 'Save more with exclusive offers',
                 style: TextStyle(
-                  color: '#6F221E'.toColor().withOpacity(0.7),
+                  color: '#6F221E'.toColor().withValues(alpha: 0.7),
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
                 ),
@@ -88,7 +90,7 @@ class _EmptyCouponsView extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: '#68171E'.toColor().withOpacity(0.2),
+                    color: '#68171E'.toColor().withValues(alpha: 0.2),
                     blurRadius: 20,
                     offset: const Offset(0, 8),
                   ),
@@ -157,13 +159,13 @@ class _CouponCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24.r),
         boxShadow: [
           BoxShadow(
-            color: '#68171E'.toColor().withOpacity(0.12),
+            color: '#68171E'.toColor().withValues(alpha: 0.12),
             blurRadius: 16,
             offset: const Offset(0, 6),
             spreadRadius: 0,
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 8,
             offset: const Offset(0, 2),
             spreadRadius: 0,
@@ -181,12 +183,12 @@ class _CouponCard extends StatelessWidget {
                 colors: [
                   Colors.white,
                   Colors.white,
-                  '#FEF6C3'.toColor().withOpacity(0.3),
+                  '#FEF6C3'.toColor().withValues(alpha: 0.3),
                 ],
               ),
               borderRadius: BorderRadius.circular(24.r),
               border: Border.all(
-                color: '#E3B341'.toColor().withOpacity(0.2),
+                color: '#E3B341'.toColor().withValues(alpha: 0.2),
                 width: 1.5,
               ),
             ),
@@ -231,7 +233,7 @@ class _CouponCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16.r),
                         boxShadow: [
                           BoxShadow(
-                            color: '#F38B3B'.toColor().withOpacity(0.3),
+                            color: '#F38B3B'.toColor().withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -292,7 +294,7 @@ class _CouponCard extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(12.w),
                     decoration: BoxDecoration(
-                      color: AppColors.saffron.withOpacity(0.08),
+                      color: AppColors.saffron.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(12.r),
                     ),
                     child: AutoTranslateText(
@@ -320,7 +322,7 @@ class _CouponCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16.r),
                     boxShadow: [
                       BoxShadow(
-                        color: '#68171E'.toColor().withOpacity(0.2),
+                        color: '#68171E'.toColor().withValues(alpha: 0.2),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
@@ -386,7 +388,7 @@ class _CouponCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16.r),
                         border: Border.all(
-                          color: '#68171E'.toColor().withOpacity(0.3),
+                          color: '#68171E'.toColor().withValues(alpha: 0.3),
                           width: 1.5,
                         ),
                         color: Colors.white,
@@ -412,7 +414,7 @@ class _CouponCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(16.r),
                           boxShadow: [
                             BoxShadow(
-                              color: '#F38B3B'.toColor().withOpacity(0.4),
+                              color: '#F38B3B'.toColor().withValues(alpha: 0.4),
                               blurRadius: 12,
                               offset: const Offset(0, 6),
                             ),
@@ -468,7 +470,7 @@ class _CouponCard extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    '#E3B341'.toColor().withOpacity(0.1),
+                    '#E3B341'.toColor().withValues(alpha: 0.1),
                     Colors.transparent,
                   ],
                 ),
@@ -501,12 +503,15 @@ class _InfoChip extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.saffron.withOpacity(0.15),
-            AppColors.saffron.withOpacity(0.08),
+            AppColors.saffron.withValues(alpha: 0.15),
+            AppColors.saffron.withValues(alpha: 0.08),
           ],
         ),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.saffron.withOpacity(0.2), width: 1),
+        border: Border.all(
+          color: AppColors.saffron.withValues(alpha: 0.2),
+          width: 1,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

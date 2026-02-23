@@ -1,5 +1,6 @@
 import 'package:astrobharataiuser/app_manager/user_data.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
+import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/services/notification_service.dart';
 import 'package:astrobharataiuser/screens/login/login/service/login_service.dart';
@@ -8,7 +9,6 @@ import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class LoginController extends BaseController {
   final LoginService _loginService = LoginService();
@@ -106,6 +106,14 @@ class LoginController extends BaseController {
       identifier = '$countryCode$phoneNumber';
     }
 
+    identifier = identifier; // To avoid unused variable warning if modified
+
+    CrashlyticsService.trackAction(
+      "AUTH",
+      "LOGIN_START",
+      data: "mode:${isEmailMode.value ? 'email' : 'phone'}",
+    );
+
     await runWithLoading(
       () async {
         if (!isEmailMode.value) {
@@ -115,6 +123,7 @@ class LoginController extends BaseController {
           }
           final otpSent = await _otpService.sendOtp(phone: identifier);
           if (otpSent) {
+            CrashlyticsService.trackAction("AUTH", "OTP_SENT");
             if (kDebugMode) {
               print('Login: OTP sent successfully, navigating to OTP page');
             }
@@ -128,6 +137,7 @@ class LoginController extends BaseController {
               },
             );
           } else {
+            CrashlyticsService.trackAction("AUTH", "OTP_FAIL");
             if (kDebugMode) {
               print('Login: Failed to send OTP');
             }
@@ -136,7 +146,11 @@ class LoginController extends BaseController {
           // Email login
           final loginModel = await _loginService.login(identifier, password);
           if (loginModel != null) {
+            CrashlyticsService.trackAction("AUTH", "LOGIN_SUCCESS");
             UserData().addLoginData(loginModel.toJson());
+
+            // Set user ID for future crashes
+            CrashlyticsService.setUser(loginModel.user?.userId ?? "unknown");
 
             // Link user to OneSignal for targeted notifications
             final userId = loginModel.user?.userId;
@@ -146,6 +160,8 @@ class LoginController extends BaseController {
 
             await Future.delayed(const Duration(milliseconds: 500));
             Get.offAllNamed(AppRoutes.userDashboard);
+          } else {
+            CrashlyticsService.trackAction("AUTH", "LOGIN_FAIL");
           }
         }
       },

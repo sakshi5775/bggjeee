@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/wishlist_model.dart';
@@ -13,7 +13,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class WishlistView extends GetView<WishlistController> {
-  const WishlistView({super.key});
+  final bool showBackButton;
+  const WishlistView({super.key, this.showBackButton = true});
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +31,7 @@ class WishlistView extends GetView<WishlistController> {
           children: [
             CommonHeader(
               title: 'My Wishlist',
+              showBackButton: showBackButton,
               subtitle: Obx(() {
                 final count = controller.items.length;
                 return AutoTranslateText(
@@ -37,7 +39,7 @@ class WishlistView extends GetView<WishlistController> {
                       ? '$count ${count == 1 ? 'item' : 'items'} saved'
                       : 'Save products you love',
                   style: TextStyle(
-                    color: '#6F221E'.toColor().withOpacity(0.7),
+                    color: '#6F221E'.toColor().withValues(alpha: 0.7),
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w400,
                   ),
@@ -58,14 +60,14 @@ class WishlistView extends GetView<WishlistController> {
                       child: Container(
                         padding: EdgeInsets.all(8.w),
                         decoration: BoxDecoration(
-                          color: '#6F221E'.toColor().withOpacity(0.1),
+                          color: '#6F221E'.toColor().withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.delete_outline_rounded,
                           color: hasItems && !isBusy
                               ? '#6F221E'.toColor()
-                              : '#6F221E'.toColor().withOpacity(0.5),
+                              : '#6F221E'.toColor().withValues(alpha: 0.5),
                           size: 20.sp,
                         ),
                       ),
@@ -157,23 +159,23 @@ class _WishlistItemCard extends StatelessWidget {
           colors: [
             Colors.white,
             Colors.white,
-            '#FEF6C3'.toColor().withOpacity(0.2),
+            '#FEF6C3'.toColor().withValues(alpha: 0.2),
           ],
         ),
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(
-          color: '#68171E'.toColor().withOpacity(0.15),
+          color: '#68171E'.toColor().withValues(alpha: 0.15),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: '#68171E'.toColor().withOpacity(0.1),
+            color: '#68171E'.toColor().withValues(alpha: 0.1),
             blurRadius: 12,
             offset: const Offset(0, 4),
             spreadRadius: 0,
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 6,
             offset: const Offset(0, 2),
             spreadRadius: 0,
@@ -205,7 +207,7 @@ class _WishlistItemCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16.r),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withValues(alpha: 0.1),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -225,8 +227,12 @@ class _WishlistItemCard extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: [
-                                      AppColors.textSecondary.withOpacity(0.1),
-                                      AppColors.textSecondary.withOpacity(0.05),
+                                      AppColors.textSecondary.withValues(
+                                        alpha: 0.1,
+                                      ),
+                                      AppColors.textSecondary.withValues(
+                                        alpha: 0.05,
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -255,7 +261,9 @@ class _WishlistItemCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(6.r),
                             boxShadow: [
                               BoxShadow(
-                                color: '#F38B3B'.toColor().withOpacity(0.3),
+                                color: '#F38B3B'.toColor().withValues(
+                                  alpha: 0.3,
+                                ),
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
                               ),
@@ -285,7 +293,7 @@ class _WishlistItemCard extends StatelessWidget {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: '#68171E'.toColor().withOpacity(0.2),
+                              color: '#68171E'.toColor().withValues(alpha: 0.2),
                               blurRadius: 8,
                               offset: const Offset(0, 4),
                             ),
@@ -368,7 +376,9 @@ class _WishlistItemCard extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(16.r),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: '#F38B3B'.toColor().withOpacity(0.4),
+                                    color: '#F38B3B'.toColor().withValues(
+                                      alpha: 0.4,
+                                    ),
                                     blurRadius: 12,
                                     offset: const Offset(0, 6),
                                   ),
@@ -433,10 +443,12 @@ class _WishlistItemCard extends StatelessWidget {
                           SizedBox(width: 12.w),
                           Container(
                             decoration: BoxDecoration(
-                              color: AppColors.sacredRed.withOpacity(0.1),
+                              color: AppColors.sacredRed.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(16.r),
                               border: Border.all(
-                                color: AppColors.sacredRed.withOpacity(0.3),
+                                color: AppColors.sacredRed.withValues(
+                                  alpha: 0.3,
+                                ),
                                 width: 1.5,
                               ),
                             ),
@@ -505,7 +517,7 @@ class _EmptyWishlist extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: '#68171E'.toColor().withOpacity(0.2),
+                    color: '#68171E'.toColor().withValues(alpha: 0.2),
                     blurRadius: 20,
                     offset: const Offset(0, 8),
                   ),
@@ -547,7 +559,7 @@ class _EmptyWishlist extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20.r),
                 boxShadow: [
                   BoxShadow(
-                    color: '#F38B3B'.toColor().withOpacity(0.4),
+                    color: '#F38B3B'.toColor().withValues(alpha: 0.4),
                     blurRadius: 16,
                     offset: const Offset(0, 8),
                   ),

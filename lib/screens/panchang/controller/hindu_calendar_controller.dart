@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/panchang/service/panchang_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
 import 'package:flutter/foundation.dart';
@@ -18,19 +18,29 @@ class HinduCalendarController extends BaseController {
   final selectedYear = DateTime.now().year.obs;
   final calendarData = <Map<String, dynamic>>[].obs;
   final selectedLocation = 'Fetching Location...'.obs;
-  
+
   // Location coordinates
   double? currentLatitude;
   double? currentLongitude;
   double? currentTimezone;
-  
+
   // Flag to track if controller is disposed
   bool _isDisposed = false;
 
   // Month names
   final List<String> monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
 
   @override
@@ -96,7 +106,11 @@ class HinduCalendarController extends BaseController {
         if (_isDisposed) return;
 
         if (reverseGeocode != null) {
-          final city = reverseGeocode['city'] ?? reverseGeocode['town'] ?? reverseGeocode['village'] ?? '';
+          final city =
+              reverseGeocode['city'] ??
+              reverseGeocode['town'] ??
+              reverseGeocode['village'] ??
+              '';
           final state = reverseGeocode['state'] ?? '';
           if (city.isNotEmpty) {
             selectedLocation.value = state.isNotEmpty ? '$city, $state' : city;
@@ -144,10 +158,14 @@ class HinduCalendarController extends BaseController {
   /// Reverse geocode coordinates to get address
   Future<Map<String, dynamic>?> _reverseGeocode(double lat, double lon) async {
     try {
-      final response = await http.get(
-        Uri.parse('https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lon'),
-        headers: {'Accept': 'application/json'},
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .get(
+            Uri.parse(
+              'https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lon',
+            ),
+            headers: {'Accept': 'application/json'},
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>;
@@ -178,7 +196,10 @@ class HinduCalendarController extends BaseController {
       }
     } catch (e) {
       debugPrint('Error fetching Hindu calendar: $e');
-      showErrorMessage(title: 'Error', message: 'Failed to fetch calendar data');
+      showErrorMessage(
+        title: 'Error',
+        message: 'Failed to fetch calendar data',
+      );
     } finally {
       isLoading.value = false;
     }
@@ -215,7 +236,11 @@ class HinduCalendarController extends BaseController {
   }
 
   /// Select city
-  Future<void> selectCity(String cityName, String? state, String? country) async {
+  Future<void> selectCity(
+    String cityName,
+    String? state,
+    String? country,
+  ) async {
     try {
       final coords = await AddressHelper.fetchCoordinatesFromCity(
         city: cityName,
@@ -225,7 +250,7 @@ class HinduCalendarController extends BaseController {
       if (coords != null) {
         currentLatitude = coords['latitude'] as double?;
         currentLongitude = coords['longitude'] as double?;
-        
+
         if (currentLatitude != null && currentLongitude != null) {
           try {
             final timezone = await AddressHelper.getTimezoneFromCoordinates(
@@ -262,7 +287,9 @@ class HinduCalendarController extends BaseController {
       } on MissingPluginException {
         if (_isDisposed) return;
         selectedLocation.value = 'Select Location';
-        debugPrint('[Location Service Unavailable] Location service is not available. Please rebuild the app after running "flutter pub get".');
+        debugPrint(
+          '[Location Service Unavailable] Location service is not available. Please rebuild the app after running "flutter pub get".',
+        );
         return;
       }
 
@@ -308,7 +335,11 @@ class HinduCalendarController extends BaseController {
       if (_isDisposed) return;
 
       if (reverseGeocode != null) {
-        final city = reverseGeocode['city'] ?? reverseGeocode['town'] ?? reverseGeocode['village'] ?? '';
+        final city =
+            reverseGeocode['city'] ??
+            reverseGeocode['town'] ??
+            reverseGeocode['village'] ??
+            '';
         final state = reverseGeocode['state'] ?? '';
         if (city.isNotEmpty) {
           selectedLocation.value = state.isNotEmpty ? '$city, $state' : city;
@@ -360,7 +391,9 @@ class HinduCalendarController extends BaseController {
   Future<double> _getTimezoneOffset(String timezone) async {
     try {
       final response = await http.get(
-        Uri.parse('https://timeapi.io/api/TimeZone/coordinate?latitude=${currentLatitude ?? 28.6139}&longitude=${currentLongitude ?? 77.2090}'),
+        Uri.parse(
+          'https://timeapi.io/api/TimeZone/coordinate?latitude=${currentLatitude ?? 28.6139}&longitude=${currentLongitude ?? 77.2090}',
+        ),
         headers: {'Accept': 'application/json'},
       );
 
@@ -375,7 +408,7 @@ class HinduCalendarController extends BaseController {
     } catch (e) {
       debugPrint('Error getting timezone offset: $e');
     }
-    
+
     // Fallback: calculate from coordinates
     return await _getTimezoneOffsetFromCoordinates(
       currentLatitude ?? 28.6139,
@@ -384,10 +417,15 @@ class HinduCalendarController extends BaseController {
   }
 
   /// Get timezone offset from coordinates
-  Future<double> _getTimezoneOffsetFromCoordinates(double lat, double lon) async {
+  Future<double> _getTimezoneOffsetFromCoordinates(
+    double lat,
+    double lon,
+  ) async {
     try {
       final response = await http.get(
-        Uri.parse('https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon'),
+        Uri.parse(
+          'https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon',
+        ),
         headers: {'Accept': 'application/json'},
       );
 
@@ -402,7 +440,7 @@ class HinduCalendarController extends BaseController {
     } catch (e) {
       debugPrint('Error getting timezone from coordinates: $e');
     }
-    
+
     // Default to IST (5.5)
     return 5.5;
   }
@@ -427,4 +465,3 @@ class HinduCalendarController extends BaseController {
     return null;
   }
 }
-

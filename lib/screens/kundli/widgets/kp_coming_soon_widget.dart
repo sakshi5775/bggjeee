@@ -9,10 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class KpComingSoonWidget extends StatelessWidget {
   final String title;
 
-  const KpComingSoonWidget({
-    super.key,
-    required this.title,
-  });
+  const KpComingSoonWidget({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -23,26 +20,27 @@ class KpComingSoonWidget extends StatelessWidget {
           Icon(
             Icons.construction,
             size: 80.w,
-            color: "#ed6f30".toColor().withOpacity(0.5),
+            color: "#ed6f30".toColor().withValues(alpha: 0.5),
           ),
           Spacing.h(24),
           AutoTranslateText(
             title,
-            style: MyTextTheme.largeBCB.copyWith(
-              color: "#6F221E".toColor(),
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.h1),
+            style: MyTextTheme.largeBCB
+                .copyWith(
+                  color: "#6F221E".toColor(),
+                  fontWeight: FontWeight.bold,
+                )
+                .merge(AppTypography.h1),
           ),
           Spacing.h(16),
           AutoTranslateText(
             'Coming Soon',
-            style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
-            ).merge(AppTypography.h3),
+            style: MyTextTheme.mediumBCN
+                .copyWith(color: "#6F221E".toColor().withValues(alpha: 0.6))
+                .merge(AppTypography.h3),
           ),
         ],
       ),
     );
   }
 }
-

@@ -197,7 +197,7 @@ class GlobalHeaderView extends GetView<GlobalHeaderController> {
                     border: Border.all(color: "#DBCCA8".toColor(), width: 1.2),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.12),
+                        color: Colors.black.withValues(alpha: 0.12),
                         blurRadius: 16,
                         offset: const Offset(0, 4),
                       ),
@@ -235,7 +235,9 @@ class GlobalHeaderView extends GetView<GlobalHeaderController> {
                                 'Search horoscope, kundli, tarot, palm reading...',
                             hintStyle: MyTextTheme.mediumBCN
                                 .copyWith(
-                                  color: "#3D0C11".toColor().withOpacity(0.5),
+                                  color: "#3D0C11".toColor().withValues(
+                                    alpha: 0.5,
+                                  ),
                                   fontWeight: FontWeight.w500,
                                 )
                                 .merge(AppTypography.body1),

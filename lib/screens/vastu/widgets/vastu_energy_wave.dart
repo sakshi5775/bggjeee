@@ -69,18 +69,18 @@ class EnergyWavePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final maxRadius = math.min(size.width, size.height) / 2;
-    
+
     // Draw multiple concentric waves
     for (int i = 0; i < 3; i++) {
       final phase = (animation.value + i * 0.33) % 1.0;
       final radius = maxRadius * 0.3 * phase;
       final opacity = (1.0 - phase) * 0.2 * intensity;
-      
+
       final paint = Paint()
-        ..color = color.withOpacity(opacity)
+        ..color = color.withValues(alpha: opacity)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2;
-      
+
       canvas.drawCircle(center, radius, paint);
     }
   }
@@ -88,4 +88,3 @@ class EnergyWavePainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
-

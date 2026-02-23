@@ -20,7 +20,10 @@ class DashaTableWidget extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.cardLight,
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: AppColors.deepOrange.withOpacity(0.5), width: 1),
+          border: Border.all(
+            color: AppColors.deepOrange.withValues(alpha: 0.5),
+            width: 1,
+          ),
           boxShadow: [
             BoxShadow(
               color: AppColors.shadowLight,
@@ -35,7 +38,7 @@ class DashaTableWidget extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
               decoration: BoxDecoration(
-                color: AppColors.deepOrange.withOpacity(0.1),
+                color: AppColors.deepOrange.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(12.r),
                   topRight: Radius.circular(12.r),
@@ -87,13 +90,16 @@ class DashaTableWidget extends StatelessWidget {
                   }
                 },
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 12.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 12.h,
+                  ),
                   decoration: BoxDecoration(
                     border: Border(
                       bottom: BorderSide(
                         color: isLast
                             ? Colors.transparent
-                            : AppColors.deepOrange.withOpacity(0.2),
+                            : AppColors.deepOrange.withValues(alpha: 0.2),
                         width: 1,
                       ),
                     ),
@@ -116,11 +122,7 @@ class DashaTableWidget extends StatelessWidget {
         Expanded(
           child: Row(
             children: [
-              Icon(
-                Icons.timeline,
-                size: 16.w,
-                color: AppColors.deepOrange,
-              ),
+              Icon(Icons.timeline, size: 16.w, color: AppColors.deepOrange),
               Spacing.w(8),
               Expanded(
                 child: AutoTranslateText(
@@ -139,7 +141,7 @@ class DashaTableWidget extends StatelessWidget {
           width: 1,
           height: 30.h,
           margin: EdgeInsets.symmetric(horizontal: 10.w),
-          color: AppColors.deepOrange.withOpacity(0.2),
+          color: AppColors.deepOrange.withValues(alpha: 0.2),
         ),
         Expanded(
           child: InkWell(
@@ -198,5 +200,4 @@ class DashaTableWidget extends StatelessWidget {
       ],
     );
   }
-
 }

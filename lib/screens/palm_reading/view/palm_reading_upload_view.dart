@@ -113,7 +113,7 @@ class PalmReadingUploadView extends StatelessWidget {
           border: Border.all(color: '#F5D7B8'.toColor(), width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -248,7 +248,10 @@ class PalmReadingUploadView extends StatelessWidget {
             borderRadius: BorderRadius.circular(12.r),
             side: isPrimary
                 ? BorderSide.none
-                : BorderSide(color: Colors.grey.withOpacity(0.3), width: 1),
+                : BorderSide(
+                    color: Colors.grey.withValues(alpha: 0.3),
+                    width: 1,
+                  ),
           ),
           elevation: isPrimary ? 4 : 0,
         ),
@@ -300,7 +303,7 @@ class PalmReadingUploadView extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -334,7 +337,7 @@ class PalmReadingUploadView extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: controller.selectedPalmImage.value != null
               ? "#F38B3B".toColor()
-              : "#F38B3B".toColor().withOpacity(0.5),
+              : "#F38B3B".toColor().withValues(alpha: 0.5),
           foregroundColor: Colors.white,
           padding: AppPaddings.symmetric(v: 16, h: 24),
           shape: RoundedRectangleBorder(
@@ -371,7 +374,7 @@ class PalmReadingUploadView extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -420,7 +423,7 @@ class PalmReadingUploadView extends StatelessWidget {
                   if (controller.selectedPalmImage.value != null)
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12.r),
                       ),
                     ),

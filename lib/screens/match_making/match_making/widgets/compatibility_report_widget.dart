@@ -219,7 +219,7 @@ class CompatibilityReportWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -248,7 +248,7 @@ class CompatibilityReportWidget extends StatelessWidget {
                         height: 70.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColors.deepOrange.withOpacity(0.2),
+                          color: AppColors.deepOrange.withValues(alpha: 0.2),
                         ),
                         child: Icon(
                           Icons.person,
@@ -271,7 +271,7 @@ class CompatibilityReportWidget extends StatelessWidget {
                 AutoTranslateText(
                   girlDob,
                   style: AppTypography.label.copyWith(
-                    color: "#6F221E".toColor().withOpacity(0.7),
+                    color: "#6F221E".toColor().withValues(alpha: 0.7),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -330,7 +330,7 @@ class CompatibilityReportWidget extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -360,7 +360,7 @@ class CompatibilityReportWidget extends StatelessWidget {
                         height: 70.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColors.deepOrange.withOpacity(0.2),
+                          color: AppColors.deepOrange.withValues(alpha: 0.2),
                         ),
                         child: Icon(
                           Icons.person,
@@ -383,7 +383,7 @@ class CompatibilityReportWidget extends StatelessWidget {
                 AutoTranslateText(
                   boyDob,
                   style: AppTypography.label.copyWith(
-                    color: "#6F221E".toColor().withOpacity(0.7),
+                    color: "#6F221E".toColor().withValues(alpha: 0.7),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -461,7 +461,7 @@ class CompatibilityReportWidget extends StatelessWidget {
       width: 24.w,
       height: 24.w,
       decoration: BoxDecoration(
-        color: "#DFB343".toColor().withOpacity(0.2),
+        color: "#DFB343".toColor().withValues(alpha: 0.2),
         shape: BoxShape.circle,
       ),
       child: Center(child: AutoTranslateText(icon, style: AppTypography.h3)),
@@ -497,7 +497,7 @@ class CompatibilityReportWidget extends StatelessWidget {
                 child: CircularProgressIndicator(
                   value: progressValue,
                   strokeWidth: 14,
-                  backgroundColor: Colors.grey.withOpacity(0.2),
+                  backgroundColor: Colors.grey.withValues(alpha: 0.2),
                   valueColor: AlwaysStoppedAnimation<Color>(
                     percentage >= 75
                         ? Colors.green
@@ -523,7 +523,7 @@ class CompatibilityReportWidget extends StatelessWidget {
                   AutoTranslateText(
                     'Gun Milan',
                     style: MyTextTheme.smallBCN.copyWith(
-                      color: "#6F221E".toColor().withOpacity(0.7),
+                      color: "#6F221E".toColor().withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -561,7 +561,9 @@ class CompatibilityReportWidget extends StatelessWidget {
             decoration: BoxDecoration(
               color: const Color(0xFFFDF3E6),
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: AppColors.deepOrange.withOpacity(0.3)),
+              border: Border.all(
+                color: AppColors.deepOrange.withValues(alpha: 0.3),
+              ),
             ),
             child: AutoTranslateText(
               'Total: $displayTotal',
@@ -694,7 +696,7 @@ class CompatibilityReportWidget extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color: "#DFB343".toColor().withOpacity(0.3),
+            color: "#DFB343".toColor().withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -742,7 +744,7 @@ class CompatibilityReportWidget extends StatelessWidget {
             AutoTranslateText(
               koota.description,
               style: MyTextTheme.smallBCN.copyWith(
-                color: "#6F221E".toColor().withOpacity(0.8),
+                color: "#6F221E".toColor().withValues(alpha: 0.8),
                 height: 1.4,
               ),
             ),
@@ -767,7 +769,7 @@ class CompatibilityReportWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFFDF3E6),
         borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
+        border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -780,7 +782,7 @@ class CompatibilityReportWidget extends StatelessWidget {
           AutoTranslateText(
             value,
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.9),
+              color: "#6F221E".toColor().withValues(alpha: 0.9),
             ),
           ),
         ],
@@ -893,7 +895,7 @@ class CompatibilityReportWidget extends StatelessWidget {
               color: const Color(0xFFFFF3E0), // Light yellow from image
               borderRadius: BorderRadius.circular(12.r),
               border: Border.all(
-                color: Colors.orange.withOpacity(0.3),
+                color: Colors.orange.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -1021,7 +1023,7 @@ class CompatibilityReportWidget extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: '#68171E'.toColor().withOpacity(0.2),
+          color: '#68171E'.toColor().withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -1050,7 +1052,7 @@ class CompatibilityReportWidget extends StatelessWidget {
           AutoTranslateText(
             'Mars placement check',
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.7),
+              color: "#6F221E".toColor().withValues(alpha: 0.7),
             ),
           ),
           Spacing.h(16),
@@ -1067,8 +1069,8 @@ class CompatibilityReportWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12.r),
                     border: Border.all(
                       color: !boyHasDosh
-                          ? Colors.green.withOpacity(0.3)
-                          : Colors.orange.withOpacity(0.3),
+                          ? Colors.green.withValues(alpha: 0.3)
+                          : Colors.orange.withValues(alpha: 0.3),
                       width: 1,
                     ),
                   ),
@@ -1107,8 +1109,8 @@ class CompatibilityReportWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12.r),
                     border: Border.all(
                       color: !girlHasDosh
-                          ? Colors.green.withOpacity(0.3)
-                          : Colors.orange.withOpacity(0.3),
+                          ? Colors.green.withValues(alpha: 0.3)
+                          : Colors.orange.withValues(alpha: 0.3),
                       width: 1,
                     ),
                   ),
@@ -1181,7 +1183,7 @@ class CompatibilityReportWidget extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: '#68171E'.toColor().withOpacity(0.2),
+          color: '#68171E'.toColor().withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -1247,7 +1249,7 @@ class CompatibilityReportWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.r),
                   boxShadow: [
                     BoxShadow(
-                      color: '#F38B3B'.toColor().withOpacity(0.3),
+                      color: '#F38B3B'.toColor().withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -1292,7 +1294,7 @@ class CompatibilityReportWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.red.withOpacity(0.3), width: 1),
+        border: Border.all(color: Colors.red.withValues(alpha: 0.3), width: 1),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -1457,7 +1459,7 @@ class CompatibilityReportWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFFDF3E6),
         borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
+        border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.2)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1476,7 +1478,7 @@ class CompatibilityReportWidget extends StatelessWidget {
                 AutoTranslateText(
                   '${category.category} (${category.nature})',
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: "#6F221E".toColor().withOpacity(0.9),
+                    color: "#6F221E".toColor().withValues(alpha: 0.9),
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -1486,7 +1488,7 @@ class CompatibilityReportWidget extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
             decoration: BoxDecoration(
-              color: AppColors.deepOrange.withOpacity(0.1),
+              color: AppColors.deepOrange.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20.r),
             ),
             child: AutoTranslateText(
@@ -1526,7 +1528,7 @@ class CompatibilityReportWidget extends StatelessWidget {
                       child: AutoTranslateText(
                         item,
                         style: MyTextTheme.smallBCN.copyWith(
-                          color: "#6F221E".toColor().withOpacity(0.8),
+                          color: "#6F221E".toColor().withValues(alpha: 0.8),
                         ),
                       ),
                     ),
@@ -1543,9 +1545,9 @@ class CompatibilityReportWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: AppColors.deepOrange.withOpacity(0.05),
+        color: AppColors.deepOrange.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
+        border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1630,7 +1632,7 @@ class _ExpandableSectionState extends State<_ExpandableSection> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: '#68171E'.toColor().withOpacity(0.2),
+          color: '#68171E'.toColor().withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -1664,7 +1666,7 @@ class _ExpandableSectionState extends State<_ExpandableSection> {
                       AutoTranslateText(
                         widget.subtitle,
                         style: MyTextTheme.smallBCN.copyWith(
-                          color: "#6F221E".toColor().withOpacity(0.7),
+                          color: "#6F221E".toColor().withValues(alpha: 0.7),
                         ),
                       ),
                     ],

@@ -230,7 +230,7 @@ class _OfficeVastuCompassViewState extends State<OfficeVastuCompassView>
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
@@ -329,7 +329,7 @@ class _OfficeVastuCompassViewState extends State<OfficeVastuCompassView>
           //         borderRadius: BorderRadius.circular(12.r),
           //       ),
           //       elevation: 6,
-          //       shadowColor: '#9C27B0'.toColor().withOpacity(0.35),
+          //       shadowColor: '#9C27B0'.toColor().withValues(alpha: 0.35),
           //     ),
           //     icon: Icon(
           //       Icons.view_in_ar,
@@ -363,7 +363,7 @@ class _OfficeVastuCompassViewState extends State<OfficeVastuCompassView>
                       borderRadius: BorderRadius.circular(12.r),
                     ),
                     elevation: 6,
-                    shadowColor: '#4A90E2'.toColor().withOpacity(0.35),
+                    shadowColor: '#4A90E2'.toColor().withValues(alpha: 0.35),
                   ),
                   icon: Icon(
                     Icons.info_outline,

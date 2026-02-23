@@ -176,7 +176,7 @@ class HoroscopeMainView extends StatelessWidget {
                               border: isSelected
                                   ? null
                                   : Border.all(
-                                      color: maroon.withOpacity(0.2),
+                                      color: maroon.withValues(alpha: 0.2),
                                       width: 1,
                                     ),
                             ),

@@ -28,6 +28,7 @@ class CommonHeader extends StatelessWidget {
   final bool showCart;
   final bool showSearch;
   final VoidCallback? onSearchTap;
+  final bool? showBackButton;
 
   final VoidCallback? onBackTap;
 
@@ -45,6 +46,7 @@ class CommonHeader extends StatelessWidget {
     this.showLanguage = true,
     this.showCart = true,
     this.showSearch = true,
+    this.showBackButton,
     this.onSearchTap,
   });
 
@@ -97,7 +99,7 @@ class CommonHeader extends StatelessWidget {
                   hintText: 'Search horoscope, kundli, tarot, numerology...',
                   hintStyle: MyTextTheme.mediumBCN
                       .copyWith(
-                        color: '#3D0C11'.toColor().withOpacity(0.5),
+                        color: '#3D0C11'.toColor().withValues(alpha: 0.5),
                         fontWeight: FontWeight.w500,
                       )
                       .merge(AppTypography.body1),
@@ -317,8 +319,8 @@ class CommonHeader extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  // Back button (Navigator.canPop)
-                  if (Navigator.canPop(context))
+                  // Back button (Navigator.canPop or explicit showBackButton)
+                  if (showBackButton ?? Navigator.canPop(context))
                     IconButton(
                       onPressed: onBackTap ?? () => Navigator.pop(context),
                       style: IconButton.styleFrom(

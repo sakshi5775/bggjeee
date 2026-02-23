@@ -87,7 +87,7 @@ class WhyChooseUsSection extends StatelessWidget {
               borderRadius: BorderRadius.circular(20.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   offset: const Offset(0, 8),
                   blurRadius: 16,
                 ),
@@ -117,7 +117,7 @@ class WhyChooseUsSection extends StatelessWidget {
                 Container(
                   width: 30.w,
                   height: 2.h,
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                 ),
                 SizedBox(height: 6.h), // Reduced spacing
                 Expanded(

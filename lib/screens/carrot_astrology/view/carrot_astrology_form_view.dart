@@ -57,17 +57,17 @@ class _CarrotAstrologyFormViewState extends State<CarrotAstrologyFormView> {
       color: Colors.white,
       borderRadius: BorderRadius.circular(16.r),
       border: Border.all(
-        color: CarrotAstrologyColors.orangeColor.withOpacity(0.2),
+        color: CarrotAstrologyColors.orangeColor.withValues(alpha: 0.2),
         width: 1.5,
       ),
       boxShadow: [
         BoxShadow(
-          color: CarrotAstrologyColors.orangeColor.withOpacity(0.08),
+          color: CarrotAstrologyColors.orangeColor.withValues(alpha: 0.08),
           blurRadius: 16,
           offset: const Offset(0, 4),
         ),
         BoxShadow(
-          color: Colors.black.withOpacity(0.04),
+          color: Colors.black.withValues(alpha: 0.04),
           blurRadius: 8,
           offset: const Offset(0, 2),
         ),
@@ -85,7 +85,7 @@ class _CarrotAstrologyFormViewState extends State<CarrotAstrologyFormView> {
       contentPadding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 14.w),
       hintText: hint,
       hintStyle: MyTextTheme.smallBCN.copyWith(
-        color: AppColors.textSecondary.withOpacity(0.6),
+        color: AppColors.textSecondary.withValues(alpha: 0.6),
         fontSize: 13.sp,
       ),
       prefixIcon: Padding(
@@ -96,13 +96,13 @@ class _CarrotAstrologyFormViewState extends State<CarrotAstrologyFormView> {
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
         borderSide: BorderSide(
-          color: CarrotAstrologyColors.orangeColor.withOpacity(0.2),
+          color: CarrotAstrologyColors.orangeColor.withValues(alpha: 0.2),
         ),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
         borderSide: BorderSide(
-          color: CarrotAstrologyColors.orangeColor.withOpacity(0.2),
+          color: CarrotAstrologyColors.orangeColor.withValues(alpha: 0.2),
         ),
       ),
       focusedBorder: OutlineInputBorder(
@@ -160,7 +160,7 @@ class _CarrotAstrologyFormViewState extends State<CarrotAstrologyFormView> {
             child: AutoTranslateText(
               'Accurate birth time improves prediction accuracy.',
               style: MyTextTheme.smallBCN.copyWith(
-                color: AppColors.textSecondary.withOpacity(0.7),
+                color: AppColors.textSecondary.withValues(alpha: 0.7),
                 fontSize: 11.sp,
               ),
             ),
@@ -185,7 +185,7 @@ class _CarrotAstrologyFormViewState extends State<CarrotAstrologyFormView> {
       children: [
         Expanded(
           child: Divider(
-            color: CarrotAstrologyColors.orangeColor.withOpacity(0.3),
+            color: CarrotAstrologyColors.orangeColor.withValues(alpha: 0.3),
             thickness: 1,
           ),
         ),
@@ -201,7 +201,7 @@ class _CarrotAstrologyFormViewState extends State<CarrotAstrologyFormView> {
         ),
         Expanded(
           child: Divider(
-            color: CarrotAstrologyColors.orangeColor.withOpacity(0.3),
+            color: CarrotAstrologyColors.orangeColor.withValues(alpha: 0.3),
             thickness: 1,
           ),
         ),
@@ -313,7 +313,7 @@ class _CarrotAstrologyFormViewState extends State<CarrotAstrologyFormView> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color: CarrotAstrologyColors.orangeColor.withOpacity(0.2),
+            color: CarrotAstrologyColors.orangeColor.withValues(alpha: 0.2),
           ),
         ),
         child: Row(
@@ -332,7 +332,7 @@ class _CarrotAstrologyFormViewState extends State<CarrotAstrologyFormView> {
                       : controller.selectedLocation.value,
                   style: MyTextTheme.smallBCN.copyWith(
                     color: controller.selectedLocation.value.isEmpty
-                        ? AppColors.textSecondary.withOpacity(0.6)
+                        ? AppColors.textSecondary.withValues(alpha: 0.6)
                         : AppColors.textPrimary,
                     fontSize: 13.sp,
                   ),
@@ -372,7 +372,7 @@ class _CarrotAstrologyFormViewState extends State<CarrotAstrologyFormView> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: CarrotAstrologyColors.orangeColor.withOpacity(0.2),
+          color: CarrotAstrologyColors.orangeColor.withValues(alpha: 0.2),
         ),
       ),
       child: Obx(
@@ -400,7 +400,7 @@ class _CarrotAstrologyFormViewState extends State<CarrotAstrologyFormView> {
                 AutoTranslateText(
                   'Select Language',
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: AppColors.textSecondary.withOpacity(0.6),
+                    color: AppColors.textSecondary.withValues(alpha: 0.6),
                     fontSize: 13.sp,
                   ),
                 ),
@@ -447,7 +447,7 @@ class _CarrotAstrologyFormViewState extends State<CarrotAstrologyFormView> {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: CarrotAstrologyColors.orangeColor.withOpacity(0.3),
+              color: CarrotAstrologyColors.orangeColor.withValues(alpha: 0.3),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),

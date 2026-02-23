@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/numerology/service/numerology_service.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +55,7 @@ class LoShuGridFormController extends BaseController {
         'Validation Error',
         'Please select your date of birth',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
       return;
@@ -66,7 +66,7 @@ class LoShuGridFormController extends BaseController {
         'Validation Error',
         'Please select your gender',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
       return;
@@ -93,11 +93,7 @@ class LoShuGridFormController extends BaseController {
           AppRoutes.loshuGridResult,
           arguments: {
             ...response['response'],
-            '_formData': {
-              'date': dateStr,
-              'gender': gender,
-              'lang': lang,
-            },
+            '_formData': {'date': dateStr, 'gender': gender, 'lang': lang},
           },
         );
       } else {
@@ -105,7 +101,7 @@ class LoShuGridFormController extends BaseController {
           'Error',
           'Failed to generate Lo Shu Grid. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
@@ -115,11 +111,9 @@ class LoShuGridFormController extends BaseController {
         'Error',
         'An error occurred: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     }
   }
 }
-
-

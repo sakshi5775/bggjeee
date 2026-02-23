@@ -1,10 +1,10 @@
-import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+﻿import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/astrologer_voice_call_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -24,10 +24,110 @@ class AstrologerVoiceCallView extends StatelessWidget {
         child: Column(
           children: [
             // Header
-            CommonHeader(
-              title: controller.astrologer.displayName,
-              showDrawer: false, // No drawer on voice call screen
-              showHome: true,
+            // Custom Header Implementation (Replaces CommonHeader)
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              decoration: BoxDecoration(color: Colors.transparent),
+              child: SafeArea(
+                bottom: false,
+                child: Row(
+                  children: [
+                    // Back Button
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.black),
+                      onPressed: () => Get.back(),
+                    ),
+                    // Astrologer Details
+                    Expanded(
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 18.r,
+                            backgroundImage:
+                                controller.astrologer.profilePicture != null &&
+                                    controller
+                                        .astrologer
+                                        .profilePicture!
+                                        .isNotEmpty
+                                ? CachedNetworkImageProvider(
+                                    controller.astrologer.profilePicture!,
+                                  )
+                                : null,
+                            child:
+                                controller.astrologer.profilePicture == null ||
+                                    controller
+                                        .astrologer
+                                        .profilePicture!
+                                        .isEmpty
+                                ? const Icon(Icons.person)
+                                : null,
+                          ),
+                          Spacing.w(8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                AutoTranslateText(
+                                  controller.astrologer.displayName,
+                                  style: MyTextTheme.mediumBCB,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Obx(
+                                  () => AutoTranslateText(
+                                    controller.callStatus.value,
+                                    style: MyTextTheme.smallBCN.copyWith(
+                                      fontSize: 10.sp,
+                                      color: controller.isCallConnected.value
+                                          ? Colors.green
+                                          : Colors.orange,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Timer & Balance (Hidden as per request)
+                    // Column(
+                    //   crossAxisAlignment: CrossAxisAlignment.end,
+                    //   mainAxisSize: MainAxisSize.min,
+                    //   children: [
+                    //     Obx(
+                    //       () => AutoTranslateText(
+                    //         controller.remainingTime.value,
+                    //         style: MyTextTheme.mediumBCB.copyWith(
+                    //           color:
+                    //               (controller.remainingTime.value !=
+                    //                       '00:00:00' &&
+                    //                   !controller.remainingTime.value
+                    //                       .startsWith('00:00:'))
+                    //               ? Colors.black
+                    //               : Colors.red,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     Obx(
+                    //       () => AutoTranslateText(
+                    //         '₹${controller.walletBalance.value.toStringAsFixed(1)}',
+                    //         style: MyTextTheme.smallBCN.copyWith(
+                    //           color: Colors.indigo[900],
+                    //           fontSize: 10.sp,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    const SizedBox.shrink(),
+                    Spacing.w(12),
+                    // Red End Session Button Removed as per request
+                    const SizedBox.shrink(),
+                  ],
+                ),
+              ),
             ),
             // Main content area
             Expanded(
@@ -40,7 +140,7 @@ class AstrologerVoiceCallView extends StatelessWidget {
                   Obx(
                     () => controller.isLoading.value
                         ? Container(
-                            color: Colors.black.withOpacity(0.7),
+                            color: Colors.black.withValues(alpha: 0.7),
                             child: Center(
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -109,9 +209,9 @@ class AstrologerVoiceCallView extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withOpacity(0.3),
-                  Colors.black.withOpacity(0.5),
-                  Colors.black.withOpacity(0.7),
+                  Colors.black.withValues(alpha: 0.3),
+                  Colors.black.withValues(alpha: 0.5),
+                  Colors.black.withValues(alpha: 0.7),
                 ],
                 stops: const [0.0, 0.5, 1.0],
               ),
@@ -125,7 +225,7 @@ class AstrologerVoiceCallView extends StatelessWidget {
   Widget _buildImage(String? imageUrl) {
     if (imageUrl == null || imageUrl.isEmpty || imageUrl == 'placeholder_url') {
       return Container(
-        color: Colors.grey.withOpacity(0.3),
+        color: Colors.grey.withValues(alpha: 0.3),
         child: Center(
           child: Icon(Icons.person, size: 200.w, color: Colors.grey),
         ),
@@ -138,7 +238,7 @@ class AstrologerVoiceCallView extends StatelessWidget {
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
           return Container(
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Center(
               child: Icon(Icons.person, size: 200.w, color: Colors.grey),
             ),
@@ -166,7 +266,7 @@ class AstrologerVoiceCallView extends StatelessWidget {
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
           return Container(
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Center(
               child: Icon(Icons.person, size: 200.w, color: Colors.grey),
             ),
@@ -180,7 +280,7 @@ class AstrologerVoiceCallView extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 40.h),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.95),
+        color: Colors.white.withValues(alpha: 0.95),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(30.r),
           topRight: Radius.circular(30.r),
@@ -301,17 +401,27 @@ class AstrologerVoiceCallView extends StatelessWidget {
     required bool isActive,
     required VoidCallback onTap,
   }) {
+    // Determine background color based on active state and type
+    Color bgColor;
+    if (color == Colors.red) {
+      // End call button always red
+      bgColor = Colors.red;
+    } else {
+      // Mic/Speaker: Active (On) -> Red, Inactive (Off/Mute) -> Black
+      bgColor = isActive ? Colors.red : Colors.black;
+    }
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: 64.w,
         height: 64.h,
         decoration: BoxDecoration(
-          color: color,
+          color: bgColor,
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.3),
+              color: bgColor.withValues(alpha: 0.3),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -332,7 +442,7 @@ class AstrologerVoiceCallView extends StatelessWidget {
         border: Border.all(
           color: controller.showLowBalanceWarning.value
               ? Colors.orange
-              : const Color(0xFFDFB343).withOpacity(0.3),
+              : const Color(0xFFDFB343).withValues(alpha: 0.3),
           width: 1,
         ),
       ),

@@ -1365,12 +1365,12 @@ class NumerologyResultView extends StatelessWidget {
   //       color: AppColors.white,
   //       borderRadius: BorderRadius.circular(16.r),
   //       border: Border.all(
-  //         color: AppColors.sacredRed.withOpacity(0.2),
+  //         color: AppColors.sacredRed.withValues(alpha: 0.2),
   //         width: 1.5,
   //       ),
   //       boxShadow: [
   //         BoxShadow(
-  //           color: AppColors.sacredRed.withOpacity(0.1),
+  //           color: AppColors.sacredRed.withValues(alpha: 0.1),
   //           blurRadius: 12,
   //           offset: const Offset(0, 4),
   //         ),
@@ -1384,8 +1384,8 @@ class NumerologyResultView extends StatelessWidget {
   //           decoration: BoxDecoration(
   //             gradient: LinearGradient(
   //               colors: [
-  //                 AppColors.sacredRed.withOpacity(0.15),
-  //                 AppColors.sacredRed.withOpacity(0.05),
+  //                 AppColors.sacredRed.withValues(alpha: 0.15),
+  //                 AppColors.sacredRed.withValues(alpha: 0.05),
   //               ],
   //               begin: Alignment.topLeft,
   //               end: Alignment.bottomRight,
@@ -1400,7 +1400,7 @@ class NumerologyResultView extends StatelessWidget {
   //               Container(
   //                 padding: EdgeInsets.all(8.w),
   //                 decoration: BoxDecoration(
-  //                   color: AppColors.sacredRed.withOpacity(0.2),
+  //                   color: AppColors.sacredRed.withValues(alpha: 0.2),
   //                   borderRadius: BorderRadius.circular(8.r),
   //                 ),
   //                 child: Icon(
@@ -2308,15 +2308,15 @@ class NumerologyResultView extends StatelessWidget {
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [color.withOpacity(0.1), color.withOpacity(0.05)],
+          colors: [color.withValues(alpha: 0.1), color.withValues(alpha: 0.05)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: color.withOpacity(0.3), width: 1.5),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -2331,7 +2331,7 @@ class NumerologyResultView extends StatelessWidget {
                 width: 50.w,
                 height: 50.w,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.2),
+                  color: color.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: Center(
@@ -2355,7 +2355,7 @@ class NumerologyResultView extends StatelessWidget {
             width: double.infinity,
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.15),
+              color: color.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: AutoTranslateText(
@@ -2384,7 +2384,7 @@ class NumerologyResultView extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: color.withOpacity(0.2), width: 1.5),
+        border: Border.all(color: color.withValues(alpha: 0.2), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2393,7 +2393,10 @@ class NumerologyResultView extends StatelessWidget {
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [color.withOpacity(0.15), color.withOpacity(0.05)],
+                colors: [
+                  color.withValues(alpha: 0.15),
+                  color.withValues(alpha: 0.05),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -2507,10 +2510,10 @@ class NumerologyResultView extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: color.withOpacity(0.3), width: 1.5),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,22 +11,15 @@ class OtherCalendarsController extends BaseController {
   final List<Map<String, dynamic>> calendarOptions = [
     {
       'title': 'Hindu Calendar',
-      // 'icon': Icons.auto_awesome,
-      // 'symbol': '🕉',
+      'symbol': '🕉️',
       'route': AppRoutes.hinduCalendarMonthlyPanchang,
     },
     {
       'title': 'Jain Calendar',
-      // 'icon': Icons.pan_tool,
-      // 'symbol': '🕉',
+      'symbol': '🕉️',
       'route': AppRoutes.jainCalendar,
     },
-    {
-      'title': 'Moon Calendar',
-      // 'icon': Icons.nightlight_round,
-      // 'symbol': '🌙',
-      'route': AppRoutes.moonCalendar,
-    },
+    {'title': 'Moon Calendar', 'symbol': '🌙', 'route': AppRoutes.moonCalendar},
   ];
 
   @override

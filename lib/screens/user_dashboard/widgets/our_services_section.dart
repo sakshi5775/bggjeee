@@ -1,7 +1,7 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/svg_assets.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
@@ -270,12 +270,12 @@ class OurServicesSection extends BasePage<UserDashboardController> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(20.r),
               border: Border.all(
-                color: "#DBCCA8".toColor().withOpacity(0.6),
+                color: "#DBCCA8".toColor().withValues(alpha: 0.6),
                 width: 1,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: maroon.withOpacity(0.08),
+                  color: maroon.withValues(alpha: 0.08),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -351,7 +351,7 @@ class OurServicesSection extends BasePage<UserDashboardController> {
             borderRadius: BorderRadius.circular(6.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.15),
+                color: Colors.black.withValues(alpha: 0.15),
                 blurRadius: 3,
                 offset: const Offset(0, 1),
               ),

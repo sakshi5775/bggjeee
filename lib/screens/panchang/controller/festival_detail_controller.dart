@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/panchang/service/panchang_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -90,7 +90,7 @@ class FestivalDetailController extends BaseController {
                   if (festMap['name']?.toString() == festivalName) {
                     // Update festival data with API data
                     festival.value = festMap;
-                    
+
                     // Extract puja vidhi if available in the API response
                     // Note: Current API doesn't provide puja_vidhi, so we'll keep it empty
                     // If API provides puja_vidhi in future, extract it here
@@ -147,7 +147,9 @@ class FestivalDetailController extends BaseController {
         dateTime = DateTime.now();
       }
 
-      final dateStr = DateFormat('dd/MM/yyyy').format(dateTime ?? DateTime.now());
+      final dateStr = DateFormat(
+        'dd/MM/yyyy',
+      ).format(dateTime ?? DateTime.now());
       final time = DateFormat('HH:mm').format(DateTime.now());
 
       final data = await _panchangService.getDailyPanchang(
@@ -169,4 +171,3 @@ class FestivalDetailController extends BaseController {
     }
   }
 }
-

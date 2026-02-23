@@ -55,7 +55,7 @@ class ShadBalaWidget extends StatelessWidget {
               AutoTranslateText(
                 'Loading Shad Bala...',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: '#6F221E'.toColor().withOpacity(0.7),
+                  color: '#6F221E'.toColor().withValues(alpha: 0.7),
                 ),
               ),
             ],
@@ -69,7 +69,7 @@ class ShadBalaWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No Shad Bala data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: '#6F221E'.toColor().withOpacity(0.6),
+              color: '#6F221E'.toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -175,13 +175,13 @@ class ShadBalaWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
         ],
         border: Border.all(
-          color: '#ed6f30'.toColor().withOpacity(0.2),
+          color: '#ed6f30'.toColor().withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -194,10 +194,10 @@ class ShadBalaWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
-        color: '#ed6f30'.toColor().withOpacity(0.08),
+        color: '#ed6f30'.toColor().withValues(alpha: 0.08),
         border: Border(
           bottom: BorderSide(
-            color: '#ed6f30'.toColor().withOpacity(0.25),
+            color: '#ed6f30'.toColor().withValues(alpha: 0.25),
             width: 1,
           ),
         ),
@@ -259,10 +259,12 @@ class ShadBalaWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: isEven ? '#ed6f30'.toColor().withOpacity(0.04) : Colors.white,
+        color: isEven
+            ? '#ed6f30'.toColor().withValues(alpha: 0.04)
+            : Colors.white,
         border: Border(
           bottom: BorderSide(
-            color: '#ed6f30'.toColor().withOpacity(0.12),
+            color: '#ed6f30'.toColor().withValues(alpha: 0.12),
             width: 1,
           ),
         ),

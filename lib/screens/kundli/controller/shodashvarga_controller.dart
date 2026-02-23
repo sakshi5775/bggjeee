@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +16,7 @@ class ShodashvargaController extends BaseController {
 
   // Form data
   final formData = Rxn<Map<String, dynamic>>();
-  
+
   // Tabs - All divisions (D2 removed)
   final tabs = [
     'SHODASHVARGA',
@@ -38,7 +38,7 @@ class ShodashvargaController extends BaseController {
     'D45',
     'D60',
   ];
-  
+
   // Division data for table (D2 removed)
   final divisions = [
     {'name': 'Lagna', 'code': 'D1', 'description': 'Rashi Chart'},
@@ -49,20 +49,36 @@ class ShodashvargaController extends BaseController {
     {'name': 'Ashtamamsha', 'code': 'D8', 'description': 'Longevity Division'},
     {'name': 'Navamsha', 'code': 'D9', 'description': 'Spouse Division'},
     {'name': 'Dashamamsha', 'code': 'D10', 'description': 'Career Division'},
-    {'name': 'Dwadashamamsha', 'code': 'D12', 'description': 'Parents Division'},
+    {
+      'name': 'Dwadashamamsha',
+      'code': 'D12',
+      'description': 'Parents Division',
+    },
     {'name': 'Shodashamsha', 'code': 'D16', 'description': 'Vehicles Division'},
     {'name': 'Vimshamsha', 'code': 'D20', 'description': 'Spiritual Division'},
-    {'name': 'Chaturvimshamsha', 'code': 'D24', 'description': 'Education Division'},
-    {'name': 'Saptavimshamsha', 'code': 'D27', 'description': 'Strength Division'},
+    {
+      'name': 'Chaturvimshamsha',
+      'code': 'D24',
+      'description': 'Education Division',
+    },
+    {
+      'name': 'Saptavimshamsha',
+      'code': 'D27',
+      'description': 'Strength Division',
+    },
     {'name': 'Trimshamsha', 'code': 'D30', 'description': 'Evil Division'},
     {'name': 'Khavedamsha', 'code': 'D40', 'description': 'Maternal Division'},
     {'name': 'Akshvedamsha', 'code': 'D45', 'description': 'Paternal Division'},
-    {'name': 'Shashtiamsha', 'code': 'D60', 'description': 'Precision Division'},
+    {
+      'name': 'Shashtiamsha',
+      'code': 'D60',
+      'description': 'Precision Division',
+    },
   ];
 
   // SVG data for each division
   final svgDataMap = <String, String?>{}.obs;
-  
+
   // Service
   final _kundliService = KundliService();
 
@@ -73,14 +89,14 @@ class ShodashvargaController extends BaseController {
     pageController = PageController(initialPage: 0);
     _loadData();
   }
-  
+
   @override
   void onClose() {
     pageController.dispose();
     tabsScrollController.dispose();
     super.onClose();
   }
-  
+
   // Handle page change from swipe
   void onPageChanged(int index) {
     selectedTabIndex.value = index;
@@ -164,7 +180,11 @@ class ShodashvargaController extends BaseController {
       final coloredPlanets = form['coloredPlanets'] as bool? ?? true;
       const colorHex = '#ed6f30';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for $division chart');
         return;
       }
@@ -231,4 +251,3 @@ class ShodashvargaController extends BaseController {
     return svgDataMap[division];
   }
 }
-

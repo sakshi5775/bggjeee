@@ -30,7 +30,7 @@ class TarotYesNoPopup extends StatelessWidget {
       if (response == null && isLoading) {
         // Show loading state only during API call
         return Container(
-          color: Colors.black.withOpacity(0.7),
+          color: Colors.black.withValues(alpha: 0.7),
           child: const Center(child: CircularProgressIndicator()),
         );
       }
@@ -48,7 +48,7 @@ class TarotYesNoPopup extends StatelessWidget {
       return GestureDetector(
         onTap: () => controller.closeReading(),
         child: Container(
-          color: Colors.black.withOpacity(0.7),
+          color: Colors.black.withValues(alpha: 0.7),
           child: Stack(
             children: [
               // Confetti animation for positive results
@@ -83,7 +83,7 @@ class TarotYesNoPopup extends StatelessWidget {
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.3),
+                                  color: Colors.black.withValues(alpha: 0.3),
                                   blurRadius: 20,
                                   offset: const Offset(0, 10),
                                 ),
@@ -191,7 +191,7 @@ class TarotYesNoPopup extends StatelessWidget {
                                                     )
                                                   : "#F38B3B"
                                                         .toColor()
-                                                        .withOpacity(0.2),
+                                                        .withValues(alpha: 0.2),
                                               borderRadius:
                                                   BorderRadius.circular(4.r),
                                             ),

@@ -19,25 +19,28 @@ class AROnboardingScreen extends StatefulWidget {
 
 class _AROnboardingScreenState extends State<AROnboardingScreen> {
   final PageController _pageController = PageController();
-  final _storage = GetStorage();
+  GetStorage get _storage => GetStorage();
   int _currentPage = 0;
 
   final List<Map<String, dynamic>> _pages = [
     {
       'title': 'AR Vastu Mode',
-      'description': 'Experience Vastu guidance through your camera. See directions and energy zones in real-time.',
+      'description':
+          'Experience Vastu guidance through your camera. See directions and energy zones in real-time.',
       'icon': Icons.view_in_ar,
       'color': '#9C27B0',
     },
     {
       'title': 'Accurate Compass',
-      'description': 'Our intelligent compass uses multiple sensors for precise direction detection. Calibrate by moving your device in a figure-8 motion.',
+      'description':
+          'Our intelligent compass uses multiple sensors for precise direction detection. Calibrate by moving your device in a figure-8 motion.',
       'icon': Icons.explore,
       'color': '#F38B3B',
     },
     {
       'title': 'Room-Aware Intelligence',
-      'description': 'Get personalized Vastu guidance based on your room type. Each space has unique energy requirements.',
+      'description':
+          'Get personalized Vastu guidance based on your room type. Each space has unique energy requirements.',
       'icon': Icons.home,
       'color': '#4A90E2',
     },
@@ -81,14 +84,13 @@ class _AROnboardingScreenState extends State<AROnboardingScreen> {
                   onPressed: _completeOnboarding,
                   child: AutoTranslateText(
                     'Skip',
-                    style: MyTextTheme.mediumBCN.copyWith(
-                      color: '#666666'.toColor(),
-                    ).merge(AppTypography.body1),
+                    style: MyTextTheme.mediumBCN
+                        .copyWith(color: '#666666'.toColor())
+                        .merge(AppTypography.body1),
                   ),
                 ),
               ),
             ),
-            
             // Page view
             Expanded(
               child: PageView.builder(
@@ -104,7 +106,6 @@ class _AROnboardingScreenState extends State<AROnboardingScreen> {
                 },
               ),
             ),
-            
             // Page indicator
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -123,9 +124,9 @@ class _AROnboardingScreenState extends State<AROnboardingScreen> {
                 ),
               ),
             ),
-            
+
             Spacing.h(32),
-            
+
             // Next/Get Started button
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
@@ -137,7 +138,7 @@ class _AROnboardingScreenState extends State<AROnboardingScreen> {
                     borderRadius: BorderRadius.circular(12.r),
                     boxShadow: [
                       BoxShadow(
-                        color: "#F38B3B".toColor().withOpacity(0.35),
+                        color: "#F38B3B".toColor().withValues(alpha: 0.35),
                         blurRadius: 6,
                         offset: const Offset(0, 3),
                       ),
@@ -157,7 +158,10 @@ class _AROnboardingScreenState extends State<AROnboardingScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.transparent,
                       foregroundColor: '#ffffff'.toColor(),
-                      padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),
+                      padding: EdgeInsets.symmetric(
+                        vertical: 16.h,
+                        horizontal: 24.w,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.r),
                       ),
@@ -166,16 +170,17 @@ class _AROnboardingScreenState extends State<AROnboardingScreen> {
                     ),
                     child: AutoTranslateText(
                       _currentPage < _pages.length - 1 ? 'Next' : 'Get Started',
-                      style: MyTextTheme.mediumBCB.copyWith(
-                        color: '#ffffff'.toColor(),
-                        fontWeight: FontWeight.bold,
-                      ).merge(AppTypography.body1),
+                      style: MyTextTheme.mediumBCB
+                          .copyWith(
+                            color: '#ffffff'.toColor(),
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.body1),
                     ),
                   ),
                 ),
               ),
             ),
-            
             Spacing.h(16),
           ],
         ),
@@ -193,7 +198,7 @@ class _AROnboardingScreenState extends State<AROnboardingScreen> {
             width: 120.w,
             height: 120.w,
             decoration: BoxDecoration(
-              color: page['color'].toString().toColor().withOpacity(0.1),
+              color: page['color'].toString().toColor().withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -205,19 +210,20 @@ class _AROnboardingScreenState extends State<AROnboardingScreen> {
           Spacing.h(32),
           AutoTranslateText(
             page['title'] as String,
-            style: MyTextTheme.veryLargeBCB.copyWith(
-              color: '#3E2723'.toColor(),
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.h1),
+            style: MyTextTheme.veryLargeBCB
+                .copyWith(
+                  color: '#3E2723'.toColor(),
+                  fontWeight: FontWeight.bold,
+                )
+                .merge(AppTypography.h1),
             textAlign: TextAlign.center,
           ),
           Spacing.h(16),
           AutoTranslateText(
             page['description'] as String,
-            style: MyTextTheme.mediumBCN.copyWith(
-              color: '#666666'.toColor(),
-              height: 1.5,
-            ).merge(AppTypography.body1),
+            style: MyTextTheme.mediumBCN
+                .copyWith(color: '#666666'.toColor(), height: 1.5)
+                .merge(AppTypography.body1),
             textAlign: TextAlign.center,
           ),
         ],
@@ -225,12 +231,3 @@ class _AROnboardingScreenState extends State<AROnboardingScreen> {
     );
   }
 }
-
-
-
-
-
-
-
-
-

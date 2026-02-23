@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
@@ -108,10 +108,10 @@ class _QuoteMarqueeContentState extends State<_QuoteMarqueeContent> {
     void onScrollingChanged() {
       if (!mounted) return;
       setState(() {
-        _manualScrollPauseUntil =
-            DateTime.now().add(_pauseAfterManualScroll);
+        _manualScrollPauseUntil = DateTime.now().add(_pauseAfterManualScroll);
       });
     }
+
     _scrollingNotifierListener = onScrollingChanged;
     pos.isScrollingNotifier.addListener(_scrollingNotifierListener!);
   }
@@ -144,8 +144,9 @@ class _QuoteMarqueeContentState extends State<_QuoteMarqueeContent> {
     timer?.cancel();
     if (_scrollController.hasClients && _scrollingNotifierListener != null) {
       try {
-        _scrollController.position.isScrollingNotifier
-            .removeListener(_scrollingNotifierListener!);
+        _scrollController.position.isScrollingNotifier.removeListener(
+          _scrollingNotifierListener!,
+        );
       } catch (_) {}
     }
     _scrollController.dispose();

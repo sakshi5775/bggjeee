@@ -142,12 +142,12 @@ class YearlyPredictionWidget extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: "#ed6f30".toColor().withOpacity(0.2),
+          color: "#ed6f30".toColor().withValues(alpha: 0.2),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -187,7 +187,7 @@ class YearlyPredictionWidget extends StatelessWidget {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8.r),
                     border: Border.all(
-                      color: "#ed6f30".toColor().withOpacity(0.3),
+                      color: "#ed6f30".toColor().withValues(alpha: 0.3),
                       width: 1,
                     ),
                   ),
@@ -211,7 +211,7 @@ class YearlyPredictionWidget extends StatelessWidget {
                   height: 30.h,
                   width: 30.w,
                   decoration: BoxDecoration(
-                    color: Colors.deepOrangeAccent.withOpacity(0.10),
+                    color: Colors.deepOrangeAccent.withValues(alpha: 0.10),
                     borderRadius: BorderRadius.circular(50.r),
                   ),
                   child: Icon(
@@ -280,7 +280,7 @@ class YearlyPredictionWidget extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
         decoration: BoxDecoration(
-          color: Colors.deepOrangeAccent.withOpacity(0.10),
+          color: Colors.deepOrangeAccent.withValues(alpha: 0.10),
           borderRadius: BorderRadius.circular(8.r),
           border: Border.all(color: Color(0xFFFF8C42), width: 1),
         ),
@@ -305,7 +305,9 @@ class YearlyPredictionWidget extends StatelessWidget {
                       vertical: 4.h,
                     ),
                     decoration: BoxDecoration(
-                      color: _getScoreColorFromString(score).withOpacity(0.1),
+                      color: _getScoreColorFromString(
+                        score,
+                      ).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6.r),
                     ),
                     child: AutoTranslateText(

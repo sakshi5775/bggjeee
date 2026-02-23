@@ -1,6 +1,7 @@
 import 'package:astrobharataiuser/app_manager/localized_text.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/localization/translations.dart' as AppTranslations;
+import 'package:astrobharataiuser/core/localization/translations.dart'
+    as AppTranslations;
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/comment_model.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -20,7 +21,7 @@ class CommentItem extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 16,
-              backgroundColor: AppColors.saffron.withOpacity(0.15),
+              backgroundColor: AppColors.saffron.withValues(alpha: 0.15),
               child: Icon(Icons.person, size: 16, color: AppColors.saffron),
             ),
             Spacing.w(10),
@@ -52,10 +53,12 @@ class CommentItem extends StatelessWidget {
             padding: AppPaddings.only(left: 42),
             child: Column(
               children: comment.replies
-                  .map((r) => Padding(
-                        padding: AppPaddings.only(top: 8),
-                        child: CommentItem(comment: r),
-                      ))
+                  .map(
+                    (r) => Padding(
+                      padding: AppPaddings.only(top: 8),
+                      child: CommentItem(comment: r),
+                    ),
+                  )
                   .toList(),
             ),
           ),
@@ -64,5 +67,3 @@ class CommentItem extends StatelessWidget {
     );
   }
 }
-
-

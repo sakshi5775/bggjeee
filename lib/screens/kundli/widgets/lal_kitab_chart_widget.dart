@@ -12,30 +12,25 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 class LalKitabChartWidget extends StatelessWidget {
   final LalKitabController controller;
 
-  const LalKitabChartWidget({
-    super.key,
-    required this.controller,
-  });
+  const LalKitabChartWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingLalKitabChart.value) {
         return Center(
-          child: CircularProgressIndicator(
-            color: "#ed6f30".toColor(),
-          ),
+          child: CircularProgressIndicator(color: "#ed6f30".toColor()),
         );
       }
 
       final data = controller.lalKitabChartData.value;
-      
+
       if (data == null || data.isEmpty) {
         return Center(
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -47,7 +42,7 @@ class LalKitabChartWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No chart data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -66,7 +61,7 @@ class LalKitabChartWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16.r),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -98,4 +93,3 @@ class LalKitabChartWidget extends StatelessWidget {
     });
   }
 }
-

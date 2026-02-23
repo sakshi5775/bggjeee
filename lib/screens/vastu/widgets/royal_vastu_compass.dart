@@ -217,11 +217,11 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
                     vertical: 6.h,
                   ),
                   decoration: BoxDecoration(
-                    color: '#D4AF37'.toColor().withOpacity(0.9),
+                    color: '#D4AF37'.toColor().withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(20.r),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
+                        color: Colors.black.withValues(alpha: 0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -288,14 +288,17 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
             height: size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.grey.withOpacity(0.1),
-              border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
+              color: Colors.grey.withValues(alpha: 0.1),
+              border: Border.all(
+                color: Colors.grey.withValues(alpha: 0.3),
+                width: 1,
+              ),
             ),
             child: Center(
               child: Icon(
                 Icons.compass_calibration,
                 size: size * 0.3,
-                color: Colors.grey.withOpacity(0.5),
+                color: Colors.grey.withValues(alpha: 0.5),
               ),
             ),
           );
@@ -316,14 +319,17 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
             height: size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.grey.withOpacity(0.1),
-              border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
+              color: Colors.grey.withValues(alpha: 0.1),
+              border: Border.all(
+                color: Colors.grey.withValues(alpha: 0.3),
+                width: 1,
+              ),
             ),
             child: Center(
               child: Icon(
                 Icons.compass_calibration,
                 size: size * 0.3,
-                color: Colors.grey.withOpacity(0.5),
+                color: Colors.grey.withValues(alpha: 0.5),
               ),
             ),
           );

@@ -85,19 +85,20 @@ class AdvancedHeatmapPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final maxRadius = math.min(size.width, size.height) / 2;
-    
+
     // Draw zones for each direction
     final allDirections = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
-    
+
     for (final direction in allDirections) {
       final energyLevel = HeatmapMathUtils.calculateEnergyLevel(
         direction,
         roomConfig,
       );
-      
+
       final color = Color(HeatmapMathUtils.getHeatmapColor(energyLevel));
-      final opacity = HeatmapMathUtils.getZoneOpacity(energyLevel) * transitionValue;
-      
+      final opacity =
+          HeatmapMathUtils.getZoneOpacity(energyLevel) * transitionValue;
+
       // Draw zone with gradient
       _drawZoneWithGradient(
         canvas,
@@ -109,7 +110,7 @@ class AdvancedHeatmapPainter extends CustomPainter {
         energyLevel,
       );
     }
-    
+
     // Draw current direction highlight
     _drawCurrentDirectionHighlight(canvas, center, maxRadius);
   }
@@ -126,24 +127,24 @@ class AdvancedHeatmapPainter extends CustomPainter {
     final angle = _directionToAngle(direction);
     final startAngle = (angle - 22.5) * math.pi / 180.0;
     final sweepAngle = 45 * math.pi / 180.0;
-    
+
     // Create gradient from center to edge
     final gradient = SweepGradient(
       startAngle: startAngle,
       endAngle: startAngle + sweepAngle,
       colors: [
-        baseColor.withOpacity(opacity * 0.3),
-        baseColor.withOpacity(opacity),
-        baseColor.withOpacity(opacity * 0.3),
+        baseColor.withValues(alpha: opacity * 0.3),
+        baseColor.withValues(alpha: opacity),
+        baseColor.withValues(alpha: opacity * 0.3),
       ],
     );
-    
+
     final paint = Paint()
       ..shader = gradient.createShader(
         Rect.fromCircle(center: center, radius: maxRadius),
       )
       ..style = PaintingStyle.fill;
-    
+
     // Draw arc
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: maxRadius),
@@ -152,14 +153,14 @@ class AdvancedHeatmapPainter extends CustomPainter {
       false,
       paint,
     );
-    
+
     // Draw border for important zones
     if (energyLevel >= 0.8 || energyLevel <= 0.3) {
       final borderPaint = Paint()
-        ..color = baseColor.withOpacity(opacity * 0.6)
+        ..color = baseColor.withValues(alpha: opacity * 0.6)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2.0;
-      
+
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: maxRadius),
         startAngle,
@@ -178,13 +179,13 @@ class AdvancedHeatmapPainter extends CustomPainter {
     final angle = _directionToAngle(currentDirection);
     final startAngle = (angle - 22.5) * math.pi / 180.0;
     final sweepAngle = 45 * math.pi / 180.0;
-    
+
     // Draw pulsing highlight for current direction
     final highlightPaint = Paint()
-      ..color = Colors.white.withOpacity(0.3 * transitionValue)
+      ..color = Colors.white.withValues(alpha: 0.3 * transitionValue)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3.0;
-    
+
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: maxRadius * 0.95),
       startAngle,

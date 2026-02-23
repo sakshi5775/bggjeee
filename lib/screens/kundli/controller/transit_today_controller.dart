@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,7 +19,18 @@ class TransitTodayController extends BaseController {
   final isLoadingPrediction = false.obs;
 
   final selectedPlanet = 'moon'.obs;
-  static const planetNames = ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune', 'pluto'];
+  static const planetNames = [
+    'sun',
+    'moon',
+    'mercury',
+    'venus',
+    'mars',
+    'jupiter',
+    'saturn',
+    'uranus',
+    'neptune',
+    'pluto',
+  ];
 
   final _kundliService = KundliService();
 
@@ -48,7 +59,11 @@ class TransitTodayController extends BaseController {
   void onTabSelected(int index) {
     selectedTabIndex.value = index;
     if (pageController.hasClients) {
-      pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     }
     if (index == 0 && dailyPredictionData.value == null) fetchDailyPrediction();
     if (index == 1 && dailyTransitsData.value == null) fetchDailyTransits();
@@ -70,10 +85,23 @@ class TransitTodayController extends BaseController {
     final latRaw = f['latitude'];
     final lonRaw = f['longitude'];
     final tzRaw = f['timezone'];
-    final lat = latRaw is num ? latRaw.toDouble() : double.tryParse(latRaw?.toString() ?? '');
-    final lon = lonRaw is num ? lonRaw.toDouble() : double.tryParse(lonRaw?.toString() ?? '');
-    final tz = tzRaw is num ? tzRaw.toDouble() : double.tryParse(tzRaw?.toString() ?? '');
-    if (date == null || date.isEmpty || time == null || time.isEmpty || lat == null || lon == null || tz == null) return null;
+    final lat = latRaw is num
+        ? latRaw.toDouble()
+        : double.tryParse(latRaw?.toString() ?? '');
+    final lon = lonRaw is num
+        ? lonRaw.toDouble()
+        : double.tryParse(lonRaw?.toString() ?? '');
+    final tz = tzRaw is num
+        ? tzRaw.toDouble()
+        : double.tryParse(tzRaw?.toString() ?? '');
+    if (date == null ||
+        date.isEmpty ||
+        time == null ||
+        time.isEmpty ||
+        lat == null ||
+        lon == null ||
+        tz == null)
+      return null;
     return {'date': date, 'time': time, 'lat': lat, 'lon': lon, 'tz': tz};
   }
 

@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:get/get.dart';
 
 class FestivalFilteredController extends BaseController {
@@ -18,7 +18,7 @@ class FestivalFilteredController extends BaseController {
     if (arguments != null) {
       festivalName.value = arguments['festivalName']?.toString() ?? '';
       location.value = arguments['location']?.toString() ?? '';
-      
+
       final calendarData = arguments['calendarData'] as List<dynamic>?;
       if (calendarData != null && festivalName.value.isNotEmpty) {
         _filterFestivals(calendarData);
@@ -28,10 +28,10 @@ class FestivalFilteredController extends BaseController {
 
   void _filterFestivals(List<dynamic> calendarData) {
     final filtered = <Map<String, dynamic>>[];
-    
+
     // Normalize the search term - extract key words (e.g., "Ekadashi", "Vrat", "Pradosh")
     final searchTerm = festivalName.value.toLowerCase().trim();
-    
+
     // Extract key festival type words from the search term
     final keyWords = <String>[];
     if (searchTerm.contains('ekadashi')) {
@@ -80,22 +80,22 @@ class FestivalFilteredController extends BaseController {
     if (searchTerm.contains('chaturdashi')) {
       keyWords.add('chaturdashi');
     }
-    
+
     // If no specific keywords found, use the full search term
     if (keyWords.isEmpty) {
       keyWords.add(searchTerm);
     }
-    
+
     for (var item in calendarData) {
       final dateStr = item['date']?.toString() ?? '';
       final festivals = item['festivals'] as List<dynamic>?;
-      
+
       if (festivals != null) {
         for (var festival in festivals) {
           final festMap = festival as Map<String, dynamic>;
           final festName = festMap['name']?.toString() ?? '';
           final festNameLower = festName.toLowerCase();
-          
+
           // Check if festival name contains any of the key words
           bool matches = false;
           for (var keyword in keyWords) {
@@ -104,23 +104,19 @@ class FestivalFilteredController extends BaseController {
               break;
             }
           }
-          
+
           // Also check if the full search term is contained (for exact matches)
           if (!matches && festNameLower.contains(searchTerm)) {
             matches = true;
           }
-          
+
           if (matches) {
-            filtered.add({
-              'date': dateStr,
-              'festival': festMap,
-            });
+            filtered.add({'date': dateStr, 'festival': festMap});
           }
         }
       }
     }
-    
+
     filteredFestivals.value = filtered;
   }
 }
-

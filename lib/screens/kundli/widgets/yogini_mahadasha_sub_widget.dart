@@ -12,30 +12,25 @@ import 'package:intl/intl.dart';
 class YoginiMahadashaSubWidget extends StatelessWidget {
   final DashaController controller;
 
-  const YoginiMahadashaSubWidget({
-    super.key,
-    required this.controller,
-  });
+  const YoginiMahadashaSubWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingYoginiSub.value) {
         return Center(
-          child: CircularProgressIndicator(
-            color: "#ed6f30".toColor(),
-          ),
+          child: CircularProgressIndicator(color: "#ed6f30".toColor()),
         );
       }
 
       final data = controller.yoginiSubData.value;
-      
+
       if (data == null || data.isEmpty) {
         return Center(
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -47,7 +42,7 @@ class YoginiMahadashaSubWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -63,7 +58,10 @@ class YoginiMahadashaSubWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.cardLight,
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: AppColors.deepOrange.withOpacity(0.5), width: 1),
+                border: Border.all(
+                  color: AppColors.deepOrange.withValues(alpha: 0.5),
+                  width: 1,
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.shadowLight,
@@ -100,23 +98,29 @@ class YoginiMahadashaSubWidget extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             Spacing.h(12),
-            
+
             // Main Dasha Items
             ...response.map((item) {
               final mainDasha = item['main_dasha'] as String? ?? '';
               final mainDashaLord = item['main_dasha_lord'] as String? ?? '';
-              final subDashaList = item['sub_dasha_list'] as List<dynamic>? ?? [];
-              final subDashaEndDates = item['sub_dasha_end_dates'] as List<dynamic>? ?? [];
-              final subDashaStartDate = item['sub_dasha_start_dates'] as String? ?? '';
-              
+              final subDashaList =
+                  item['sub_dasha_list'] as List<dynamic>? ?? [];
+              final subDashaEndDates =
+                  item['sub_dasha_end_dates'] as List<dynamic>? ?? [];
+              final subDashaStartDate =
+                  item['sub_dasha_start_dates'] as String? ?? '';
+
               return Container(
                 margin: EdgeInsets.only(bottom: 12.h),
                 decoration: BoxDecoration(
                   color: AppColors.cardLight,
                   borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(color: AppColors.deepOrange.withOpacity(0.5), width: 1),
+                  border: Border.all(
+                    color: AppColors.deepOrange.withValues(alpha: 0.5),
+                    width: 1,
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.shadowLight,
@@ -131,7 +135,7 @@ class YoginiMahadashaSubWidget extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.all(10.w),
                       decoration: BoxDecoration(
-                        color: AppColors.deepOrange.withOpacity(0.1),
+                        color: AppColors.deepOrange.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(12.r),
                           topRight: Radius.circular(12.r),
@@ -170,18 +174,25 @@ class YoginiMahadashaSubWidget extends StatelessWidget {
                         ],
                       ),
                     ),
-                    
+
                     ...List.generate(subDashaList.length, (index) {
                       final isLast = index == subDashaList.length - 1;
                       final subDasha = subDashaList[index].toString();
-                      final endDate = index < subDashaEndDates.length ? subDashaEndDates[index].toString() : '';
-                      
+                      final endDate = index < subDashaEndDates.length
+                          ? subDashaEndDates[index].toString()
+                          : '';
+
                       return Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10.w,
+                          vertical: 10.h,
+                        ),
                         decoration: BoxDecoration(
                           border: Border(
                             bottom: BorderSide(
-                              color: isLast ? Colors.transparent : AppColors.deepOrange.withOpacity(0.2),
+                              color: isLast
+                                  ? Colors.transparent
+                                  : AppColors.deepOrange.withValues(alpha: 0.2),
                               width: 1,
                             ),
                           ),
@@ -232,7 +243,7 @@ class YoginiMahadashaSubWidget extends StatelessWidget {
         'MMM dd yyyy',
         'dd/MM/yyyy',
       ];
-      
+
       for (final format in formats) {
         try {
           final date = DateFormat(format).parse(dateStr);
@@ -241,11 +252,10 @@ class YoginiMahadashaSubWidget extends StatelessWidget {
           continue;
         }
       }
-      
+
       return dateStr;
     } catch (e) {
       return dateStr;
     }
   }
 }
-

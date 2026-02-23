@@ -124,13 +124,13 @@ class _CartItemCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: '#68171E'.toColor().withOpacity(0.08),
+            color: '#68171E'.toColor().withValues(alpha: 0.08),
             blurRadius: 12,
             offset: const Offset(0, 4),
             spreadRadius: 0,
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 6,
             offset: const Offset(0, 2),
             spreadRadius: 0,
@@ -152,7 +152,7 @@ class _CartItemCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16.r),
                         boxShadow: [
                           BoxShadow(
-                            color: '#68171E'.toColor().withOpacity(0.1),
+                            color: '#68171E'.toColor().withValues(alpha: 0.1),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -174,8 +174,12 @@ class _CartItemCard extends StatelessWidget {
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                     colors: [
-                                      AppColors.textSecondary.withOpacity(0.1),
-                                      AppColors.textSecondary.withOpacity(0.05),
+                                      AppColors.textSecondary.withValues(
+                                        alpha: 0.1,
+                                      ),
+                                      AppColors.textSecondary.withValues(
+                                        alpha: 0.05,
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -208,7 +212,9 @@ class _CartItemCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12.r),
                             boxShadow: [
                               BoxShadow(
-                                color: '#DD2914'.toColor().withOpacity(0.3),
+                                color: '#DD2914'.toColor().withValues(
+                                  alpha: 0.3,
+                                ),
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
                               ),
@@ -285,13 +291,13 @@ class _CartItemCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              AppColors.saffron.withOpacity(0.1),
-                              AppColors.saffron.withOpacity(0.05),
+                              AppColors.saffron.withValues(alpha: 0.1),
+                              AppColors.saffron.withValues(alpha: 0.05),
                             ],
                           ),
                           borderRadius: BorderRadius.circular(25.r),
                           border: Border.all(
-                            color: AppColors.saffron.withOpacity(0.3),
+                            color: AppColors.saffron.withValues(alpha: 0.3),
                             width: 1.5,
                           ),
                         ),
@@ -385,10 +391,10 @@ class _CartItemCard extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.all(8.w),
                   decoration: BoxDecoration(
-                    color: AppColors.sacredRed.withOpacity(0.1),
+                    color: AppColors.sacredRed.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: AppColors.sacredRed.withOpacity(0.3),
+                      color: AppColors.sacredRed.withValues(alpha: 0.3),
                       width: 1,
                     ),
                   ),
@@ -433,15 +439,15 @@ class _QuantityButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: enabled
                 ? (isRemove
-                      ? AppColors.sacredRed.withOpacity(0.1)
-                      : AppColors.saffron.withOpacity(0.15))
+                      ? AppColors.sacredRed.withValues(alpha: 0.1)
+                      : AppColors.saffron.withValues(alpha: 0.15))
                 : Colors.transparent,
             shape: BoxShape.circle,
             border: enabled
                 ? Border.all(
                     color: isRemove
-                        ? AppColors.sacredRed.withOpacity(0.3)
-                        : AppColors.saffron.withOpacity(0.4),
+                        ? AppColors.sacredRed.withValues(alpha: 0.3)
+                        : AppColors.saffron.withValues(alpha: 0.4),
                     width: 1.5,
                   )
                 : null,
@@ -451,7 +457,7 @@ class _QuantityButton extends StatelessWidget {
             size: 20.h,
             color: enabled
                 ? (isRemove ? AppColors.sacredRed : AppColors.saffron)
-                : AppColors.textSecondary.withOpacity(0.3),
+                : AppColors.textSecondary.withValues(alpha: 0.3),
           ),
         ),
       ),

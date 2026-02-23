@@ -19,8 +19,9 @@ class TarotShuffleButtonWidget extends StatelessWidget {
     final controller = Get.find<TarotController>();
 
     return Obx(() {
-      final isLoading = controller.isLoading.value || controller.isShuffling.value;
-      
+      final isLoading =
+          controller.isLoading.value || controller.isShuffling.value;
+
       return Container(
         width: double.infinity,
         height: 56.h,
@@ -29,7 +30,7 @@ class TarotShuffleButtonWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -50,7 +51,7 @@ class TarotShuffleButtonWidget extends StatelessWidget {
             // Divider
             Container(
               width: 1.w,
-              color: '#ede7c8'.toColor().withOpacity(0.3),
+              color: '#ede7c8'.toColor().withValues(alpha: 0.3),
             ),
             // Part 2: Both Shuffle
             Expanded(
@@ -65,7 +66,7 @@ class TarotShuffleButtonWidget extends StatelessWidget {
             // Divider
             Container(
               width: 1.w,
-              color: '#ede7c8'.toColor().withOpacity(0.3),
+              color: '#ede7c8'.toColor().withValues(alpha: 0.3),
             ),
             // Part 3: Major Shuffle
             Expanded(
@@ -91,20 +92,19 @@ class TarotShuffleButtonWidget extends StatelessWidget {
     required bool isSelected,
   }) {
     final isActive = controller.selectedShuffleType.value == type;
-    
+
     return GestureDetector(
-      onTap: isLoading ? null : () {
-        controller.setShuffleType(type);
-        controller.shuffleCards();
-      },
+      onTap: isLoading
+          ? null
+          : () {
+              controller.setShuffleType(type);
+              controller.shuffleCards();
+            },
       child: Container(
         decoration: BoxDecoration(
           gradient: isActive
               ? LinearGradient(
-                  colors: [
-                    "#F38B3B".toColor(),
-                    '#820B17'.toColor(),
-                  ],
+                  colors: ["#F38B3B".toColor(), '#820B17'.toColor()],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 )
@@ -119,9 +119,7 @@ class TarotShuffleButtonWidget extends StatelessWidget {
                   height: 20.w,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Colors.white,
-                    ),
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                   ),
                 )
               : AutoTranslateText(
@@ -155,6 +153,3 @@ class TarotShuffleButtonWidget extends StatelessWidget {
     }
   }
 }
-
-
-

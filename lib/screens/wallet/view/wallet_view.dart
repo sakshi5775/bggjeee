@@ -77,7 +77,7 @@ class WalletView extends StatelessWidget {
         style: TextStyle(
           fontFamily: 'Poppins',
           fontSize: 12,
-          color: '#6F221E'.toColor().withOpacity(0.9),
+          color: '#6F221E'.toColor().withValues(alpha: 0.9),
         ),
       ),
       onMenuTap: null,
@@ -93,13 +93,13 @@ class WalletView extends StatelessWidget {
         borderRadius: BorderRadius.circular(24.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.templeGold.withOpacity(0.3),
+            color: AppColors.templeGold.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 8),
             spreadRadius: 2,
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -114,7 +114,7 @@ class WalletView extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(10.w),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Icon(
@@ -129,7 +129,7 @@ class WalletView extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 14,
-                  color: '#68171E'.toColor().withOpacity(0.8),
+                  color: '#68171E'.toColor().withValues(alpha: 0.8),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -160,7 +160,7 @@ class WalletView extends StatelessWidget {
               borderRadius: BorderRadius.circular(16.r),
               boxShadow: [
                 BoxShadow(
-                  color: '#68171E'.toColor().withOpacity(0.3),
+                  color: '#68171E'.toColor().withValues(alpha: 0.3),
                   blurRadius: 12,
                   offset: const Offset(0, 6),
                 ),
@@ -215,7 +215,7 @@ class WalletView extends StatelessWidget {
         borderRadius: BorderRadius.circular(24.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 15,
             offset: const Offset(0, 4),
           ),
@@ -241,13 +241,99 @@ class WalletView extends StatelessWidget {
                       .merge(AppTypography.h3),
                 ),
               ),
+              // Sort button
+              Container(
+                margin: EdgeInsets.only(right: 8.w),
+                decoration: BoxDecoration(
+                  color: AppColors.templeGold.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(
+                    color: AppColors.templeGold.withValues(alpha: 0.3),
+                    width: 1,
+                  ),
+                ),
+                child: PopupMenuButton<String>(
+                  icon: Icon(
+                    Icons.sort_rounded,
+                    color: '#68171E'.toColor(),
+                    size: 24.w,
+                  ),
+                  tooltip: 'Sort History',
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  onSelected: (value) {
+                    controller.setSortOrder(value);
+                  },
+                  itemBuilder: (context) {
+                    final currentSort = controller.sortOrder.value;
+                    return [
+                      PopupMenuItem(
+                        value: 'NEWEST',
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.arrow_downward_rounded,
+                              size: 18.w,
+                              color: currentSort == 'NEWEST'
+                                  ? '#68171E'.toColor()
+                                  : Colors.grey,
+                            ),
+                            Spacing.w(8),
+                            AutoTranslateText(
+                              'Newest First',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontWeight: currentSort == 'NEWEST'
+                                    ? FontWeight.w700
+                                    : FontWeight.w400,
+                                color: currentSort == 'NEWEST'
+                                    ? '#68171E'.toColor()
+                                    : Colors.grey[700],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: 'OLDEST',
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.arrow_upward_rounded,
+                              size: 18.w,
+                              color: currentSort == 'OLDEST'
+                                  ? '#68171E'.toColor()
+                                  : Colors.grey,
+                            ),
+                            Spacing.w(8),
+                            AutoTranslateText(
+                              'Oldest First',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontWeight: currentSort == 'OLDEST'
+                                    ? FontWeight.w700
+                                    : FontWeight.w400,
+                                color: currentSort == 'OLDEST'
+                                    ? '#68171E'.toColor()
+                                    : Colors.grey[700],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ];
+                  },
+                ),
+              ),
+
               // Filter button
               Container(
                 decoration: BoxDecoration(
-                  color: AppColors.templeGold.withOpacity(0.1),
+                  color: AppColors.templeGold.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12.r),
                   border: Border.all(
-                    color: AppColors.templeGold.withOpacity(0.3),
+                    color: AppColors.templeGold.withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
@@ -388,8 +474,8 @@ class WalletView extends StatelessWidget {
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              AppColors.templeGold.withOpacity(0.1),
-                              AppColors.templeGold.withOpacity(0.05),
+                              AppColors.templeGold.withValues(alpha: 0.1),
+                              AppColors.templeGold.withValues(alpha: 0.05),
                             ],
                           ),
                           shape: BoxShape.circle,
@@ -418,10 +504,11 @@ class WalletView extends StatelessWidget {
             return Column(
               children: [
                 ...controller.combinedHistory.map((item) {
-                  if (item is WalletRechargeHistoryItem) {
-                    return _buildRechargeItem(item, controller);
-                  } else if (item is WalletTransaction) {
+                  if (item is WalletTransaction) {
                     return _buildTransactionItem(item, controller);
+                  } else if (item is WalletRechargeHistoryItem) {
+                    // Fallback for any legacy items if still present
+                    return _buildRechargeItem(item, controller);
                   }
                   return const SizedBox.shrink();
                 }),
@@ -446,7 +533,7 @@ class WalletView extends StatelessWidget {
                                 boxShadow: [
                                   BoxShadow(
                                     color: AppColors.orangeGradient.colors.first
-                                        .withOpacity(0.3),
+                                        .withValues(alpha: 0.3),
                                     blurRadius: 8,
                                     offset: const Offset(0, 4),
                                   ),
@@ -500,10 +587,13 @@ class WalletView extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: Colors.grey.withOpacity(0.15), width: 1),
+        border: Border.all(
+          color: Colors.grey.withValues(alpha: 0.15),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -520,12 +610,15 @@ class WalletView extends StatelessWidget {
                 height: 56.w,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [statusBgColor, statusBgColor.withOpacity(0.7)],
+                    colors: [
+                      statusBgColor,
+                      statusBgColor.withValues(alpha: 0.7),
+                    ],
                   ),
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: statusColor.withOpacity(0.2),
+                      color: statusColor.withValues(alpha: 0.2),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -576,7 +669,7 @@ class WalletView extends StatelessWidget {
                         color: statusBgColor,
                         borderRadius: BorderRadius.circular(8.r),
                         border: Border.all(
-                          color: statusColor.withOpacity(0.3),
+                          color: statusColor.withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -636,10 +729,10 @@ class WalletView extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.1),
+                    color: Colors.red.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10.r),
                     border: Border.all(
-                      color: Colors.red.withOpacity(0.3),
+                      color: Colors.red.withValues(alpha: 0.3),
                       width: 1,
                     ),
                   ),
@@ -734,10 +827,12 @@ class WalletView extends StatelessWidget {
     WalletTransaction transaction,
     WalletController controller,
   ) {
-    final isDeduction = transaction.type == 'DEDUCTION';
+    final isDeduction = transaction.type.toUpperCase() == 'DEDUCTION';
+    final isRecharge = transaction.type.toUpperCase() == 'RECHARGE';
+
     final statusColor = isDeduction ? Colors.red : const Color(0xFF4CAF50);
     final statusBgColor = isDeduction
-        ? Colors.red.withOpacity(0.05)
+        ? Colors.red.withValues(alpha: 0.05)
         : const Color(0xFFE8F5E9);
     final date = transaction.createdAtDate;
 
@@ -747,10 +842,13 @@ class WalletView extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: Colors.grey.withOpacity(0.15), width: 1),
+        border: Border.all(
+          color: Colors.grey.withValues(alpha: 0.15),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -767,12 +865,15 @@ class WalletView extends StatelessWidget {
                 height: 56.w,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [statusBgColor, statusBgColor.withOpacity(0.7)],
+                    colors: [
+                      statusBgColor,
+                      statusBgColor.withValues(alpha: 0.7),
+                    ],
                   ),
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: statusColor.withOpacity(0.2),
+                      color: statusColor.withValues(alpha: 0.2),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -781,7 +882,9 @@ class WalletView extends StatelessWidget {
                 child: Icon(
                   isDeduction
                       ? Icons.remove_circle_rounded
-                      : Icons.check_circle_rounded,
+                      : (isRecharge
+                            ? Icons.add_task_rounded
+                            : Icons.check_circle_rounded),
                   color: statusColor,
                   size: 28.w,
                 ),
@@ -796,7 +899,11 @@ class WalletView extends StatelessWidget {
                   children: [
                     AutoTranslateText(
                       transaction.description ??
-                          (isDeduction ? 'Consultation' : 'Wallet Update'),
+                          (isDeduction
+                              ? 'Consultation'
+                              : (isRecharge
+                                    ? 'Wallet Recharge'
+                                    : 'Wallet Update')),
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 16,
@@ -826,7 +933,7 @@ class WalletView extends StatelessWidget {
                         color: statusBgColor,
                         borderRadius: BorderRadius.circular(8.r),
                         border: Border.all(
-                          color: statusColor.withOpacity(0.3),
+                          color: statusColor.withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -849,7 +956,8 @@ class WalletView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   AutoTranslateText(
-                    '${isDeduction ? '-' : '+'}₹${transaction.amount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                    '${isDeduction ? '-' : '+'}₹${transaction.amount.abs().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+
                     style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 20,
@@ -900,7 +1008,7 @@ class WalletView extends StatelessWidget {
             borderRadius: BorderRadius.circular(30.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.15),
+                color: Colors.black.withValues(alpha: 0.15),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -940,7 +1048,7 @@ class WalletView extends StatelessWidget {
                         child: Container(
                           padding: EdgeInsets.all(8.w),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -962,7 +1070,7 @@ class WalletView extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.all(16.w),
                       decoration: BoxDecoration(
-                        color: '#68171E'.toColor().withOpacity(0.05),
+                        color: '#68171E'.toColor().withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(12.r),
                       ),
                       child: Row(
@@ -996,7 +1104,7 @@ class WalletView extends StatelessWidget {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(16.r),
                               border: Border.all(
-                                color: Colors.grey.withOpacity(0.3),
+                                color: Colors.grey.withValues(alpha: 0.3),
                                 width: 1.5,
                               ),
                             ),
@@ -1031,7 +1139,7 @@ class WalletView extends StatelessWidget {
                               boxShadow: [
                                 BoxShadow(
                                   color: AppColors.orangeGradient.colors.first
-                                      .withOpacity(0.4),
+                                      .withValues(alpha: 0.4),
                                   blurRadius: 12,
                                   offset: const Offset(0, 6),
                                 ),

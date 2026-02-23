@@ -12,10 +12,7 @@ import 'package:get/get.dart';
 class PanchangPredictionWidget extends StatelessWidget {
   final PredictionsController controller;
 
-  const PanchangPredictionWidget({
-    super.key,
-    required this.controller,
-  });
+  const PanchangPredictionWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +35,7 @@ class PanchangPredictionWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
               fontSize: 12.sp,
             ),
           ),
@@ -59,12 +56,12 @@ class PanchangPredictionWidget extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.circular(10.r),
             border: Border.all(
-              color: "#ed6f30".toColor().withOpacity(0.2),
+              color: "#ed6f30".toColor().withValues(alpha: 0.2),
               width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 4,
                 offset: const Offset(0, 1),
               ),
@@ -84,15 +81,19 @@ class PanchangPredictionWidget extends StatelessWidget {
                       _buildAboutSection(explantion),
                       Spacing.h(6),
                     ],
-                    if (tithi != null) _buildItem('Tithi', tithi, Icons.calendar_today),
+                    if (tithi != null)
+                      _buildItem('Tithi', tithi, Icons.calendar_today),
                     if (tithi != null) Spacing.h(5),
-                    if (weekday != null) _buildItem('Weekday', weekday, Icons.today),
+                    if (weekday != null)
+                      _buildItem('Weekday', weekday, Icons.today),
                     if (weekday != null) Spacing.h(5),
-                    if (yoga != null) _buildItem('Yoga', yoga, Icons.auto_awesome),
+                    if (yoga != null)
+                      _buildItem('Yoga', yoga, Icons.auto_awesome),
                     if (yoga != null) Spacing.h(5),
                     if (karan != null) _buildItem('Karan', karan, Icons.star),
                     if (karan != null) Spacing.h(5),
-                    if (nakshatra != null) _buildItem('Nakshatra', nakshatra, Icons.stars),
+                    if (nakshatra != null)
+                      _buildItem('Nakshatra', nakshatra, Icons.stars),
                   ],
                 ),
               ),
@@ -106,9 +107,7 @@ class PanchangPredictionWidget extends StatelessWidget {
   Widget _buildHeader() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
-      decoration: BoxDecoration(
-        gradient: AppColors.orangeGradient,
-      ),
+      decoration: BoxDecoration(gradient: AppColors.orangeGradient),
       child: Row(
         children: [
           Icon(Icons.nightlight_round, size: 14.w, color: Colors.white),
@@ -132,15 +131,15 @@ class PanchangPredictionWidget extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.orangeGradient.colors.first.withOpacity(0.08),
-            AppColors.orangeGradient.colors.last.withOpacity(0.04),
+            AppColors.orangeGradient.colors.first.withValues(alpha: 0.08),
+            AppColors.orangeGradient.colors.last.withValues(alpha: 0.04),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(8.r),
         border: Border.all(
-          color: AppColors.orangeGradient.colors.first.withOpacity(0.25),
+          color: AppColors.orangeGradient.colors.first.withValues(alpha: 0.25),
           width: 1,
         ),
       ),
@@ -186,10 +185,10 @@ class PanchangPredictionWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(8.w),
       decoration: BoxDecoration(
-        color: AppColors.orangeGradient.colors.first.withOpacity(0.04),
+        color: AppColors.orangeGradient.colors.first.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(8.r),
         border: Border.all(
-          color: AppColors.orangeGradient.colors.first.withOpacity(0.2),
+          color: AppColors.orangeGradient.colors.first.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -222,7 +221,9 @@ class PanchangPredictionWidget extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 3.h),
               decoration: BoxDecoration(
-                color: AppColors.orangeGradient.colors.first.withOpacity(0.12),
+                color: AppColors.orangeGradient.colors.first.withValues(
+                  alpha: 0.12,
+                ),
                 borderRadius: BorderRadius.circular(5.r),
               ),
               child: AutoTranslateText(

@@ -11,30 +11,24 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 class KpChartWidget extends StatelessWidget {
   final KpSystemController controller;
 
-  const KpChartWidget({
-    super.key,
-    required this.controller,
-  });
+  const KpChartWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingKpChart.value) {
         return Center(
-          child: CircularProgressIndicator(
-            color: "#ed6f30".toColor(),
-          ),
+          child: CircularProgressIndicator(color: "#ed6f30".toColor()),
         );
       }
 
       final data = controller.kpChartData.value;
-      
       if (data == null || data.isEmpty) {
         return Center(
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -46,7 +40,7 @@ class KpChartWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No chart data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -64,10 +58,12 @@ class KpChartWidget extends StatelessWidget {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12.r),
                 border: Border.all(
-                    color: '#ed6f30'.toColor().withOpacity(0.2), width: 1),
+                  color: '#ed6f30'.toColor().withValues(alpha: 0.2),
+                  width: 1,
+                ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 6,
                     offset: const Offset(0, 2),
                   ),
@@ -99,4 +95,3 @@ class KpChartWidget extends StatelessWidget {
     });
   }
 }
-

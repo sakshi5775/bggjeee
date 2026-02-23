@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +43,11 @@ class SadeSatiController extends BaseController {
   void onTabSelected(int index) {
     selectedTabIndex.value = index;
     if (pageController.hasClients) {
-      pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     }
     if (index == 0 && currentSadeSatiData.value == null) fetchCurrentSadeSati();
     if (index == 1 && sadeSatiTableData.value == null) fetchSadeSatiTable();
@@ -66,10 +70,21 @@ class SadeSatiController extends BaseController {
     final lat = form['latitude'] as double?;
     final lng = form['longitude'] as double?;
     final tz = form['timezone'] as double?;
-    if (date == null || time == null || lat == null || lng == null || tz == null) return;
+    if (date == null ||
+        time == null ||
+        lat == null ||
+        lng == null ||
+        tz == null)
+      return;
     try {
       isLoadingCurrent.value = true;
-      final data = await _kundliService.getCurrentSadeSati(date: date, time: time, latitude: lat, longitude: lng, tz: tz);
+      final data = await _kundliService.getCurrentSadeSati(
+        date: date,
+        time: time,
+        latitude: lat,
+        longitude: lng,
+        tz: tz,
+      );
       currentSadeSatiData.value = data;
     } finally {
       isLoadingCurrent.value = false;
@@ -84,10 +99,21 @@ class SadeSatiController extends BaseController {
     final lat = form['latitude'] as double?;
     final lng = form['longitude'] as double?;
     final tz = form['timezone'] as double?;
-    if (date == null || time == null || lat == null || lng == null || tz == null) return;
+    if (date == null ||
+        time == null ||
+        lat == null ||
+        lng == null ||
+        tz == null)
+      return;
     try {
       isLoadingTable.value = true;
-      final data = await _kundliService.getSadeSatiTableVedic(date: date, time: time, latitude: lat, longitude: lng, tz: tz);
+      final data = await _kundliService.getSadeSatiTableVedic(
+        date: date,
+        time: time,
+        latitude: lat,
+        longitude: lng,
+        tz: tz,
+      );
       sadeSatiTableData.value = data;
     } finally {
       isLoadingTable.value = false;

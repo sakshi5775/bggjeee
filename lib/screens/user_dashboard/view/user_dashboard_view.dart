@@ -1,12 +1,13 @@
-import 'package:astrobharataiuser/widgets/common_tab_slider.dart';
+﻿import 'package:astrobharataiuser/widgets/common_tab_slider.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/svg_assets.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/all_astrologers_view.dart';
 import 'package:astrobharataiuser/screens/live_stream/view/live_stream_view.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
@@ -89,6 +90,15 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        /*
+                        Obx(
+                          () =>
+                              controller.isOffline.value &&
+                                  controller.hasCache.value
+                              ? const OfflineBanner()
+                              : const SizedBox.shrink(),
+                        ),
+                        */
                         // Safe area padding for the specific top content if strictly needed,
                         // but CommonHeader handles its own SafeArea.
                         // However, since we are inside a ScrollView, CommonHeader's SafeArea
@@ -354,7 +364,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         final h = MediaQuery.sizeOf(context).height;
         return SizedBox(
           height: (h - 240).clamp(400.0, h * 0.85),
-          child: const CoursesView(hideHeader: true),
+          child: CoursesView(hideHeader: true),
         );
       }
 
@@ -478,12 +488,12 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20.r),
                 border: Border.all(
-                  color: "#DBCCA8".toColor().withOpacity(0.6),
+                  color: "#DBCCA8".toColor().withValues(alpha: 0.6),
                   width: 1,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: "#6F221E".toColor().withOpacity(0.08),
+                    color: "#6F221E".toColor().withValues(alpha: 0.08),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -594,12 +604,12 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           border: Border.all(
             color: controller.isListening.value
                 ? "#F38B3B".toColor()
-                : "#FFFFFF".toColor().withOpacity(0.2),
+                : "#FFFFFF".toColor().withValues(alpha: 0.2),
             width: controller.isListening.value ? 2.0 : 1.1,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.15),
+              color: Colors.black.withValues(alpha: 0.15),
               blurRadius: 14,
               offset: const Offset(0, 2),
             ),
@@ -661,7 +671,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                         : 'Search horoscope, kundli, tarot...'),
                               hintStyle: MyTextTheme.mediumBCN
                                   .copyWith(
-                                    color: "#3D0C11".toColor().withOpacity(0.5),
+                                    color: "#3D0C11".toColor().withValues(
+                                      alpha: 0.5,
+                                    ),
 
                                     fontWeight: FontWeight.w500,
                                   )
@@ -707,7 +719,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                       padding: EdgeInsets.all(8.w),
                       decoration: BoxDecoration(
                         color: controller.isListening.value
-                            ? "#F38B3B".toColor().withOpacity(0.1)
+                            ? "#F38B3B".toColor().withValues(alpha: 0.1)
                             : Colors.transparent,
                         shape: BoxShape.circle,
                       ),
@@ -755,7 +767,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     border: Border.all(color: "#DBCCA8".toColor(), width: 1.2),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.12),
+                        color: Colors.black.withValues(alpha: 0.12),
                         blurRadius: 16,
                         offset: const Offset(0, 4),
                       ),
@@ -793,7 +805,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                 'Search horoscope, kundli, tarot, palm reading...',
                             hintStyle: MyTextTheme.mediumBCN
                                 .copyWith(
-                                  color: "#3D0C11".toColor().withOpacity(0.5),
+                                  color: "#3D0C11".toColor().withValues(
+                                    alpha: 0.5,
+                                  ),
                                   fontWeight: FontWeight.w500,
                                 )
                                 .merge(AppTypography.body1),
@@ -952,9 +966,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   //   Container(
                   //     padding: AppPaddings.symmetric(h: 12.w, v: 8.h),
                   //     decoration: BoxDecoration(
-                  //       color: Colors.red.withOpacity(0.1),
+                  //       color: Colors.red.withValues(alpha: 0.1),
                   //       borderRadius: BorderRadius.circular(8.r),
-                  //       border: Border.all(color: Colors.red.withOpacity(0.3)),
+                  //       border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
                   //     ),
                   //     child: Row(
                   //       children: [
@@ -1004,10 +1018,26 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           }),
 
           // Chat/Call Section (same data as All Astrologers, reversed order)
+          /*
+          Obx(() => controller.isOffline.value
+              ? OfflinePlaceholderCard(
+                  onRetry: () => controller.refreshDashboard(),
+                  message: 'Connect to the internet to chat or call astrologers',
+                )
+              : const ChatCallAstrologerWidget()),
+          */
           const ChatCallAstrologerWidget(),
           Spacing.h(5),
 
           // All Astrologers Section
+          /*
+          Obx(() => controller.isOffline.value
+              ? OfflinePlaceholderCard(
+                  onRetry: () => controller.refreshDashboard(),
+                  message: 'Connect to the internet to view all astrologers',
+                )
+              : AllAstrologerWidget()),
+          */
           AllAstrologerWidget(),
           Spacing.h(5),
 
@@ -1197,7 +1227,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 borderRadius: AppRadius.all(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.28),
+                    color: Colors.black.withValues(alpha: 0.28),
                     blurRadius: 28,
                     offset: const Offset(0, 16),
                   ),
@@ -1359,12 +1389,12 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                 BoxShadow(
                                   color: const Color(
                                     0xFFFFD33D,
-                                  ).withOpacity(0.45),
+                                  ).withValues(alpha: 0.45),
                                   blurRadius: 22,
                                   offset: const Offset(0, 12),
                                 ),
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.18),
+                                  color: Colors.black.withValues(alpha: 0.18),
                                   blurRadius: 12,
                                   offset: const Offset(0, 8),
                                 ),
@@ -1412,10 +1442,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                             return Container(
                               width: imageWidth,
                               height: imageHeight,
-                              color: Colors.white.withOpacity(0.06),
+                              color: Colors.white.withValues(alpha: 0.06),
                               child: Icon(
                                 Icons.image_not_supported_outlined,
-                                color: Colors.white.withOpacity(0.6),
+                                color: Colors.white.withValues(alpha: 0.6),
                                 size: 28.w,
                               ),
                             );
@@ -1457,17 +1487,17 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         borderRadius: BorderRadius.circular(12.r), // Responsive border radius
         boxShadow: [
           BoxShadow(
-            color: "#E75426".toColor().withOpacity(0.2),
+            color: "#E75426".toColor().withValues(alpha: 0.2),
             blurRadius: 38.1,
             offset: const Offset(0, -1),
           ),
           BoxShadow(
-            color: "#DC3E3E".toColor().withOpacity(0.2),
+            color: "#DC3E3E".toColor().withValues(alpha: 0.2),
             blurRadius: 10.9,
             offset: const Offset(-6, -2),
           ),
           BoxShadow(
-            color: "#E03419".toColor().withOpacity(0.1),
+            color: "#E03419".toColor().withValues(alpha: 0.1),
             blurRadius: 0,
             offset: const Offset(0, 0),
           ),
@@ -1488,7 +1518,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 fit: BoxFit.cover, // Maintain aspect ratio and fill
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    color: Colors.grey.withOpacity(0.3),
+                    color: Colors.grey.withValues(alpha: 0.3),
                     child: Icon(Icons.person, color: Colors.white, size: 60.w),
                   );
                 },
@@ -1603,7 +1633,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                         color: "#FFFFFF".toColor(),
                         borderRadius: BorderRadius.circular(25.r),
                         border: Border.all(
-                          color: "#F38B3B".toColor().withOpacity(0.5),
+                          color: "#F38B3B".toColor().withValues(alpha: 0.5),
                           width: 1.5,
                         ),
                       ),
@@ -1662,7 +1692,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
-                      color: Colors.grey.withOpacity(0.3),
+                      color: Colors.grey.withValues(alpha: 0.3),
                       child: Icon(Icons.image, color: Colors.white, size: 60.w),
                     );
                   },
@@ -2046,7 +2076,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.16),
+            color: Colors.black.withValues(alpha: 0.16),
             blurRadius: 18,
             offset: const Offset(0, 8),
           ),
@@ -2092,7 +2122,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                       borderRadius: BorderRadius.circular(18.r),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.10),
+                          color: Colors.black.withValues(alpha: 0.10),
                           blurRadius: 12,
                           offset: const Offset(0, 6),
                         ),
@@ -2314,20 +2344,20 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     return Container(
       width: width,
       decoration: BoxDecoration(
-        color: "#FFFFFF".toColor().withOpacity(0.8),
+        color: "#FFFFFF".toColor().withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: "#E3B341".toColor().withOpacity(0.1),
+          color: "#E3B341".toColor().withValues(alpha: 0.1),
           width: 0.53,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 6,
             offset: const Offset(0, 1),
           ),
@@ -2351,7 +2381,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 return Container(
                   width: width,
                   height: 96.h,
-                  color: Colors.grey.withOpacity(0.3),
+                  color: Colors.grey.withValues(alpha: 0.3),
                   child: Icon(Icons.image, size: 40.w),
                 );
               },
@@ -2673,7 +2703,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         color: "#FFFFFF".toColor(),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.14),
+            color: Colors.black.withValues(alpha: 0.14),
             blurRadius: 18.93,
             offset: const Offset(3.15, 3.15),
           ),
@@ -2971,7 +3001,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                               imageUrl: imagePath,
                               fit: BoxFit.cover,
                               placeholder: (context, url) => Container(
-                                color: Colors.grey.withOpacity(0.3),
+                                color: Colors.grey.withValues(alpha: 0.3),
                                 child: Center(
                                   child: CircularProgressIndicator(
                                     color: AppColors.deepOrange,
@@ -2980,19 +3010,19 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                 ),
                               ),
                               errorWidget: (context, url, error) => Container(
-                                color: Colors.grey.withOpacity(0.3),
+                                color: Colors.grey.withValues(alpha: 0.3),
                                 child: Icon(
                                   Icons.person,
-                                  color: Colors.white.withOpacity(0.5),
+                                  color: Colors.white.withValues(alpha: 0.5),
                                   size: 40.w,
                                 ),
                               ),
                             )
                           : Container(
-                              color: Colors.grey.withOpacity(0.3),
+                              color: Colors.grey.withValues(alpha: 0.3),
                               child: Icon(
                                 Icons.person,
-                                color: Colors.white.withOpacity(0.5),
+                                color: Colors.white.withValues(alpha: 0.5),
                                 size: 40.w,
                               ),
                             ),
@@ -3379,7 +3409,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            '#F7C443'.toColor().withOpacity(0.2),
+            '#F7C443'.toColor().withValues(alpha: 0.2),
             "#FFFCF3".toColor(),
             Color(0xFFFFFFFF),
           ],
@@ -3389,7 +3419,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.25),
+            color: Colors.black.withValues(alpha: 0.25),
             blurRadius: 20,
             offset: const Offset(0, 12),
           ),
@@ -3413,7 +3443,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     return Container(
                       width: double.infinity,
                       height: 210.h,
-                      color: Colors.grey.withOpacity(0.3),
+                      color: Colors.grey.withValues(alpha: 0.3),
                       child: Icon(Icons.temple_hindu, size: 60.w),
                     );
                   },
@@ -3667,7 +3697,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 width: 255.99.w,
                 height: 265.h,
                 colorFilter: ColorFilter.mode(
-                  "#FFF6C2".toColor().withOpacity(0.1),
+                  "#FFF6C2".toColor().withValues(alpha: 0.1),
                   BlendMode.srcIn,
                 ),
               ),
@@ -3697,10 +3727,14 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                       return Container(
                                         width: 255.99.w,
                                         height: 120.h,
-                                        color: Colors.grey.withOpacity(0.3),
+                                        color: Colors.grey.withValues(
+                                          alpha: 0.3,
+                                        ),
                                         child: Icon(
                                           Icons.person,
-                                          color: Colors.white.withOpacity(0.5),
+                                          color: Colors.white.withValues(
+                                            alpha: 0.5,
+                                          ),
                                           size: 40.w,
                                         ),
                                       );
@@ -3709,10 +3743,12 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                 : Container(
                                     width: 255.99.w,
                                     height: 120.h,
-                                    color: Colors.grey.withOpacity(0.3),
+                                    color: Colors.grey.withValues(alpha: 0.3),
                                     child: Icon(
                                       Icons.person,
-                                      color: Colors.white.withOpacity(0.5),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.5,
+                                      ),
                                       size: 40.w,
                                     ),
                                   ),
@@ -3730,7 +3766,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                   end: Alignment.bottomCenter,
                                   colors: [
                                     Colors.transparent,
-                                    Colors.black.withOpacity(0.8),
+                                    Colors.black.withValues(alpha: 0.8),
                                   ],
                                 ),
                               ),
@@ -3756,12 +3792,12 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                           //       ),
                           //       shape: BoxShape.circle,
                           //       border: Border.all(
-                          //         color: Colors.white.withOpacity(0.2),
+                          //         color: Colors.white.withValues(alpha: 0.2),
                           //         width: 1.58,
                           //       ),
                           //       boxShadow: [
                           //         BoxShadow(
-                          //           color: Colors.black.withOpacity(0.1),
+                          //           color: Colors.black.withValues(alpha: 0.1),
                           //           blurRadius: 4,
                           //           offset: const Offset(0, 2),
                           //         ),
@@ -3807,7 +3843,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                             child: AutoTranslateText(
                               subtitle,
                               style: MyTextTheme.smallBCN.copyWith(
-                                color: "#FFF6C2".toColor().withOpacity(0.7),
+                                color: "#FFF6C2".toColor().withValues(
+                                  alpha: 0.7,
+                                ),
                                 fontWeight: FontWeight.w400,
                                 fontFamily: 'Poppins',
                                 height: 1.0,
@@ -3825,7 +3863,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                 height: 3.5.h,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: "#05DF72".toColor().withOpacity(0.91),
+                                  color: "#05DF72".toColor().withValues(
+                                    alpha: 0.91,
+                                  ),
                                 ),
                               ),
                               Spacing.w(2),
@@ -3859,12 +3899,12 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     //               vertical: 3.h,
                     //             ),
                     //             decoration: BoxDecoration(
-                    //               color: "#E3B341".toColor().withOpacity(0.2),
+                    //               color: "#E3B341".toColor().withValues(alpha: 0.2),
                     //               borderRadius: BorderRadius.circular(
                     //                 17722700.r,
                     //               ),
                     //               border: Border.all(
-                    //                 color: "#E3B341".toColor().withOpacity(0.3),
+                    //                 color: "#E3B341".toColor().withValues(alpha: 0.3),
                     //                 width: 0.53,
                     //               ),
                     //             ),
@@ -4152,7 +4192,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                     color: "#FFFFFF".toColor(),
                                     width: 2,
                                   ),
-                                  color: "#05DF72".toColor().withOpacity(0.91),
+                                  color: "#05DF72".toColor().withValues(
+                                    alpha: 0.91,
+                                  ),
                                 ),
                               ),
                               Spacing.w(6),
@@ -4201,7 +4243,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                         displayTitle,
                         style: MyTextTheme.mediumBCN
                             .copyWith(
-                              color: Colors.white.withOpacity(0.75),
+                              color: Colors.white.withValues(alpha: 0.75),
                               fontWeight: FontWeight.w400,
                             )
                             .merge(AppTypography.body2),
@@ -4450,15 +4492,15 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       child: Container(
         width: width,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.8),
+          color: Colors.white.withValues(alpha: 0.8),
           borderRadius: AppRadius.all(16),
           border: Border.all(
-            color: "#E3B341".toColor().withOpacity(0.1),
+            color: "#E3B341".toColor().withValues(alpha: 0.1),
             width: 0.53,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -4510,7 +4552,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   child: Container(
                     padding: AppPaddings.symmetric(h: 6, v: 3),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.7),
+                      color: Colors.black.withValues(alpha: 0.7),
                       borderRadius: AppRadius.all(4),
                     ),
                     child: AutoTranslateText(
@@ -4527,7 +4569,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   child: Container(
                     padding: AppPaddings.all(4),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.5),
+                      color: Colors.black.withValues(alpha: 0.5),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -4604,15 +4646,15 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     return Container(
       width: 168.42.w,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.8),
+        color: Colors.white.withValues(alpha: 0.8),
         borderRadius: AppRadius.all(16),
         border: Border.all(
-          color: "#E3B341".toColor().withOpacity(0.1),
+          color: "#E3B341".toColor().withValues(alpha: 0.1),
           width: 0.53,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -4637,7 +4679,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     return Container(
                       width: double.infinity,
                       height: 96.h,
-                      color: Colors.grey.withOpacity(0.3),
+                      color: Colors.grey.withValues(alpha: 0.3),
                       child: Icon(Icons.video_library, size: 40.w),
                     );
                   },
@@ -4649,7 +4691,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 child: Container(
                   padding: AppPaddings.symmetric(h: 8, v: 4),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.7),
+                    color: Colors.black.withValues(alpha: 0.7),
                     borderRadius: AppRadius.all(4),
                   ),
                   child: AutoTranslateText(
@@ -4684,13 +4726,13 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     Icon(
                       Icons.visibility,
                       size: 12.w,
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                     ),
                     Spacing.w(4),
                     AutoTranslateText(
                       views,
                       style: MyTextTheme.smallBCN.copyWith(
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withValues(alpha: 0.9),
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w400,
                       ),
@@ -4709,6 +4751,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     final controller = Get.isRegistered<UserDashboardController>()
         ? Get.find<UserDashboardController>()
         : null;
+    final mainController = Get.find<UserMainController>();
     return Drawer(
       width: Get.width > 600 ? Get.width * 0.70 : null,
       backgroundColor: const Color(
@@ -4768,7 +4811,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                   style: MyTextTheme.smallBCN.copyWith(
                                     color: const Color(
                                       0xFF5F2221,
-                                    ).withOpacity(0.7),
+                                    ).withValues(alpha: 0.7),
                                   ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -4800,7 +4843,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               //     borderRadius: AppRadius.all(12),
               //     boxShadow: [
               //       BoxShadow(
-              //         color: Colors.black.withOpacity(0.05),
+              //         color: Colors.black.withValues(alpha: 0.05),
               //         blurRadius: 10,
               //         offset: const Offset(0, 2),
               //       ),
@@ -4820,7 +4863,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               //                 height: 48.w,
               //                 decoration: BoxDecoration(
               //                   shape: BoxShape.circle,
-              //                   color: "#6F221E".toColor().withOpacity(0.2),
+              //                   color: "#6F221E".toColor().withValues(alpha: 0.2),
               //                 ),
               //                 child: Icon(
               //                   Icons.person,
@@ -4905,7 +4948,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     isSelected: true,
                     onTap: () {
                       Navigator.of(context).pop();
-                      Get.offNamed('/user-home', id: 1);
+                      mainController.changePage(0);
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -4916,7 +4959,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     badgeText: 'New',
                     onTap: () {
                       Navigator.of(context).pop();
-                      Get.toNamed(AppRoutes.aichat);
+                      mainController.changePage(3);
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -4925,7 +4968,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Digital Consultation',
                     onTap: () {
                       Navigator.of(context).pop();
-                      Get.toNamed(AppRoutes.astrologyServices);
+                      mainController.changePage(1);
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -4961,7 +5004,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Live',
                     onTap: () {
                       Navigator.of(context).pop();
-                      Get.toNamed(AppRoutes.liveAstrologers);
+                      mainController.changePage(2);
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -4970,7 +5013,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Consult',
                     onTap: () {
                       Navigator.of(context).pop();
-                      Get.toNamed(AppRoutes.astrologyServices);
+                      mainController.changePage(1);
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -4979,14 +5022,14 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'History',
                     onTap: () {
                       Navigator.of(context).pop();
-                      Get.toNamed(AppRoutes.consultationHistory);
+                      Get.toNamed(AppRoutes.consultationHistory, id: 1);
                     },
                   ),
                 ],
               ),
               Spacing.h(24),
               Divider(
-                color: const Color(0xFF5F2221).withOpacity(0.2),
+                color: const Color(0xFF5F2221).withValues(alpha: 0.2),
                 thickness: 1,
               ),
               Spacing.h(12),
@@ -5098,7 +5141,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               ),
               Spacing.h(24),
               Divider(
-                color: const Color(0xFF5F2221).withOpacity(0.2),
+                color: const Color(0xFF5F2221).withValues(alpha: 0.2),
                 thickness: 1,
               ),
               Spacing.h(12),
@@ -5174,7 +5217,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               ),
               Spacing.h(24),
               Divider(
-                color: const Color(0xFF5F2221).withOpacity(0.2),
+                color: const Color(0xFF5F2221).withValues(alpha: 0.2),
                 thickness: 1,
               ),
               Spacing.h(12),
@@ -5250,7 +5293,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               ),
               Spacing.h(24),
               Divider(
-                color: const Color(0xFF5F2221).withOpacity(0.2),
+                color: const Color(0xFF5F2221).withValues(alpha: 0.2),
                 thickness: 1,
               ),
               Spacing.h(12),
@@ -5268,14 +5311,14 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Profile',
                     onTap: () {
                       Navigator.of(context).pop();
-                      Get.toNamed(AppRoutes.profile);
+                      mainController.changePage(4);
                     },
                   ),
                 ],
               ),
               Spacing.h(24),
               Divider(
-                color: const Color(0xFF5F2221).withOpacity(0.2),
+                color: const Color(0xFF5F2221).withValues(alpha: 0.2),
                 thickness: 1,
               ),
               Spacing.h(12),
@@ -5284,15 +5327,6 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 context: context,
                 title: 'JOIN US',
                 children: [
-                  _buildDrawerItemStatic(
-                    context: context,
-                    icon: Icons.info_outline_rounded,
-                    label: 'About Us',
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      Get.toNamed(AppRoutes.aboutUs);
-                    },
-                  ),
                   _buildDrawerItemStatic(
                     context: context,
                     icon: Icons.work_outline,
@@ -5332,7 +5366,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               .copyWith(
                 color: const Color(
                   0xFF5F2221,
-                ).withOpacity(0.7), // Dark maroon with opacity
+                ).withValues(alpha: 0.7), // Dark maroon with opacity
               )
               .merge(AppTypography.label),
         ),
@@ -5424,7 +5458,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           AutoTranslateText(
             title,
             style: MyTextTheme.smallBCN.copyWith(
-              color: const Color(0xFF5F2221).withOpacity(0.6),
+              color: const Color(0xFF5F2221).withValues(alpha: 0.6),
               fontWeight: FontWeight.w500,
             ),
           ),

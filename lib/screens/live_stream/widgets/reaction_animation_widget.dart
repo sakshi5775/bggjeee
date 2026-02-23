@@ -153,18 +153,18 @@ class _ReactionAnimationWidgetState extends State<ReactionAnimationWidget>
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          const Color(0xFFF38B3B).withOpacity(0.95),
-                          const Color(0xFFDD2914).withOpacity(0.95),
+                          const Color(0xFFF38B3B).withValues(alpha: 0.95),
+                          const Color(0xFFDD2914).withValues(alpha: 0.95),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(30.r),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.3),
+                        color: Colors.white.withValues(alpha: 0.3),
                         width: 2,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFF38B3B).withOpacity(0.6),
+                          color: const Color(0xFFF38B3B).withValues(alpha: 0.6),
                           blurRadius: 20,
                           spreadRadius: 2,
                         ),

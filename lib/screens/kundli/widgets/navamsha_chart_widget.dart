@@ -15,7 +15,7 @@ class NavamshaChartWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<KundliResultController>();
-    
+
     return Obx(() {
       final svgData = controller.navamshaSvgData.value;
       if (svgData == null || svgData.isEmpty) {
@@ -23,14 +23,12 @@ class NavamshaChartWidget extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(
-                color: const Color(0xFFDFB343),
-              ),
+              CircularProgressIndicator(color: const Color(0xFFDFB343)),
               Spacing.h(16),
               AutoTranslateText(
                 'Loading chart...',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.7),
+                  color: "#6F221E".toColor().withValues(alpha: 0.7),
                 ),
               ),
             ],
@@ -50,13 +48,13 @@ class NavamshaChartWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12.r),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.06),
+                    color: Colors.black.withValues(alpha: 0.06),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
                 ],
                 border: Border.all(
-                  color: "#ed6f30".toColor().withOpacity(0.2),
+                  color: "#ed6f30".toColor().withValues(alpha: 0.2),
                   width: 1,
                 ),
               ),
@@ -77,7 +75,7 @@ class NavamshaChartWidget extends StatelessWidget {
                           fit: BoxFit.contain,
                           alignment: Alignment.center,
                           placeholderBuilder: (context) => Container(
-                            color: Colors.grey.withOpacity(0.08),
+                            color: Colors.grey.withValues(alpha: 0.08),
                             child: Center(
                               child: CircularProgressIndicator(
                                 color: "#ed6f30".toColor(),
@@ -101,7 +99,4 @@ class NavamshaChartWidget extends StatelessWidget {
       );
     });
   }
-
- 
 }
-

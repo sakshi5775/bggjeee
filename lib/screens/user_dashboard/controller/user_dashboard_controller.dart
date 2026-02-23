@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/enums/user_role.dart';
 import 'package:astrobharataiuser/core/services/auth_service.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
@@ -34,11 +34,12 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:video_player/video_player.dart';
 
+import 'package:astrobharataiuser/core/localization/language_controller_v2.dart';
+
 import '../../../data_model/astrologer_model.dart';
 import '../../../data_model/user_profile_model.dart';
 import '../service/user_profile_service.dart';
 import 'package:astrobharataiuser/core/services/google_cloud_translation_service.dart';
-import 'package:astrobharataiuser/core/localization/language_controller_v2.dart';
 
 class UserDashboardController extends BaseController
     with GetTickerProviderStateMixin {
@@ -47,6 +48,10 @@ class UserDashboardController extends BaseController
   final RxString userPhone = ''.obs;
   final Rx<UserRole> userRole = UserRole.user.obs;
   final RxBool showConsultationBanner = true.obs;
+
+  // Offline State
+  final RxBool isOffline = false.obs;
+  final RxBool hasCache = false.obs;
 
   // Live streams
   final LiveStreamService _liveStreamService = LiveStreamService();
@@ -71,7 +76,7 @@ class UserDashboardController extends BaseController
       quoteDate: '',
       sanskrit: SanskritQuote(
         text:
-            'उद्यमेन हि सिद्ध्यन्ति कार्याणि न मनोरथैः।\nन हि सुप्तस्य सिंहस्य प्रविशन्ति मुखे मृगाः॥',
+            'उद्यमेन हि सिध्यन्ति कार्याणि न मनोरथैः।\nन हि सुप्तस्य सिंहस्य प्रविशन्ति मुखे मृगाः॥',
         transliteration:
             'Udyamena hi siddhyanti karyani na manorathaih.\nNa hi suptasya simhasya pravishanti mukhe mrigah.',
         meaning:
@@ -1033,23 +1038,69 @@ class UserDashboardController extends BaseController
   }
 
   Future<void> refreshDashboard() async {
+    // Localized offline check commented out as per global offline screen requirement
+    /*
+    final online = await NetworkService.instance.checkConnectivity();
+    isOffline.value = !online;
+    
+    // Check if we have some critical cache (e.g. banners or quotes)
+    final criticalCacheKey = '/api/banners/apphomescreen';
+    hasCache.value = 
+        GlobalApiStore.has(criticalCacheKey) || 
+        ApiCacheService.get(criticalCacheKey) != null;
+
+    if (!online && !hasCache.value) {
+      if (kDebugMode) print('Dashboard: Offline and no cache, showing offline state');
+      return;
+    }
+    */
+
     final requireAuth = !_isGuest;
     if (requireAuth) {
       _loadUserData();
       await loadUserProfile();
       await checkForLiveWebinarFromEnrolledCourses();
     }
-    await loadLiveStreams();
-    await loadDailyQuote(requireAuth: requireAuth);
-    await loadBanners();
-    await loadBlogs(requireAuth: requireAuth);
-    await loadVedicAstrologers();
-    await loadKidsSpecialistAstrologers();
-    await loadCelebrityAstrologers();
-    await loadAiAstrologers();
-    await loadCourses();
-    await loadRemedyCategories();
-    await loadDigitalMartCategories();
+
+    try {
+      // First wave: High priority/Critical
+      await Future.wait([
+        loadBanners(),
+        loadDailyQuote(requireAuth: requireAuth),
+      ]);
+
+      // Small delay to allow UI to breathe
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      // Second wave: User specific & Real-time
+      await Future.wait([
+        loadLiveStreams(),
+        loadAiAstrologers(),
+        loadVedicAstrologers(),
+      ]);
+
+      // Small delay
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      // Third wave: Supplementary content
+      await Future.wait([
+        loadKidsSpecialistAstrologers(),
+        loadCelebrityAstrologers(),
+        loadCourses(),
+        loadPujas(),
+      ]);
+
+      // Final wave: Heavy/External content
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (!isClosed) {
+          loadYouTubeVideos();
+          loadRemedyCategories();
+          loadDigitalMartCategories();
+        }
+      });
+    } catch (e) {
+      if (kDebugMode) print('Error refreshing dashboard: $e');
+    }
   }
 
   /// Initialize Speech-to-AutoTranslateText
@@ -1200,11 +1251,9 @@ class UserDashboardController extends BaseController
   /// Start typewriter animation
   Future<void> _startTypewriterAnimation() async {
     if (_isAnimating || !_shouldAnimate) {
-      debugPrint('Typewriter: Already animating or should not animate');
       return;
     }
 
-    debugPrint('Typewriter: Starting animation');
     _isAnimating = true;
 
     while (_shouldAnimate) {
@@ -1220,7 +1269,6 @@ class UserDashboardController extends BaseController
               _currentPromptIndex < translatedSearchPrompts.length
           ? translatedSearchPrompts[_currentPromptIndex]
           : _searchPrompts[_currentPromptIndex];
-      debugPrint('Typewriter: Starting prompt: $prompt');
 
       // Type out the text
       await _typeText(prompt);
@@ -1245,7 +1293,6 @@ class UserDashboardController extends BaseController
       }
 
       // Erase the text
-      debugPrint('Typewriter: Starting erase');
       await _eraseText();
 
       // Check again before next prompt
@@ -1263,7 +1310,6 @@ class UserDashboardController extends BaseController
       _currentPromptIndex = (_currentPromptIndex + 1) % _searchPrompts.length;
     }
 
-    debugPrint('Typewriter: Animation stopped');
     _isAnimating = false;
   }
 

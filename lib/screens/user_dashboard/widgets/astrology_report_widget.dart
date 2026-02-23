@@ -16,12 +16,11 @@ class AstrologyReportWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-     
       child: Padding(
         padding: EdgeInsets.only(
           left: 16.w,
           right: 16.w,
-        //  top: 4.h,
+          //  top: 4.h,
           bottom: 2.h,
         ),
         child: Column(
@@ -33,7 +32,6 @@ class AstrologyReportWidget extends StatelessWidget {
                   'Sacred Library',
                   style: AppTypography.h2.copyWith(color: "#820B17".toColor()),
                 ),
-              
               ],
             ),
             Spacing.h(6),
@@ -43,23 +41,28 @@ class AstrologyReportWidget extends StatelessWidget {
                 spacing: 10.w,
                 children: [
                   _buildAstrologyReportCard(
-                    imageUrl: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/atharvaveda.jpeg',
+                    imageUrl:
+                        'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/atharvaveda.jpeg',
                     title: 'Atharvaveda',
                   ),
                   _buildAstrologyReportCard(
-                    imageUrl: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/jyotishVedang.jpeg',
+                    imageUrl:
+                        'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/jyotishVedang.jpeg',
                     title: 'Jyotish Vedang',
                   ),
                   _buildAstrologyReportCard(
-                    imageUrl: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/rigveda.jpeg',
+                    imageUrl:
+                        'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/rigveda.jpeg',
                     title: 'Rigveda',
                   ),
                   _buildAstrologyReportCard(
-                    imageUrl: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/samveda.jpeg',
+                    imageUrl:
+                        'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/samveda.jpeg',
                     title: 'Samveda',
                   ),
                   _buildAstrologyReportCard(
-                    imageUrl: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/yajurveda.jpeg',
+                    imageUrl:
+                        'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/yajurveda.jpeg',
                     title: 'Yajurveda',
                   ),
                 ],
@@ -77,10 +80,7 @@ class AstrologyReportWidget extends StatelessWidget {
   }) {
     return GestureDetector(
       onTap: () {
-        Get.to(() => BookOpenPage(
-              imageUrl: imageUrl,
-              title: title,
-            ));
+        Get.to(() => BookOpenPage(imageUrl: imageUrl, title: title));
       },
       child: ClipRRect(
         borderRadius: AppRadius.only(
@@ -100,13 +100,13 @@ class AstrologyReportWidget extends StatelessWidget {
                   imageUrl: imageUrl,
                   fit: BoxFit.cover,
                   placeholder: (context, url) => Container(
-                    color: Colors.grey.withOpacity(0.3),
+                    color: Colors.grey.withValues(alpha: 0.3),
                     child: const Center(
                       child: CircularProgressIndicator(strokeWidth: 2),
                     ),
                   ),
                   errorWidget: (context, url, error) => Container(
-                    color: Colors.grey.withOpacity(0.3),
+                    color: Colors.grey.withValues(alpha: 0.3),
                     child: const Icon(Icons.error_outline),
                   ),
                 ),
@@ -122,7 +122,7 @@ class AstrologyReportWidget extends StatelessWidget {
                       begin: Alignment.bottomCenter,
                       end: Alignment.topCenter,
                       colors: [
-                        Colors.black.withOpacity(0.7),
+                        Colors.black.withValues(alpha: 0.7),
                         Colors.transparent,
                       ],
                     ),

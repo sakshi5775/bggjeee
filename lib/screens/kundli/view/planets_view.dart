@@ -1,6 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/planets_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -114,11 +114,13 @@ class PlanetsView extends BasePage<PlanetsController> {
                               borderRadius: BorderRadius.circular(12.r),
                               border: isSelected
                                   ? null
-                                  : Border.all(color: maroon.withOpacity(0.2)),
+                                  : Border.all(
+                                      color: maroon.withValues(alpha: 0.2),
+                                    ),
                               boxShadow: isSelected
                                   ? [
                                       BoxShadow(
-                                        color: orange.withOpacity(0.25),
+                                        color: orange.withValues(alpha: 0.25),
                                         blurRadius: 4,
                                         offset: const Offset(0, 1),
                                       ),
@@ -162,7 +164,7 @@ class PlanetsView extends BasePage<PlanetsController> {
               AutoTranslateText(
                 'Loading planet details...',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: '#6F221E'.toColor().withOpacity(0.7),
+                  color: '#6F221E'.toColor().withValues(alpha: 0.7),
                 ),
               ),
             ],
@@ -177,13 +179,13 @@ class PlanetsView extends BasePage<PlanetsController> {
               Icon(
                 Icons.error_outline,
                 size: 64.w,
-                color: Colors.red.withOpacity(0.7),
+                color: Colors.red.withValues(alpha: 0.7),
               ),
               Spacing.h(16),
               AutoTranslateText(
                 'No data available',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: '#6F221E'.toColor().withOpacity(0.7),
+                  color: '#6F221E'.toColor().withValues(alpha: 0.7),
                 ),
               ),
               Spacing.h(16),
@@ -221,10 +223,10 @@ class PlanetsView extends BasePage<PlanetsController> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: maroon.withOpacity(0.2)),
+                border: Border.all(color: maroon.withValues(alpha: 0.2)),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: Colors.black.withValues(alpha: 0.04),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -347,7 +349,7 @@ class PlanetsView extends BasePage<PlanetsController> {
           child: AutoTranslateText(
             'Select planet and year, then tap refresh to load transit dates.',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: maroon.withOpacity(0.6),
+              color: maroon.withValues(alpha: 0.6),
             ),
           ),
         ),
@@ -380,10 +382,10 @@ class PlanetsView extends BasePage<PlanetsController> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: maroon.withOpacity(0.2)),
+        border: Border.all(color: maroon.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -434,9 +436,9 @@ class PlanetsView extends BasePage<PlanetsController> {
               margin: EdgeInsets.only(bottom: 8.h),
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
               decoration: BoxDecoration(
-                color: maroon.withOpacity(0.04),
+                color: maroon.withValues(alpha: 0.04),
                 borderRadius: BorderRadius.circular(10.r),
-                border: Border.all(color: orange.withOpacity(0.2)),
+                border: Border.all(color: orange.withValues(alpha: 0.2)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -473,7 +475,7 @@ class PlanetsView extends BasePage<PlanetsController> {
                     AutoTranslateText(
                       'Position: $degStr',
                       style: MyTextTheme.smallBCN.copyWith(
-                        color: maroon.withOpacity(0.8),
+                        color: maroon.withValues(alpha: 0.8),
                         fontSize: 10.sp,
                       ),
                     ),
@@ -502,7 +504,7 @@ class PlanetsView extends BasePage<PlanetsController> {
               AutoTranslateText(
                 'Loading Western chart...',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: maroon.withOpacity(0.7),
+                  color: maroon.withValues(alpha: 0.7),
                 ),
               ),
             ],
@@ -515,12 +517,16 @@ class PlanetsView extends BasePage<PlanetsController> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.public, size: 48.w, color: maroon.withOpacity(0.5)),
+              Icon(
+                Icons.public,
+                size: 48.w,
+                color: maroon.withValues(alpha: 0.5),
+              ),
               Spacing.h(12),
               AutoTranslateText(
                 'Western planet details require birth data.',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: maroon.withOpacity(0.7),
+                  color: maroon.withValues(alpha: 0.7),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -615,10 +621,10 @@ class PlanetsView extends BasePage<PlanetsController> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(color: maroon.withOpacity(0.2)),
+                  border: Border.all(color: maroon.withValues(alpha: 0.2)),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
+                      color: Colors.black.withValues(alpha: 0.04),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -652,7 +658,7 @@ class PlanetsView extends BasePage<PlanetsController> {
                             AutoTranslateText(
                               '$zodiac${house.isNotEmpty ? ' • House $house' : ''}',
                               style: MyTextTheme.smallBCN.copyWith(
-                                color: maroon.withOpacity(0.8),
+                                color: maroon.withValues(alpha: 0.8),
                                 fontSize: 11.sp,
                               ),
                             ),
@@ -660,7 +666,7 @@ class PlanetsView extends BasePage<PlanetsController> {
                             AutoTranslateText(
                               '$element${quality.isNotEmpty ? ' • $quality' : ''}',
                               style: MyTextTheme.smallBCN.copyWith(
-                                color: maroon.withOpacity(0.6),
+                                color: maroon.withValues(alpha: 0.6),
                                 fontSize: 10.sp,
                               ),
                             ),
@@ -674,7 +680,7 @@ class PlanetsView extends BasePage<PlanetsController> {
                                   'Global: $globalDegStr',
                               ].join(' | '),
                               style: MyTextTheme.smallBCN.copyWith(
-                                color: maroon.withOpacity(0.6),
+                                color: maroon.withValues(alpha: 0.6),
                                 fontSize: 10.sp,
                               ),
                             ),
@@ -707,10 +713,10 @@ class PlanetsView extends BasePage<PlanetsController> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: maroon.withOpacity(0.2)),
+                border: Border.all(color: maroon.withValues(alpha: 0.2)),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: Colors.black.withValues(alpha: 0.04),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -774,7 +780,7 @@ class PlanetsView extends BasePage<PlanetsController> {
           child: AutoTranslateText(
             'Select a planet to view detailed report.',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: maroon.withOpacity(0.6),
+              color: maroon.withValues(alpha: 0.6),
             ),
           ),
         ),
@@ -807,10 +813,10 @@ class PlanetsView extends BasePage<PlanetsController> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: maroon.withOpacity(0.2)),
+        border: Border.all(color: maroon.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),

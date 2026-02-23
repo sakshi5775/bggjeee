@@ -20,7 +20,8 @@ class TarotCardDisplayWidget extends StatelessWidget {
     this.cardImage,
     this.width,
     this.height,
-    this.fit = BoxFit.contain, // Changed from cover to contain to show full image without cutting
+    this.fit = BoxFit
+        .contain, // Changed from cover to contain to show full image without cutting
   });
 
   @override
@@ -29,13 +30,13 @@ class TarotCardDisplayWidget extends StatelessWidget {
 
     return Obx(() {
       final theme = controller.selectedTheme.value;
-      
+
       // Get card image URL from API response
       String? cardImageUrl;
       if (cardImage != null && cardImage!.isNotEmpty) {
         cardImageUrl = cardImage![theme] ?? cardImage!['classic'] ?? '';
       }
-      
+
       // If no image URL, return empty
       if (cardImageUrl == null || cardImageUrl.isEmpty) {
         return const SizedBox.shrink();
@@ -45,7 +46,9 @@ class TarotCardDisplayWidget extends StatelessWidget {
       final cardHeight = height ?? 180.h;
 
       return Container(
-        key: ValueKey('card_${theme}_${cardImageUrl}'), // Force rebuild on theme change
+        key: ValueKey(
+          'card_${theme}_${cardImageUrl}',
+        ), // Force rebuild on theme change
         width: cardWidth,
         height: cardHeight,
         margin: EdgeInsets.symmetric(vertical: 8.h),
@@ -53,7 +56,7 @@ class TarotCardDisplayWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -62,9 +65,12 @@ class TarotCardDisplayWidget extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(12.r),
           child: CachedNetworkImage(
-            key: ValueKey('img_${theme}_${cardImageUrl}'), // Force image reload on URL/theme change
+            key: ValueKey(
+              'img_${theme}_${cardImageUrl}',
+            ), // Force image reload on URL/theme change
             imageUrl: cardImageUrl,
-            cacheKey: '${cardImageUrl}_theme_$theme', // Force cache refresh on theme change
+            cacheKey:
+                '${cardImageUrl}_theme_$theme', // Force cache refresh on theme change
             fit: fit,
             placeholder: (context, url) => Container(
               color: Colors.grey[200],
@@ -81,11 +87,7 @@ class TarotCardDisplayWidget extends StatelessWidget {
             ),
             errorWidget: (context, url, error) => Container(
               color: Colors.grey[200],
-              child: Icon(
-                Icons.error,
-                color: '#820B17'.toColor(),
-                size: 30.w,
-              ),
+              child: Icon(Icons.error, color: '#820B17'.toColor(), size: 30.w),
             ),
           ),
         ),
@@ -106,7 +108,8 @@ class TarotCardBackDisplayWidget extends StatelessWidget {
     this.cardImagesBack,
     this.width,
     this.height,
-    this.fit = BoxFit.contain, // Changed from cover to contain to show full image without cutting
+    this.fit = BoxFit
+        .contain, // Changed from cover to contain to show full image without cutting
   });
 
   @override
@@ -115,14 +118,14 @@ class TarotCardBackDisplayWidget extends StatelessWidget {
 
     return Obx(() {
       final backType = controller.selectedBackType.value;
-      
+
       // Get card back image URL from API response
       String? backImageUrl;
       if (cardImagesBack != null && cardImagesBack!.isNotEmpty) {
-        backImageUrl = cardImagesBack![backType] ?? 
-                      cardImagesBack!['classic'] ?? '';
+        backImageUrl =
+            cardImagesBack![backType] ?? cardImagesBack!['classic'] ?? '';
       }
-      
+
       // If no image URL, return empty
       if (backImageUrl == null || backImageUrl.isEmpty) {
         return const SizedBox.shrink();
@@ -132,7 +135,9 @@ class TarotCardBackDisplayWidget extends StatelessWidget {
       final cardHeight = height ?? 180.h;
 
       return Container(
-        key: ValueKey('back_${backType}_${backImageUrl}'), // Force rebuild on theme change
+        key: ValueKey(
+          'back_${backType}_${backImageUrl}',
+        ), // Force rebuild on theme change
         width: cardWidth,
         height: cardHeight,
         margin: EdgeInsets.symmetric(vertical: 8.h),
@@ -140,7 +145,7 @@ class TarotCardBackDisplayWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -149,9 +154,12 @@ class TarotCardBackDisplayWidget extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(12.r),
           child: CachedNetworkImage(
-            key: ValueKey('back_img_${backType}_${backImageUrl}'), // Force image reload on URL/theme change
+            key: ValueKey(
+              'back_img_${backType}_${backImageUrl}',
+            ), // Force image reload on URL/theme change
             imageUrl: backImageUrl,
-            cacheKey: '${backImageUrl}_back_$backType', // Force cache refresh on back type change
+            cacheKey:
+                '${backImageUrl}_back_$backType', // Force cache refresh on back type change
             fit: fit,
             placeholder: (context, url) => Container(
               color: Colors.grey[200],
@@ -168,11 +176,7 @@ class TarotCardBackDisplayWidget extends StatelessWidget {
             ),
             errorWidget: (context, url, error) => Container(
               color: Colors.grey[200],
-              child: Icon(
-                Icons.error,
-                color: '#820B17'.toColor(),
-                size: 30.w,
-              ),
+              child: Icon(Icons.error, color: '#820B17'.toColor(), size: 30.w),
             ),
           ),
         ),
@@ -201,23 +205,19 @@ class TarotCardThemeSelector extends StatelessWidget {
                 margin: EdgeInsets.only(right: 8.w),
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
-                  color: isSelected 
-                      ? "#F38B3B".toColor() 
-                      : Colors.transparent,
+                  color: isSelected ? "#F38B3B".toColor() : Colors.transparent,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
-                    color: isSelected 
-                        ? "#F38B3B".toColor() 
-                        : '#ede7c8'.toColor().withOpacity(0.5),
+                    color: isSelected
+                        ? "#F38B3B".toColor()
+                        : '#ede7c8'.toColor().withValues(alpha: 0.5),
                     width: 1.5,
                   ),
                 ),
                 child: AutoTranslateText(
                   theme.toUpperCase(),
                   style: TextStyle(
-                    color: isSelected 
-                        ? Colors.white 
-                        : '#820B17'.toColor(),
+                    color: isSelected ? Colors.white : '#820B17'.toColor(),
                   ),
                 ),
               ),
@@ -259,23 +259,19 @@ class TarotCardBackSelector extends StatelessWidget {
                 margin: EdgeInsets.only(right: 8.w),
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
-                  color: isSelected 
-                      ? "#F38B3B".toColor() 
-                      : Colors.transparent,
+                  color: isSelected ? "#F38B3B".toColor() : Colors.transparent,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
-                    color: isSelected 
-                        ? "#F38B3B".toColor() 
-                        : '#ede7c8'.toColor().withOpacity(0.5),
+                    color: isSelected
+                        ? "#F38B3B".toColor()
+                        : '#ede7c8'.toColor().withValues(alpha: 0.5),
                     width: 1.5,
                   ),
                 ),
                 child: AutoTranslateText(
                   backType.replaceAll('_', ' ').toUpperCase(),
                   style: TextStyle(
-                    color: isSelected 
-                        ? Colors.white 
-                        : '#820B17'.toColor(),
+                    color: isSelected ? Colors.white : '#820B17'.toColor(),
                   ),
                 ),
               ),
@@ -286,4 +282,3 @@ class TarotCardBackSelector extends StatelessWidget {
     });
   }
 }
-

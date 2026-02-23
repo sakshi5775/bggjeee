@@ -70,7 +70,7 @@ class _CommonPdfLoadingWidgetState extends State<CommonPdfLoadingWidget>
           borderRadius: BorderRadius.circular(24.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 20,
               spreadRadius: 5,
             ),
@@ -106,7 +106,7 @@ class _CommonPdfLoadingWidgetState extends State<CommonPdfLoadingWidget>
                           width: 50.w,
                           height: 50.w,
                           decoration: BoxDecoration(
-                            color: "#6F221E".toColor().withOpacity(0.1),
+                            color: "#6F221E".toColor().withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -130,7 +130,7 @@ class _CommonPdfLoadingWidgetState extends State<CommonPdfLoadingWidget>
                     return LinearGradient(
                       colors: [
                         "#6F221E".toColor(),
-                        "#6F221E".toColor().withOpacity(0.5),
+                        "#6F221E".toColor().withValues(alpha: 0.5),
                         "#6F221E".toColor(),
                       ],
                       stops: [

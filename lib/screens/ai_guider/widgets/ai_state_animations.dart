@@ -25,13 +25,15 @@ class _AiOrbAnimationState extends State<AiOrbAnimation>
       vsync: this,
     )..repeat(reverse: true);
 
-    _scaleAnimation = Tween<double>(begin: 0.9, end: 1.1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.9,
+      end: 1.1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
-    _opacityAnimation = Tween<double>(begin: 0.7, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _opacityAnimation = Tween<double>(
+      begin: 0.7,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -56,14 +58,14 @@ class _AiOrbAnimationState extends State<AiOrbAnimation>
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    Colors.amber.withOpacity(0.8),
-                    Colors.orange.withOpacity(0.6),
-                    Colors.deepOrange.withOpacity(0.4),
+                    Colors.amber.withValues(alpha: 0.8),
+                    Colors.orange.withValues(alpha: 0.6),
+                    Colors.deepOrange.withValues(alpha: 0.4),
                   ],
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.amber.withOpacity(0.5),
+                    color: Colors.amber.withValues(alpha: 0.5),
                     blurRadius: 30.r,
                     spreadRadius: 5.r,
                   ),
@@ -109,9 +111,11 @@ class _WaveformAnimationState extends State<WaveformAnimation>
     );
 
     _animations = _controllers
-        .map((controller) => Tween<double>(begin: 0.3, end: 1.0).animate(
-              CurvedAnimation(parent: controller, curve: Curves.easeInOut),
-            ))
+        .map(
+          (controller) => Tween<double>(begin: 0.3, end: 1.0).animate(
+            CurvedAnimation(parent: controller, curve: Curves.easeInOut),
+          ),
+        )
         .toList();
   }
 
@@ -179,9 +183,11 @@ class _ThinkingDotsAnimationState extends State<ThinkingDotsAnimation>
     }
 
     _animations = _controllers
-        .map((controller) => Tween<double>(begin: 0.0, end: 1.0).animate(
-              CurvedAnimation(parent: controller, curve: Curves.easeInOut),
-            ))
+        .map(
+          (controller) => Tween<double>(begin: 0.0, end: 1.0).animate(
+            CurvedAnimation(parent: controller, curve: Curves.easeInOut),
+          ),
+        )
         .toList();
   }
 
@@ -241,9 +247,10 @@ class _SpeakingGlowAnimationState extends State<SpeakingGlowAnimation>
       vsync: this,
     )..repeat();
 
-    _glowAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _glowAnimation = Tween<double>(
+      begin: 0.5,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -264,25 +271,23 @@ class _SpeakingGlowAnimationState extends State<SpeakingGlowAnimation>
             shape: BoxShape.circle,
             gradient: RadialGradient(
               colors: [
-                Colors.amber.withOpacity(_glowAnimation.value * 0.9),
-                Colors.orange.withOpacity(_glowAnimation.value * 0.7),
-                Colors.deepOrange.withOpacity(_glowAnimation.value * 0.5),
+                Colors.amber.withValues(alpha: _glowAnimation.value * 0.9),
+                Colors.orange.withValues(alpha: _glowAnimation.value * 0.7),
+                Colors.deepOrange.withValues(alpha: _glowAnimation.value * 0.5),
               ],
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.amber.withOpacity(_glowAnimation.value * 0.6),
+                color: Colors.amber.withValues(
+                  alpha: _glowAnimation.value * 0.6,
+                ),
                 blurRadius: 40.r * _glowAnimation.value,
                 spreadRadius: 10.r * _glowAnimation.value,
               ),
             ],
           ),
           child: Center(
-            child: Icon(
-              Icons.volume_up,
-              size: 60.w,
-              color: Colors.white,
-            ),
+            child: Icon(Icons.volume_up, size: 60.w, color: Colors.white),
           ),
         );
       },
@@ -312,9 +317,10 @@ class _InterruptedFadeAnimationState extends State<InterruptedFadeAnimation>
       vsync: this,
     )..forward();
 
-    _fadeAnimation = Tween<double>(begin: 1.0, end: 0.3).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.3,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
   }
 
   @override
@@ -335,7 +341,7 @@ class _InterruptedFadeAnimationState extends State<InterruptedFadeAnimation>
             height: 120.w,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.grey.withOpacity(0.3),
+              color: Colors.grey.withValues(alpha: 0.3),
             ),
             child: Center(
               child: Icon(
@@ -375,4 +381,3 @@ class AiStateAnimation extends StatelessWidget {
     });
   }
 }
-

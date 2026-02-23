@@ -259,10 +259,10 @@ class WalletTransaction {
       transactionId: json['transactionId']?.toString() ?? '',
       type: json['type']?.toString() ?? '',
       amount: json['amount'] != null
-          ? int.tryParse(json['amount'].toString()) ?? 0
+          ? (double.tryParse(json['amount'].toString()) ?? 0).round()
           : 0,
       balanceAfter: json['balanceAfter'] != null
-          ? int.tryParse(json['balanceAfter'].toString()) ?? 0
+          ? (double.tryParse(json['balanceAfter'].toString()) ?? 0).round()
           : 0,
       status: json['status']?.toString() ?? '',
       description: json['description']?.toString(),

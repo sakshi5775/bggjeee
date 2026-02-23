@@ -62,11 +62,11 @@ class TimePickerHelper {
                 borderRadius: BorderRadius.circular(8.r),
               ),
               dialHandColor: AppColors.deepOrange,
-              dialBackgroundColor: AppColors.deepOrange.withOpacity(0.1),
+              dialBackgroundColor: AppColors.deepOrange.withValues(alpha: 0.1),
               hourMinuteColor: WidgetStateColor.resolveWith((states) {
                 return states.contains(WidgetState.selected)
-                    ? AppColors.deepOrange.withOpacity(0.2)
-                    : Colors.grey.withOpacity(0.1);
+                    ? AppColors.deepOrange.withValues(alpha: 0.2)
+                    : Colors.grey.withValues(alpha: 0.1);
               }),
               hourMinuteTextColor: WidgetStateColor.resolveWith((states) {
                 return states.contains(WidgetState.selected)

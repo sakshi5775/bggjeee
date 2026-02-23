@@ -21,10 +21,7 @@ class PredictionStyle {
     );
   }
 
-  static Widget buildEmptyState({
-    required String message,
-    String? submessage,
-  }) {
+  static Widget buildEmptyState({required String message, String? submessage}) {
     return Center(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -39,7 +36,7 @@ class PredictionStyle {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.deepOrange.withOpacity(0.25),
+                    color: AppColors.deepOrange.withValues(alpha: 0.25),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -79,7 +76,10 @@ class PredictionStyle {
     return BoxDecoration(
       color: AppColors.cardLight,
       borderRadius: BorderRadius.circular(12.r),
-      border: Border.all(color: AppColors.deepOrange.withOpacity(0.3), width: 1),
+      border: Border.all(
+        color: AppColors.deepOrange.withValues(alpha: 0.3),
+        width: 1,
+      ),
       boxShadow: [
         BoxShadow(
           color: AppColors.shadowLight,
@@ -110,7 +110,7 @@ class PredictionStyle {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepOrange.withOpacity(0.2),
+            color: AppColors.deepOrange.withValues(alpha: 0.2),
             blurRadius: 4,
             offset: const Offset(0, 1),
           ),

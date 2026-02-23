@@ -1,6 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/panchang/controller/panchang_controller.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/celestial_info_card_widget.dart';
@@ -72,7 +72,7 @@ class PanchangView extends BasePage<PanchangController> {
           borderRadius: BorderRadius.circular(15.33.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 12,
               offset: const Offset(2, 4),
             ),
@@ -192,7 +192,7 @@ class PanchangView extends BasePage<PanchangController> {
                 value: controller.solarNoonTime.value.isNotEmpty
                     ? controller.solarNoonTime.value
                     : '--:-- --',
-                iconBgColor: "#FFA602".toColor().withOpacity(0.2),
+                iconBgColor: "#FFA602".toColor().withValues(alpha: 0.2),
               ),
             ),
             Spacing.h(11.5),
@@ -205,7 +205,7 @@ class PanchangView extends BasePage<PanchangController> {
                   value:
                       controller.moonPhaseData.value?['state']?.toString() ??
                       'Waning Crescent',
-                  iconBgColor: "#7F00BB".toColor().withOpacity(0.2),
+                  iconBgColor: "#7F00BB".toColor().withValues(alpha: 0.2),
                 ),
               ),
             ),
@@ -378,7 +378,7 @@ class PanchangView extends BasePage<PanchangController> {
                 Container(
                   padding: EdgeInsets.all(12.w),
                   decoration: BoxDecoration(
-                    color: "#E3B341".toColor().withOpacity(0.1),
+                    color: "#E3B341".toColor().withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8.r),
                   ),
                   child: Row(
@@ -410,7 +410,7 @@ class PanchangView extends BasePage<PanchangController> {
                     AutoTranslateText(
                       'Paksha: ',
                       style: MyTextTheme.smallBCN.copyWith(
-                        color: "#8B1925".toColor().withOpacity(0.7),
+                        color: "#8B1925".toColor().withValues(alpha: 0.7),
                         fontSize: 14.sp,
                       ),
                     ),
@@ -432,7 +432,7 @@ class PanchangView extends BasePage<PanchangController> {
                     AutoTranslateText(
                       'Luminance: ',
                       style: MyTextTheme.smallBCN.copyWith(
-                        color: "#8B1925".toColor().withOpacity(0.7),
+                        color: "#8B1925".toColor().withValues(alpha: 0.7),
                         fontSize: 14.sp,
                       ),
                     ),
@@ -454,7 +454,7 @@ class PanchangView extends BasePage<PanchangController> {
                     AutoTranslateText(
                       'Phase: ',
                       style: MyTextTheme.smallBCN.copyWith(
-                        color: "#8B1925".toColor().withOpacity(0.7),
+                        color: "#8B1925".toColor().withValues(alpha: 0.7),
                         fontSize: 14.sp,
                       ),
                     ),
@@ -473,7 +473,7 @@ class PanchangView extends BasePage<PanchangController> {
               Container(
                 padding: EdgeInsets.all(12.w),
                 decoration: BoxDecoration(
-                  color: "#8B1925".toColor().withOpacity(0.05),
+                  color: "#8B1925".toColor().withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: AutoTranslateText(

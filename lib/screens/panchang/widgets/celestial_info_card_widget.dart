@@ -29,7 +29,7 @@ class CelestialInfoCardWidget extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 15.33.w, vertical: 15.33.h),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.6),
+          color: Colors.white.withValues(alpha: 0.6),
           borderRadius: BorderRadius.circular(13.41.r),
           border: Border.all(color: "#F38B3B".toColor(), width: 0.5),
         ),
@@ -52,7 +52,7 @@ class CelestialInfoCardWidget extends StatelessWidget {
                     width: 20.w,
                     height: 20.h,
                     colorFilter: ColorFilter.mode(
-                      iconBgColor == "#FFA602".toColor().withOpacity(0.2)
+                      iconBgColor == "#FFA602".toColor().withValues(alpha: 0.2)
                           ? "#FFA602"
                                 .toColor() // Solar Noon - yellow
                           : "#7F00BB".toColor(), // Moon Phase - purple

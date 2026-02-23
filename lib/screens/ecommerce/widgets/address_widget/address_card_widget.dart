@@ -25,7 +25,10 @@ class AddressCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final addressType = (address.type ?? 'home').toUpperCase();
-    final updatedDate = address.updatedAt ?? address.createdAt ?? DateTime.now().toIso8601String();
+    final updatedDate =
+        address.updatedAt ??
+        address.createdAt ??
+        DateTime.now().toIso8601String();
 
     return Container(
       decoration: BoxDecoration(
@@ -35,25 +38,25 @@ class AddressCardWidget extends StatelessWidget {
           colors: [
             Colors.white,
             Colors.white,
-            '#FEF6C3'.toColor().withOpacity(0.2),
+            '#FEF6C3'.toColor().withValues(alpha: 0.2),
           ],
         ),
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(
           color: isDefault
-              ? '#E3B341'.toColor().withOpacity(0.4)
-              : '#68171E'.toColor().withOpacity(0.15),
+              ? '#E3B341'.toColor().withValues(alpha: 0.4)
+              : '#68171E'.toColor().withValues(alpha: 0.15),
           width: isDefault ? 2 : 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: '#68171E'.toColor().withOpacity(0.1),
+            color: '#68171E'.toColor().withValues(alpha: 0.1),
             blurRadius: 12,
             offset: const Offset(0, 4),
             spreadRadius: 0,
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 6,
             offset: const Offset(0, 2),
             spreadRadius: 0,
@@ -79,7 +82,7 @@ class AddressCardWidget extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12.r),
                         boxShadow: [
                           BoxShadow(
-                            color: '#68171E'.toColor().withOpacity(0.2),
+                            color: '#68171E'.toColor().withValues(alpha: 0.2),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -111,14 +114,17 @@ class AddressCardWidget extends StatelessWidget {
                           // Address Lines
                           _AddressInfoRow(
                             icon: Icons.location_on_rounded,
-                            text: '${address.addressLine1 ?? ''}${address.addressLine2 != null ? ', ${address.addressLine2}' : ''}',
+                            text:
+                                '${address.addressLine1 ?? ''}${address.addressLine2 != null ? ', ${address.addressLine2}' : ''}',
                           ),
                           SizedBox(height: 4.h),
                           _AddressInfoRow(
                             icon: Icons.public_rounded,
-                            text: '${address.city ?? ''}, ${address.state ?? ''}${address.pincode != null ? ' - ${address.pincode}' : ''}',
+                            text:
+                                '${address.city ?? ''}, ${address.state ?? ''}${address.pincode != null ? ' - ${address.pincode}' : ''}',
                           ),
-                          if (address.landmark != null && address.landmark!.isNotEmpty) ...[
+                          if (address.landmark != null &&
+                              address.landmark!.isNotEmpty) ...[
                             SizedBox(height: 4.h),
                             _AddressInfoRow(
                               icon: Icons.place_rounded,
@@ -131,7 +137,8 @@ class AddressCardWidget extends StatelessWidget {
                             icon: Icons.phone_rounded,
                             text: address.phone ?? '',
                           ),
-                          if (address.email != null && address.email!.isNotEmpty) ...[
+                          if (address.email != null &&
+                              address.email!.isNotEmpty) ...[
                             SizedBox(height: 4.h),
                             _AddressInfoRow(
                               icon: Icons.mail_rounded,
@@ -153,8 +160,8 @@ class AddressCardWidget extends StatelessWidget {
                       label: addressType,
                       gradient: LinearGradient(
                         colors: [
-                          AppColors.saffron.withOpacity(0.2),
-                          AppColors.saffron.withOpacity(0.1),
+                          AppColors.saffron.withValues(alpha: 0.2),
+                          AppColors.saffron.withValues(alpha: 0.1),
                         ],
                       ),
                       textColor: AppColors.saffron,
@@ -165,8 +172,8 @@ class AddressCardWidget extends StatelessWidget {
                         label: 'DEFAULT',
                         gradient: LinearGradient(
                           colors: [
-                            '#E3B341'.toColor().withOpacity(0.2),
-                            '#E3B341'.toColor().withOpacity(0.1),
+                            '#E3B341'.toColor().withValues(alpha: 0.2),
+                            '#E3B341'.toColor().withValues(alpha: 0.1),
                           ],
                         ),
                         textColor: '#E3B341'.toColor(),
@@ -182,7 +189,7 @@ class AddressCardWidget extends StatelessWidget {
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w400,
                     fontSize: 11.sp,
-                    color: AppColors.textSecondary.withOpacity(0.7),
+                    color: AppColors.textSecondary.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -196,10 +203,10 @@ class AddressCardWidget extends StatelessWidget {
               icon: Container(
                 padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: '#68171E'.toColor().withOpacity(0.2),
+                    color: '#68171E'.toColor().withValues(alpha: 0.2),
                     width: 1,
                   ),
                 ),
@@ -304,21 +311,14 @@ class _AddressInfoRow extends StatelessWidget {
   final IconData icon;
   final String text;
 
-  const _AddressInfoRow({
-    required this.icon,
-    required this.text,
-  });
+  const _AddressInfoRow({required this.icon, required this.text});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(
-          icon,
-          size: 16.sp,
-          color: AppColors.textSecondary,
-        ),
+        Icon(icon, size: 16.sp, color: AppColors.textSecondary),
         SizedBox(width: 8.w),
         Expanded(
           child: AutoTranslateText(
@@ -357,19 +357,12 @@ class _AddressBadge extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: gradient,
         borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(
-          color: textColor.withOpacity(0.3),
-          width: 1,
-        ),
+        border: Border.all(color: textColor.withValues(alpha: 0.3), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 14.sp,
-            color: textColor,
-          ),
+          Icon(icon, size: 14.sp, color: textColor),
           SizedBox(width: 6.w),
           AutoTranslateText(
             label,

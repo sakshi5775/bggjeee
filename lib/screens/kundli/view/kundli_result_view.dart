@@ -1,5 +1,5 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/kundli_result_controller.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
@@ -216,7 +216,7 @@ class KundliResultView extends BasePage<KundliResultController> {
                 color: AppColors.cardLight,
                 borderRadius: BorderRadius.circular(10.r),
                 border: Border.all(
-                  color: AppColors.deepOrange.withOpacity(0.5),
+                  color: AppColors.deepOrange.withValues(alpha: 0.5),
                   width: 1,
                 ),
                 boxShadow: [
@@ -313,7 +313,7 @@ class KundliResultView extends BasePage<KundliResultController> {
             borderRadius: BorderRadius.circular(8.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.15),
+                color: Colors.black.withValues(alpha: 0.15),
                 blurRadius: 3,
                 offset: const Offset(0, 1),
               ),
@@ -381,7 +381,7 @@ class KundliResultView extends BasePage<KundliResultController> {
                         gradient: AppColors.orangeGradient,
                         borderRadius: BorderRadius.circular(8.r),
                         border: Border.all(
-                          color: AppColors.deepOrange.withOpacity(0.5),
+                          color: AppColors.deepOrange.withValues(alpha: 0.5),
                         ),
                       ),
                       child: AutoTranslateText(
@@ -552,7 +552,7 @@ class KundliResultView extends BasePage<KundliResultController> {
         decoration: BoxDecoration(
           color: AppColors.cardLight,
           border: Border.all(
-            color: AppColors.deepOrange.withOpacity(0.5),
+            color: AppColors.deepOrange.withValues(alpha: 0.5),
             width: 1,
           ),
           borderRadius: BorderRadius.circular(10.r),

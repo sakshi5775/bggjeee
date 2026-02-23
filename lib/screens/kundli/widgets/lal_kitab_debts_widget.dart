@@ -30,7 +30,7 @@ class LalKitabDebtsWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -42,7 +42,7 @@ class LalKitabDebtsWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -77,21 +77,18 @@ class LalKitabDebtsWidget extends StatelessWidget {
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            "#FFFFFF".toColor(),
-            "#FFFFFF".toColor(),
-          ],
+          colors: ["#FFFFFF".toColor(), "#FFFFFF".toColor()],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: "#ed6f30".toColor().withOpacity(0.2),
+          color: "#ed6f30".toColor().withValues(alpha: 0.2),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -161,12 +158,10 @@ class LalKitabDebtsWidget extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(14.r),
-                        border: Border.all(
-                          color: "#ed6f30".toColor(),
-                        ),
+                        border: Border.all(color: "#ed6f30".toColor()),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: Colors.black.withValues(alpha: 0.05),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -215,12 +210,10 @@ class LalKitabDebtsWidget extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(14.r),
-                        border: Border.all(
-                          color: "#ed6f30".toColor(),
-                        ),
+                        border: Border.all(color: "#ed6f30".toColor()),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: Colors.black.withValues(alpha: 0.05),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -263,17 +256,15 @@ class LalKitabDebtsWidget extends StatelessWidget {
               final index = entry.key;
               final remedy = entry.value.toString();
               return Container(
-                 margin: EdgeInsets.only(bottom: 12.h),
+                margin: EdgeInsets.only(bottom: 12.h),
                 padding: EdgeInsets.all(14.w),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(14.r),
-                  border: Border.all(
-                    color: "#ed6f30".toColor(),
-                  ),
+                  border: Border.all(color: "#ed6f30".toColor()),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -288,7 +279,7 @@ class LalKitabDebtsWidget extends StatelessWidget {
                       width: 24.w,
                       height: 24.w,
                       decoration: BoxDecoration(
-                        color: "#ed6f30".toColor().withOpacity(0.1),
+                        color: "#ed6f30".toColor().withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: Center(

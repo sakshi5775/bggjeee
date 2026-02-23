@@ -77,9 +77,10 @@ class BlogCard extends StatelessWidget {
                         tag: 'blog_image_${blog.id}',
                         child: ClipRRect(
                           borderRadius: AppRadius.all(12),
-                          child: _isVideoUrl(blog.featuredImage ?? '') && 
-                                 blog.featuredImage != null && 
-                                 blog.featuredImage!.isNotEmpty
+                          child:
+                              _isVideoUrl(blog.featuredImage ?? '') &&
+                                  blog.featuredImage != null &&
+                                  blog.featuredImage!.isNotEmpty
                               ? Stack(
                                   children: [
                                     Container(
@@ -96,14 +97,13 @@ class BlogCard extends StatelessWidget {
                                     ),
                                   ],
                                 )
-                              : blog.featuredImage != null && blog.featuredImage!.isNotEmpty
-                                  ? NetworkImageWithLoader(
-                                      url: blog.featuredImage!,
-                                    )
-                                  : Container(
-                                      color: Colors.grey.withOpacity(0.3),
-                                      child: const Icon(Icons.image),
-                                    ),
+                              : blog.featuredImage != null &&
+                                    blog.featuredImage!.isNotEmpty
+                              ? NetworkImageWithLoader(url: blog.featuredImage!)
+                              : Container(
+                                  color: Colors.grey.withValues(alpha: 0.3),
+                                  child: const Icon(Icons.image),
+                                ),
                         ),
                       ),
                     ),
@@ -153,7 +153,9 @@ class BlogCard extends StatelessWidget {
                                 return Container(
                                   padding: AppPaddings.symmetric(h: 8, v: 4),
                                   decoration: BoxDecoration(
-                                    color: AppColors.saffron.withOpacity(0.1),
+                                    color: AppColors.saffron.withValues(
+                                      alpha: 0.1,
+                                    ),
                                     borderRadius: AppRadius.all(12),
                                   ),
                                   child: LocalizedText(
@@ -236,7 +238,7 @@ class BlogCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: _getStatusColor(
                           blog.status ?? '',
-                        ).withOpacity(0.1),
+                        ).withValues(alpha: 0.1),
                         borderRadius: AppRadius.all(12),
                       ),
                       child: Row(

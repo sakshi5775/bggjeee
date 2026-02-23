@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/panchang/service/panchang_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
 import 'package:flutter/foundation.dart';
@@ -15,21 +15,32 @@ class FestivalYearlyController extends BaseController {
   // State
   final isLoading = false.obs;
   final selectedMonth = DateTime.now().month.obs;
-  final selectedYear = DateTime.now().year.obs; // Dynamic year - defaults to current year
+  final selectedYear =
+      DateTime.now().year.obs; // Dynamic year - defaults to current year
   final selectedLocation = 'Fetching Location...'.obs;
   final yearlyFestivalData = <Map<String, dynamic>>[].obs;
-  
+
   // Month names
   final List<String> monthNames = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
-  
+
   // Location coordinates
   double? currentLatitude;
   double? currentLongitude;
   double? currentTimezone;
-  
+
   // Flag to track if controller is disposed
   bool _isDisposed = false;
 
@@ -96,7 +107,11 @@ class FestivalYearlyController extends BaseController {
         if (_isDisposed) return;
 
         if (reverseGeocode != null) {
-          final city = reverseGeocode['city'] ?? reverseGeocode['town'] ?? reverseGeocode['village'] ?? '';
+          final city =
+              reverseGeocode['city'] ??
+              reverseGeocode['town'] ??
+              reverseGeocode['village'] ??
+              '';
           final state = reverseGeocode['state'] ?? '';
           if (city.isNotEmpty) {
             selectedLocation.value = state.isNotEmpty ? '$city, $state' : city;
@@ -144,10 +159,14 @@ class FestivalYearlyController extends BaseController {
   /// Reverse geocode coordinates to get address
   Future<Map<String, dynamic>?> _reverseGeocode(double lat, double lon) async {
     try {
-      final response = await http.get(
-        Uri.parse('https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lon'),
-        headers: {'Accept': 'application/json'},
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .get(
+            Uri.parse(
+              'https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lon',
+            ),
+            headers: {'Accept': 'application/json'},
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>;
@@ -206,7 +225,10 @@ class FestivalYearlyController extends BaseController {
       yearlyFestivalData.value = festivalData;
     } catch (e) {
       debugPrint('Error fetching yearly festivals: $e');
-      showErrorMessage(title: 'Error', message: 'Failed to fetch festival data');
+      showErrorMessage(
+        title: 'Error',
+        message: 'Failed to fetch festival data',
+      );
     } finally {
       isLoading.value = false;
     }
@@ -247,7 +269,11 @@ class FestivalYearlyController extends BaseController {
   }
 
   /// Select city
-  Future<void> selectCity(String cityName, String? state, String? country) async {
+  Future<void> selectCity(
+    String cityName,
+    String? state,
+    String? country,
+  ) async {
     try {
       final coords = await AddressHelper.fetchCoordinatesFromCity(
         city: cityName,
@@ -257,7 +283,7 @@ class FestivalYearlyController extends BaseController {
       if (coords != null) {
         currentLatitude = coords['latitude'] as double?;
         currentLongitude = coords['longitude'] as double?;
-        
+
         if (currentLatitude != null && currentLongitude != null) {
           try {
             final timezone = await AddressHelper.getTimezoneFromCoordinates(
@@ -336,7 +362,11 @@ class FestivalYearlyController extends BaseController {
       if (_isDisposed) return;
 
       if (reverseGeocode != null) {
-        final city = reverseGeocode['city'] ?? reverseGeocode['town'] ?? reverseGeocode['village'] ?? '';
+        final city =
+            reverseGeocode['city'] ??
+            reverseGeocode['town'] ??
+            reverseGeocode['village'] ??
+            '';
         final state = reverseGeocode['state'] ?? '';
         if (city.isNotEmpty) {
           selectedLocation.value = state.isNotEmpty ? '$city, $state' : city;
@@ -387,7 +417,9 @@ class FestivalYearlyController extends BaseController {
   Future<double> _getTimezoneOffset(String timezone) async {
     try {
       final response = await http.get(
-        Uri.parse('https://timeapi.io/api/TimeZone/coordinate?latitude=${currentLatitude ?? 28.6139}&longitude=${currentLongitude ?? 77.2090}'),
+        Uri.parse(
+          'https://timeapi.io/api/TimeZone/coordinate?latitude=${currentLatitude ?? 28.6139}&longitude=${currentLongitude ?? 77.2090}',
+        ),
         headers: {'Accept': 'application/json'},
       );
 
@@ -402,7 +434,7 @@ class FestivalYearlyController extends BaseController {
     } catch (e) {
       debugPrint('Error getting timezone offset: $e');
     }
-    
+
     return await _getTimezoneOffsetFromCoordinates(
       currentLatitude ?? 28.6139,
       currentLongitude ?? 77.2090,
@@ -410,10 +442,15 @@ class FestivalYearlyController extends BaseController {
   }
 
   /// Get timezone offset from coordinates
-  Future<double> _getTimezoneOffsetFromCoordinates(double lat, double lon) async {
+  Future<double> _getTimezoneOffsetFromCoordinates(
+    double lat,
+    double lon,
+  ) async {
     try {
       final response = await http.get(
-        Uri.parse('https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon'),
+        Uri.parse(
+          'https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon',
+        ),
         headers: {'Accept': 'application/json'},
       );
 
@@ -428,7 +465,7 @@ class FestivalYearlyController extends BaseController {
     } catch (e) {
       debugPrint('Error getting timezone from coordinates: $e');
     }
-    
+
     return 5.5;
   }
 
@@ -452,5 +489,3 @@ class FestivalYearlyController extends BaseController {
     return null;
   }
 }
-
-

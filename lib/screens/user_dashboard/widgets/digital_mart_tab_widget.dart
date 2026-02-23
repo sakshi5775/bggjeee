@@ -67,71 +67,74 @@ class DigitalMartTabWidget extends StatelessWidget {
 
   Widget _buildCategoryCard(BuildContext context, CategoryModel category) {
     return GestureDetector(
-    onTap: () {
-      if (category.id != null) {
-        Get.toNamed('/product-list', arguments: {'category': category});
-      } else if (category.slug != null) {
-        Get.toNamed('/product-list', arguments: {'categorySlug': category.slug});
-      }
-    },
-    child: Container(
-      padding: EdgeInsets.all(6.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+      onTap: () {
+        if (category.id != null) {
+          Get.toNamed('/product-list', arguments: {'category': category});
+        } else if (category.slug != null) {
+          Get.toNamed(
+            '/product-list',
+            arguments: {'categorySlug': category.slug},
+          );
+        }
+      },
+      child: Container(
+        padding: EdgeInsets.all(6.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+          border: Border.all(
+            color: AppColors.orangeGradient.colors.first.withValues(alpha: 0.3),
+            width: 0.8,
           ),
-        ],
-        border: Border.all(
-          color: AppColors.orangeGradient.colors.first.withOpacity(0.3),
-          width: 0.8,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // BIGGER IMAGE
+            ClipRRect(
+              borderRadius: BorderRadius.circular(50.r),
+              child: SizedBox(
+                width: 80.w,
+                height: 80.w,
+                child: category.image != null && category.image!.isNotEmpty
+                    ? NetworkImageWithLoader(
+                        url: category.image!,
+                        width: 80.w,
+                        height: 80.w,
+                        isCircular: true,
+                      )
+                    : Icon(
+                        Icons.category_rounded,
+                        size: 40.w,
+                        color: AppColors.deepOrange,
+                      ),
+              ),
+            ),
+
+            SizedBox(height: 6.h),
+
+            AutoTranslateText(
+              category.name ?? 'Category',
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 10.sp,
+                fontWeight: FontWeight.w600,
+                color: '#3D0C11'.toColor(),
+                height: 1.1,
+              ),
+            ),
+          ],
         ),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // BIGGER IMAGE
-          ClipRRect(
-            borderRadius: BorderRadius.circular(50.r),
-            child: SizedBox(
-              width: 80.w,
-              height: 80.w,
-              child: category.image != null && category.image!.isNotEmpty
-                  ? NetworkImageWithLoader(
-                      url: category.image!,
-                      width: 80.w,
-                      height: 80.w,
-                      isCircular: true,
-                    )
-                  : Icon(
-                      Icons.category_rounded,
-                      size: 40.w,
-                      color: AppColors.deepOrange,
-                    ),
-            ),
-          ),
-
-          SizedBox(height: 6.h),
-
-          AutoTranslateText(
-            category.name ?? 'Category',
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 10.sp,
-              fontWeight: FontWeight.w600,
-              color: '#3D0C11'.toColor(),
-              height: 1.1,
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
+    );
   }
 }

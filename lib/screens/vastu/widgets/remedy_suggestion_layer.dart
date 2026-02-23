@@ -38,22 +38,17 @@ class _RemedySuggestionLayerState extends State<RemedySuggestionLayer>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 1),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.easeOutCubic,
-    ));
-    
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _slideController,
-        curve: Curves.easeOut,
-      ),
-    );
-    
+
+    _slideAnimation = Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
+        .animate(
+          CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
+        );
+
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _slideController, curve: Curves.easeOut));
+
     _slideController.forward();
   }
 
@@ -63,8 +58,10 @@ class _RemedySuggestionLayerState extends State<RemedySuggestionLayer>
     super.dispose();
   }
 
-  bool get isAvoidDirection => widget.roomConfig.isAvoidDirection(widget.currentDirection);
-  bool get isIdealDirection => widget.roomConfig.isIdealDirection(widget.currentDirection);
+  bool get isAvoidDirection =>
+      widget.roomConfig.isAvoidDirection(widget.currentDirection);
+  bool get isIdealDirection =>
+      widget.roomConfig.isIdealDirection(widget.currentDirection);
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +70,7 @@ class _RemedySuggestionLayerState extends State<RemedySuggestionLayer>
         _slideController.reverse().then((_) => widget.onClose());
       },
       child: Container(
-        color: Colors.black.withOpacity(0.5),
+        color: Colors.black.withValues(alpha: 0.5),
         child: SlideTransition(
           position: _slideAnimation,
           child: FadeTransition(
@@ -88,7 +85,7 @@ class _RemedySuggestionLayerState extends State<RemedySuggestionLayer>
                   borderRadius: BorderRadius.circular(24.r),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
+                      color: Colors.black.withValues(alpha: 0.3),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -108,27 +105,38 @@ class _RemedySuggestionLayerState extends State<RemedySuggestionLayer>
                             children: [
                               AutoTranslateText(
                                 '${widget.roomConfig.displayName} - ${widget.currentDirection}',
-                                style: MyTextTheme.largeBCB.copyWith(
-                                  color: '#3E2723'.toColor(),
-                                  fontWeight: FontWeight.bold,
-                                ).merge(AppTypography.h2),
+                                style: MyTextTheme.largeBCB
+                                    .copyWith(
+                                      color: '#3E2723'.toColor(),
+                                      fontWeight: FontWeight.bold,
+                                    )
+                                    .merge(AppTypography.h2),
                               ),
                               Spacing.h(4),
                               Container(
-                                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 12.w,
+                                  vertical: 6.h,
+                                ),
                                 decoration: BoxDecoration(
                                   color: isAvoidDirection
-                                      ? '#C62828'.toColor().withOpacity(0.1)
+                                      ? '#C62828'.toColor().withValues(
+                                          alpha: 0.1,
+                                        )
                                       : isIdealDirection
-                                          ? '#2E7D32'.toColor().withOpacity(0.1)
-                                          : '#E6CBA8'.toColor().withOpacity(0.1),
+                                      ? '#2E7D32'.toColor().withValues(
+                                          alpha: 0.1,
+                                        )
+                                      : '#E6CBA8'.toColor().withValues(
+                                          alpha: 0.1,
+                                        ),
                                   borderRadius: BorderRadius.circular(12.r),
                                   border: Border.all(
                                     color: isAvoidDirection
                                         ? '#C62828'.toColor()
                                         : isIdealDirection
-                                            ? '#2E7D32'.toColor()
-                                            : '#E6CBA8'.toColor(),
+                                        ? '#2E7D32'.toColor()
+                                        : '#E6CBA8'.toColor(),
                                     width: 1.5,
                                   ),
                                 ),
@@ -136,16 +144,18 @@ class _RemedySuggestionLayerState extends State<RemedySuggestionLayer>
                                   isAvoidDirection
                                       ? 'Avoid Direction'
                                       : isIdealDirection
-                                          ? 'Ideal Direction'
-                                          : 'Neutral Direction',
-                                  style: MyTextTheme.smallBCB.copyWith(
-                                    color: isAvoidDirection
-                                        ? '#C62828'.toColor()
-                                        : isIdealDirection
+                                      ? 'Ideal Direction'
+                                      : 'Neutral Direction',
+                                  style: MyTextTheme.smallBCB
+                                      .copyWith(
+                                        color: isAvoidDirection
+                                            ? '#C62828'.toColor()
+                                            : isIdealDirection
                                             ? '#2E7D32'.toColor()
                                             : '#D4AF37'.toColor(),
-                                    fontWeight: FontWeight.bold,
-                                  ).merge(AppTypography.body2),
+                                        fontWeight: FontWeight.bold,
+                                      )
+                                      .merge(AppTypography.body2),
                                 ),
                               ),
                             ],
@@ -153,7 +163,9 @@ class _RemedySuggestionLayerState extends State<RemedySuggestionLayer>
                         ),
                         GestureDetector(
                           onTap: () {
-                            _slideController.reverse().then((_) => widget.onClose());
+                            _slideController.reverse().then(
+                              (_) => widget.onClose(),
+                            );
                           },
                           child: Container(
                             padding: EdgeInsets.all(8.w),
@@ -171,85 +183,97 @@ class _RemedySuggestionLayerState extends State<RemedySuggestionLayer>
                       ],
                     ),
                     Spacing.h(20),
-                    
+
                     // Guidance
                     AutoTranslateText(
-                      widget.roomConfig.getGuidanceForDirection(widget.currentDirection),
-                      style: MyTextTheme.mediumBCN.copyWith(
-                        color: '#3E2723'.toColor(),
-                      ).merge(AppTypography.body1),
+                      widget.roomConfig.getGuidanceForDirection(
+                        widget.currentDirection,
+                      ),
+                      style: MyTextTheme.mediumBCN
+                          .copyWith(color: '#3E2723'.toColor())
+                          .merge(AppTypography.body1),
                     ),
                     Spacing.h(20),
-                    
+
                     // Remedies (if avoid direction)
                     if (isAvoidDirection) ...[
                       AutoTranslateText(
                         'Remedies & Corrections',
-                        style: MyTextTheme.mediumBCB.copyWith(
-                          color: '#3E2723'.toColor(),
-                          fontWeight: FontWeight.bold,
-                        ).merge(AppTypography.h3),
+                        style: MyTextTheme.mediumBCB
+                            .copyWith(
+                              color: '#3E2723'.toColor(),
+                              fontWeight: FontWeight.bold,
+                            )
+                            .merge(AppTypography.h3),
                       ),
                       Spacing.h(12),
-                      ...widget.roomConfig.remedies.map((remedy) => Padding(
-                        padding: EdgeInsets.only(bottom: 8.h),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(top: 4.h, right: 12.w),
-                              width: 6.w,
-                              height: 6.w,
-                              decoration: BoxDecoration(
-                                color: '#D4AF37'.toColor(),
-                                shape: BoxShape.circle,
+                      ...widget.roomConfig.remedies.map(
+                        (remedy) => Padding(
+                          padding: EdgeInsets.only(bottom: 8.h),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(top: 4.h, right: 12.w),
+                                width: 6.w,
+                                height: 6.w,
+                                decoration: BoxDecoration(
+                                  color: '#D4AF37'.toColor(),
+                                  shape: BoxShape.circle,
+                                ),
                               ),
-                            ),
-                            Expanded(
-                              child: AutoTranslateText(
-                                remedy,
-                                style: MyTextTheme.smallBCN.copyWith(
-                                  color: '#666666'.toColor(),
-                                ).merge(AppTypography.body2),
+                              Expanded(
+                                child: AutoTranslateText(
+                                  remedy,
+                                  style: MyTextTheme.smallBCN
+                                      .copyWith(color: '#666666'.toColor())
+                                      .merge(AppTypography.body2),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      )),
+                      ),
                     ],
-                    
+
                     // Suggestions (if ideal or neutral)
                     if (!isAvoidDirection) ...[
                       AutoTranslateText(
                         'Enhancement Suggestions',
-                        style: MyTextTheme.mediumBCB.copyWith(
-                          color: '#3E2723'.toColor(),
-                          fontWeight: FontWeight.bold,
-                        ).merge(AppTypography.h3),
+                        style: MyTextTheme.mediumBCB
+                            .copyWith(
+                              color: '#3E2723'.toColor(),
+                              fontWeight: FontWeight.bold,
+                            )
+                            .merge(AppTypography.h3),
                       ),
                       Spacing.h(12),
-                      ...widget.roomConfig.remedies.take(3).map((suggestion) => Padding(
-                        padding: EdgeInsets.only(bottom: 8.h),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Icon(
-                              Icons.check_circle_outline,
-                              size: 18.w,
-                              color: '#2E7D32'.toColor(),
-                            ),
-                            Spacing.w(12),
-                            Expanded(
-                              child: AutoTranslateText(
-                                suggestion,
-                                style: MyTextTheme.smallBCN.copyWith(
-                                  color: '#666666'.toColor(),
-                                ).merge(AppTypography.body2),
+                      ...widget.roomConfig.remedies
+                          .take(3)
+                          .map(
+                            (suggestion) => Padding(
+                              padding: EdgeInsets.only(bottom: 8.h),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Icon(
+                                    Icons.check_circle_outline,
+                                    size: 18.w,
+                                    color: '#2E7D32'.toColor(),
+                                  ),
+                                  Spacing.w(12),
+                                  Expanded(
+                                    child: AutoTranslateText(
+                                      suggestion,
+                                      style: MyTextTheme.smallBCN
+                                          .copyWith(color: '#666666'.toColor())
+                                          .merge(AppTypography.body2),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
-                      )),
+                          ),
                     ],
                   ],
                 ),
@@ -261,12 +285,3 @@ class _RemedySuggestionLayerState extends State<RemedySuggestionLayer>
     );
   }
 }
-
-
-
-
-
-
-
-
-

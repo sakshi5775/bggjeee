@@ -76,7 +76,7 @@ class CurrentSadeSatiWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepOrange.withOpacity(0.3),
+            color: AppColors.deepOrange.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -87,7 +87,7 @@ class CurrentSadeSatiWidget extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Icon(
@@ -112,7 +112,7 @@ class CurrentSadeSatiWidget extends StatelessWidget {
                 AutoTranslateText(
                   'Saturn\'s transit effect',
                   style: MyTextTheme.mediumBCN.copyWith(
-                    color: AppColors.golden.withOpacity(0.9),
+                    color: AppColors.golden.withValues(alpha: 0.9),
                   ),
                 ),
               ],
@@ -131,14 +131,16 @@ class CurrentSadeSatiWidget extends StatelessWidget {
         color: isActive ? null : Colors.green.shade50,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: isActive ? Colors.transparent : Colors.green.withOpacity(0.3),
+          color: isActive
+              ? Colors.transparent
+              : Colors.green.withValues(alpha: 0.3),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
             color: isActive
-                ? AppColors.deepOrange.withOpacity(0.3)
-                : Colors.green.withOpacity(0.2),
+                ? AppColors.deepOrange.withValues(alpha: 0.3)
+                : Colors.green.withValues(alpha: 0.2),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -149,7 +151,7 @@ class CurrentSadeSatiWidget extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(12.w),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(isActive ? 0.2 : 0.8),
+              color: Colors.white.withValues(alpha: isActive ? 0.2 : 0.8),
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Icon(
@@ -177,7 +179,7 @@ class CurrentSadeSatiWidget extends StatelessWidget {
                       : 'You are not under Sade Sati influence',
                   style: MyTextTheme.smallBCN.copyWith(
                     color: isActive
-                        ? Colors.white.withOpacity(0.9)
+                        ? Colors.white.withValues(alpha: 0.9)
                         : Colors.green.shade600,
                   ),
                 ),
@@ -196,12 +198,12 @@ class CurrentSadeSatiWidget extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: AppColors.deepOrange.withOpacity(0.2),
+          color: AppColors.deepOrange.withValues(alpha: 0.2),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -264,7 +266,7 @@ class CurrentSadeSatiWidget extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: AppColors.deepOrange.withOpacity(0.1),
+            color: AppColors.deepOrange.withValues(alpha: 0.1),
             width: 1,
           ),
         ),
@@ -288,7 +290,7 @@ class CurrentSadeSatiWidget extends StatelessWidget {
             child: AutoTranslateText(
               value,
               style: MyTextTheme.smallBCN.copyWith(
-                color: AppColors.textPrimary.withOpacity(0.8),
+                color: AppColors.textPrimary.withValues(alpha: 0.8),
               ),
               textAlign: TextAlign.end,
             ),

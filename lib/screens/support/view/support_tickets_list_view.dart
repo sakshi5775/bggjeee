@@ -11,7 +11,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class SupportTicketsListView extends GetView<SupportTicketController> {
-  const SupportTicketsListView({super.key});
+  final bool showBackButton;
+  const SupportTicketsListView({super.key, this.showBackButton = true});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class SupportTicketsListView extends GetView<SupportTicketController> {
             borderRadius: BorderRadius.circular(30.r),
             boxShadow: [
               BoxShadow(
-                color: AppColors.deepOrange.withOpacity(0.3),
+                color: AppColors.deepOrange.withValues(alpha: 0.3),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),
@@ -44,7 +45,10 @@ class SupportTicketsListView extends GetView<SupportTicketController> {
         ),
         body: Column(
           children: [
-            CommonHeader(title: 'Support Tickets'),
+            CommonHeader(
+              title: 'Support Tickets',
+              showBackButton: showBackButton,
+            ),
             Obx(() => _buildFilters()),
             Expanded(
               child: Obx(() {
@@ -304,9 +308,9 @@ class _TicketCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6.r),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: AutoTranslateText(
         label,

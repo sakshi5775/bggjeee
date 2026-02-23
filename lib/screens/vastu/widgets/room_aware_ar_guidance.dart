@@ -53,7 +53,7 @@ class _RoomAwareARGuidanceState extends State<RoomAwareARGuidance>
         final screenSize = Size(constraints.maxWidth, constraints.maxHeight);
         final center = Offset(screenSize.width / 2, screenSize.height / 2);
         final radius = math.min(screenSize.width, screenSize.height) * 0.4;
-        
+
         return AnimatedBuilder(
           animation: _glowController,
           builder: (context, child) {
@@ -69,7 +69,7 @@ class _RoomAwareARGuidanceState extends State<RoomAwareARGuidance>
                     isIdeal: true,
                   );
                 }),
-                
+
                 // Draw avoid direction warnings (red pulse)
                 ...widget.roomConfig.avoidDirections.map((direction) {
                   return _buildDirectionHighlight(
@@ -80,7 +80,7 @@ class _RoomAwareARGuidanceState extends State<RoomAwareARGuidance>
                     isIdeal: false,
                   );
                 }),
-                
+
                 // Draw tooltip for hovered direction
                 if (_hoveredDirection != null)
                   _buildTooltip(_hoveredDirection!, screenSize, center, radius),
@@ -101,14 +101,16 @@ class _RoomAwareARGuidanceState extends State<RoomAwareARGuidance>
   }) {
     final position = _calculateDirectionPosition(direction, center, radius);
     final glowIntensity = _glowController.value;
-    
+
     return Positioned(
       left: position.dx - 60.w,
       top: position.dy - 60.h,
       child: GestureDetector(
         onTap: () {
           setState(() {
-            _hoveredDirection = _hoveredDirection == direction ? null : direction;
+            _hoveredDirection = _hoveredDirection == direction
+                ? null
+                : direction;
           });
         },
         child: Container(
@@ -119,19 +121,27 @@ class _RoomAwareARGuidanceState extends State<RoomAwareARGuidance>
             gradient: RadialGradient(
               colors: isIdeal
                   ? [
-                      const Color(0xFF4CAF50).withOpacity(0.3 * glowIntensity),
-                      const Color(0xFF4CAF50).withOpacity(0.0),
+                      const Color(
+                        0xFF4CAF50,
+                      ).withValues(alpha: 0.3 * glowIntensity),
+                      const Color(0xFF4CAF50).withValues(alpha: 0.0),
                     ]
                   : [
-                      const Color(0xFFE53935).withOpacity(0.3 * glowIntensity),
-                      const Color(0xFFE53935).withOpacity(0.0),
+                      const Color(
+                        0xFFE53935,
+                      ).withValues(alpha: 0.3 * glowIntensity),
+                      const Color(0xFFE53935).withValues(alpha: 0.0),
                     ],
             ),
             boxShadow: [
               BoxShadow(
                 color: isIdeal
-                    ? const Color(0xFF4CAF50).withOpacity(0.5 * glowIntensity)
-                    : const Color(0xFFE53935).withOpacity(0.5 * glowIntensity),
+                    ? const Color(
+                        0xFF4CAF50,
+                      ).withValues(alpha: 0.5 * glowIntensity)
+                    : const Color(
+                        0xFFE53935,
+                      ).withValues(alpha: 0.5 * glowIntensity),
                 blurRadius: 20,
                 spreadRadius: 5,
               ),
@@ -161,7 +171,7 @@ class _RoomAwareARGuidanceState extends State<RoomAwareARGuidance>
     final isIdeal = widget.roomConfig.isIdealDirection(direction);
     final isAvoid = widget.roomConfig.isAvoidDirection(direction);
     final guidance = widget.roomConfig.getGuidanceForDirection(direction);
-    
+
     return Positioned(
       left: position.dx - 100.w,
       top: position.dy - 80.h,
@@ -169,16 +179,17 @@ class _RoomAwareARGuidanceState extends State<RoomAwareARGuidance>
         width: 200.w,
         padding: EdgeInsets.all(12.w),
         decoration: BoxDecoration(
-          color: (isIdeal
-                  ? const Color(0xFF4CAF50)
-                  : isAvoid
+          color:
+              (isIdeal
+                      ? const Color(0xFF4CAF50)
+                      : isAvoid
                       ? const Color(0xFFE53935)
                       : Colors.blueGrey)
-              .withOpacity(0.95),
+                  .withValues(alpha: 0.95),
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -190,17 +201,16 @@ class _RoomAwareARGuidanceState extends State<RoomAwareARGuidance>
           children: [
             AutoTranslateText(
               '$direction Direction',
-              style: MyTextTheme.smallBCB.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ).merge(AppTypography.body2),
+              style: MyTextTheme.smallBCB
+                  .copyWith(color: Colors.white, fontWeight: FontWeight.bold)
+                  .merge(AppTypography.body2),
             ),
             SizedBox(height: 4.h),
             AutoTranslateText(
               guidance,
-              style: MyTextTheme.smallBCN.copyWith(
-                color: Colors.white.withOpacity(0.9),
-              ).merge(AppTypography.body2),
+              style: MyTextTheme.smallBCN
+                  .copyWith(color: Colors.white.withValues(alpha: 0.9))
+                  .merge(AppTypography.body2),
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
             ),
@@ -225,16 +235,15 @@ class _RoomAwareARGuidanceState extends State<RoomAwareARGuidance>
       'W': 180.0,
       'NW': -135.0,
     };
-    
+
     final baseAngle = directionAngles[direction] ?? 0.0;
     final adjustedAngle = (baseAngle - widget.heading) * math.pi / 180.0;
     final gyroAdjustment = (widget.gyroRotation ?? 0.0) * 0.1;
     final finalAngle = adjustedAngle + gyroAdjustment;
-    
+
     final x = center.dx + radius * math.cos(finalAngle);
     final y = center.dy + radius * math.sin(finalAngle);
-    
+
     return Offset(x, y);
   }
 }
-

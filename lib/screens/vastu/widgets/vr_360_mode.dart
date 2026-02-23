@@ -28,31 +28,25 @@ class VR360Mode extends StatelessWidget {
   Widget build(BuildContext context) {
     // Get AR controller for camera preview
     final arController = Get.find<ARController>(tag: 'ar_controller');
-    
     return Stack(
       fit: StackFit.expand,
       children: [
         // Camera preview (fullscreen for VR experience)
-        if (arController.isCameraInitialized && arController.cameraController != null)
+        if (arController.isCameraInitialized &&
+            arController.cameraController != null)
           CameraPreview(arController.cameraController!)
         else
-          Container(
-            color: Colors.black,
-          ),
-        
+          Container(color: Colors.black),
+
         // Direction ring around edges
         _buildDirectionRing(context),
-        
+
         // Center compass indicator (minimal)
         _buildCenterIndicator(),
-        
+
         // Exit button (top right, subtle)
-        Positioned(
-          top: 40.h,
-          right: 16.w,
-          child: _buildExitButton(),
-        ),
-        
+        Positioned(top: 40.h, right: 16.w, child: _buildExitButton()),
+
         // Bottom info (minimal)
         if (roomConfig != null)
           Positioned(
@@ -68,13 +62,11 @@ class VR360Mode extends StatelessWidget {
   Widget _buildDirectionRing(BuildContext context) {
     final directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
     final screenSize = MediaQuery.of(context).size;
-    
     return Stack(
       children: directions.map((direction) {
         final position = _getEdgePosition(direction, screenSize);
         final isIdeal = roomConfig?.isIdealDirection(direction) ?? false;
         final isAvoid = roomConfig?.isAvoidDirection(direction) ?? false;
-        
         return Positioned(
           left: position.dx - 30.w,
           top: position.dy - 20.h,
@@ -88,7 +80,6 @@ class VR360Mode extends StatelessWidget {
     final margin = 30.0;
     final width = screenSize.width;
     final height = screenSize.height;
-    
     switch (direction.toUpperCase()) {
       case 'N':
         return Offset(width / 2, margin);
@@ -114,37 +105,33 @@ class VR360Mode extends StatelessWidget {
   Widget _buildEdgeLabel(String direction, bool isIdeal, bool isAvoid) {
     Color backgroundColor;
     Color borderColor;
-    
+
     if (isIdeal) {
-      backgroundColor = const Color(0xFF4CAF50).withOpacity(0.8);
+      backgroundColor = const Color(0xFF4CAF50).withValues(alpha: 0.8);
       borderColor = const Color(0xFF66BB6A);
     } else if (isAvoid) {
-      backgroundColor = const Color(0xFFE53935).withOpacity(0.8);
+      backgroundColor = const Color(0xFFE53935).withValues(alpha: 0.8);
       borderColor = const Color(0xFFEF5350);
     } else if (direction == 'N') {
-      backgroundColor = Colors.red.withOpacity(0.7);
-      borderColor = Colors.white.withOpacity(0.4);
+      backgroundColor = Colors.red.withValues(alpha: 0.7);
+      borderColor = Colors.white.withValues(alpha: 0.4);
     } else {
-      backgroundColor = Colors.black.withOpacity(0.6);
-      borderColor = Colors.white.withOpacity(0.3);
+      backgroundColor = Colors.black.withValues(alpha: 0.6);
+      borderColor = Colors.white.withValues(alpha: 0.3);
     }
-    
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(
-          color: borderColor,
-          width: 1.5,
-        ),
+        border: Border.all(color: borderColor, width: 1.5),
       ),
       child: AutoTranslateText(
         direction,
-        style: MyTextTheme.smallBCB.copyWith(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        ).merge(AppTypography.body2),
+        style: MyTextTheme.smallBCB
+            .copyWith(color: Colors.white, fontWeight: FontWeight.bold)
+            .merge(AppTypography.body2),
       ),
     );
   }
@@ -156,18 +143,18 @@ class VR360Mode extends StatelessWidget {
         height: 60.w,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: Colors.black.withOpacity(0.5),
+          color: Colors.black.withValues(alpha: 0.5),
           border: Border.all(
-            color: Colors.white.withOpacity(0.3),
+            color: Colors.white.withValues(alpha: 0.3),
             width: 2,
           ),
         ),
         child: Center(
           child: AutoTranslateText(
             '${heading.toStringAsFixed(0)}°',
-            style: MyTextTheme.smallBCB.copyWith(
-              color: Colors.white,
-            ).merge(AppTypography.body2),
+            style: MyTextTheme.smallBCB
+                .copyWith(color: Colors.white)
+                .merge(AppTypography.body2),
           ),
         ),
       ),
@@ -181,18 +168,14 @@ class VR360Mode extends StatelessWidget {
         width: 44.w,
         height: 44.w,
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.5),
+          color: Colors.black.withValues(alpha: 0.5),
           shape: BoxShape.circle,
           border: Border.all(
-            color: Colors.white.withOpacity(0.3),
+            color: Colors.white.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
-        child: Icon(
-          Icons.close,
-          color: Colors.white,
-          size: 24.w,
-        ),
+        child: Icon(Icons.close, color: Colors.white, size: 24.w),
       ),
     );
   }
@@ -204,11 +187,11 @@ class VR360Mode extends StatelessWidget {
     final isAvoid = roomConfig!.isAvoidDirection(
       _getCurrentDirectionFromHeading(),
     );
-    
+
     Color statusColor;
     String statusText;
     IconData statusIcon;
-    
+
     if (isIdeal) {
       statusColor = const Color(0xFF4CAF50);
       statusText = 'Ideal Direction';
@@ -222,16 +205,15 @@ class VR360Mode extends StatelessWidget {
       statusText = 'Neutral Direction';
       statusIcon = Icons.info;
     }
-    
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 40.w),
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
       decoration: BoxDecoration(
-        color: statusColor.withOpacity(0.9),
+        color: statusColor.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(24.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -245,10 +227,9 @@ class VR360Mode extends StatelessWidget {
           SizedBox(width: 8.w),
           AutoTranslateText(
             '${roomConfig!.displayName} - $statusText',
-            style: MyTextTheme.smallBCB.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.body2),
+            style: MyTextTheme.smallBCB
+                .copyWith(color: Colors.white, fontWeight: FontWeight.bold)
+                .merge(AppTypography.body2),
           ),
         ],
       ),
@@ -258,8 +239,8 @@ class VR360Mode extends StatelessWidget {
   String _getCurrentDirectionFromHeading() {
     final directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
     final anglePerDirection = 360 / directions.length;
-    final index = ((heading + anglePerDirection / 2) % 360) ~/ anglePerDirection;
+    final index =
+        ((heading + anglePerDirection / 2) % 360) ~/ anglePerDirection;
     return directions[index];
   }
 }
-

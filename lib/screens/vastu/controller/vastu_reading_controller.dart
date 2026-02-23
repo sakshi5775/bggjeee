@@ -54,7 +54,7 @@ class VastuReadingController extends GetxController {
   final DirectionCalculator _directionCalculator = DirectionCalculator();
 
   // Storage for snapshots
-  final _storage = GetStorage();
+  GetStorage get _storage => GetStorage();
 
   // Previous heading for haptic feedback
   double _previousHeading = 0.0;
@@ -315,7 +315,7 @@ class VastuReadingController extends GetxController {
                           vertical: 6.h,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.1),
+                          color: Colors.green.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8.r),
                           border: Border.all(color: Colors.green),
                         ),
@@ -350,7 +350,7 @@ class VastuReadingController extends GetxController {
                           vertical: 6.h,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.red.withOpacity(0.1),
+                          color: Colors.red.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8.r),
                           border: Border.all(color: Colors.red),
                         ),

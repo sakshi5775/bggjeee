@@ -24,7 +24,10 @@ class LalKitabDebtPredictionsWidget extends StatelessWidget {
         return Center(
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 24.h),
-            child: CircularProgressIndicator(color: '#ed6f30'.toColor(), strokeWidth: 2),
+            child: CircularProgressIndicator(
+              color: '#ed6f30'.toColor(),
+              strokeWidth: 2,
+            ),
           ),
         );
       }
@@ -35,7 +38,9 @@ class LalKitabDebtPredictionsWidget extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 24.h),
             child: AutoTranslateText(
               'No data available',
-              style: MyTextTheme.mediumBCN.copyWith(color: '#6F221E'.toColor().withOpacity(0.6)),
+              style: MyTextTheme.mediumBCN.copyWith(
+                color: '#6F221E'.toColor().withValues(alpha: 0.6),
+              ),
             ),
           ),
         );
@@ -48,7 +53,9 @@ class LalKitabDebtPredictionsWidget extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 16.h),
             child: AutoTranslateText(
               'No data available',
-              style: MyTextTheme.mediumBCN.copyWith(color: '#6F221E'.toColor().withOpacity(0.6)),
+              style: MyTextTheme.mediumBCN.copyWith(
+                color: '#6F221E'.toColor().withValues(alpha: 0.6),
+              ),
             ),
           ),
         );
@@ -64,7 +71,10 @@ class LalKitabDebtPredictionsWidget extends StatelessWidget {
               AutoTranslateText(
                 'Lal Kitab Debt',
                 style: MyTextTheme.mediumBCB
-                    .copyWith(color: '#6F221E'.toColor(), fontWeight: FontWeight.bold)
+                    .copyWith(
+                      color: '#6F221E'.toColor(),
+                      fontWeight: FontWeight.bold,
+                    )
                     .merge(AppTypography.h3),
               ),
             ],
@@ -94,9 +104,16 @@ class LalKitabDebtPredictionsWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: '#ed6f30'.toColor().withOpacity(0.2), width: 1),
+        border: Border.all(
+          color: '#ed6f30'.toColor().withValues(alpha: 0.2),
+          width: 1,
+        ),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 8, offset: const Offset(0, 2)),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: Column(
@@ -155,7 +172,11 @@ class LalKitabDebtPredictionsWidget extends StatelessWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Icon(Icons.check_circle_outline, color: '#ed6f30'.toColor(), size: 18.w),
+                      Icon(
+                        Icons.check_circle_outline,
+                        color: '#ed6f30'.toColor(),
+                        size: 18.w,
+                      ),
                       Spacing.w(8),
                       Expanded(
                         child: AutoTranslateText(
@@ -227,14 +248,17 @@ class LalKitabDebtPredictionsWidget extends StatelessWidget {
                       width: 24.w,
                       height: 24.w,
                       decoration: BoxDecoration(
-                        color: '#ed6f30'.toColor().withOpacity(0.1),
+                        color: '#ed6f30'.toColor().withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: Center(
                         child: AutoTranslateText(
                           '${index + 1}',
                           style: MyTextTheme.smallBCB
-                              .copyWith(color: '#ed6f30'.toColor(), fontWeight: FontWeight.bold)
+                              .copyWith(
+                                color: '#ed6f30'.toColor(),
+                                fontWeight: FontWeight.bold,
+                              )
                               .merge(AppTypography.body2),
                         ),
                       ),

@@ -25,7 +25,6 @@ class PalmReadingAnalysisView extends StatelessWidget {
           children: [
             // Starry background
             _buildStarryBackground(),
-            
             // Content
             Center(
               child: SingleChildScrollView(
@@ -43,7 +42,7 @@ class PalmReadingAnalysisView extends StatelessWidget {
                             child: Container(
                               padding: EdgeInsets.all(8.w),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.1),
+                                color: Colors.white.withValues(alpha: 0.1),
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
@@ -54,39 +53,41 @@ class PalmReadingAnalysisView extends StatelessWidget {
                             ),
                           ),
                         ),
-                        
+
                         Spacing.h(20),
-                        
+
                         // Accuracy message
                         AutoTranslateText(
                           'We read your destiny with 95% accuracy!',
-                          style: MyTextTheme.veryLargeBCB.copyWith(
-                            color: AppColors.goldenYellow,
-                            fontWeight: FontWeight.bold,
-                          ).merge(AppTypography.h1),
+                          style: MyTextTheme.veryLargeBCB
+                              .copyWith(
+                                color: AppColors.goldenYellow,
+                                fontWeight: FontWeight.bold,
+                              )
+                              .merge(AppTypography.h1),
                           textAlign: TextAlign.center,
                         ),
-                        
+
                         Spacing.h(40),
-                        
+
                         // Hand diagram
                         _buildHandDiagram(controller),
-                        
+
                         Spacing.h(40),
-                        
+
                         // Palm lines buttons
                         _buildPalmLinesButtons(),
-                        
+
                         Spacing.h(40),
-                        
+
                         // Continue button
                         _buildContinueButton(),
-                        
+
                         Spacing.h(16),
-                        
+
                         // Skip button
                         _buildSkipButton(),
-                        
+
                         Spacing.h(32),
                       ],
                     ),
@@ -102,9 +103,7 @@ class PalmReadingAnalysisView extends StatelessWidget {
 
   Widget _buildStarryBackground() {
     return Positioned.fill(
-      child: CustomPaint(
-        painter: StarryBackgroundPainter(),
-      ),
+      child: CustomPaint(painter: StarryBackgroundPainter()),
     );
   }
 
@@ -115,7 +114,7 @@ class PalmReadingAnalysisView extends StatelessWidget {
         width: double.infinity,
         height: 400.h,
         decoration: BoxDecoration(
-          color: const Color(0xFF2D2D44).withOpacity(0.3),
+          color: const Color(0xFF2D2D44).withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(20.r),
         ),
         child: Stack(
@@ -126,7 +125,6 @@ class PalmReadingAnalysisView extends StatelessWidget {
               size: Size(300.w, 400.h),
               painter: HandDiagramPainter(isLeftHand: isLeftHand),
             ),
-            
             // Planetary labels
             _buildPlanetaryLabels(isLeftHand),
           ],
@@ -193,9 +191,9 @@ class PalmReadingAnalysisView extends StatelessWidget {
         Spacing.h(4),
         AutoTranslateText(
           name,
-          style: MyTextTheme.smallBCN.copyWith(
-            color: Colors.white.withOpacity(0.8),
-          ).merge(AppTypography.label),
+          style: MyTextTheme.smallBCN
+              .copyWith(color: Colors.white.withValues(alpha: 0.8))
+              .merge(AppTypography.label),
         ),
       ],
     );
@@ -206,25 +204,17 @@ class PalmReadingAnalysisView extends StatelessWidget {
       children: [
         Row(
           children: [
-            Expanded(
-              child: _buildLineButton('Life line', Colors.lightBlue),
-            ),
+            Expanded(child: _buildLineButton('Life line', Colors.lightBlue)),
             Spacing.w(12),
-            Expanded(
-              child: _buildLineButton('Head line', "#F38B3B".toColor()),
-            ),
+            Expanded(child: _buildLineButton('Head line', "#F38B3B".toColor())),
           ],
         ),
         Spacing.h(12),
         Row(
           children: [
-            Expanded(
-              child: _buildLineButton('Fate line', Colors.purple),
-            ),
+            Expanded(child: _buildLineButton('Fate line', Colors.purple)),
             Spacing.w(12),
-            Expanded(
-              child: _buildLineButton('Heart line', Colors.red),
-            ),
+            Expanded(child: _buildLineButton('Heart line', Colors.red)),
           ],
         ),
       ],
@@ -240,10 +230,9 @@ class PalmReadingAnalysisView extends StatelessWidget {
       ),
       child: AutoTranslateText(
         label,
-        style: MyTextTheme.mediumBCB.copyWith(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        ).merge(AppTypography.body1),
+        style: MyTextTheme.mediumBCB
+            .copyWith(color: Colors.white, fontWeight: FontWeight.bold)
+            .merge(AppTypography.body1),
         textAlign: TextAlign.center,
       ),
     );
@@ -258,7 +247,7 @@ class PalmReadingAnalysisView extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: "#F38B3B".toColor().withOpacity(0.35),
+              color: "#F38B3B".toColor().withValues(alpha: 0.35),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -285,10 +274,9 @@ class PalmReadingAnalysisView extends StatelessWidget {
           ),
           child: AutoTranslateText(
             'Continue',
-            style: MyTextTheme.mediumBCB.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.h3),
+            style: MyTextTheme.mediumBCB
+                .copyWith(color: Colors.white, fontWeight: FontWeight.bold)
+                .merge(AppTypography.h3),
           ),
         ),
       ),
@@ -307,10 +295,12 @@ class PalmReadingAnalysisView extends StatelessWidget {
       },
       child: AutoTranslateText(
         'Skip',
-        style: MyTextTheme.mediumBCN.copyWith(
-          color: Colors.white.withOpacity(0.7),
-          decoration: TextDecoration.underline,
-        ).merge(AppTypography.body1),
+        style: MyTextTheme.mediumBCN
+            .copyWith(
+              color: Colors.white.withValues(alpha: 0.7),
+              decoration: TextDecoration.underline,
+            )
+            .merge(AppTypography.body1),
       ),
     );
   }
@@ -321,7 +311,7 @@ class StarryBackgroundPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.6)
+      ..color = Colors.white.withValues(alpha: 0.6)
       ..style = PaintingStyle.fill;
 
     // Draw random stars
@@ -330,10 +320,10 @@ class StarryBackgroundPainter extends CustomPainter {
       final y = (i * 61.3) % size.height;
       canvas.drawCircle(Offset(x, y), 1.5, paint);
     }
-    
+
     // Draw some larger stars
     final largeStarPaint = Paint()
-      ..color = Colors.white.withOpacity(0.8)
+      ..color = Colors.white.withValues(alpha: 0.8)
       ..style = PaintingStyle.fill;
     for (int i = 0; i < 10; i++) {
       final x = (i * 87.2) % size.width;
@@ -361,7 +351,6 @@ class HandDiagramPainter extends CustomPainter {
 
     // Draw a simplified hand outline
     final path = Path();
-    
     // Palm base
     path.moveTo(size.width * 0.3, size.height * 0.7);
     path.quadraticBezierTo(
@@ -370,7 +359,6 @@ class HandDiagramPainter extends CustomPainter {
       size.width * 0.7,
       size.height * 0.7,
     );
-    
     // Thumb
     path.moveTo(size.width * 0.3, size.height * 0.7);
     path.quadraticBezierTo(
@@ -379,19 +367,16 @@ class HandDiagramPainter extends CustomPainter {
       size.width * 0.15,
       size.height * 0.3,
     );
-    
     // Fingers
     for (int i = 0; i < 4; i++) {
       final fingerX = size.width * (0.4 + i * 0.15);
       path.moveTo(fingerX, size.height * 0.2);
       path.lineTo(fingerX, size.height * 0.05);
     }
-    
     // Draw palm lines
     final linePaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
-    
     // Life line (curved around thumb)
     linePaint.color = Colors.lightBlue;
     final lifeLine = Path();
@@ -403,7 +388,6 @@ class HandDiagramPainter extends CustomPainter {
       size.height * 0.7,
     );
     canvas.drawPath(lifeLine, linePaint);
-    
     // Head line (horizontal middle)
     linePaint.color = "#F38B3B".toColor();
     canvas.drawLine(
@@ -411,7 +395,6 @@ class HandDiagramPainter extends CustomPainter {
       Offset(size.width * 0.8, size.height * 0.4),
       linePaint,
     );
-    
     // Heart line (top horizontal)
     linePaint.color = Colors.red;
     canvas.drawLine(
@@ -419,7 +402,6 @@ class HandDiagramPainter extends CustomPainter {
       Offset(size.width * 0.8, size.height * 0.25),
       linePaint,
     );
-    
     // Fate line (vertical center)
     linePaint.color = Colors.purple;
     canvas.drawLine(
@@ -427,7 +409,6 @@ class HandDiagramPainter extends CustomPainter {
       Offset(size.width * 0.5, size.height * 0.7),
       linePaint,
     );
-    
     // Draw hand outline
     canvas.drawPath(path, paint);
   }
@@ -435,14 +416,3 @@ class HandDiagramPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
-
-
-
-
-
-
-
-
-
-
-

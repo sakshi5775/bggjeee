@@ -15,56 +15,56 @@ class AstrologyToolWidget extends StatelessWidget {
 
   final List<Map<String, String>> _astrologyTools = [
     {
-      'label': 'Face\nReading',
+      'label': 'Face Reading',
       'route': AppRoutes.faceReading,
       'image':
           'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/face2.jpeg',
       'pricingKey': 'face_reading',
     },
     {
-      'label': 'Palm\nReading',
+      'label': 'Palm Reading',
       'route': AppRoutes.palmReading,
       'image':
           'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/hand.jpeg',
       'pricingKey': 'palmistry',
     },
     {
-      'label': 'Vastu\nReading',
+      'label': 'Vastu Reading',
       'route': AppRoutes.vastuDashboard,
       'image':
           'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/vastu.jpeg',
       'pricingKey': '',
     },
     {
-      'label': 'Ramal\nShastra',
+      'label': 'Ramal Shastra',
       'route': AppRoutes.ramalShastra,
       'image':
           'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/ramal.jpeg',
       'pricingKey': 'ramal_shastra',
     },
     {
-      'label': 'Writing\nAstrology',
+      'label': 'Writing Astrology',
       'route': AppRoutes.handwritingAstrology,
       'image':
           'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/writing.jpeg',
       'pricingKey': 'handwriting_analysis',
     },
     {
-      'label': 'Prashna\nKundli',
+      'label': 'Prashna Kundli',
       'route': AppRoutes.prashnaKundali,
       'image':
           'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/PrashanKundli.jpg',
       'pricingKey': 'prashna_kundali',
     },
     {
-      'label': 'Tarot\nReading',
+      'label': 'Tarot Reading',
       'route': AppRoutes.tarotReading,
       'image':
           'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/TarotReading.png',
       'pricingKey': '',
     },
     {
-      'label': 'Carrot\nAstrology',
+      'label': 'Carrot Astrology',
       'route': AppRoutes.carrotAstrology,
       'image':
           'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/carrotAstro.png',
@@ -166,15 +166,15 @@ class AstrologyToolWidget extends StatelessWidget {
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             colors: [
-                              maroon.withOpacity(0.1),
-                              maroon.withOpacity(0.2),
+                              maroon.withValues(alpha: 0.1),
+                              maroon.withValues(alpha: 0.2),
                             ],
                           ),
                         ),
                         child: Icon(
                           Icons.image_not_supported_outlined,
                           size: 28.w,
-                          color: maroon.withOpacity(0.5),
+                          color: maroon.withValues(alpha: 0.5),
                         ),
                       ),
                     ),
@@ -191,7 +191,7 @@ class AstrologyToolWidget extends StatelessWidget {
                             end: Alignment.bottomCenter,
                             colors: [
                               Colors.transparent,
-                              Colors.black.withOpacity(0.3),
+                              Colors.black.withValues(alpha: 0.3),
                             ],
                           ),
                         ),
@@ -206,21 +206,29 @@ class AstrologyToolWidget extends StatelessWidget {
             // Label section - compact at bottom with transparent background
             Expanded(
               flex: 3,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
-                child: Center(
-                  child: AutoTranslateText(
-                    label,
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      color: maroon,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 9.5.sp,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final screenWidth = MediaQuery.of(context).size.width;
+
+                  // Define breakpoint (you can adjust 600 based on your design system)
+                  final bool isPhone = screenWidth < 600;
+
+                  return Container(
+                    child: Center(
+                      child: AutoTranslateText(
+                        label,
+                        style: MyTextTheme.mediumBCB.copyWith(
+                          color: maroon,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 9.5.sp,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: isPhone ? 2 : 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
+                  );
+                },
               ),
             ),
           ],
@@ -253,7 +261,7 @@ class AstrologyToolWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(8.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withValues(alpha: 0.2),
                 blurRadius: 4,
                 offset: const Offset(0, 1),
               ),

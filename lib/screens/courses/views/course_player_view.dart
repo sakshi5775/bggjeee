@@ -704,7 +704,7 @@ class CoursePlayerView extends StatelessWidget {
             color: const Color(0xFF2D2D2D),
             border: Border(
               bottom: BorderSide(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
                 width: 1,
               ),
             ),
@@ -741,7 +741,7 @@ class CoursePlayerView extends StatelessWidget {
             color: const Color(0xFF2D2D2D),
             border: Border(
               bottom: BorderSide(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
                 width: 1,
               ),
             ),

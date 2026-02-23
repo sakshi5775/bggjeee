@@ -1,14 +1,13 @@
 import 'package:astrobharataiuser/data_model/login_model.dart';
 import 'package:get_storage/get_storage.dart';
 
-import '../core/base/baseController.dart';
+import '../core/base/base_controller.dart';
 import '../core/routes/app_routes.dart';
 
 class UserData extends BaseController {
-  final loginData = GetStorage('loginData');
-
-  var setOnboardingVal = GetStorage('onboardingVal');
-  final baseUrl = GetStorage('baseUrl');
+  GetStorage get loginData => GetStorage('loginData');
+  GetStorage get setOnboardingVal => GetStorage('onboardingVal');
+  GetStorage get baseUrl => GetStorage('baseUrl');
 
   LoginModel get getLoginData =>
       LoginModel.fromJson(loginData.read('loginData') ?? {});

@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -6,10 +6,10 @@ import 'package:get/get.dart';
 class YogController extends BaseController {
   // Form data
   final formData = Rxn<Map<String, dynamic>>();
-  
+
   // Yog API data
   final yogData = Rxn<Map<String, dynamic>>();
-  
+
   // Loading states
   final isLoadingYog = false.obs;
 
@@ -40,7 +40,7 @@ class YogController extends BaseController {
 
     try {
       isLoadingYog.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -49,7 +49,11 @@ class YogController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Yog');
         isLoadingYog.value = false;
         return;
@@ -78,8 +82,3 @@ class YogController extends BaseController {
     }
   }
 }
-
-
-
-
-

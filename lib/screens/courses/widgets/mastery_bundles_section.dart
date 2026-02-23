@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/value/dimension.dart';
+﻿import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/learning_journey_dialog.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -141,7 +141,9 @@ class MasteryBundlesSection extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xFFFFF8E7), // Beige background
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(color: const Color(0xFFD68D3C).withOpacity(0.5)),
+          border: Border.all(
+            color: const Color(0xFFD68D3C).withValues(alpha: 0.5),
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
 import 'package:flutter/foundation.dart';
@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 
 class FollowingAstrologersController extends BaseController {
   final AstrologerService _astrologerService = AstrologerService();
-  
+
   final RxList<AstrologerModel> followingAstrologers = <AstrologerModel>[].obs;
   final RxBool isLoading = false.obs;
   final RxInt currentPage = 1.obs;
@@ -22,10 +22,10 @@ class FollowingAstrologersController extends BaseController {
 
   Future<void> loadFollowingAstrologers({bool refresh = false}) async {
     if (isLoading.value) return;
-    
+
     try {
       isLoading.value = true;
-      
+
       if (refresh) {
         currentPage.value = 1;
         followingAstrologers.clear();
@@ -42,12 +42,13 @@ class FollowingAstrologersController extends BaseController {
       }
 
       if (result != null) {
-        final newAstrologers = result['following'] as List<AstrologerModel>? ?? [];
-        
+        final newAstrologers =
+            result['following'] as List<AstrologerModel>? ?? [];
+
         if (kDebugMode) {
           print('New astrologers count: ${newAstrologers.length}');
         }
-        
+
         if (refresh) {
           followingAstrologers.value = newAstrologers;
         } else {
@@ -60,11 +61,13 @@ class FollowingAstrologersController extends BaseController {
           final totalPages = pagination['totalPages'] as int? ?? 1;
           totalFollowing.value = pagination['totalFollowing'] as int? ?? 0;
           hasMore.value = currentPageNum < totalPages;
-          
+
           if (kDebugMode) {
-            print('Pagination: page $currentPageNum of $totalPages, total: ${totalFollowing.value}');
+            print(
+              'Pagination: page $currentPageNum of $totalPages, total: ${totalFollowing.value}',
+            );
           }
-          
+
           if (hasMore.value) {
             currentPage.value = currentPageNum + 1;
           }
@@ -96,5 +99,3 @@ class FollowingAstrologersController extends BaseController {
     }
   }
 }
-
-

@@ -1,7 +1,7 @@
 import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/panchang/controller/monthly_calendar_controller.dart';
@@ -40,7 +40,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
                   style: MyTextTheme.mediumBCN.copyWith(
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
-                    color: "#6F221E".toColor().withOpacity(0.7),
+                    color: "#6F221E".toColor().withValues(alpha: 0.7),
                     height: 1.33,
                   ),
                 ),
@@ -190,7 +190,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 15.04,
             offset: const Offset(0, 3.01),
           ),
@@ -542,7 +542,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 15.04,
             offset: const Offset(0, 3.01),
           ),
@@ -581,7 +581,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
                   child: AutoTranslateText(
                     'No festivals found for this month',
                     style: MyTextTheme.mediumBCN.copyWith(
-                      color: "#6F221E".toColor().withOpacity(0.6),
+                      color: "#6F221E".toColor().withValues(alpha: 0.6),
                     ),
                   ),
                 ),
@@ -610,7 +610,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
                   child: AutoTranslateText(
                     'No festivals found for this month',
                     style: MyTextTheme.mediumBCN.copyWith(
-                      color: "#6F221E".toColor().withOpacity(0.6),
+                      color: "#6F221E".toColor().withValues(alpha: 0.6),
                     ),
                   ),
                 ),
@@ -757,7 +757,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
                   _showCalendarOptions(festival, dateStr, dayNumber, dayName),
               child: Icon(
                 Icons.arrow_forward_ios,
-                color: "#6B1B1A".toColor().withOpacity(0.5),
+                color: "#6B1B1A".toColor().withValues(alpha: 0.5),
                 size: 16.h,
               ),
             ),
@@ -881,7 +881,9 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
                                 Icon(
                                   Icons.calendar_today,
                                   size: 16.w,
-                                  color: "#6F221E".toColor().withOpacity(0.7),
+                                  color: "#6F221E".toColor().withValues(
+                                    alpha: 0.7,
+                                  ),
                                 ),
                                 Spacing.w(8),
                                 Flexible(
@@ -904,7 +906,9 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
                               AutoTranslateText(
                                 festival['description']?.toString() ?? '',
                                 style: MyTextTheme.smallBCN.copyWith(
-                                  color: "#6F221E".toColor().withOpacity(0.6),
+                                  color: "#6F221E".toColor().withValues(
+                                    alpha: 0.6,
+                                  ),
                                   fontSize: 12,
                                 ),
                                 maxLines: 3,

@@ -1,6 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/numerology/controller/loshu_grid_form_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -56,15 +56,15 @@ class LoShuGridFormView extends BasePage<LoShuGridFormController> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            "#DFB343".toColor().withOpacity(0.1),
-            "#DFB343".toColor().withOpacity(0.05),
+            "#DFB343".toColor().withValues(alpha: 0.1),
+            "#DFB343".toColor().withValues(alpha: 0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: "#DFB343".toColor().withOpacity(0.3),
+          color: "#DFB343".toColor().withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -73,7 +73,7 @@ class LoShuGridFormView extends BasePage<LoShuGridFormController> {
           Container(
             padding: EdgeInsets.all(12.w),
             decoration: BoxDecoration(
-              color: "#DFB343".toColor().withOpacity(0.2),
+              color: "#DFB343".toColor().withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -98,7 +98,7 @@ class LoShuGridFormView extends BasePage<LoShuGridFormController> {
                 AutoTranslateText(
                   'Enter your details to generate your personalized Lo Shu Grid',
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: "#6F221E".toColor().withOpacity(0.7),
+                    color: "#6F221E".toColor().withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -117,7 +117,7 @@ class LoShuGridFormView extends BasePage<LoShuGridFormController> {
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -131,7 +131,7 @@ class LoShuGridFormView extends BasePage<LoShuGridFormController> {
               Container(
                 padding: EdgeInsets.all(10.w),
                 decoration: BoxDecoration(
-                  color: "#DFB343".toColor().withOpacity(0.1),
+                  color: "#DFB343".toColor().withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Icon(
@@ -208,13 +208,13 @@ class LoShuGridFormView extends BasePage<LoShuGridFormController> {
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
               decoration: BoxDecoration(
                 color: controller.selectedDate.value != null
-                    ? "#DFB343".toColor().withOpacity(0.05)
-                    : Colors.grey.withOpacity(0.05),
+                    ? "#DFB343".toColor().withValues(alpha: 0.05)
+                    : Colors.grey.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(14.r),
                 border: Border.all(
                   color: controller.selectedDate.value != null
                       ? "#DFB343".toColor()
-                      : Colors.grey.withOpacity(0.3),
+                      : Colors.grey.withValues(alpha: 0.3),
                   width: controller.selectedDate.value != null ? 2 : 1,
                 ),
               ),
@@ -297,13 +297,13 @@ class LoShuGridFormView extends BasePage<LoShuGridFormController> {
           padding: EdgeInsets.symmetric(vertical: 16.h),
           decoration: BoxDecoration(
             color: isSelected
-                ? "#DFB343".toColor().withOpacity(0.1)
-                : Colors.grey.withOpacity(0.05),
+                ? "#DFB343".toColor().withValues(alpha: 0.1)
+                : Colors.grey.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(14.r),
             border: Border.all(
               color: isSelected
                   ? "#DFB343".toColor()
-                  : Colors.grey.withOpacity(0.3),
+                  : Colors.grey.withValues(alpha: 0.3),
               width: isSelected ? 2 : 1,
             ),
           ),
@@ -368,10 +368,10 @@ class LoShuGridFormView extends BasePage<LoShuGridFormController> {
           () => Container(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.05),
+              color: Colors.grey.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(14.r),
               border: Border.all(
-                color: "#DFB343".toColor().withOpacity(0.3),
+                color: "#DFB343".toColor().withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -415,10 +415,13 @@ class LoShuGridFormView extends BasePage<LoShuGridFormController> {
           gradient: LinearGradient(
             colors: controller.isLoading.value
                 ? [
-                    "#DFB343".toColor().withOpacity(0.5),
-                    "#DFB343".toColor().withOpacity(0.3),
+                    "#DFB343".toColor().withValues(alpha: 0.5),
+                    "#DFB343".toColor().withValues(alpha: 0.3),
                   ]
-                : ["#DFB343".toColor(), "#DFB343".toColor().withOpacity(0.8)],
+                : [
+                    "#DFB343".toColor(),
+                    "#DFB343".toColor().withValues(alpha: 0.8),
+                  ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -427,7 +430,7 @@ class LoShuGridFormView extends BasePage<LoShuGridFormController> {
               ? []
               : [
                   BoxShadow(
-                    color: "#DFB343".toColor().withOpacity(0.3),
+                    color: "#DFB343".toColor().withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),

@@ -212,11 +212,15 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
                                   vertical: 8.h,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: '#D4AF37'.toColor().withOpacity(0.9),
+                                  color: '#D4AF37'.toColor().withValues(
+                                    alpha: 0.9,
+                                  ),
                                   borderRadius: BorderRadius.circular(20.r),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.2),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.2,
+                                      ),
                                       blurRadius: 8,
                                       offset: const Offset(0, 2),
                                     ),
@@ -266,7 +270,7 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
@@ -309,7 +313,7 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
                     borderRadius: BorderRadius.circular(12.r),
                     boxShadow: [
                       BoxShadow(
-                        color: "#F38B3B".toColor().withOpacity(0.35),
+                        color: "#F38B3B".toColor().withValues(alpha: 0.35),
                         blurRadius: 6,
                         offset: const Offset(0, 3),
                       ),

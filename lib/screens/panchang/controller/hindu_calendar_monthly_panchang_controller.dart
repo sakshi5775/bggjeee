@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/panchang/service/panchang_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
 import 'package:flutter/foundation.dart';
@@ -16,15 +16,17 @@ class HinduCalendarMonthlyPanchangController extends BaseController {
   // State
   final isLoading = false.obs;
   final selectedDate = DateTime.now().obs;
-  final monthlyPanchangData = <Map<String, dynamic>>[].obs; // Stores panchang data for selected date
-  final festivalsByMonth = <String, List<Map<String, dynamic>>>{}.obs; // Stores festivals by date string
+  final monthlyPanchangData =
+      <Map<String, dynamic>>[].obs; // Stores panchang data for selected date
+  final festivalsByMonth = <String, List<Map<String, dynamic>>>{}
+      .obs; // Stores festivals by date string
   final selectedLocation = 'Fetching Location...'.obs;
-  
+
   // Location coordinates
   double? currentLatitude;
   double? currentLongitude;
   double? currentTimezone;
-  
+
   // Flag to track if controller is disposed
   bool _isDisposed = false;
 
@@ -36,10 +38,10 @@ class HinduCalendarMonthlyPanchangController extends BaseController {
     currentLongitude = 77.2090;
     currentTimezone = 5.5;
     selectedLocation.value = 'Loading...';
-    
+
     // Fetch data immediately with default values
     fetchMonthlyPanchang();
-    
+
     // Then try to get actual location in background
     _tryGetCurrentLocation();
   }
@@ -100,7 +102,11 @@ class HinduCalendarMonthlyPanchangController extends BaseController {
         if (_isDisposed) return;
 
         if (reverseGeocode != null) {
-          final city = reverseGeocode['city'] ?? reverseGeocode['town'] ?? reverseGeocode['village'] ?? '';
+          final city =
+              reverseGeocode['city'] ??
+              reverseGeocode['town'] ??
+              reverseGeocode['village'] ??
+              '';
           final state = reverseGeocode['state'] ?? '';
           if (city.isNotEmpty) {
             selectedLocation.value = state.isNotEmpty ? '$city, $state' : city;
@@ -135,15 +141,18 @@ class HinduCalendarMonthlyPanchangController extends BaseController {
       }
 
       // Update location and re-fetch with actual coordinates
-      if (currentLatitude != null && currentLongitude != null && currentTimezone != null) {
+      if (currentLatitude != null &&
+          currentLongitude != null &&
+          currentTimezone != null) {
         // Only re-fetch if location changed significantly (optional optimization)
         final oldLat = currentLatitude!;
         final oldLon = currentLongitude!;
         currentLatitude = position.latitude;
         currentLongitude = position.longitude;
-        
+
         // Re-fetch with actual location (only if location changed significantly)
-        if ((oldLat - position.latitude).abs() > 0.1 || (oldLon - position.longitude).abs() > 0.1) {
+        if ((oldLat - position.latitude).abs() > 0.1 ||
+            (oldLon - position.longitude).abs() > 0.1) {
           fetchMonthlyPanchang();
         }
       }
@@ -152,7 +161,9 @@ class HinduCalendarMonthlyPanchangController extends BaseController {
       if (_isDisposed) return;
       selectedLocation.value = 'Select Location';
       // Use default values (already set in onInit, but ensure they're set)
-      if (currentLatitude == null || currentLongitude == null || currentTimezone == null) {
+      if (currentLatitude == null ||
+          currentLongitude == null ||
+          currentTimezone == null) {
         currentLatitude = 28.6139;
         currentLongitude = 77.2090;
         currentTimezone = 5.5;
@@ -162,10 +173,14 @@ class HinduCalendarMonthlyPanchangController extends BaseController {
   }
 
   /// Select city from location bottom sheet
-  Future<void> selectCity(String cityName, String? state, String? country) async {
+  Future<void> selectCity(
+    String cityName,
+    String? state,
+    String? country,
+  ) async {
     try {
       selectedLocation.value = cityName;
-      
+
       // Fetch coordinates for the city
       final coords = await AddressHelper.fetchCoordinatesFromCity(
         city: cityName,
@@ -176,14 +191,14 @@ class HinduCalendarMonthlyPanchangController extends BaseController {
       if (coords != null) {
         currentLatitude = coords['latitude'] as double?;
         currentLongitude = coords['longitude'] as double?;
-        
+
         // Get timezone
         if (currentLatitude != null && currentLongitude != null) {
           final timezone = await AddressHelper.getTimezoneFromCoordinates(
             currentLatitude!,
             currentLongitude!,
           );
-          
+
           // Calculate timezone offset
           if (timezone != null) {
             currentTimezone = await _getTimezoneOffset(timezone);
@@ -195,7 +210,7 @@ class HinduCalendarMonthlyPanchangController extends BaseController {
             );
           }
         }
-        
+
         // Refresh panchang data for selected date
         fetchMonthlyPanchang();
       }
@@ -241,7 +256,11 @@ class HinduCalendarMonthlyPanchangController extends BaseController {
       );
 
       if (reverseGeocode != null && reverseGeocode['city'] != null) {
-        final city = reverseGeocode['city'] ?? reverseGeocode['town'] ?? reverseGeocode['village'] ?? '';
+        final city =
+            reverseGeocode['city'] ??
+            reverseGeocode['town'] ??
+            reverseGeocode['village'] ??
+            '';
         final state = reverseGeocode['state'] ?? '';
         if (city.isNotEmpty) {
           selectedLocation.value = state.isNotEmpty ? '$city, $state' : city;
@@ -257,7 +276,7 @@ class HinduCalendarMonthlyPanchangController extends BaseController {
         position.latitude,
         position.longitude,
       );
-      
+
       if (timezone != null) {
         currentTimezone = await _getTimezoneOffset(timezone);
       } else {
@@ -266,7 +285,7 @@ class HinduCalendarMonthlyPanchangController extends BaseController {
           position.longitude,
         );
       }
-      
+
       // Refresh panchang data
       fetchMonthlyPanchang();
     } catch (e) {
@@ -280,13 +299,10 @@ class HinduCalendarMonthlyPanchangController extends BaseController {
       final url = Uri.parse(
         'https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lon&zoom=18&addressdetails=1',
       );
-      
-      final response = await http.get(
-        url,
-        headers: {
-          'User-Agent': 'AstrologyApp',
-        },
-      ).timeout(const Duration(seconds: 10));
+
+      final response = await http
+          .get(url, headers: {'User-Agent': 'AstrologyApp'})
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>;
@@ -302,9 +318,11 @@ class HinduCalendarMonthlyPanchangController extends BaseController {
   /// Get timezone offset from timezone string
   Future<double> _getTimezoneOffset(String timezone) async {
     try {
-      final url = Uri.parse('https://timeapi.io/api/TimeZone/zone?timeZone=$timezone');
+      final url = Uri.parse(
+        'https://timeapi.io/api/TimeZone/zone?timeZone=$timezone',
+      );
       final response = await http.get(url).timeout(const Duration(seconds: 10));
-      
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>?;
         if (data?['currentUtcOffset'] != null) {
@@ -320,11 +338,16 @@ class HinduCalendarMonthlyPanchangController extends BaseController {
   }
 
   /// Get timezone offset from coordinates
-  Future<double> _getTimezoneOffsetFromCoordinates(double lat, double lon) async {
+  Future<double> _getTimezoneOffsetFromCoordinates(
+    double lat,
+    double lon,
+  ) async {
     try {
-      final url = Uri.parse('https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon');
+      final url = Uri.parse(
+        'https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon',
+      );
       final response = await http.get(url).timeout(const Duration(seconds: 10));
-      
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>?;
         if (data?['currentUtcOffset'] != null) {
@@ -361,7 +384,9 @@ class HinduCalendarMonthlyPanchangController extends BaseController {
 
   /// Fetch monthly panchang data for selected date
   Future<void> fetchMonthlyPanchang() async {
-    if (currentLatitude == null || currentLongitude == null || currentTimezone == null) {
+    if (currentLatitude == null ||
+        currentLongitude == null ||
+        currentTimezone == null) {
       currentLatitude = 28.6139;
       currentLongitude = 77.2090;
       currentTimezone = 5.5;
@@ -376,7 +401,9 @@ class HinduCalendarMonthlyPanchangController extends BaseController {
       final dateStr = DateFormat('dd/MM/yyyy').format(selectedDate.value);
       final time = DateFormat('HH:mm').format(DateTime.now());
 
-      debugPrint('Monthly Panchang API - Date: $dateStr, Time: $time, Lat: $currentLatitude, Lon: $currentLongitude, TZ: $currentTimezone');
+      debugPrint(
+        'Monthly Panchang API - Date: $dateStr, Time: $time, Lat: $currentLatitude, Lon: $currentLongitude, TZ: $currentTimezone',
+      );
 
       final panchangData = await _panchangService.getMonthlyPanchang(
         date: dateStr,
@@ -393,7 +420,7 @@ class HinduCalendarMonthlyPanchangController extends BaseController {
           // Process all days in the response
           for (var item in response) {
             final dayData = item as Map<String, dynamic>;
-            
+
             // Parse date from API response (format: "2025/12/19")
             final apiDateStr = dayData['date']?.toString() ?? '';
             if (apiDateStr.isNotEmpty) {
@@ -405,10 +432,13 @@ class HinduCalendarMonthlyPanchangController extends BaseController {
                   final month = int.parse(parts[1]);
                   final day = int.parse(parts[2]);
                   dayData['dayNumber'] = day;
-                  dayData['date'] = apiDateStr; // Keep original format for matching
-                  
+                  dayData['date'] =
+                      apiDateStr; // Keep original format for matching
+
                   // Also store in dd/MM/yyyy format for compatibility
-                  dayData['dateFormatted'] = DateFormat('dd/MM/yyyy').format(DateTime(year, month, day));
+                  dayData['dateFormatted'] = DateFormat(
+                    'dd/MM/yyyy',
+                  ).format(DateTime(year, month, day));
                 }
               } catch (e) {
                 debugPrint('Error parsing date: $e');
@@ -421,20 +451,28 @@ class HinduCalendarMonthlyPanchangController extends BaseController {
               dayData['dayNumber'] = selectedDate.value.day;
               dayData['date'] = dateStr;
             }
-            
+
             monthlyPanchangData.add(dayData);
           }
-          debugPrint('Monthly Panchang - Loaded ${monthlyPanchangData.length} days');
+          debugPrint(
+            'Monthly Panchang - Loaded ${monthlyPanchangData.length} days',
+          );
         } else {
           debugPrint('Monthly Panchang - Empty response');
         }
       } else {
         debugPrint('Monthly Panchang - No data in response');
-        showErrorMessage(title: 'Error', message: 'Failed to fetch monthly panchang data');
+        showErrorMessage(
+          title: 'Error',
+          message: 'Failed to fetch monthly panchang data',
+        );
       }
     } catch (e) {
       debugPrint('Error fetching monthly panchang: $e');
-      showErrorMessage(title: 'Error', message: 'Failed to fetch monthly panchang data: ${e.toString()}');
+      showErrorMessage(
+        title: 'Error',
+        message: 'Failed to fetch monthly panchang data: ${e.toString()}',
+      );
     } finally {
       isLoading.value = false;
     }
@@ -446,4 +484,3 @@ class HinduCalendarMonthlyPanchangController extends BaseController {
     fetchMonthlyPanchang();
   }
 }
-

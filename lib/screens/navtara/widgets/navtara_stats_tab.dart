@@ -93,10 +93,10 @@ class NavtaraStatsTab extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: maroon.withOpacity(0.05)),
+        border: Border.all(color: maroon.withValues(alpha: 0.05)),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.05),
+            color: color.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -128,7 +128,7 @@ class NavtaraStatsTab extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: maroon.withOpacity(0.1)),
+        border: Border.all(color: maroon.withValues(alpha: 0.1)),
       ),
       child: Column(
         children: [
@@ -189,7 +189,7 @@ class NavtaraStatsTab extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16.r),
-              border: Border.all(color: maroon.withOpacity(0.1)),
+              border: Border.all(color: maroon.withValues(alpha: 0.1)),
             ),
             child: Column(
               children: distribution.map((item) {

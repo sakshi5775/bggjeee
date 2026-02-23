@@ -1,6 +1,7 @@
 import 'package:astrobharataiuser/app_manager/localized_text.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/localization/translations.dart' as AppTranslations;
+import 'package:astrobharataiuser/core/localization/translations.dart'
+    as AppTranslations;
 import 'package:astrobharataiuser/core/value/dimension.dart';
 
 import 'package:astrobharataiuser/screens/blogs/controller/all_blogs_controller.dart';
@@ -41,7 +42,7 @@ class FilterChips extends StatelessWidget {
                     boxShadow: isSelected
                         ? [
                             BoxShadow(
-                              color: AppColors.saffron.withOpacity(0.3),
+                              color: AppColors.saffron.withValues(alpha: 0.3),
                               blurRadius: 8.r,
                               offset: const Offset(0, 2),
                             ),

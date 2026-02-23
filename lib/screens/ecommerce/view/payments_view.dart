@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/widgets/common_header.dart';
+﻿import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/data_model/payment_model.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/payments_controller.dart';
@@ -146,7 +146,7 @@ class _PaymentTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 3),
             ),
@@ -222,7 +222,7 @@ class _StatusPill extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: AppColors.saffron.withOpacity(0.12),
+        color: AppColors.saffron.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: AutoTranslateText(
@@ -252,7 +252,7 @@ class _InfoChip extends StatelessWidget {
           color: AppColors.textPrimary,
         ).merge(AppTypography.label),
       ),
-      backgroundColor: AppColors.saffron.withOpacity(0.08),
+      backgroundColor: AppColors.saffron.withValues(alpha: 0.08),
       visualDensity: VisualDensity.compact,
     );
   }

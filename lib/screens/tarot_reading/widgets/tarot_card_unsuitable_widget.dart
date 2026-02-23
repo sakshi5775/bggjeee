@@ -18,7 +18,8 @@ class TarotCardUnsuitableWidget extends StatefulWidget {
   });
 
   @override
-  State<TarotCardUnsuitableWidget> createState() => _TarotCardUnsuitableWidgetState();
+  State<TarotCardUnsuitableWidget> createState() =>
+      _TarotCardUnsuitableWidgetState();
 }
 
 class _TarotCardUnsuitableWidgetState extends State<TarotCardUnsuitableWidget>
@@ -26,7 +27,7 @@ class _TarotCardUnsuitableWidgetState extends State<TarotCardUnsuitableWidget>
   late AnimationController _mainController;
   late AnimationController _pulseController;
   late AnimationController _rotateController;
-  
+
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
   late Animation<Offset> _slideAnimation;
@@ -36,7 +37,7 @@ class _TarotCardUnsuitableWidgetState extends State<TarotCardUnsuitableWidget>
   @override
   void initState() {
     super.initState();
-    
+
     // Main animation controller (fade, scale, slide) - faster
     _mainController = AnimationController(
       duration: const Duration(milliseconds: 500),
@@ -69,29 +70,22 @@ class _TarotCardUnsuitableWidgetState extends State<TarotCardUnsuitableWidget>
       ),
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, -0.3),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _mainController,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
-      ),
-    );
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, -0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _mainController,
+            curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _pulseAnimation = Tween<double>(begin: 0.8, end: 1.2).animate(
-      CurvedAnimation(
-        parent: _pulseController,
-        curve: Curves.easeInOut,
-      ),
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
 
-    _rotateAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _rotateController,
-        curve: Curves.linear,
-      ),
-    );
+    _rotateAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _rotateController, curve: Curves.linear));
 
     _mainController.forward().then((_) {
       // Wait before calling onAnimationComplete - faster
@@ -126,15 +120,12 @@ class _TarotCardUnsuitableWidgetState extends State<TarotCardUnsuitableWidget>
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  "#F38B3B".toColor(),
-                  "#DD2914".toColor(),
-                ],
+                colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
               ),
               borderRadius: BorderRadius.circular(20.r),
               boxShadow: [
                 BoxShadow(
-                  color: "#F38B3B".toColor().withOpacity(0.4),
+                  color: "#F38B3B".toColor().withValues(alpha: 0.4),
                   blurRadius: 15,
                   spreadRadius: 2,
                   offset: const Offset(0, 6),
@@ -162,9 +153,7 @@ class _TarotCardUnsuitableWidgetState extends State<TarotCardUnsuitableWidget>
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     text: TextSpan(
-                      style: MyTextTheme.smallBCN.copyWith(
-                        color: Colors.white,
-                      ),
+                      style: MyTextTheme.smallBCN.copyWith(color: Colors.white),
                       children: [
                         TextSpan(
                           text: '"${widget.cardName}" ',

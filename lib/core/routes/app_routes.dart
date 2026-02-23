@@ -253,4 +253,5 @@ class AppRoutes {
   static const String userPrivacyPolicy = '/user-privacy-policy';
   static const String reportPdfView = '/report-pdf-view';
   static const String navtaraDashboard = '/navtara-dashboard';
+  static const String kundliReportHistory = '/kundli-report-history';
 }

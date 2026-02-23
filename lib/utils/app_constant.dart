@@ -5,7 +5,7 @@ class AppConstant {
   /// Update this when you release a new version (e.g. '1.0.1').
   /// Also add "[Minimum supported app version: X.Y.Z]" to your Play Store app description
   /// (full description or "What's New") so old installs get the minimum version from the store.
-  static const String minAppVersion = '9.9.9';
+  static const String minAppVersion = '1.0.0';
 
   // OneSignal App ID (from OneSignal Dashboard → Settings → Keys & IDs)
   static const String oneSignalAppId = '67ddfe0f-eadf-41fa-a1d2-7f9d35e8c766';

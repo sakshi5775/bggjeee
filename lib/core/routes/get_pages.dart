@@ -139,6 +139,7 @@ import 'package:astrobharataiuser/screens/support/view/support_tickets_list_view
 import 'package:astrobharataiuser/screens/support/view/create_support_ticket_view.dart';
 import 'package:astrobharataiuser/screens/support/view/support_ticket_detail_view.dart';
 import 'package:astrobharataiuser/screens/support/binding/support_ticket_binding.dart';
+import 'package:astrobharataiuser/screens/ecommerce/view/kundli_report_history_view.dart';
 import 'package:astrobharataiuser/screens/wallet/view/wallet_view.dart';
 import 'package:astrobharataiuser/binding/navtara_binding/navtara_binding.dart';
 import 'package:astrobharataiuser/screens/navtara/view/navtara_view.dart';
@@ -628,6 +629,13 @@ class PageRoutes {
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
       binding: CouponsBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.kundliReportHistory,
+      page: () => const KundliReportHistoryView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+      binding: ProfileBinding(),
     ),
     // Support Tickets Routes
     GetPage(

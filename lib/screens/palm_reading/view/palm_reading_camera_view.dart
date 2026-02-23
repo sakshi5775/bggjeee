@@ -258,7 +258,7 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
+                            color: Colors.black.withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -336,7 +336,7 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
                   margin: EdgeInsets.symmetric(horizontal: 24.w),
                   padding: AppPaddings.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.9),
+                    color: Colors.red.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(12.r),
                   ),
                   child: Column(
@@ -391,7 +391,7 @@ class HandOverlayPainter extends CustomPainter {
 
     // Draw semi-transparent background
     final backgroundPaint = Paint()
-      ..color = Colors.black.withOpacity(0.5)
+      ..color = Colors.black.withValues(alpha: 0.5)
       ..style = PaintingStyle.fill;
     canvas.drawRect(
       Rect.fromLTWH(0, 0, size.width, size.height),
@@ -423,7 +423,7 @@ class HandOverlayPainter extends CustomPainter {
 
     // Draw the cutout
     final cutoutPaint = Paint()
-      ..color = Colors.black.withOpacity(0.7)
+      ..color = Colors.black.withValues(alpha: 0.7)
       ..style = PaintingStyle.fill;
     canvas.drawPath(cutoutPath, cutoutPaint);
 

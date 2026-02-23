@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/apihelper/api_response.dart';
@@ -16,6 +18,17 @@ class ErrorHandler {
       }
       print('--------------------');
     }
+
+    // Report non-fatal error to Crashlytics
+    final type = getErrorType(error);
+    CrashlyticsService.recordError(
+      error,
+      error is Error
+          ? (error.stackTrace ?? StackTrace.current)
+          : StackTrace.current,
+      type: _mapToCrashErrorType(type),
+      reason: "API_PROVIDER_ERROR | type: ${type.name}",
+    );
 
     if (error is SocketException) {
       return "Network connection unavailable. Please check your internet.";
@@ -81,6 +94,26 @@ class ErrorHandler {
           return "Server is temporarily unavailable.";
         }
         return response.statusText ?? "Could not connect to server.";
+    }
+  }
+
+  static CrashErrorType _mapToCrashErrorType(ErrorType type) {
+    switch (type) {
+      case ErrorType.network:
+      case ErrorType.timeout:
+        return CrashErrorType.network;
+      case ErrorType.server:
+        return CrashErrorType.network;
+      case ErrorType.unauthorized:
+        return CrashErrorType.auth;
+      case ErrorType.validation:
+      case ErrorType.notFound:
+      case ErrorType.conflict:
+        return CrashErrorType.network;
+      case ErrorType.runtime:
+        return CrashErrorType.unknown;
+      case ErrorType.unknown:
+        return CrashErrorType.unknown;
     }
   }
 }

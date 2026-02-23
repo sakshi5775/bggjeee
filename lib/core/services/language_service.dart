@@ -2,7 +2,8 @@ import 'package:astrobharataiuser/core/models/app_language_model.dart';
 import 'package:get_storage/get_storage.dart';
 
 class LanguageService {
-  static final _storage = GetStorage('language');
+  // Use lazy getter to ensure the box is accessed only after GetStorage.init() in main()
+  static GetStorage get _storage => GetStorage('language');
   static const _languageKey = 'current_language';
 
   /// Get current language from storage
@@ -11,7 +12,6 @@ class LanguageService {
     if (languageCode == null) {
       return await LanguageModelService.getDefaultLanguage();
     }
-    
     final language = await LanguageModelService.getLanguageByCode(languageCode);
     return language ?? await LanguageModelService.getDefaultLanguage();
   }

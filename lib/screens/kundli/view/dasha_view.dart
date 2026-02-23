@@ -1,5 +1,5 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/dasha_controller.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/dasha_table_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/vimshottari_dasha_widget.dart';
@@ -156,11 +156,11 @@ class DashaView extends BasePage<DashaController> {
             borderRadius: BorderRadius.circular(12.r),
             border: isSelected
                 ? null
-                : Border.all(color: maroon.withOpacity(0.2), width: 1),
+                : Border.all(color: maroon.withValues(alpha: 0.2), width: 1),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: orange.withOpacity(0.25),
+                      color: orange.withValues(alpha: 0.25),
                       blurRadius: 4,
                       offset: const Offset(0, 1),
                     ),

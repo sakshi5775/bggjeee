@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/data_model/course_model.dart';
+﻿import 'package:astrobharataiuser/data_model/course_model.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -10,11 +10,7 @@ class CourseCard extends StatelessWidget {
   final CourseModel course;
   final VoidCallback onTap;
 
-  const CourseCard({
-    super.key,
-    required this.course,
-    required this.onTap,
-  });
+  const CourseCard({super.key, required this.course, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +22,7 @@ class CourseCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 12,
               offset: const Offset(0, 4),
               spreadRadius: 0,
@@ -40,62 +36,72 @@ class CourseCard extends StatelessWidget {
             Expanded(
               flex: 2,
               child: Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16.r),
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16.r),
                       bottomLeft: Radius.circular(16.r),
-                  ),
-                  child: Container(
+                    ),
+                    child: Container(
                       height: 140.h,
-                    width: double.infinity,
-                    color: const Color(0xFFF5F5F5),
-                    child: course.thumbnail != null && course.thumbnail!.isNotEmpty
-                        ? Stack(
-                            fit: StackFit.expand,
-                            children: [
-                              CachedNetworkImage(
-                                imageUrl: course.thumbnail!,
-                                width: double.infinity,
+                      width: double.infinity,
+                      color: const Color(0xFFF5F5F5),
+                      child:
+                          course.thumbnail != null &&
+                              course.thumbnail!.isNotEmpty
+                          ? Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                CachedNetworkImage(
+                                  imageUrl: course.thumbnail!,
+                                  width: double.infinity,
                                   height: 140.h,
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) => Container(
-                                  color: const Color(0xFFF5F5F5),
-                                  child: Center(
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        AppColors.primaryGradient.colors.first,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Container(
+                                    color: const Color(0xFFF5F5F5),
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              AppColors
+                                                  .primaryGradient
+                                                  .colors
+                                                  .first,
+                                            ),
                                       ),
                                     ),
                                   ),
+                                  errorWidget: (context, url, error) =>
+                                      _buildPlaceholderImage(),
                                 ),
-                                errorWidget: (context, url, error) => _buildPlaceholderImage(),
-                              ),
                                 // Gradient overlay
-                              Container(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      Colors.transparent,
-                                        Colors.black.withOpacity(0.2),
-                                    ],
+                                Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Colors.transparent,
+                                        Colors.black.withValues(alpha: 0.2),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          )
-                        : _buildPlaceholderImage(),
+                              ],
+                            )
+                          : _buildPlaceholderImage(),
+                    ),
                   ),
-                ),
                   // Bestseller badge (top left)
-                Positioned(
+                  Positioned(
                     top: 8.h,
                     left: 8.w,
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                        vertical: 4.h,
+                      ),
                       decoration: BoxDecoration(
                         gradient: AppColors.orangeGradient,
                         borderRadius: BorderRadius.circular(12.r),
@@ -113,32 +119,32 @@ class CourseCard extends StatelessWidget {
                   // Play button overlay (center)
                   Positioned.fill(
                     child: Center(
-                  child: Container(
+                      child: Container(
                         width: 56.w,
                         height: 56.w,
-                    decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.9),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.9),
                           shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.2),
                               blurRadius: 8,
-                          offset: const Offset(0, 2),
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
                         child: Icon(
                           Icons.play_arrow,
                           color: AppColors.primaryGradient.colors.first,
                           size: 32.w,
                         ),
-                        ),
+                      ),
                     ),
-                    ),
+                  ),
                 ],
-                ),
+              ),
             ),
-            
+
             // Content Section
             Expanded(
               flex: 3,
@@ -162,7 +168,7 @@ class CourseCard extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 4.h),
-                    
+
                     // Instructor with profile picture
                     Row(
                       children: [
@@ -171,7 +177,8 @@ class CourseCard extends StatelessWidget {
                           width: 20.w,
                           height: 20.w,
                           decoration: BoxDecoration(
-                            color: AppColors.primaryGradient.colors.first.withOpacity(0.2),
+                            color: AppColors.primaryGradient.colors.first
+                                .withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -195,7 +202,7 @@ class CourseCard extends StatelessWidget {
                       ],
                     ),
                     SizedBox(height: 4.h),
-                    
+
                     // Price
                     AutoTranslateText(
                       '₹${course.price.toStringAsFixed(0)}',
@@ -224,8 +231,8 @@ class CourseCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.primaryGradient.colors.first.withOpacity(0.15),
-            AppColors.primaryGradient.colors.last.withOpacity(0.15),
+            AppColors.primaryGradient.colors.first.withValues(alpha: 0.15),
+            AppColors.primaryGradient.colors.last.withValues(alpha: 0.15),
           ],
         ),
       ),
@@ -234,7 +241,9 @@ class CourseCard extends StatelessWidget {
           Center(
             child: Icon(
               Icons.school_rounded,
-              color: AppColors.primaryGradient.colors.first.withOpacity(0.4),
+              color: AppColors.primaryGradient.colors.first.withValues(
+                alpha: 0.4,
+              ),
               size: 38.w,
             ),
           ),
@@ -246,7 +255,7 @@ class CourseCard extends StatelessWidget {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
-                  Colors.black.withOpacity(0.1),
+                  Colors.black.withValues(alpha: 0.1),
                 ],
               ),
             ),

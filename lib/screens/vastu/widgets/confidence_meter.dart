@@ -23,10 +23,10 @@ class ConfidenceMeter extends StatelessWidget {
   Widget build(BuildContext context) {
     final confidence = isCalibrated ? accuracy : accuracy * 0.5;
     final confidencePercent = (confidence * 100).toInt();
-    
+
     Color meterColor;
     String statusText;
-    
+
     if (confidence >= 0.8) {
       meterColor = Colors.green;
       statusText = 'High Accuracy';
@@ -43,13 +43,10 @@ class ConfidenceMeter extends StatelessWidget {
       decoration: BoxDecoration(
         color: '#ffffff'.toColor(),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: '#F5D7B8'.toColor(),
-          width: 1.2,
-        ),
+        border: Border.all(color: '#F5D7B8'.toColor(), width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -57,11 +54,7 @@ class ConfidenceMeter extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.verified,
-            color: meterColor,
-            size: 20.w,
-          ),
+          Icon(Icons.verified, color: meterColor, size: 20.w),
           Spacing.w(12),
           Expanded(
             child: Column(
@@ -72,17 +65,21 @@ class ConfidenceMeter extends StatelessWidget {
                   children: [
                     AutoTranslateText(
                       statusText,
-                      style: MyTextTheme.smallBCB.copyWith(
-                        color: '#3E2723'.toColor(),
-                        fontWeight: FontWeight.bold,
-                      ).merge(AppTypography.body2),
+                      style: MyTextTheme.smallBCB
+                          .copyWith(
+                            color: '#3E2723'.toColor(),
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.body2),
                     ),
                     AutoTranslateText(
                       '$confidencePercent%',
-                      style: MyTextTheme.smallBCB.copyWith(
-                        color: meterColor,
-                        fontWeight: FontWeight.bold,
-                      ).merge(AppTypography.body2),
+                      style: MyTextTheme.smallBCB
+                          .copyWith(
+                            color: meterColor,
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.body2),
                     ),
                   ],
                 ),
@@ -104,4 +101,3 @@ class ConfidenceMeter extends StatelessWidget {
     );
   }
 }
-

@@ -97,6 +97,38 @@ class CallService {
     }
   }
 
+  /// Connect a call (Triggers billing start)
+  ///
+  /// [callId] - The ID of the call to connect
+  Future<bool> connectCall(String callId) async {
+    try {
+      if (kDebugMode) {
+        print('═══════════════════════════════════════════════════════════');
+        print('📞 CALL CONNECT INITIATED: $callId');
+        print('═══════════════════════════════════════════════════════════');
+      }
+
+      final response = await _apiRepository.postApi(
+        EndPoints.callConnect(callId),
+        {},
+        useAuthHeader: true,
+      );
+
+      if (kDebugMode) {
+        print('Connect call API response status: ${response.statusCode}');
+        print('Connect call API response body: ${response.body}');
+      }
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('Error connecting call: $e');
+      return false;
+    }
+  }
+
   /// End a call
   ///
   /// [callId] - The ID of the call to end

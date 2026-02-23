@@ -29,7 +29,7 @@ class EmptyStateWidget extends StatelessWidget {
             Container(
               padding: AppPaddings.all(24),
               decoration: BoxDecoration(
-                color: AppColors.saffron.withOpacity(0.1),
+                color: AppColors.saffron.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -40,12 +40,10 @@ class EmptyStateWidget extends StatelessWidget {
             ),
             Spacing.h(24),
             LocalizedText(
-              text: isEmpty
-                  ? 'No AI Personas Available'
-                  : 'No Results Found',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: AppColors.textPrimary,
-              ).merge(AppTypography.h2),
+              text: isEmpty ? 'No AI Personas Available' : 'No Results Found',
+              style: MyTextTheme.largeBCB
+                  .copyWith(color: AppColors.textPrimary)
+                  .merge(AppTypography.h2),
             ),
             Spacing.h(8),
             LocalizedText(
@@ -83,4 +81,3 @@ class EmptyStateWidget extends StatelessWidget {
     );
   }
 }
-

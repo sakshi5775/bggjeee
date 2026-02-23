@@ -49,7 +49,7 @@ class PlanetsWidget extends StatelessWidget {
                 AutoTranslateText(
                   'Loading...',
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: "#6F221E".toColor().withOpacity(0.7),
+                    color: "#6F221E".toColor().withValues(alpha: 0.7),
                     fontSize: 12.sp,
                   ),
                 ),
@@ -63,7 +63,7 @@ class PlanetsWidget extends StatelessWidget {
             child: AutoTranslateText(
               'No data available',
               style: MyTextTheme.mediumBCN.copyWith(
-                color: "#6F221E".toColor().withOpacity(0.7),
+                color: "#6F221E".toColor().withValues(alpha: 0.7),
               ),
             ),
           ),
@@ -188,7 +188,9 @@ class PlanetsWidget extends StatelessWidget {
           for (int i = 0; i < planets.length; i++) ...[
             TableRow(
               decoration: BoxDecoration(
-                color: i.isOdd ? oc.withOpacity(0.04) : Colors.transparent,
+                color: i.isOdd
+                    ? oc.withValues(alpha: 0.04)
+                    : Colors.transparent,
               ),
               children: _planetCells(planets[i], cellStyle),
             ),
@@ -268,10 +270,10 @@ class PlanetsWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(color: "#ed6f30".toColor().withOpacity(0.2)),
+        border: Border.all(color: "#ed6f30".toColor().withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 4,
             offset: const Offset(0, 1),
           ),
@@ -346,7 +348,7 @@ class PlanetsWidget extends StatelessWidget {
             child: AutoTranslateText(
               label,
               style: MyTextTheme.smallBCB.copyWith(
-                color: "#6F221E".toColor().withOpacity(0.7),
+                color: "#6F221E".toColor().withValues(alpha: 0.7),
                 fontWeight: FontWeight.w500,
                 fontSize: 9.sp,
               ),
@@ -541,7 +543,7 @@ class PlanetsWidget extends StatelessWidget {
             child: AutoTranslateText(
               label,
               style: MyTextTheme.smallBCB.copyWith(
-                color: "#6F221E".toColor().withOpacity(0.7),
+                color: "#6F221E".toColor().withValues(alpha: 0.7),
                 fontWeight: FontWeight.w500,
                 fontSize: 9.sp,
               ),

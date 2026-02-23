@@ -23,33 +23,21 @@ class _CalibrationHintState extends State<CalibrationHint>
   @override
   void initState() {
     super.initState();
-    
+
     _controller = AnimationController(
       duration: const Duration(seconds: 4), // Slower, more spiritual
       vsync: this,
     )..repeat();
-    
+
     _rotationAnimation = Tween<double>(
       begin: 0.0,
       end: 2 * 3.14159, // Full rotation
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
-    
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
     _opacityAnimation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 0.4, end: 0.8),
-        weight: 1,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 0.8, end: 0.4),
-        weight: 1,
-      ),
-    ]).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+      TweenSequenceItem(tween: Tween<double>(begin: 0.4, end: 0.8), weight: 1),
+      TweenSequenceItem(tween: Tween<double>(begin: 0.8, end: 0.4), weight: 1),
+    ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -68,11 +56,11 @@ class _CalibrationHintState extends State<CalibrationHint>
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
             decoration: BoxDecoration(
-              color: "#F38B3B".toColor().withOpacity(0.9),
+              color: "#F38B3B".toColor().withValues(alpha: 0.9),
               borderRadius: BorderRadius.circular(20.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -96,9 +84,9 @@ class _CalibrationHintState extends State<CalibrationHint>
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.left,
-                    style: MyTextTheme.smallBCN.copyWith(
-                      color: '#ffffff'.toColor(),
-                    ).merge(AppTypography.body2),
+                    style: MyTextTheme.smallBCN
+                        .copyWith(color: '#ffffff'.toColor())
+                        .merge(AppTypography.body2),
                   ),
                 ),
               ],
@@ -109,4 +97,3 @@ class _CalibrationHintState extends State<CalibrationHint>
     );
   }
 }
-

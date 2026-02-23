@@ -31,12 +31,10 @@ class _ScannerOverlayState extends State<ScannerOverlay>
       vsync: this,
     );
 
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeInOut,
-      ),
-    );
+    _animation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     if (widget.isScanning) {
       _controller.repeat(reverse: true);
@@ -86,12 +84,12 @@ class _ScannerOverlayState extends State<ScannerOverlay>
               ),
               boxShadow: [
                 BoxShadow(
-                  color: widget.scannerColor.withOpacity(0.8),
+                  color: widget.scannerColor.withValues(alpha: 0.8),
                   blurRadius: 15,
                   spreadRadius: 2,
                 ),
                 BoxShadow(
-                  color: widget.scannerColor.withOpacity(0.4),
+                  color: widget.scannerColor.withValues(alpha: 0.4),
                   blurRadius: 30,
                   spreadRadius: 5,
                 ),
@@ -103,4 +101,3 @@ class _ScannerOverlayState extends State<ScannerOverlay>
     );
   }
 }
-

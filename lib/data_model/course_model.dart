@@ -87,7 +87,6 @@ class LectureModel {
         courseId = json['course']['_id'] as String? ?? '';
       }
     }
-
     return LectureModel(
       id: json['_id'] as String,
       title: json['title'] as String? ?? '',
@@ -164,7 +163,6 @@ class CourseDetailModel {
         }
       }
     }
-
     // Create course model with lecture IDs
     final courseJson = Map<String, dynamic>.from(courseData);
     courseJson['lectures'] = lectureIds; // Replace with IDs for CourseModel

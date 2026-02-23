@@ -111,7 +111,7 @@ class _LiveWebinarSessionViewContent extends StatelessWidget {
                           () => AutoTranslateText(
                             '${controller.webinar.value?.viewerStats?.totalViewers} watching',
                             style: MyTextTheme.smallBCN.copyWith(
-                              color: '#3E2723'.toColor().withOpacity(0.7),
+                              color: '#3E2723'.toColor().withValues(alpha: 0.7),
                             ),
                           ),
                         ),
@@ -291,7 +291,7 @@ class _LiveWebinarSessionViewContent extends StatelessWidget {
                   controller.remoteUid.value == 0) {
                 return Positioned.fill(
                   child: Container(
-                    color: Colors.black.withOpacity(0.6),
+                    color: Colors.black.withValues(alpha: 0.6),
                     child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -478,7 +478,7 @@ class _LiveWebinarSessionViewContent extends StatelessWidget {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(8.r),
                 border: Border.all(
-                  color: const Color(0xFFEAA92A).withOpacity(0.3),
+                  color: const Color(0xFFEAA92A).withValues(alpha: 0.3),
                 ),
               ),
               child: Column(
@@ -523,7 +523,7 @@ class _LiveWebinarSessionViewContent extends StatelessWidget {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             offset: const Offset(0, -4),
             blurRadius: 10,
           ),

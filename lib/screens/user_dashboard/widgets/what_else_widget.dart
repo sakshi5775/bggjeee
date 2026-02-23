@@ -232,7 +232,7 @@ class WhatElseWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: AppColors.deepOrange.withOpacity(0.3),
+              color: AppColors.deepOrange.withValues(alpha: 0.3),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),

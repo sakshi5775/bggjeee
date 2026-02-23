@@ -23,10 +23,12 @@ class PalmReadingAnimatedLinesView extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<PalmReadingAnimatedLinesView> createState() => _PalmReadingAnimatedLinesViewState();
+  State<PalmReadingAnimatedLinesView> createState() =>
+      _PalmReadingAnimatedLinesViewState();
 }
 
-class _PalmReadingAnimatedLinesViewState extends State<PalmReadingAnimatedLinesView>
+class _PalmReadingAnimatedLinesViewState
+    extends State<PalmReadingAnimatedLinesView>
     with TickerProviderStateMixin {
   late AnimationController _lifeLineController;
   late AnimationController _headLineController;
@@ -56,11 +58,11 @@ class _PalmReadingAnimatedLinesViewState extends State<PalmReadingAnimatedLinesV
 
   void _checkAvailableLines() {
     if (widget.readingData == null) return;
-    
+
     final categories = widget.readingData!.readings
         .map((r) => r.category.toUpperCase())
         .toList();
-    
+
     _hasLifeLine = categories.contains('LIFE_LINE');
     _hasHeadLine = categories.contains('HEAD_LINE');
     _hasFateLine = categories.contains('FATE_LINE');
@@ -235,7 +237,8 @@ class _PalmReadingAnimatedLinesViewState extends State<PalmReadingAnimatedLinesV
     // Prioritize user's selection over API's detection
     // If user selected a hand, use that; otherwise fall back to API's detection
     final bool isLeftHand;
-    if (widget.userSelectedHand != null && widget.userSelectedHand!.isNotEmpty) {
+    if (widget.userSelectedHand != null &&
+        widget.userSelectedHand!.isNotEmpty) {
       isLeftHand = widget.userSelectedHand!.toUpperCase() == 'LEFT';
     } else {
       // Fall back to API's detection if user didn't select
@@ -270,7 +273,8 @@ class _PalmReadingAnimatedLinesViewState extends State<PalmReadingAnimatedLinesV
 
 class AnimatedPalmLinesPainter extends CustomPainter {
   final PalmReadingData readingData;
-  final bool isLeftHand; // This now uses user's selection (prioritized in the widget)
+  final bool
+  isLeftHand; // This now uses user's selection (prioritized in the widget)
   final double lifeLineProgress;
   final double headLineProgress;
   final double fateLineProgress;
@@ -303,26 +307,26 @@ class AnimatedPalmLinesPainter extends CustomPainter {
 
     // Draw Life Line (light blue) - curved around thumb area
     if (lifeLineProgress > 0) {
-      linePaint.color = Colors.lightBlue.withOpacity(0.9);
+      linePaint.color = Colors.lightBlue.withValues(alpha: 0.9);
       linePaint.maskFilter = MaskFilter.blur(BlurStyle.normal, 2);
-      
+
       final lifeLine = Path();
-      final lifeStartX = isLeftHand 
-          ? handLeft + handWidth * 0.25 
+      final lifeStartX = isLeftHand
+          ? handLeft + handWidth * 0.25
           : handLeft + handWidth * 0.75;
       final lifeStartY = handTop + handHeight * 0.3;
-      final lifeMidX = isLeftHand 
-          ? handLeft + handWidth * 0.2 
+      final lifeMidX = isLeftHand
+          ? handLeft + handWidth * 0.2
           : handLeft + handWidth * 0.8;
       final lifeMidY = handTop + handHeight * 0.55;
-      final lifeEndX = isLeftHand 
-          ? handLeft + handWidth * 0.3 
+      final lifeEndX = isLeftHand
+          ? handLeft + handWidth * 0.3
           : handLeft + handWidth * 0.7;
       final lifeEndY = handTop + handHeight * 0.75;
-      
+
       lifeLine.moveTo(lifeStartX, lifeStartY);
       lifeLine.quadraticBezierTo(lifeMidX, lifeMidY, lifeEndX, lifeEndY);
-      
+
       // Animate the path
       final metrics = lifeLine.computeMetrics().first;
       final length = metrics.length;
@@ -332,17 +336,17 @@ class AnimatedPalmLinesPainter extends CustomPainter {
 
     // Draw Head Line (orange) - middle horizontal, across the palm
     if (headLineProgress > 0) {
-      linePaint.color = "#F38B3B".toColor().withOpacity(0.9);
+      linePaint.color = "#F38B3B".toColor().withValues(alpha: 0.9);
       linePaint.maskFilter = MaskFilter.blur(BlurStyle.normal, 2);
-      
+
       final headStartX = handLeft + handWidth * 0.2;
       final headEndX = handLeft + handWidth * 0.8;
       final headY = handTop + handHeight * 0.45;
-      
+
       final headLine = Path();
       headLine.moveTo(headStartX, headY);
       headLine.lineTo(headEndX, headY);
-      
+
       final metrics = headLine.computeMetrics().first;
       final length = metrics.length;
       final animatedPath = metrics.extractPath(0.0, length * headLineProgress);
@@ -351,17 +355,17 @@ class AnimatedPalmLinesPainter extends CustomPainter {
 
     // Draw Fate Line (purple) - vertical center of palm
     if (fateLineProgress > 0) {
-      linePaint.color = Colors.purple.withOpacity(0.9);
+      linePaint.color = Colors.purple.withValues(alpha: 0.9);
       linePaint.maskFilter = MaskFilter.blur(BlurStyle.normal, 2);
-      
+
       final fateX = handLeft + handWidth * 0.5;
       final fateStartY = handTop + handHeight * 0.2;
       final fateEndY = handTop + handHeight * 0.7;
-      
+
       final fateLine = Path();
       fateLine.moveTo(fateX, fateStartY);
       fateLine.lineTo(fateX, fateEndY);
-      
+
       final metrics = fateLine.computeMetrics().first;
       final length = metrics.length;
       final animatedPath = metrics.extractPath(0.0, length * fateLineProgress);
@@ -370,17 +374,17 @@ class AnimatedPalmLinesPainter extends CustomPainter {
 
     // Draw Heart Line (red) - top horizontal, across the palm below fingers
     if (heartLineProgress > 0) {
-      linePaint.color = Colors.red.withOpacity(0.9);
+      linePaint.color = Colors.red.withValues(alpha: 0.9);
       linePaint.maskFilter = MaskFilter.blur(BlurStyle.normal, 2);
-      
+
       final heartStartX = handLeft + handWidth * 0.15;
       final heartEndX = handLeft + handWidth * 0.85;
       final heartY = handTop + handHeight * 0.25;
-      
+
       final heartLine = Path();
       heartLine.moveTo(heartStartX, heartY);
       heartLine.lineTo(heartEndX, heartY);
-      
+
       final metrics = heartLine.computeMetrics().first;
       final length = metrics.length;
       final animatedPath = metrics.extractPath(0.0, length * heartLineProgress);
@@ -389,18 +393,18 @@ class AnimatedPalmLinesPainter extends CustomPainter {
 
     // Draw Sun Line (yellow/gold) - diagonal from base toward ring finger
     if (sunLineProgress > 0) {
-      linePaint.color = Colors.amber.withOpacity(0.9);
+      linePaint.color = Colors.amber.withValues(alpha: 0.9);
       linePaint.maskFilter = MaskFilter.blur(BlurStyle.normal, 2);
-      
+
       final sunStartX = handLeft + handWidth * 0.4;
       final sunStartY = handTop + handHeight * 0.6;
       final sunEndX = handLeft + handWidth * 0.6;
       final sunEndY = handTop + handHeight * 0.15;
-      
+
       final sunLine = Path();
       sunLine.moveTo(sunStartX, sunStartY);
       sunLine.lineTo(sunEndX, sunEndY);
-      
+
       final metrics = sunLine.computeMetrics().first;
       final length = metrics.length;
       final animatedPath = metrics.extractPath(0.0, length * sunLineProgress);
@@ -417,4 +421,3 @@ class AnimatedPalmLinesPainter extends CustomPainter {
         oldDelegate.sunLineProgress != sunLineProgress;
   }
 }
-

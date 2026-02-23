@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/order_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
 import 'package:get/get.dart';
@@ -58,7 +58,9 @@ class OrderDetailController extends BaseController {
         result = await _service.getOrderById(identifier);
       }
       result ??= await _service.getOrderByOrderNumber(identifier);
-      if (result == null && !_looksLikeObjectId(identifier) && _orderInternalId != null) {
+      if (result == null &&
+          !_looksLikeObjectId(identifier) &&
+          _orderInternalId != null) {
         result = await _service.getOrderById(_orderInternalId!);
       }
       if (result != null) {
@@ -84,10 +86,7 @@ class OrderDetailController extends BaseController {
   Future<void> _loadSupplementaryData() async {
     final id = order.value?.id;
     if (id == null) return;
-    await Future.wait([
-      _loadTracking(id),
-      _loadHistory(id),
-    ]);
+    await Future.wait([_loadTracking(id), _loadHistory(id)]);
   }
 
   Future<void> _loadTracking(String orderId) async {
@@ -135,7 +134,10 @@ class OrderDetailController extends BaseController {
         order.refresh();
         _hydrateMetaFromOrder(result);
         await _loadSupplementaryData();
-        showSuccessMessage(title: 'Order cancelled', message: 'Your order has been cancelled.');
+        showSuccessMessage(
+          title: 'Order cancelled',
+          message: 'Your order has been cancelled.',
+        );
       }
     } catch (e) {
       showErrorMessage(title: 'Cancel order', message: e.toString());
@@ -173,7 +175,9 @@ class OrderDetailController extends BaseController {
       'cancelled',
     ];
 
-    final completedUntil = fallbackStatuses.indexWhere((element) => element == currentStatus);
+    final completedUntil = fallbackStatuses.indexWhere(
+      (element) => element == currentStatus,
+    );
     timeline.clear();
     for (var index = 0; index < fallbackStatuses.length; index++) {
       final status = fallbackStatuses[index];
@@ -198,4 +202,3 @@ class OrderDetailController extends BaseController {
     return hexRegex.hasMatch(value);
   }
 }
-

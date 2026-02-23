@@ -1,5 +1,4 @@
-import 'package:astrobharataiuser/screens/courses/controllers/courses_controller.dart';
-import 'package:astrobharataiuser/screens/courses/widgets/course_type_bottom_sheet.dart';
+﻿import 'package:astrobharataiuser/screens/courses/widgets/learning_journey_dialog.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -7,67 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-/// Static metadata for each course level (labels / API key / display info).
-class _CourseStep {
-  final String label;
-  final String courseType;
-  final String duration;
-  final String price;
-  final IconData icon;
-  final bool isDark;
-
-  const _CourseStep({
-    required this.label,
-    required this.courseType,
-    required this.duration,
-    required this.price,
-    required this.icon,
-    this.isDark = false,
-  });
-}
-
-const _steps = <_CourseStep>[
-  _CourseStep(
-    label: 'Intro Course',
-    courseType: 'introcourse',
-    duration: '4 WEEKS',
-    price: '₹1,200+',
-    icon: Icons.school_outlined,
-  ),
-  _CourseStep(
-    label: 'Diploma Program',
-    courseType: 'diplomacourse',
-    duration: '8 WEEKS',
-    price: '₹4,999+',
-    icon: Icons.emoji_events_outlined,
-  ),
-  _CourseStep(
-    label: 'Bachelor Program',
-    courseType: 'bachelorcourse',
-    duration: '12 WEEKS',
-    price: '₹9,999+',
-    icon: Icons.workspace_premium_outlined,
-  ),
-  _CourseStep(
-    label: 'Master Program',
-    courseType: 'mastercourse',
-    duration: '16 WEEKS',
-    price: '₹19,999+',
-    icon: Icons.history_edu_outlined,
-  ),
-  _CourseStep(
-    label: 'Grand Master',
-    courseType: 'grandmaster',
-    duration: '24 WEEKS',
-    price: '₹39,999+',
-    icon: Icons.stars_outlined,
-    isDark: true,
-  ),
-];
-
-// ══════════════════════════════════════════════════
-// Section widget — fully stateless
-// ══════════════════════════════════════════════════
 class LearningJourneySection extends StatelessWidget {
   const LearningJourneySection({super.key});
 
@@ -76,43 +14,47 @@ class LearningJourneySection extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Section heading ──
-          Center(
-            child: Column(
-              children: [
-                AutoTranslateText(
-                  'Your Learning Journey',
-                  style: AppTypography.h2.copyWith(
-                    color: AppColors.textPrimary,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 6.h),
-                AutoTranslateText(
-                  'Tap any level to explore available courses',
-                  style: AppTypography.label.copyWith(
-                    color: Colors.grey.shade500,
-                  ),
-                ),
-              ],
+          AutoTranslateText(
+            'Your Learning Journey',
+            style: AppTypography.h2.copyWith(
+              color: AppColors.textPrimary,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 20.h),
-
-          // ── Horizontal scrollable steps ──
+          SizedBox(height: 24.h),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            clipBehavior: Clip.none,
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                for (int i = 0; i < _steps.length; i++) ...[
-                  _JourneyCard(step: _steps[i]),
-                  if (i < _steps.length - 1) _buildArrow(),
-                ],
+                _buildJourneyStep(
+                  'Intro Course',
+                  '4 WEEKS',
+                  '₹2,000 - ₹3,000',
+                  Icons.school_outlined,
+                ),
+                _buildArrow(),
+                _buildJourneyStep(
+                  'Diploma Program',
+                  '8 WEEKS',
+                  '₹4,999',
+                  Icons.emoji_events_outlined,
+                ),
+                _buildArrow(),
+                _buildJourneyStep(
+                  'Bachelor Program',
+                  '12 WEEKS',
+                  '₹9,999',
+                  Icons.workspace_premium_outlined,
+                ),
+                _buildArrow(),
+                _buildJourneyStep(
+                  'Master Program',
+                  '16 WEEKS',
+                  '₹19,999',
+                  Icons.history_edu_outlined,
+                ),
               ],
             ),
           ),
@@ -123,210 +65,222 @@ class LearningJourneySection extends StatelessWidget {
 
   Widget _buildArrow() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 6.w),
+      padding: EdgeInsets.symmetric(horizontal: 8.w),
       child: Icon(
-        Icons.arrow_forward_ios_rounded,
-        size: 14.w,
+        Icons.arrow_forward_ios,
+        size: 16.w,
         color: const Color(0xFFD68D3C),
       ),
     );
   }
-}
 
-// ══════════════════════════════════════════════════
-// Journey step card — fully stateless
-// Bounce scale is driven by CoursesController.bounceScaleMap via Obx.
-// ══════════════════════════════════════════════════
-class _JourneyCard extends StatelessWidget {
-  final _CourseStep step;
-  const _JourneyCard({required this.step});
-
-  Future<void> _onTap(CoursesController ctrl) async {
-    await ctrl.triggerBounce(step.courseType);
-    await showCourseTypeSheet(
-      courseType: step.courseType,
-      courseLabel: step.label,
-      icon: step.icon,
-      isDark: step.isDark,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final ctrl = Get.find<CoursesController>();
-
-    return Obx(() {
-      final scale = ctrl.bounceScaleMap[step.courseType] ?? 1.0;
-
-      return Transform.scale(
-        scale: scale,
-        child: GestureDetector(
-          onTap: () => _onTap(ctrl),
-          child: Container(
-            width: 148.w,
-            padding: EdgeInsets.all(14.w),
-            decoration: BoxDecoration(
-              gradient: step.isDark
-                  ? const LinearGradient(
-                      colors: [Color(0xFF4A1515), Color(0xFF2E0D0D)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    )
-                  : null,
-              color: step.isDark ? null : Colors.white,
-              borderRadius: BorderRadius.circular(18.r),
-              border: Border.all(
-                color: step.isDark
-                    ? const Color(0xFFD68D3C).withValues(alpha: 0.5)
-                    : const Color(0xFFD68D3C).withValues(alpha: 0.25),
-                width: step.isDark ? 1.5 : 1.0,
-              ),
-              boxShadow: [
-                if (step.isDark)
-                  BoxShadow(
-                    color: const Color(0xFF3E1212).withValues(alpha: 0.35),
-                    blurRadius: 16,
-                    offset: const Offset(0, 6),
-                  )
-                else
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.06),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // ── Icon circle ──
-                Container(
-                  padding: EdgeInsets.all(10.w),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: step.isDark
-                        ? const LinearGradient(
-                            colors: [Color(0xFFD68D3C), Color(0xFFFFCC80)],
-                          )
-                        : AppColors.orangeGradient,
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.deepOrange.withValues(alpha: 0.25),
-                        blurRadius: 8,
-                      ),
-                    ],
-                  ),
-                  child: Icon(step.icon, color: Colors.white, size: 22.w),
-                ),
-                SizedBox(height: 10.h),
-
-                // ── Title ──
-                SizedBox(
-                  height: 38.h,
-                  child: Center(
-                    child: AutoTranslateText(
-                      step.label,
-                      textAlign: TextAlign.center,
-                      style: AppTypography.body1.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                        color: step.isDark
-                            ? Colors.white
-                            : AppColors.textPrimary,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 8.h),
-
-                // ── Duration badge ──
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                  decoration: BoxDecoration(
-                    color: step.isDark
-                        ? const Color(0xFFFFCC80).withValues(alpha: 0.2)
-                        : const Color(0xFFEEEEEE),
-                    borderRadius: BorderRadius.circular(6.r),
-                  ),
-                  child: AutoTranslateText(
-                    step.duration,
-                    style: AppTypography.label.copyWith(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: step.isDark
-                          ? const Color(0xFFFFCC80)
-                          : const Color(0xFF666666),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 8.h),
-
-                // ── Price ──
-                AutoTranslateText(
-                  step.price,
-                  style: AppTypography.body2.copyWith(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    color: step.isDark
-                        ? const Color(0xFFFFCC80)
-                        : const Color(0xFFD68D3C),
-                  ),
-                ),
-                SizedBox(height: 10.h),
-
-                // ── "Learn More" button ──
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 7.h),
-                  decoration: BoxDecoration(
-                    gradient: step.isDark
-                        ? const LinearGradient(
-                            colors: [Color(0xFFFFCC80), Color(0xFFFFEEDD)],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          )
-                        : AppColors.orangeGradient,
-                    borderRadius: BorderRadius.circular(8.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.deepOrange.withValues(alpha: 0.2),
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      AutoTranslateText(
-                        'Learn More',
-                        textAlign: TextAlign.center,
-                        style: AppTypography.body2.copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 11.sp,
-                          color: step.isDark
-                              ? const Color(0xFF3E1212)
-                              : Colors.white,
-                        ),
-                      ),
-                      SizedBox(width: 4.w),
-                      Icon(
-                        Icons.arrow_forward_rounded,
-                        size: 12.w,
-                        color: step.isDark
-                            ? const Color(0xFF3E1212)
-                            : Colors.white,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+  Widget _buildJourneyStep(
+    String title,
+    String duration,
+    String price,
+    IconData icon, {
+    bool isPremium = false,
+  }) {
+    return Container(
+      width: 150.w,
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: isPremium ? const Color(0xFF3E1212) : Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(
+          color: const Color(0xFFD68D3C).withValues(alpha: 0.3),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            offset: const Offset(0, 4),
+            blurRadius: 10,
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          CircleAvatar(
+            backgroundColor: isPremium
+                ? Colors.white.withValues(alpha: 0.2)
+                : const Color(0xFFFFF6E5),
+            radius: 24.r,
+            child: Icon(
+              icon,
+              color: isPremium ? Colors.white : const Color(0xFFD68D3C),
+              size: 24.w,
             ),
           ),
-        ),
-      );
-    });
+          SizedBox(height: 12.h),
+          SizedBox(
+            height: 40.h, // Fixed height for 2 lines of text
+            child: Center(
+              child: AutoTranslateText(
+                title,
+                textAlign: TextAlign.center,
+                style: AppTypography.body1.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  color: isPremium ? Colors.white : AppColors.textPrimary,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+            decoration: BoxDecoration(
+              color: isPremium
+                  ? const Color(0xFFFFCC80)
+                  : const Color(0xFFEEEEEE),
+              borderRadius: BorderRadius.circular(4.r),
+            ),
+            child: AutoTranslateText(
+              duration,
+              style: AppTypography.label.copyWith(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: isPremium
+                    ? const Color(0xFF3E1212)
+                    : const Color(0xFF666666),
+              ),
+            ),
+          ),
+          SizedBox(height: 8.h),
+          AutoTranslateText(
+            price,
+            style: AppTypography.body2.copyWith(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: isPremium
+                  ? const Color(0xFFFFCC80)
+                  : const Color(0xFFD68D3C),
+            ),
+          ),
+          SizedBox(height: 12.h),
+          GestureDetector(
+            onTap: () {
+              if (title == 'Intro Course') {
+                Get.dialog(
+                  const LearningJourneyDialog(
+                    title: 'Intro Course',
+                    duration: '4 Weeks',
+                    description: 'Foundations & Awareness',
+                    whoItIsFor: 'Beginners, seekers, and curious learners',
+                    objective:
+                        'Build clarity, remove superstition, and introduce logic-based understanding',
+                    icon: Icons.school_outlined,
+                    whatYouWillLearn: [
+                      'Fundamentals of Core subject mastery (Astrology / Numerology / Vastu / Healing – as selected)',
+                      'Basic concepts of planets, numbers, directions, and human energy systems',
+                      'Logical explanation of remedies, gemstones, and spiritual practices',
+                      'Ethical awareness: what to do and what to avoid',
+                    ],
+                    learningOutcomes: [
+                      'Strong conceptual foundation',
+                      'Ability to understand consultations logically',
+                      'Confidence to move into professional learning paths',
+                    ],
+                  ),
+                );
+              } else if (title == 'Diploma Program') {
+                Get.dialog(
+                  const LearningJourneyDialog(
+                    title: 'Diploma Program',
+                    duration: '8 Weeks',
+                    description: 'Professional Entry Level',
+                    whoItIsFor: 'Aspiring practitioners and serious learners',
+                    objective: 'Enable structured practice with confidence',
+                    icon: Icons.emoji_events_outlined,
+                    whatYouWillLearn: [
+                      'Core subject mastery (Astrology / Numerology / Vastu / Healing – as selected)',
+                      'Practical tools: charts, grids, layouts, symbols, and indicators',
+                      'Introduction to KP logic, Lal Kitab actions, and validation methods',
+                      'Case studies and beginner-level consultation report writing',
+                    ],
+                    learningOutcomes: [
+                      'Entry-level professional competency',
+                      'Ability to conduct basic client consultations',
+                      'Industry-ready certification',
+                    ],
+                  ),
+                );
+              } else if (title == 'Bachelor Program') {
+                Get.dialog(
+                  const LearningJourneyDialog(
+                    title: 'Bachelor Program',
+                    duration: '12 Weeks',
+                    description: 'Career-Focused Specialist',
+                    whoItIsFor: 'Learners aiming for consulting as a career',
+                    objective: 'Develop depth, accuracy, and specialization',
+                    icon: Icons.workspace_premium_outlined,
+                    buttonText: 'Build Your Consulting Career',
+                    whatYouWillLearn: [
+                      'Advanced interpretation techniques and combinations',
+                      'Cross-validation (Astrology + Face Reading + Palmistry + Numerology)',
+                      'Event timing logic, predictive rules, and situational judgment',
+                      'Structured consultation workflows and ethical advisory practices',
+                    ],
+                    learningOutcomes: [
+                      'Specialist-level expertise',
+                      'Career-ready consulting skills',
+                      'Ability to deliver detailed professional-grade reports',
+                    ],
+                  ),
+                );
+              } else if (title == 'Master Program') {
+                Get.dialog(
+                  const LearningJourneyDialog(
+                    title: 'Master Program',
+                    duration: '16 Weeks',
+                    description: 'Expert, Researcher & Teacher',
+                    whoItIsFor: 'Experts, mentors, and future faculty members',
+                    objective: 'Create authority, mastery, and leadership',
+                    icon: Icons.history_edu_outlined,
+                    whatYouWillLearn: [
+                      'Rule-based mastery (KP Astrology, Lal Kitab, Nakshatra logic)',
+                      'Research-oriented analysis and advanced case audits',
+                      'Complex problem-solving (career, health, relationships, karmic patterns)',
+                      'Teaching methodology, mentoring skills, and faculty evaluation',
+                    ],
+                    learningOutcomes: [
+                      'Expert-level authority',
+                      'Eligibility for Astrobharatai Faculty Panel (post-evaluation)',
+                      'Leadership in consultation, research, and education',
+                    ],
+                  ),
+                );
+              }
+            },
+
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: 8.h),
+              decoration: BoxDecoration(
+                gradient: isPremium
+                    ? const LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Color(0xFFFFCC80), Color(0xFFFFEEDD)],
+                      )
+                    : AppColors.orangeGradient,
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: AutoTranslateText(
+                'Learn More',
+                textAlign: TextAlign.center,
+                style: AppTypography.body2.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12.sp,
+                  color: isPremium ? const Color(0xFF3E1212) : Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

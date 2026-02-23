@@ -79,7 +79,10 @@ class _NavtaraTabWidgetState extends State<NavtaraTabWidget> {
               decoration: BoxDecoration(
                 color: isSelected ? maroon : const Color(0xFFFDF3E6),
                 borderRadius: BorderRadius.circular(20.r),
-                border: Border.all(color: maroon.withOpacity(0.3), width: 0.8),
+                border: Border.all(
+                  color: maroon.withValues(alpha: 0.3),
+                  width: 0.8,
+                ),
               ),
               child: AutoTranslateText(
                 subTabs[index],
@@ -189,10 +192,10 @@ class _NavtaraTabWidgetState extends State<NavtaraTabWidget> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: maroon.withOpacity(0.1)),
+          border: Border.all(color: maroon.withValues(alpha: 0.1)),
           boxShadow: [
             BoxShadow(
-              color: maroon.withOpacity(0.05),
+              color: maroon.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -273,7 +276,7 @@ class _NavtaraTabWidgetState extends State<NavtaraTabWidget> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: maroon.withOpacity(0.1)),
+        border: Border.all(color: maroon.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -304,7 +307,7 @@ class _NavtaraTabWidgetState extends State<NavtaraTabWidget> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: maroon.withOpacity(0.1)),
+        border: Border.all(color: maroon.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -384,7 +387,7 @@ class _NavtaraTabWidgetState extends State<NavtaraTabWidget> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

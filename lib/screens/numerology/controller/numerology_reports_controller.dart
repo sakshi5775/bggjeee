@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/numerology/service/numerology_service.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -55,12 +55,14 @@ class NumerologyReportsController extends BaseController {
           if (refresh) {
             reports.clear();
           }
-          reports.addAll(dataList.map((e) {
-            if (e is Map) {
-              return Map<String, dynamic>.from(e);
-            }
-            return <String, dynamic>{};
-          }));
+          reports.addAll(
+            dataList.map((e) {
+              if (e is Map) {
+                return Map<String, dynamic>.from(e);
+              }
+              return <String, dynamic>{};
+            }),
+          );
         }
 
         if (pagination != null) {
@@ -74,7 +76,7 @@ class NumerologyReportsController extends BaseController {
         'Error',
         'Failed to load reports: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Get.theme.colorScheme.error.withOpacity(0.8),
+        backgroundColor: Get.theme.colorScheme.error.withValues(alpha: 0.8),
         colorText: Get.theme.colorScheme.onError,
       );
     } finally {
@@ -106,12 +108,14 @@ class NumerologyReportsController extends BaseController {
         }
 
         if (dataList.isNotEmpty) {
-          reports.addAll(dataList.map((e) {
-            if (e is Map) {
-              return Map<String, dynamic>.from(e);
-            }
-            return <String, dynamic>{};
-          }));
+          reports.addAll(
+            dataList.map((e) {
+              if (e is Map) {
+                return Map<String, dynamic>.from(e);
+              }
+              return <String, dynamic>{};
+            }),
+          );
         }
 
         if (pagination != null) {
@@ -129,7 +133,7 @@ class NumerologyReportsController extends BaseController {
         'Error',
         'Failed to load more reports: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Get.theme.colorScheme.error.withOpacity(0.8),
+        backgroundColor: Get.theme.colorScheme.error.withValues(alpha: 0.8),
         colorText: Get.theme.colorScheme.onError,
       );
     } finally {
@@ -145,27 +149,35 @@ class NumerologyReportsController extends BaseController {
       if (response != null) {
         final reportData = response;
         final reportType = reportData['reportType'] as String? ?? '';
-        
+
         // API response structure: data.response.response contains the actual data
         Map<String, dynamic>? actualResponseData;
         if (reportData['response'] != null) {
-          final responseWrapper = reportData['response'] as Map<String, dynamic>;
+          final responseWrapper =
+              reportData['response'] as Map<String, dynamic>;
           // The actual data is nested in response.response
-          actualResponseData = responseWrapper['response'] as Map<String, dynamic>?;
+          actualResponseData =
+              responseWrapper['response'] as Map<String, dynamic>?;
           // If not found, use the wrapper itself
           if (actualResponseData == null) {
             actualResponseData = responseWrapper;
           }
         }
-        
+
         // If still null, try to use reportData directly (but exclude metadata)
         if (actualResponseData == null) {
           actualResponseData = <String, dynamic>{};
           // Copy only the response-related fields, not metadata
           reportData.forEach((key, value) {
-            if (key != '_id' && key != 'userId' && key != 'reportType' && 
-                key != 'createdAt' && key != 'updatedAt' && key != '__v' && 
-                key != 'formattedCreatedAt' && key != 'id' && key != 'inputData') {
+            if (key != '_id' &&
+                key != 'userId' &&
+                key != 'reportType' &&
+                key != 'createdAt' &&
+                key != 'updatedAt' &&
+                key != '__v' &&
+                key != 'formattedCreatedAt' &&
+                key != 'id' &&
+                key != 'inputData') {
               actualResponseData![key] = value;
             }
           });
@@ -210,27 +222,30 @@ class NumerologyReportsController extends BaseController {
               break;
             case 'loshu_grid':
               // Navigate to Lo Shu Grid result
-              Get.toNamed('/loshu-grid-result', arguments: {
-                ...actualResponseData,
-                '_formData': reportData['inputData'],
-              });
+              Get.toNamed(
+                '/loshu-grid-result',
+                arguments: {
+                  ...actualResponseData,
+                  '_formData': reportData['inputData'],
+                },
+              );
               return;
             default:
               resultType = 'generic';
           }
 
           if (resultType.isNotEmpty) {
-            Get.toNamed('/numerology-result', arguments: {
-              'type': resultType,
-              'data': actualResponseData,
-            });
+            Get.toNamed(
+              '/numerology-result',
+              arguments: {'type': resultType, 'data': actualResponseData},
+            );
           }
         } else {
           Get.snackbar(
             'Error',
             'No data found in report',
             snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Get.theme.colorScheme.error.withOpacity(0.8),
+            backgroundColor: Get.theme.colorScheme.error.withValues(alpha: 0.8),
             colorText: Get.theme.colorScheme.onError,
           );
         }
@@ -239,7 +254,7 @@ class NumerologyReportsController extends BaseController {
           'Error',
           'Failed to load report details',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Get.theme.colorScheme.error.withOpacity(0.8),
+          backgroundColor: Get.theme.colorScheme.error.withValues(alpha: 0.8),
           colorText: Get.theme.colorScheme.onError,
         );
       }
@@ -248,7 +263,7 @@ class NumerologyReportsController extends BaseController {
         'Error',
         'An error occurred: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Get.theme.colorScheme.error.withOpacity(0.8),
+        backgroundColor: Get.theme.colorScheme.error.withValues(alpha: 0.8),
         colorText: Get.theme.colorScheme.onError,
       );
     }
@@ -272,4 +287,3 @@ class NumerologyReportsController extends BaseController {
     return names[reportType] ?? reportType;
   }
 }
-

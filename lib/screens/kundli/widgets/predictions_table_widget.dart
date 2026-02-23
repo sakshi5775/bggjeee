@@ -21,11 +21,15 @@ class PredictionsTableWidget extends StatelessWidget {
         children: [
           _buildSectionHeader('Life Predictions', Icons.auto_awesome),
           Spacing.h(8),
-          ...controller.predictionsTableData.take(6).map((row) => _buildRow(row)),
+          ...controller.predictionsTableData
+              .take(6)
+              .map((row) => _buildRow(row)),
           Spacing.h(14),
           _buildSectionHeader('Monthly Predictions', Icons.calendar_month),
           Spacing.h(8),
-          ...controller.predictionsTableData.skip(6).map((row) => _buildRow(row)),
+          ...controller.predictionsTableData
+              .skip(6)
+              .map((row) => _buildRow(row)),
         ],
       ),
     );
@@ -39,7 +43,7 @@ class PredictionsTableWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepOrange.withOpacity(0.2),
+            color: AppColors.deepOrange.withValues(alpha: 0.2),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -50,7 +54,7 @@ class PredictionsTableWidget extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(6.r),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.25),
+              color: Colors.white.withValues(alpha: 0.25),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: Colors.white, size: 18.w),
@@ -81,10 +85,21 @@ class PredictionsTableWidget extends StatelessWidget {
       padding: EdgeInsets.only(bottom: 8.h),
       child: Row(
         children: [
-          if (hasApiLeft) Expanded(child: _buildCard(leftText, () => controller.navigateToTab(leftText))),
+          if (hasApiLeft)
+            Expanded(
+              child: _buildCard(
+                leftText,
+                () => controller.navigateToTab(leftText),
+              ),
+            ),
           if (hasApiLeft && hasApiRight && rightText.isNotEmpty) Spacing.w(8),
           if (rightText.isNotEmpty && hasApiRight)
-            Expanded(child: _buildCard(rightText, () => controller.navigateToTab(rightText))),
+            Expanded(
+              child: _buildCard(
+                rightText,
+                () => controller.navigateToTab(rightText),
+              ),
+            ),
         ],
       ),
     );
@@ -99,7 +114,10 @@ class PredictionsTableWidget extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.cardLight,
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: AppColors.deepOrange.withOpacity(0.35), width: 1),
+          border: Border.all(
+            color: AppColors.deepOrange.withValues(alpha: 0.35),
+            width: 1,
+          ),
           boxShadow: [
             BoxShadow(
               color: AppColors.shadowLight,
@@ -117,7 +135,7 @@ class PredictionsTableWidget extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.deepOrange.withOpacity(0.2),
+                    color: AppColors.deepOrange.withValues(alpha: 0.2),
                     blurRadius: 3,
                     offset: const Offset(0, 1),
                   ),
@@ -136,7 +154,11 @@ class PredictionsTableWidget extends StatelessWidget {
                 ),
               ),
             ),
-            Icon(Icons.arrow_forward_ios, color: AppColors.deepOrange, size: 12.w),
+            Icon(
+              Icons.arrow_forward_ios,
+              color: AppColors.deepOrange,
+              size: 12.w,
+            ),
           ],
         ),
       ),

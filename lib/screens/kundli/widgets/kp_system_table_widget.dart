@@ -35,7 +35,7 @@ class KpSystemTableWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepOrange.withOpacity(0.2),
+            color: AppColors.deepOrange.withValues(alpha: 0.2),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -46,7 +46,7 @@ class KpSystemTableWidget extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(6.r),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.25),
+              color: Colors.white.withValues(alpha: 0.25),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: Colors.white, size: 18.w),
@@ -91,7 +91,10 @@ class KpSystemTableWidget extends StatelessWidget {
           if (rightText.isNotEmpty && hasApiRight)
             Expanded(
               child: _buildCard(
-                  rightText, hasApiRight, () => controller.navigateToTab(rightText)),
+                rightText,
+                hasApiRight,
+                () => controller.navigateToTab(rightText),
+              ),
             ),
         ],
       ),
@@ -108,7 +111,9 @@ class KpSystemTableWidget extends StatelessWidget {
           color: AppColors.cardLight,
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-              color: AppColors.deepOrange.withOpacity(0.35), width: 1),
+            color: AppColors.deepOrange.withValues(alpha: 0.35),
+            width: 1,
+          ),
           boxShadow: [
             BoxShadow(
               color: AppColors.shadowLight,
@@ -123,23 +128,19 @@ class KpSystemTableWidget extends StatelessWidget {
               padding: EdgeInsets.all(6.r),
               decoration: BoxDecoration(
                 gradient: hasApi ? AppColors.orangeGradient : null,
-                color: hasApi ? null : Colors.grey.withOpacity(0.3),
+                color: hasApi ? null : Colors.grey.withValues(alpha: 0.3),
                 shape: BoxShape.circle,
                 boxShadow: hasApi
                     ? [
                         BoxShadow(
-                          color: AppColors.deepOrange.withOpacity(0.2),
+                          color: AppColors.deepOrange.withValues(alpha: 0.2),
                           blurRadius: 3,
                           offset: const Offset(0, 1),
                         ),
                       ]
                     : null,
               ),
-              child: Icon(
-                Icons.grid_view,
-                color: Colors.white,
-                size: 14.w,
-              ),
+              child: Icon(Icons.grid_view, color: Colors.white, size: 14.w),
             ),
             Spacing.w(12),
             Expanded(
@@ -160,7 +161,7 @@ class KpSystemTableWidget extends StatelessWidget {
                     AutoTranslateText(
                       'Coming Soon',
                       style: MyTextTheme.smallBCN.copyWith(
-                        color: AppColors.textPrimary.withOpacity(0.6),
+                        color: AppColors.textPrimary.withValues(alpha: 0.6),
                         fontSize: 10.sp,
                       ),
                     ),
@@ -169,8 +170,11 @@ class KpSystemTableWidget extends StatelessWidget {
               ),
             ),
             if (hasApi)
-              Icon(Icons.arrow_forward_ios,
-                  color: AppColors.deepOrange, size: 12.w),
+              Icon(
+                Icons.arrow_forward_ios,
+                color: AppColors.deepOrange,
+                size: 12.w,
+              ),
           ],
         ),
       ),

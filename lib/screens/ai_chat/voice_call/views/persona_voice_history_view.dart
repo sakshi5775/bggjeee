@@ -210,7 +210,7 @@ class PersonaVoiceHistoryView extends StatelessWidget {
               border: Border.all(color: const Color(0xFFE0E0E0)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
+                  color: Colors.black.withValues(alpha: 0.04),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -225,7 +225,7 @@ class PersonaVoiceHistoryView extends StatelessWidget {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: '#F38B3B'.toColor().withOpacity(0.3),
+                        color: '#F38B3B'.toColor().withValues(alpha: 0.3),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),

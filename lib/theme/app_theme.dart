@@ -1,5 +1,3 @@
-
-
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -34,9 +32,7 @@ class AppTheme {
       foregroundColor: AppColors.textLight,
       systemOverlayStyle: SystemUiOverlayStyle.light,
       iconTheme: const IconThemeData(color: AppColors.textLight, size: 24),
-      titleTextStyle: AppTypography.h2.copyWith(
-        color: AppColors.textLight,
-      ),
+      titleTextStyle: AppTypography.h2.copyWith(color: AppColors.textLight),
     ),
 
     // Card Theme
@@ -56,9 +52,7 @@ class AppTheme {
         foregroundColor: AppColors.textLight,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        textStyle: AppTypography.h2.copyWith(
-          color: AppColors.textLight,
-        ),
+        textStyle: AppTypography.h2.copyWith(color: AppColors.textLight),
       ),
     ),
 
@@ -69,9 +63,7 @@ class AppTheme {
         side: const BorderSide(color: AppColors.saffron, width: 2),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        textStyle: AppTypography.h2.copyWith(
-          color: AppColors.textLight,
-        ),
+        textStyle: AppTypography.h2.copyWith(color: AppColors.textLight),
       ),
     ),
 
@@ -175,9 +167,7 @@ class AppTheme {
       backgroundColor: AppColors.cardLight,
       elevation: 8,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      titleTextStyle: AppTypography.h2.copyWith(
-        color: AppColors.textPrimary,
-      ),
+      titleTextStyle: AppTypography.h2.copyWith(color: AppColors.textPrimary),
       contentTextStyle: AppTypography.body1.copyWith(
         color: AppColors.textSecondary,
       ),
@@ -220,7 +210,7 @@ class AppTheme {
       }),
       trackColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
-          return AppColors.saffron.withOpacity(0.5);
+          return AppColors.saffron.withValues(alpha: 0.5);
         }
         return AppColors.dividerLight;
       }),
@@ -314,8 +304,6 @@ class AppTheme {
     boxShadow: cardShadowLight,
   );
 
- 
-
   // Dark Theme
   static ThemeData darkTheme = ThemeData(
     useMaterial3: true,
@@ -342,9 +330,7 @@ class AppTheme {
       foregroundColor: AppColors.textLight,
       systemOverlayStyle: SystemUiOverlayStyle.light,
       iconTheme: const IconThemeData(color: AppColors.textLight, size: 24),
-      titleTextStyle: AppTypography.h2.copyWith(
-        color: AppColors.textLight,
-      ),
+      titleTextStyle: AppTypography.h2.copyWith(color: AppColors.textLight),
     ),
 
     // Card Theme
@@ -364,9 +350,7 @@ class AppTheme {
         foregroundColor: AppColors.textLight,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        textStyle: AppTypography.h2.copyWith(
-          color: AppColors.textLight,
-        ),
+        textStyle: AppTypography.h2.copyWith(color: AppColors.textLight),
       ),
     ),
 
@@ -377,9 +361,7 @@ class AppTheme {
         side: const BorderSide(color: AppColors.saffron, width: 2),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        textStyle: AppTypography.h2.copyWith(
-          color: AppColors.textLight,
-        ),
+        textStyle: AppTypography.h2.copyWith(color: AppColors.textLight),
       ),
     ),
 
@@ -400,7 +382,7 @@ class AppTheme {
     iconButtonTheme: IconButtonThemeData(
       style: IconButton.styleFrom(
         foregroundColor: AppColors.saffron,
-        highlightColor: AppColors.saffron.withOpacity(0.1),
+        highlightColor: AppColors.saffron.withValues(alpha: 0.1),
       ),
     ),
 
@@ -442,7 +424,7 @@ class AppTheme {
       disabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(
-          color: AppColors.dividerDark.withOpacity(0.5),
+          color: AppColors.dividerDark.withValues(alpha: 0.5),
           width: 1.5,
         ),
       ),
@@ -485,7 +467,7 @@ class AppTheme {
     // Navigation Bar Theme (Material 3)
     navigationBarTheme: NavigationBarThemeData(
       backgroundColor: AppColors.cardDark,
-      indicatorColor: AppColors.saffron.withOpacity(0.2),
+      indicatorColor: AppColors.saffron.withValues(alpha: 0.2),
       elevation: 8,
       labelTextStyle: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
@@ -573,9 +555,7 @@ class AppTheme {
       backgroundColor: AppColors.cardDark,
       elevation: 8,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      titleTextStyle: AppTypography.h2.copyWith(
-        color: AppColors.textLight,
-      ),
+      titleTextStyle: AppTypography.h2.copyWith(color: AppColors.textLight),
       contentTextStyle: AppTypography.body1.copyWith(
         color: AppColors.textLight,
       ),
@@ -650,15 +630,15 @@ class AppTheme {
       }),
       trackColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
-          return AppColors.saffron.withOpacity(0.5);
+          return AppColors.saffron.withValues(alpha: 0.5);
         }
         return AppColors.dividerDark;
       }),
       overlayColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
-          return AppColors.saffron.withOpacity(0.2);
+          return AppColors.saffron.withValues(alpha: 0.2);
         }
-        return AppColors.textSecondary.withOpacity(0.2);
+        return AppColors.textSecondary.withValues(alpha: 0.2);
       }),
     ),
 
@@ -673,9 +653,9 @@ class AppTheme {
       checkColor: WidgetStateProperty.all(AppColors.textLight),
       overlayColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
-          return AppColors.saffron.withOpacity(0.2);
+          return AppColors.saffron.withValues(alpha: 0.2);
         }
-        return AppColors.textSecondary.withOpacity(0.2);
+        return AppColors.textSecondary.withValues(alpha: 0.2);
       }),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
     ),
@@ -690,9 +670,9 @@ class AppTheme {
       }),
       overlayColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
-          return AppColors.saffron.withOpacity(0.2);
+          return AppColors.saffron.withValues(alpha: 0.2);
         }
-        return AppColors.textSecondary.withOpacity(0.2);
+        return AppColors.textSecondary.withValues(alpha: 0.2);
       }),
     ),
 
@@ -763,7 +743,7 @@ class AppTheme {
     // AutoTranslateText Selection Theme
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: AppColors.saffron,
-      selectionColor: AppColors.saffron.withOpacity(0.3),
+      selectionColor: AppColors.saffron.withValues(alpha: 0.3),
       selectionHandleColor: AppColors.saffron,
     ),
 
@@ -859,7 +839,7 @@ class AppTheme {
 
   static List<BoxShadow> get elevatedShadowDark => [
     BoxShadow(
-      color: Colors.black.withOpacity(0.6),
+      color: Colors.black.withValues(alpha: 0.6),
       blurRadius: 20,
       offset: const Offset(0, 6),
     ),
@@ -890,8 +870,6 @@ class AppTheme {
     boxShadow: cardShadowDark,
   );
 
-  
-
   // Duration constants for animations
   static const Duration shortDuration = Duration(milliseconds: 200);
   static const Duration mediumDuration = Duration(milliseconds: 300);
@@ -899,23 +877,18 @@ class AppTheme {
   static const Duration extraLongDuration = Duration(milliseconds: 800);
 
   // Custom TextStyles for special use cases - Using App Typography
-  static TextStyle get goldHeadline => AppTypography.h1.copyWith(
-    color: AppColors.goldenYellow,
-  );
+  static TextStyle get goldHeadline =>
+      AppTypography.h1.copyWith(color: AppColors.goldenYellow);
 
-  static TextStyle get saffronTitle => AppTypography.h2.copyWith(
-    color: AppColors.saffron,
-  );
+  static TextStyle get saffronTitle =>
+      AppTypography.h2.copyWith(color: AppColors.saffron);
 
-  static TextStyle get sacredText => AppTypography.body1.copyWith(
-    color: AppColors.sacredRed,
-  );
+  static TextStyle get sacredText =>
+      AppTypography.body1.copyWith(color: AppColors.sacredRed);
 
-  static TextStyle get whiteHeadline => AppTypography.h1.copyWith(
-    color: AppColors.textLight,
-  );
+  static TextStyle get whiteHeadline =>
+      AppTypography.h1.copyWith(color: AppColors.textLight);
 
-  static TextStyle get subtleText => AppTypography.body1.copyWith(
-    color: AppColors.textSecondary,
-  );
+  static TextStyle get subtleText =>
+      AppTypography.body1.copyWith(color: AppColors.textSecondary);
 }

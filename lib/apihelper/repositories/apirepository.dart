@@ -17,6 +17,8 @@ class ApiRepository {
     T Function(dynamic)? decoder,
     bool useAuthHeader = true,
     Duration? timeout,
+    bool useCache = true,
+    int? maxCacheAge,
   }) async {
     return await apiClient.getApi<T>(
       endPoint,
@@ -25,6 +27,8 @@ class ApiRepository {
       decoder: decoder,
       useAuthHeader: useAuthHeader,
       timeout: timeout,
+      useCache: useCache,
+      maxCacheAge: maxCacheAge,
     );
   }
 

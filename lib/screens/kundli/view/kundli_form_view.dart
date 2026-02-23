@@ -1,5 +1,5 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/kundli_form_controller.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
@@ -42,17 +42,17 @@ class KundliFormView extends BasePage<KundliFormController> {
       color: Colors.white,
       borderRadius: BorderRadius.circular(16.r),
       border: Border.all(
-        color: AppColors.deepOrange.withOpacity(0.2),
+        color: AppColors.deepOrange.withValues(alpha: 0.2),
         width: 1.5,
       ),
       boxShadow: [
         BoxShadow(
-          color: AppColors.deepOrange.withOpacity(0.08),
+          color: AppColors.deepOrange.withValues(alpha: 0.08),
           blurRadius: 16,
           offset: const Offset(0, 4),
         ),
         BoxShadow(
-          color: Colors.black.withOpacity(0.04),
+          color: Colors.black.withValues(alpha: 0.04),
           blurRadius: 8,
           offset: const Offset(0, 2),
         ),
@@ -70,7 +70,7 @@ class KundliFormView extends BasePage<KundliFormController> {
       contentPadding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 14.w),
       hintText: hint,
       hintStyle: MyTextTheme.smallBCN.copyWith(
-        color: AppColors.textSecondary.withOpacity(0.6),
+        color: AppColors.textSecondary.withValues(alpha: 0.6),
         fontSize: 13.sp,
       ),
       prefixIcon: Padding(
@@ -80,11 +80,15 @@ class KundliFormView extends BasePage<KundliFormController> {
       suffixIcon: suffix,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(color: AppColors.deepOrange.withOpacity(0.2)),
+        borderSide: BorderSide(
+          color: AppColors.deepOrange.withValues(alpha: 0.2),
+        ),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(color: AppColors.deepOrange.withOpacity(0.2)),
+        borderSide: BorderSide(
+          color: AppColors.deepOrange.withValues(alpha: 0.2),
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
@@ -159,7 +163,7 @@ class KundliFormView extends BasePage<KundliFormController> {
             child: AutoTranslateText(
               'Accurate birth time improves Kundli accuracy.',
               style: MyTextTheme.smallBCN.copyWith(
-                color: AppColors.textSecondary.withOpacity(0.7),
+                color: AppColors.textSecondary.withValues(alpha: 0.7),
                 fontSize: 11.sp,
               ),
             ),
@@ -195,10 +199,12 @@ class KundliFormView extends BasePage<KundliFormController> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12.r),
-            border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
+            border: Border.all(
+              color: AppColors.deepOrange.withValues(alpha: 0.2),
+            ),
             boxShadow: [
               BoxShadow(
-                color: AppColors.deepOrange.withOpacity(0.05),
+                color: AppColors.deepOrange.withValues(alpha: 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -240,10 +246,10 @@ class KundliFormView extends BasePage<KundliFormController> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
+        border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepOrange.withOpacity(0.05),
+            color: AppColors.deepOrange.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -280,10 +286,12 @@ class KundliFormView extends BasePage<KundliFormController> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
+          border: Border.all(
+            color: AppColors.deepOrange.withValues(alpha: 0.2),
+          ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.deepOrange.withOpacity(0.05),
+              color: AppColors.deepOrange.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -391,10 +399,10 @@ class KundliFormView extends BasePage<KundliFormController> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
+        border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepOrange.withOpacity(0.05),
+            color: AppColors.deepOrange.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -405,7 +413,7 @@ class KundliFormView extends BasePage<KundliFormController> {
         hint: AutoTranslateText(
           hint,
           style: MyTextTheme.smallBCN.copyWith(
-            color: AppColors.textSecondary.withOpacity(0.6),
+            color: AppColors.textSecondary.withValues(alpha: 0.6),
             fontSize: 13.sp,
           ),
         ),
@@ -435,13 +443,13 @@ class KundliFormView extends BasePage<KundliFormController> {
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: AppColors.deepOrange.withOpacity(0.4),
+              color: AppColors.deepOrange.withValues(alpha: 0.4),
               blurRadius: 20,
               offset: const Offset(0, 8),
               spreadRadius: 0,
             ),
             BoxShadow(
-              color: AppColors.deepOrange.withOpacity(0.2),
+              color: AppColors.deepOrange.withValues(alpha: 0.2),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -465,8 +473,8 @@ class KundliFormView extends BasePage<KundliFormController> {
               gradient: controller.isLoading.value
                   ? LinearGradient(
                       colors: [
-                        AppColors.deepOrange.withOpacity(0.5),
-                        AppColors.templeGold.withOpacity(0.5),
+                        AppColors.deepOrange.withValues(alpha: 0.5),
+                        AppColors.templeGold.withValues(alpha: 0.5),
                       ],
                     )
                   : AppColors.orangeGradient,
@@ -575,7 +583,7 @@ class KundliFormView extends BasePage<KundliFormController> {
   //       borderRadius: BorderRadius.circular(12.r),
   //       boxShadow: [
   //         BoxShadow(
-  //           color: Colors.black.withOpacity(0.05),
+  //           color: Colors.black.withValues(alpha: 0.05),
   //           blurRadius: 8,
   //           offset: const Offset(0, 2),
   //         ),
@@ -589,7 +597,7 @@ class KundliFormView extends BasePage<KundliFormController> {
   //       decoration: InputDecoration(
   //         labelText: label,
   //         labelStyle: MyTextTheme.smallBCN.copyWith(
-  //           color: '#3E2723'.toColor().withOpacity(0.6),
+  //           color: '#3E2723'.toColor().withValues(alpha: 0.6),
   //         ),
   //         prefixIcon: Container(
   //           padding: EdgeInsets.all(12.w),
@@ -602,7 +610,7 @@ class KundliFormView extends BasePage<KundliFormController> {
   //         enabledBorder: OutlineInputBorder(
   //           borderRadius: BorderRadius.circular(12.r),
   //           borderSide: BorderSide(
-  //             color: '#F5D7B8'.toColor().withOpacity(0.5),
+  //             color: '#F5D7B8'.toColor().withValues(alpha: 0.5),
   //             width: 1,
   //           ),
   //         ),
@@ -624,7 +632,7 @@ class KundliFormView extends BasePage<KundliFormController> {
   //       borderRadius: BorderRadius.circular(12.r),
   //       boxShadow: [
   //         BoxShadow(
-  //           color: Colors.black.withOpacity(0.05),
+  //           color: Colors.black.withValues(alpha: 0.05),
   //           blurRadius: 8,
   //           offset: const Offset(0, 2),
   //         ),
@@ -636,7 +644,7 @@ class KundliFormView extends BasePage<KundliFormController> {
   //         decoration: InputDecoration(
   //           labelText: 'Gender',
   //           labelStyle: MyTextTheme.smallBCN.copyWith(
-  //             color: '#3E2723'.toColor().withOpacity(0.6),
+  //             color: '#3E2723'.toColor().withValues(alpha: 0.6),
   //           ),
   //           prefixIcon: Icon(
   //             Icons.person_outline,
@@ -650,7 +658,7 @@ class KundliFormView extends BasePage<KundliFormController> {
   //           enabledBorder: OutlineInputBorder(
   //             borderRadius: BorderRadius.circular(12.r),
   //             borderSide: BorderSide(
-  //               color: '#F5D7B8'.toColor().withOpacity(0.5),
+  //               color: '#F5D7B8'.toColor().withValues(alpha: 0.5),
   //               width: 1,
   //             ),
   //           ),
@@ -689,7 +697,7 @@ class KundliFormView extends BasePage<KundliFormController> {
   //       borderRadius: BorderRadius.circular(12.r),
   //       boxShadow: [
   //         BoxShadow(
-  //           color: Colors.black.withOpacity(0.05),
+  //           color: Colors.black.withValues(alpha: 0.05),
   //           blurRadius: 8,
   //           offset: const Offset(0, 2),
   //         ),
@@ -701,7 +709,7 @@ class KundliFormView extends BasePage<KundliFormController> {
   //         decoration: InputDecoration(
   //           labelText: 'Chart style (north, south, east)',
   //           labelStyle: MyTextTheme.smallBCN.copyWith(
-  //             color: '#3E2723'.toColor().withOpacity(0.6),
+  //             color: '#3E2723'.toColor().withValues(alpha: 0.6),
   //           ),
   //           prefixIcon: Icon(
   //             Icons.style,
@@ -715,7 +723,7 @@ class KundliFormView extends BasePage<KundliFormController> {
   //           enabledBorder: OutlineInputBorder(
   //             borderRadius: BorderRadius.circular(12.r),
   //             borderSide: BorderSide(
-  //               color: '#F5D7B8'.toColor().withOpacity(0.5),
+  //               color: '#F5D7B8'.toColor().withValues(alpha: 0.5),
   //               width: 1,
   //             ),
   //           ),
@@ -754,7 +762,7 @@ class KundliFormView extends BasePage<KundliFormController> {
   //       borderRadius: BorderRadius.circular(12.r),
   //       boxShadow: [
   //         BoxShadow(
-  //           color: Colors.black.withOpacity(0.05),
+  //           color: Colors.black.withValues(alpha: 0.05),
   //           blurRadius: 8,
   //           offset: const Offset(0, 2),
   //         ),
@@ -766,7 +774,7 @@ class KundliFormView extends BasePage<KundliFormController> {
   //         decoration: InputDecoration(
   //           labelText: 'Send true for colored font',
   //           labelStyle: MyTextTheme.smallBCN.copyWith(
-  //             color: '#3E2723'.toColor().withOpacity(0.6),
+  //             color: '#3E2723'.toColor().withValues(alpha: 0.6),
   //           ),
   //           prefixIcon: Icon(
   //             Icons.palette,
@@ -780,7 +788,7 @@ class KundliFormView extends BasePage<KundliFormController> {
   //           enabledBorder: OutlineInputBorder(
   //             borderRadius: BorderRadius.circular(12.r),
   //             borderSide: BorderSide(
-  //               color: '#F5D7B8'.toColor().withOpacity(0.5),
+  //               color: '#F5D7B8'.toColor().withValues(alpha: 0.5),
   //               width: 1,
   //             ),
   //           ),
@@ -856,7 +864,7 @@ class KundliFormView extends BasePage<KundliFormController> {
   //       borderRadius: BorderRadius.circular(12.r),
   //       boxShadow: [
   //         BoxShadow(
-  //           color: Colors.black.withOpacity(0.05),
+  //           color: Colors.black.withValues(alpha: 0.05),
   //           blurRadius: 8,
   //           offset: const Offset(0, 2),
   //         ),
@@ -868,7 +876,7 @@ class KundliFormView extends BasePage<KundliFormController> {
   //         decoration: InputDecoration(
   //           labelText: 'Language code',
   //           labelStyle: MyTextTheme.smallBCN.copyWith(
-  //             color: '#3E2723'.toColor().withOpacity(0.6),
+  //             color: '#3E2723'.toColor().withValues(alpha: 0.6),
   //           ),
   //           prefixIcon: Icon(
   //             Icons.language,
@@ -882,7 +890,7 @@ class KundliFormView extends BasePage<KundliFormController> {
   //           enabledBorder: OutlineInputBorder(
   //             borderRadius: BorderRadius.circular(12.r),
   //             borderSide: BorderSide(
-  //               color: '#F5D7B8'.toColor().withOpacity(0.5),
+  //               color: '#F5D7B8'.toColor().withValues(alpha: 0.5),
   //               width: 1,
   //             ),
   //           ),
@@ -913,3 +921,4 @@ class KundliFormView extends BasePage<KundliFormController> {
   //     ),
   //   );
   // }
+

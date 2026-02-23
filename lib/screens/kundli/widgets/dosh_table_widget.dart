@@ -23,10 +23,10 @@ class DoshTableWidget extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.cardLight,
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: _maroon.withOpacity(0.2), width: 1),
+          border: Border.all(color: _maroon.withValues(alpha: 0.2), width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -37,7 +37,7 @@ class DoshTableWidget extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
               decoration: BoxDecoration(
-                color: _orange.withOpacity(0.1),
+                color: _orange.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(12.r),
                   topRight: Radius.circular(12.r),
@@ -96,7 +96,7 @@ class DoshTableWidget extends StatelessWidget {
                       bottom: BorderSide(
                         color: isLast
                             ? Colors.transparent
-                            : _maroon.withOpacity(0.15),
+                            : _maroon.withValues(alpha: 0.15),
                         width: 1,
                       ),
                     ),

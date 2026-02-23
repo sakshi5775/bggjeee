@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:open_file/open_file.dart';
+import 'package:http/http.dart' as http;
 
 class ReportPdfView extends StatefulWidget {
   const ReportPdfView({super.key});
@@ -20,21 +21,54 @@ class ReportPdfView extends StatefulWidget {
 }
 
 class _ReportPdfViewState extends State<ReportPdfView> {
-  late Uint8List pdfBytes;
+  Uint8List? pdfBytes;
   late String fileName;
   late String title;
   bool _isDownloading = false;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _initPdf();
+  }
+
+  Future<void> _initPdf() async {
     final args = Get.arguments as Map<String, dynamic>;
-    pdfBytes = args['bytes'] as Uint8List;
     fileName = args['fileName'] as String? ?? 'report.pdf';
     title = args['title'] as String? ?? 'Astrology Report';
+
+    if (args['bytes'] != null) {
+      pdfBytes = args['bytes'] as Uint8List;
+      setState(() => _isLoading = false);
+    } else if (args['pdfUrl'] != null) {
+      await _fetchPdfFromUrl(args['pdfUrl'] as String);
+    } else {
+      ErrorUiUtils.showWarningSnackbar("No PDF data found.");
+      setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _fetchPdfFromUrl(String url) async {
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        setState(() {
+          pdfBytes = response.bodyBytes;
+          _isLoading = false;
+        });
+      } else {
+        throw Exception("Failed to load PDF: ${response.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("Error fetching PDF: $e");
+      ErrorUiUtils.showWarningSnackbar("Failed to load PDF.");
+      setState(() => _isLoading = false);
+    }
   }
 
   Future<void> _downloadToDevice() async {
+    if (pdfBytes == null) return;
     setState(() => _isDownloading = true);
     try {
       bool granted = await PermissionService.requestStoragePermission();
@@ -46,7 +80,7 @@ class _ReportPdfViewState extends State<ReportPdfView> {
       }
 
       final file = await PdfGeneratorService.downloadPdf(
-        pdfBytes: pdfBytes,
+        pdfBytes: pdfBytes!,
         fileName: fileName,
       );
 
@@ -69,7 +103,7 @@ class _ReportPdfViewState extends State<ReportPdfView> {
         snackPosition: SnackPosition.BOTTOM,
         boxShadows: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -135,26 +169,30 @@ class _ReportPdfViewState extends State<ReportPdfView> {
           // Share Action
           IconButton(
             icon: const Icon(Icons.share, color: Colors.white),
-            onPressed: () {
-              Share.shareXFiles([
-                XFile.fromData(
-                  pdfBytes,
-                  name: fileName,
-                  mimeType: 'application/pdf',
-                ),
-              ], text: title);
-            },
+            onPressed: pdfBytes == null
+                ? null
+                : () {
+                    Share.shareXFiles([
+                      XFile.fromData(
+                        pdfBytes!,
+                        name: fileName,
+                        mimeType: 'application/pdf',
+                      ),
+                    ], text: title);
+                  },
             tooltip: 'Share PDF',
           ),
           // Print Action
           IconButton(
             icon: const Icon(Icons.print, color: Colors.white),
-            onPressed: () async {
-              await Printing.layoutPdf(
-                onLayout: (format) => pdfBytes,
-                name: fileName,
-              );
-            },
+            onPressed: pdfBytes == null
+                ? null
+                : () async {
+                    await Printing.layoutPdf(
+                      onLayout: (format) => pdfBytes!,
+                      name: fileName,
+                    );
+                  },
             tooltip: 'Print PDF',
           ),
           // Download Action
@@ -183,18 +221,20 @@ class _ReportPdfViewState extends State<ReportPdfView> {
             ),
         ],
       ),
-      body: PdfPreview(
-        build: (format) => pdfBytes,
-        allowPrinting: false, // Moved to AppBar
-        allowSharing: false, // Moved to AppBar
-        canChangePageFormat: false,
-        canChangeOrientation: false,
-        canDebug: false,
-        maxPageWidth: 700,
-        pdfFileName: fileName,
-        loadingWidget: const Center(child: CircularProgressIndicator()),
-        actions: const [], // Clear default actions
-      ),
+      body: _isLoading || pdfBytes == null
+          ? const Center(child: CircularProgressIndicator())
+          : PdfPreview(
+              build: (format) => pdfBytes!,
+              allowPrinting: false, // Moved to AppBar
+              allowSharing: false, // Moved to AppBar
+              canChangePageFormat: false,
+              canChangeOrientation: false,
+              canDebug: false,
+              maxPageWidth: 700,
+              pdfFileName: fileName,
+              loadingWidget: const Center(child: CircularProgressIndicator()),
+              actions: const [], // Clear default actions
+            ),
     );
   }
 }

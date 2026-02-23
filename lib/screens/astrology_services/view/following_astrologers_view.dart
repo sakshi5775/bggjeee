@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/widgets/common_header.dart';
+﻿import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
@@ -12,7 +12,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class FollowingAstrologersView extends StatelessWidget {
-  const FollowingAstrologersView({Key? key}) : super(key: key);
+  final bool showBackButton;
+  const FollowingAstrologersView({Key? key, this.showBackButton = true})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,7 @@ class FollowingAstrologersView extends StatelessWidget {
               // Header Section
               CommonHeader(
                 title: 'Following',
+                showBackButton: showBackButton,
                 customActions: [
                   Obx(() {
                     final controller =
@@ -180,7 +183,7 @@ class FollowingAstrologersView extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 10,
               offset: const Offset(0, 2),
             ),
@@ -404,7 +407,7 @@ class FollowingAstrologersView extends StatelessWidget {
       return Container(
         width: size.w,
         height: size.h,
-        color: Colors.grey.withOpacity(0.3),
+        color: Colors.grey.withValues(alpha: 0.3),
         child: Icon(Icons.person, size: (size / 2).w, color: Colors.grey),
       );
     }
@@ -419,7 +422,7 @@ class FollowingAstrologersView extends StatelessWidget {
           return Container(
             width: size.w,
             height: size.h,
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Icon(Icons.person, size: (size / 2).w, color: Colors.grey),
           );
         },
@@ -428,7 +431,7 @@ class FollowingAstrologersView extends StatelessWidget {
           return Container(
             width: size.w,
             height: size.h,
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Center(
               child: CircularProgressIndicator(
                 value: loadingProgress.expectedTotalBytes != null
@@ -451,7 +454,7 @@ class FollowingAstrologersView extends StatelessWidget {
           return Container(
             width: size.w,
             height: size.h,
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Icon(Icons.person, size: (size / 2).w, color: Colors.grey),
           );
         },

@@ -25,7 +25,9 @@ class LanguageSelectorWidget extends StatelessWidget {
           GetBuilder<CustomTranslationService>(
             builder: (translationService) => AutoTranslateText(
               translationService.tr('profile.selectLanguage'),
-              style: MyTextTheme.largeBCB.copyWith(color: AppColors.textPrimary),
+              style: MyTextTheme.largeBCB.copyWith(
+                color: AppColors.textPrimary,
+              ),
             ),
           ),
           Spacing.h(16),
@@ -39,10 +41,9 @@ class LanguageSelectorWidget extends StatelessWidget {
             if (snapshot.hasError || !snapshot.hasData) {
               return const SizedBox.shrink();
             }
-            return Obx(() => _buildLanguageList(
-                  languageController,
-                  snapshot.data!,
-                ));
+            return Obx(
+              () => _buildLanguageList(languageController, snapshot.data!),
+            );
           },
         ),
       ],
@@ -50,10 +51,13 @@ class LanguageSelectorWidget extends StatelessWidget {
   }
 
   Widget _buildLanguageList(
-      LanguageControllerV2 controller, List<AppLanguageModel> languages) {
+    LanguageControllerV2 controller,
+    List<AppLanguageModel> languages,
+  ) {
     return Column(
       children: languages.map((language) {
-        final isSelected = controller.currentLanguage.value?.code == language.code;
+        final isSelected =
+            controller.currentLanguage.value?.code == language.code;
         return GestureDetector(
           onTap: () => controller.changeLanguage(language),
           child: Container(
@@ -61,7 +65,7 @@ class LanguageSelectorWidget extends StatelessWidget {
             padding: AppPaddings.all(16),
             decoration: BoxDecoration(
               color: isSelected
-                  ? AppColors.saffron.withOpacity(0.1)
+                  ? AppColors.saffron.withValues(alpha: 0.1)
                   : AppColors.cardLight,
               borderRadius: AppRadius.all(12),
               border: Border.all(
@@ -84,7 +88,7 @@ class LanguageSelectorWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isSelected
                         ? AppColors.saffron
-                        : AppColors.textSecondary.withOpacity(0.1),
+                        : AppColors.textSecondary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: Center(
@@ -187,4 +191,3 @@ class LanguageSelectorDialog extends StatelessWidget {
     Get.dialog(const LanguageSelectorDialog());
   }
 }
-

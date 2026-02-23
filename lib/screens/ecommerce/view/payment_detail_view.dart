@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/widgets/common_header.dart';
+﻿import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/data_model/payment_model.dart';
 import 'package:astrobharataiuser/data_model/order_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/payment_detail_controller.dart';
@@ -69,7 +69,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
         borderRadius: BorderRadius.circular(18.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -142,7 +142,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                 width: double.infinity,
                 padding: EdgeInsets.all(12.w),
                 decoration: BoxDecoration(
-                  color: AppColors.error.withOpacity(0.08),
+                  color: AppColors.error.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: AutoTranslateText(
@@ -167,7 +167,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
         borderRadius: BorderRadius.circular(18.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -257,7 +257,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
         borderRadius: BorderRadius.circular(18.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -340,7 +340,7 @@ class _StatusChip extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: AppColors.saffron.withOpacity(0.12),
+        color: AppColors.saffron.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: AutoTranslateText(

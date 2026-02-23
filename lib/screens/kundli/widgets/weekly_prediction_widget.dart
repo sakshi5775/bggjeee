@@ -72,12 +72,17 @@ class WeeklyPredictionWidget extends StatelessWidget {
                     height: 36.h,
                     width: 36.w,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: [
-                        Color(0xFFF38B3B), Color(0xFFDD2914)
-                      ]),
-                      borderRadius: BorderRadius.circular(12.r)
+                      gradient: LinearGradient(
+                        colors: [Color(0xFFF38B3B), Color(0xFFDD2914)],
+                      ),
+                      borderRadius: BorderRadius.circular(12.r),
                     ),
-                    child: Icon(Icons.date_range, color: Colors.white, size: 24.w)),
+                    child: Icon(
+                      Icons.date_range,
+                      color: Colors.white,
+                      size: 24.w,
+                    ),
+                  ),
                   Spacing.w(12),
                   Expanded(
                     child: AutoTranslateText(
@@ -86,7 +91,7 @@ class WeeklyPredictionWidget extends StatelessWidget {
                         color: Color(0xFF3D0C11),
                         fontWeight: FontWeight.bold,
                         fontSize: 14.sp,
-                        fontFamily: 'baloo2'
+                        fontFamily: 'baloo2',
                       ),
                     ),
                   ),
@@ -102,14 +107,13 @@ class WeeklyPredictionWidget extends StatelessWidget {
                 color: Colors.white,
                 border: Border.all(color: Colors.deepOrange, width: 1),
                 borderRadius: BorderRadius.circular(16.r),
-                
               ),
               child: Column(
                 children: [
                   AutoTranslateText(
                     'Overall Score',
                     style: MyTextTheme.mediumBCN.copyWith(
-                      color: "#6F221E".toColor().withOpacity(0.7),
+                      color: "#6F221E".toColor().withValues(alpha: 0.7),
                     ),
                   ),
                   Spacing.h(8),
@@ -146,7 +150,6 @@ class WeeklyPredictionWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16.r),
-                  
                 ),
                 child: Row(
                   children: [
@@ -154,10 +157,12 @@ class WeeklyPredictionWidget extends StatelessWidget {
                       width: 40.w,
                       height: 40.w,
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(colors: [Color(0xFFFF8C42), Color(0xFFE63946)]),
+                        gradient: LinearGradient(
+                          colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                        ),
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: Colors.grey.withOpacity(0.3),
+                          color: Colors.grey.withValues(alpha: 0.3),
                           width: 2,
                         ),
                       ),
@@ -170,7 +175,7 @@ class WeeklyPredictionWidget extends StatelessWidget {
                           AutoTranslateText(
                             'Lucky Color',
                             style: MyTextTheme.smallBCN.copyWith(
-                              color: "#6F221E".toColor().withOpacity(0.7),
+                              color: "#6F221E".toColor().withValues(alpha: 0.7),
                             ),
                           ),
                           Spacing.h(4),
@@ -200,7 +205,7 @@ class WeeklyPredictionWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16.r),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -212,7 +217,10 @@ class WeeklyPredictionWidget extends StatelessWidget {
                     Row(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(left: 10.0, bottom: 10.0),
+                          padding: const EdgeInsets.only(
+                            left: 10.0,
+                            bottom: 10.0,
+                          ),
                           child: Container(
                             height: 36.h,
                             width: 36.h,
@@ -251,7 +259,7 @@ class WeeklyPredictionWidget extends StatelessWidget {
                           width: 40.w,
                           height: 40.w,
                           decoration: BoxDecoration(
-                            color: "#ed6f30".toColor().withOpacity(0.1),
+                            color: "#ed6f30".toColor().withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12.r),
                             border: Border.all(
                               color: "#ed6f30".toColor(),
@@ -288,7 +296,7 @@ class WeeklyPredictionWidget extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(16.r),
                   border: Border.all(
-                    color: "#ed6f30".toColor().withOpacity(0.2),
+                    color: "#ed6f30".toColor().withValues(alpha: 0.2),
                     width: 1,
                   ),
                 ),
@@ -381,7 +389,7 @@ class WeeklyPredictionWidget extends StatelessWidget {
                 label,
                 textAlign: TextAlign.center,
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.7),
+                  color: "#6F221E".toColor().withValues(alpha: 0.7),
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,

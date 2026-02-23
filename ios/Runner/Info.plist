@@ -1,70 +1,184 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+ "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-	<dict>
-		<key>CFBundleDevelopmentRegion</key>
-		<string>$(DEVELOPMENT_LANGUAGE)</string>
-		<key>CFBundleDisplayName</key>
-		<string>AstroBharatAI</string>
-		<key>CFBundleExecutable</key>
-		<string>$(EXECUTABLE_NAME)</string>
-		<key>CFBundleIdentifier</key>
-		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-		<key>CFBundleInfoDictionaryVersion</key>
-		<string>6.0</string>
-		<key>CFBundleName</key>
-		<string>astrobharataiuser</string>
-		<key>CFBundlePackageType</key>
-		<string>APPL</string>
-		<key>CFBundleShortVersionString</key>
-		<string>$(FLUTTER_BUILD_NAME)</string>
-		<key>CFBundleSignature</key>
-		<string>????</string>
-		<key>CFBundleVersion</key>
-		<string>$(FLUTTER_BUILD_NUMBER)</string>
-		<key>LSRequiresIPhoneOS</key>
-		<true/>
-		<key>UILaunchStoryboardName</key>
-		<string>LaunchScreen</string>
-		<key>UIMainStoryboardFile</key>
-		<string>Main</string>
-		<key>UISupportedInterfaceOrientations</key>
-		<array>
-			<string>UIInterfaceOrientationPortrait</string>
-			<string>UIInterfaceOrientationLandscapeLeft</string>
-			<string>UIInterfaceOrientationLandscapeRight</string>
-		</array>
-		<key>UISupportedInterfaceOrientations~ipad</key>
-		<array>
-			<string>UIInterfaceOrientationPortrait</string>
-			<string>UIInterfaceOrientationPortraitUpsideDown</string>
-			<string>UIInterfaceOrientationLandscapeLeft</string>
-			<string>UIInterfaceOrientationLandscapeRight</string>
-		</array>
-		<key>CADisableMinimumFrameDurationOnPhone</key>
-		<true/>
-		<key>UIApplicationSupportsIndirectInputEvents</key>
-		<true/>
-		<key>UIStatusBarHidden</key>
-		<false/>
-	<!-- Agora SDK Permissions -->
-	<key>NSMicrophoneUsageDescription</key>
-	<string>We need access to your microphone to enable voice and video calls with astrologers.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>We need access to your camera to enable video calls with astrologers.</string>
-	<!-- Photo Library Permission -->
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We need access to your photo library to allow you to select and share images with astrologers.</string>
-	<!-- Speech Recognition Permission -->
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>We need access to speech recognition to enable voice-to-text features for better communication with astrologers.</string>
-	<!-- Calendar Permission -->
-	<key>NSCalendarsUsageDescription</key>
-	<string>We need access to your calendar to help you schedule and manage appointments with astrologers.</string>
-	<!-- Location Permissions -->
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We need access to your location to provide location-based astrological services and accurate horoscope calculations.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>We need access to your location to provide location-based astrological services and accurate horoscope calculations.</string>
-	</dict>
+<dict>
+
+    <!-- Basic App Info -->
+    <key>CFBundleDevelopmentRegion</key>
+    <string>$(DEVELOPMENT_LANGUAGE)</string>
+
+    <key>CFBundleDisplayName</key>
+    <string>AstroBharatAI</string>
+
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+
+    <key>CFBundleIdentifier</key>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+
+    <key>CFBundleName</key>
+    <string>astrobharataiuser</string>
+
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+
+    <key>CFBundleShortVersionString</key>
+    <string>$(FLUTTER_BUILD_NAME)</string>
+
+    <key>CFBundleVersion</key>
+    <string>$(FLUTTER_BUILD_NUMBER)</string>
+
+    <key>LSRequiresIPhoneOS</key>
+    <true/>
+
+    <!-- UI Configuration -->
+    <key>UILaunchStoryboardName</key>
+    <string>LaunchScreen</string>
+
+    <key>UIMainStoryboardFile</key>
+    <string>Main</string>
+
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+
+    <key>UISupportedInterfaceOrientations~ipad</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationPortraitUpsideDown</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+
+    <key>UIStatusBarHidden</key>
+    <false/>
+
+    <key>CADisableMinimumFrameDurationOnPhone</key>
+    <true/>
+
+    <key>UIApplicationSupportsIndirectInputEvents</key>
+    <true/>
+
+    <!-- ========================= -->
+    <!-- App Transport Security -->
+    <!-- ========================= -->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
+
+    <!-- ========================= -->
+    <!-- Background Modes (Downloader, Push, Audio for Agora & Recording) -->
+    <!-- ========================= -->
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>audio</string>
+        <string>fetch</string>
+        <string>processing</string>
+        <string>remote-notification</string>
+    </array>
+
+    <!-- ========================= -->
+    <!-- Background Task Identifiers (required when UIBackgroundModes includes 'processing') -->
+    <!-- ========================= -->
+    <key>BGTaskSchedulerPermittedIdentifiers</key>
+    <array>
+        <string>com.astrobharatai.astrouser.backgroundrefresh</string>
+    </array>
+
+    <!-- ========================= -->
+    <!-- Camera / Microphone (Agora, Camera, Record) -->
+    <!-- ========================= -->
+    <key>NSCameraUsageDescription</key>
+    <string>Camera access is required for video calls and image capture.</string>
+
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Microphone access is required for voice and video calls.</string>
+
+    <!-- ========================= -->
+    <!-- Motion / Sensors (Sensors Plus) -->
+    <!-- ========================= -->
+    <key>NSMotionUsageDescription</key>
+    <string>Motion access is required for compass and vastu features.</string>
+
+    <!-- ========================= -->
+    <!-- Photo Library -->
+    <!-- ========================= -->
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Photo library access is required to select and share images.</string>
+
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>Permission required to save images to your gallery.</string>
+
+    <!-- ========================= -->
+    <!-- Location -->
+    <!-- ========================= -->
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Location is required for personalized horoscope calculations.</string>
+
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>Location access improves astrological accuracy.</string>
+
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>Location access is required for continuous astrological updates.</string>
+
+    <!-- ========================= -->
+    <!-- Speech Recognition -->
+    <!-- ========================= -->
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>Speech recognition is required for voice-to-text features.</string>
+
+    <!-- ========================= -->
+    <!-- Calendar / Reminders -->
+    <!-- ========================= -->
+    <key>NSCalendarsUsageDescription</key>
+    <string>Calendar access is required to schedule astrology sessions.</string>
+
+    <key>NSRemindersUsageDescription</key>
+    <string>Reminders access is required to notify you about upcoming sessions.</string>
+
+    <key>NSContactsUsageDescription</key>
+    <string>Contacts access is required to help you connect with others.</string>
+
+    <!-- ========================= -->
+    <!-- Bluetooth (Sensors / Device Info Safety) -->
+    <!-- ========================= -->
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>Bluetooth access is required for device connectivity features.</string>
+
+    <key>NSBluetoothPeripheralUsageDescription</key>
+    <string>Bluetooth access is required for device connectivity features.</string>
+
+    <!-- ========================= -->
+    <!-- Razorpay / UPI Schemes -->
+    <!-- ========================= -->
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+        <string>upi</string>
+        <string>tez</string>
+        <string>phonepe</string>
+        <string>paytmmp</string>
+    </array>
+
+    <!-- ========================= -->
+    <!-- Firebase / OneSignal Configuration -->
+    <!-- ========================= -->
+    <!-- CRITICAL: Enable Firebase method swizzling for proper AppDelegate integration -->
+    <!-- This allows Firebase, OneSignal, and other plugins to initialize correctly -->
+    <key>FirebaseAppDelegateProxyEnabled</key>
+    <true/>
+    
+    <!-- OneSignal requires this for proper notification delivery -->
+    <key>UIApplicationSupportsMultipleScenes</key>
+    <true/>
+
+</dict>
 </plist>

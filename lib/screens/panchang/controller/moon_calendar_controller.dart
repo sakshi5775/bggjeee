@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/panchang/service/panchang_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
 import 'package:flutter/foundation.dart';
@@ -18,12 +18,12 @@ class MoonCalendarController extends BaseController {
   final selectedDate = DateTime.now().obs;
   final moonCalendarData = <Map<String, dynamic>>[].obs;
   final selectedLocation = 'Fetching Location...'.obs;
-  
+
   // Location coordinates
   double? currentLatitude;
   double? currentLongitude;
   double? currentTimezone;
-  
+
   // Flag to track if controller is disposed
   bool _isDisposed = false;
 
@@ -35,10 +35,10 @@ class MoonCalendarController extends BaseController {
     currentLongitude = 77.2090;
     currentTimezone = 5.5;
     selectedLocation.value = 'Loading...';
-    
+
     // Fetch data immediately with default values
     fetchMoonCalendar();
-    
+
     // Then try to get actual location in background
     _tryGetCurrentLocation();
   }
@@ -99,7 +99,11 @@ class MoonCalendarController extends BaseController {
         if (_isDisposed) return;
 
         if (reverseGeocode != null) {
-          final city = reverseGeocode['city'] ?? reverseGeocode['town'] ?? reverseGeocode['village'] ?? '';
+          final city =
+              reverseGeocode['city'] ??
+              reverseGeocode['town'] ??
+              reverseGeocode['village'] ??
+              '';
           final state = reverseGeocode['state'] ?? '';
           if (city.isNotEmpty) {
             selectedLocation.value = state.isNotEmpty ? '$city, $state' : city;
@@ -134,15 +138,18 @@ class MoonCalendarController extends BaseController {
       }
 
       // Update location and re-fetch with actual coordinates
-      if (currentLatitude != null && currentLongitude != null && currentTimezone != null) {
+      if (currentLatitude != null &&
+          currentLongitude != null &&
+          currentTimezone != null) {
         // Only re-fetch if location changed significantly (optional optimization)
         final oldLat = currentLatitude!;
         final oldLon = currentLongitude!;
         currentLatitude = position.latitude;
         currentLongitude = position.longitude;
-        
+
         // Re-fetch with actual location (only if location changed significantly)
-        if ((oldLat - position.latitude).abs() > 0.1 || (oldLon - position.longitude).abs() > 0.1) {
+        if ((oldLat - position.latitude).abs() > 0.1 ||
+            (oldLon - position.longitude).abs() > 0.1) {
           fetchMoonCalendar();
         }
       }
@@ -151,7 +158,9 @@ class MoonCalendarController extends BaseController {
       if (_isDisposed) return;
       selectedLocation.value = 'Select Location';
       // Use default values (already set in onInit, but ensure they're set)
-      if (currentLatitude == null || currentLongitude == null || currentTimezone == null) {
+      if (currentLatitude == null ||
+          currentLongitude == null ||
+          currentTimezone == null) {
         currentLatitude = 28.6139;
         currentLongitude = 77.2090;
         currentTimezone = 5.5;
@@ -161,10 +170,14 @@ class MoonCalendarController extends BaseController {
   }
 
   /// Select city from location bottom sheet
-  Future<void> selectCity(String cityName, String? state, String? country) async {
+  Future<void> selectCity(
+    String cityName,
+    String? state,
+    String? country,
+  ) async {
     try {
       selectedLocation.value = cityName;
-      
+
       // Fetch coordinates for the city
       final coords = await AddressHelper.fetchCoordinatesFromCity(
         city: cityName,
@@ -175,14 +188,14 @@ class MoonCalendarController extends BaseController {
       if (coords != null) {
         currentLatitude = coords['latitude'] as double?;
         currentLongitude = coords['longitude'] as double?;
-        
+
         // Get timezone
         if (currentLatitude != null && currentLongitude != null) {
           final timezone = await AddressHelper.getTimezoneFromCoordinates(
             currentLatitude!,
             currentLongitude!,
           );
-          
+
           // Calculate timezone offset
           if (timezone != null) {
             currentTimezone = await _getTimezoneOffset(timezone);
@@ -194,7 +207,7 @@ class MoonCalendarController extends BaseController {
             );
           }
         }
-        
+
         // Refresh moon calendar data for selected date
         fetchMoonCalendar();
       }
@@ -240,7 +253,11 @@ class MoonCalendarController extends BaseController {
       );
 
       if (reverseGeocode != null && reverseGeocode['city'] != null) {
-        final city = reverseGeocode['city'] ?? reverseGeocode['town'] ?? reverseGeocode['village'] ?? '';
+        final city =
+            reverseGeocode['city'] ??
+            reverseGeocode['town'] ??
+            reverseGeocode['village'] ??
+            '';
         final state = reverseGeocode['state'] ?? '';
         if (city.isNotEmpty) {
           selectedLocation.value = state.isNotEmpty ? '$city, $state' : city;
@@ -256,7 +273,7 @@ class MoonCalendarController extends BaseController {
         position.latitude,
         position.longitude,
       );
-      
+
       if (timezone != null) {
         currentTimezone = await _getTimezoneOffset(timezone);
       } else {
@@ -265,7 +282,7 @@ class MoonCalendarController extends BaseController {
           position.longitude,
         );
       }
-      
+
       // Refresh moon calendar data
       fetchMoonCalendar();
     } catch (e) {
@@ -279,13 +296,10 @@ class MoonCalendarController extends BaseController {
       final url = Uri.parse(
         'https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lon&zoom=18&addressdetails=1',
       );
-      
-      final response = await http.get(
-        url,
-        headers: {
-          'User-Agent': 'AstrologyApp',
-        },
-      ).timeout(const Duration(seconds: 10));
+
+      final response = await http
+          .get(url, headers: {'User-Agent': 'AstrologyApp'})
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>;
@@ -301,9 +315,11 @@ class MoonCalendarController extends BaseController {
   /// Get timezone offset from timezone string
   Future<double> _getTimezoneOffset(String timezone) async {
     try {
-      final url = Uri.parse('https://timeapi.io/api/TimeZone/zone?timeZone=$timezone');
+      final url = Uri.parse(
+        'https://timeapi.io/api/TimeZone/zone?timeZone=$timezone',
+      );
       final response = await http.get(url).timeout(const Duration(seconds: 10));
-      
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>?;
         if (data?['currentUtcOffset'] != null) {
@@ -319,11 +335,16 @@ class MoonCalendarController extends BaseController {
   }
 
   /// Get timezone offset from coordinates
-  Future<double> _getTimezoneOffsetFromCoordinates(double lat, double lon) async {
+  Future<double> _getTimezoneOffsetFromCoordinates(
+    double lat,
+    double lon,
+  ) async {
     try {
-      final url = Uri.parse('https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon');
+      final url = Uri.parse(
+        'https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon',
+      );
       final response = await http.get(url).timeout(const Duration(seconds: 10));
-      
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>?;
         if (data?['currentUtcOffset'] != null) {
@@ -360,7 +381,9 @@ class MoonCalendarController extends BaseController {
 
   /// Fetch moon calendar data for selected date
   Future<void> fetchMoonCalendar() async {
-    if (currentLatitude == null || currentLongitude == null || currentTimezone == null) {
+    if (currentLatitude == null ||
+        currentLongitude == null ||
+        currentTimezone == null) {
       currentLatitude = 28.6139;
       currentLongitude = 77.2090;
       currentTimezone = 5.5;
@@ -373,7 +396,9 @@ class MoonCalendarController extends BaseController {
       final dateStr = DateFormat('dd/MM/yyyy').format(selectedDate.value);
       final time = DateFormat('HH:mm').format(DateTime.now());
 
-      debugPrint('Moon Calendar API - Date: $dateStr, Time: $time, Lat: $currentLatitude, Lon: $currentLongitude, TZ: $currentTimezone');
+      debugPrint(
+        'Moon Calendar API - Date: $dateStr, Time: $time, Lat: $currentLatitude, Lon: $currentLongitude, TZ: $currentTimezone',
+      );
 
       final data = await _panchangService.getMoonCalendar(
         date: dateStr,
@@ -398,7 +423,10 @@ class MoonCalendarController extends BaseController {
       } else {
         moonCalendarData.clear();
         debugPrint('Moon Calendar - No data in response');
-        showErrorMessage(title: 'Error', message: 'Failed to fetch moon calendar data');
+        showErrorMessage(
+          title: 'Error',
+          message: 'Failed to fetch moon calendar data',
+        );
       }
     } catch (e) {
       debugPrint('Error fetching moon calendar: $e');
@@ -415,4 +443,3 @@ class MoonCalendarController extends BaseController {
     fetchMoonCalendar();
   }
 }
-

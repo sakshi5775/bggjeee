@@ -1,5 +1,5 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -12,18 +12,29 @@ import 'package:get/get.dart';
 class PlanetsController extends BaseController {
   // Form data
   final formData = Rxn<Map<String, dynamic>>();
-  
+
   // Tab: 0=Overview, 1=Transit, 2=Detailed
   final selectedTabIndex = 0.obs;
   late PageController pageController;
   final ScrollController tabsScrollController = ScrollController();
   final Map<int, GlobalKey> tabKeys = {};
-  
+
   // Planet/year for Transit & Detailed
   final selectedPlanet = 'sun'.obs;
   final selectedYear = DateTime.now().year.obs;
-  static const planetNames = ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune', 'pluto'];
-  
+  static const planetNames = [
+    'sun',
+    'moon',
+    'mercury',
+    'venus',
+    'mars',
+    'jupiter',
+    'saturn',
+    'uranus',
+    'neptune',
+    'pluto',
+  ];
+
   // API data
   final planetDetailsData = Rxn<Map<String, dynamic>>();
   final westernPlanetDetailsData = Rxn<Map<String, dynamic>>();
@@ -37,7 +48,7 @@ class PlanetsController extends BaseController {
   final isLoadingAspects = false.obs;
   final isLoadingTransit = false.obs;
   final isLoadingDetailedReport = false.obs;
-  
+
   // Service
   final _kundliService = KundliService();
 
@@ -48,7 +59,7 @@ class PlanetsController extends BaseController {
     _loadData();
     fetchPlanetDetails();
   }
-  
+
   @override
   void onClose() {
     pageController.dispose();
@@ -59,16 +70,24 @@ class PlanetsController extends BaseController {
   void onTabSelected(int index) {
     selectedTabIndex.value = index;
     if (pageController.hasClients) {
-      pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     }
-    if (index == 1 && transitDatesData.value == null) fetchPlanetTransitDates(selectedPlanet.value, selectedYear.value);
-    if (index == 2 && detailedReportData.value == null) fetchDetailedPlanetReport(selectedPlanet.value);
+    if (index == 1 && transitDatesData.value == null)
+      fetchPlanetTransitDates(selectedPlanet.value, selectedYear.value);
+    if (index == 2 && detailedReportData.value == null)
+      fetchDetailedPlanetReport(selectedPlanet.value);
   }
-  
+
   void onPageChanged(int index) {
     selectedTabIndex.value = index;
-    if (index == 1 && transitDatesData.value == null) fetchPlanetTransitDates(selectedPlanet.value, selectedYear.value);
-    if (index == 2 && detailedReportData.value == null) fetchDetailedPlanetReport(selectedPlanet.value);
+    if (index == 1 && transitDatesData.value == null)
+      fetchPlanetTransitDates(selectedPlanet.value, selectedYear.value);
+    if (index == 2 && detailedReportData.value == null)
+      fetchDetailedPlanetReport(selectedPlanet.value);
   }
 
   void _loadData() {
@@ -81,15 +100,19 @@ class PlanetsController extends BaseController {
   // Check if required fields are present
   bool _hasRequiredFields() {
     if (formData.value == null) return false;
-    
+
     final form = formData.value!;
     final date = form['date'] as String?;
     final time = form['time'] as String?;
     final latitude = form['latitude'] as double?;
     final longitude = form['longitude'] as double?;
     final tz = form['timezone'] as double?;
-    
-    return date != null && time != null && latitude != null && longitude != null && tz != null;
+
+    return date != null &&
+        time != null &&
+        latitude != null &&
+        longitude != null &&
+        tz != null;
   }
 
   // Get missing required fields
@@ -97,16 +120,16 @@ class PlanetsController extends BaseController {
     if (formData.value == null) {
       return ['date', 'time', 'latitude', 'longitude', 'timezone'];
     }
-    
+
     final form = formData.value!;
     final missing = <String>[];
-    
+
     if (form['date'] == null) missing.add('date');
     if (form['time'] == null) missing.add('time');
     if (form['latitude'] == null) missing.add('latitude');
     if (form['longitude'] == null) missing.add('longitude');
     if (form['timezone'] == null) missing.add('timezone');
-    
+
     return missing;
   }
 
@@ -114,7 +137,7 @@ class PlanetsController extends BaseController {
   Future<void> _showFormPopup(List<String> missingFields) async {
     final formControllers = <String, TextEditingController>{};
     final formValues = <String, dynamic>{};
-    
+
     // Initialize controllers with existing values if available
     if (formData.value != null) {
       final existingForm = formData.value!;
@@ -128,7 +151,7 @@ class PlanetsController extends BaseController {
         formControllers[field] = TextEditingController();
       }
     }
-    
+
     await Get.dialog(
       Dialog(
         shape: RoundedRectangleBorder(
@@ -186,21 +209,23 @@ class PlanetsController extends BaseController {
                       for (final field in missingFields) {
                         final value = formControllers[field]?.text.trim();
                         if (value != null && value.isNotEmpty) {
-                          if (field == 'latitude' || field == 'longitude' || field == 'timezone') {
+                          if (field == 'latitude' ||
+                              field == 'longitude' ||
+                              field == 'timezone') {
                             formValues[field] = double.tryParse(value);
                           } else {
                             formValues[field] = value;
                           }
                         }
                       }
-                      
+
                       // Update formData
                       if (formData.value != null) {
                         formData.value!.addAll(formValues);
                       } else {
                         formData.value = formValues;
                       }
-                      
+
                       Get.back();
                       // Retry fetching data
                       fetchPlanetDetails();
@@ -218,7 +243,7 @@ class PlanetsController extends BaseController {
         ),
       ),
     );
-    
+
     // Dispose controllers
     for (final controller in formControllers.values) {
       controller.dispose();
@@ -283,7 +308,7 @@ class PlanetsController extends BaseController {
             'Error',
             'Please provide all required fields',
             snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red.withOpacity(0.8),
+            backgroundColor: Colors.red.withValues(alpha: 0.8),
             colorText: Colors.white,
           );
           return;
@@ -293,7 +318,7 @@ class PlanetsController extends BaseController {
 
     try {
       isLoadingPlanetDetails.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -302,14 +327,18 @@ class PlanetsController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Planet Details');
         isLoadingPlanetDetails.value = false;
         Get.snackbar(
           'Error',
           'Missing required fields. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
         return;
@@ -337,7 +366,7 @@ class PlanetsController extends BaseController {
           'Error',
           'Failed to fetch planet details. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
@@ -348,7 +377,7 @@ class PlanetsController extends BaseController {
         'Error',
         'An error occurred: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     }
@@ -362,15 +391,33 @@ class PlanetsController extends BaseController {
     final latRaw = form['latitude'];
     final lonRaw = form['longitude'];
     final tzRaw = form['timezone'];
-    final lat = latRaw is num ? latRaw.toDouble() : double.tryParse(latRaw?.toString() ?? '');
-    final lon = lonRaw is num ? lonRaw.toDouble() : double.tryParse(lonRaw?.toString() ?? '');
-    final tz = tzRaw is num ? tzRaw.toDouble() : double.tryParse(tzRaw?.toString() ?? '');
-    if (date == null || time == null || lat == null || lon == null || tz == null) return;
+    final lat = latRaw is num
+        ? latRaw.toDouble()
+        : double.tryParse(latRaw?.toString() ?? '');
+    final lon = lonRaw is num
+        ? lonRaw.toDouble()
+        : double.tryParse(lonRaw?.toString() ?? '');
+    final tz = tzRaw is num
+        ? tzRaw.toDouble()
+        : double.tryParse(tzRaw?.toString() ?? '');
+    if (date == null ||
+        time == null ||
+        lat == null ||
+        lon == null ||
+        tz == null)
+      return;
     try {
       isLoadingWesternPlanetDetails.value = true;
-      final data = await _kundliService.getWesternPlanetDetails(dob: date, tob: time, lat: lat, lon: lon, tz: tz);
+      final data = await _kundliService.getWesternPlanetDetails(
+        dob: date,
+        tob: time,
+        lat: lat,
+        lon: lon,
+        tz: tz,
+      );
       if (data != null && data['response'] != null) {
-        westernPlanetDetailsData.value = data['response'] as Map<String, dynamic>;
+        westernPlanetDetailsData.value =
+            data['response'] as Map<String, dynamic>;
       }
     } finally {
       isLoadingWesternPlanetDetails.value = false;
@@ -385,10 +432,21 @@ class PlanetsController extends BaseController {
     final lat = form['latitude'] as double?;
     final lon = form['longitude'] as double?;
     final tz = form['timezone'] as double?;
-    if (date == null || time == null || lat == null || lon == null || tz == null) return;
+    if (date == null ||
+        time == null ||
+        lat == null ||
+        lon == null ||
+        tz == null)
+      return;
     try {
       isLoadingAspects.value = true;
-      final data = await _kundliService.getAspects(dob: date, tob: time, lat: lat, lon: lon, tz: tz);
+      final data = await _kundliService.getAspects(
+        dob: date,
+        tob: time,
+        lat: lat,
+        lon: lon,
+        tz: tz,
+      );
       if (data != null && data['response'] != null) {
         aspectsData.value = data['response'] as Map<String, dynamic>;
       }
@@ -400,7 +458,10 @@ class PlanetsController extends BaseController {
   Future<void> fetchPlanetTransitDates(String planet, int year) async {
     try {
       isLoadingTransit.value = true;
-      final data = await _kundliService.getPlanetTransitDates(planet: planet, year: year);
+      final data = await _kundliService.getPlanetTransitDates(
+        planet: planet,
+        year: year,
+      );
       transitDatesData.value = data;
     } finally {
       isLoadingTransit.value = false;
@@ -415,10 +476,22 @@ class PlanetsController extends BaseController {
     final lat = form['latitude'] as double?;
     final lon = form['longitude'] as double?;
     final tz = form['timezone'] as double?;
-    if (date == null || time == null || lat == null || lon == null || tz == null) return;
+    if (date == null ||
+        time == null ||
+        lat == null ||
+        lon == null ||
+        tz == null)
+      return;
     try {
       isLoadingDetailedReport.value = true;
-      final data = await _kundliService.getDetailedPlanetReport(dob: date, tob: time, lat: lat, lon: lon, tz: tz, planet: planet);
+      final data = await _kundliService.getDetailedPlanetReport(
+        dob: date,
+        tob: time,
+        lat: lat,
+        lon: lon,
+        tz: tz,
+        planet: planet,
+      );
       if (data != null && data['response'] != null) {
         detailedReportData.value = data['response'] as Map<String, dynamic>;
       }
@@ -427,4 +500,3 @@ class PlanetsController extends BaseController {
     }
   }
 }
-

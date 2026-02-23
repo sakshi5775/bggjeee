@@ -132,7 +132,9 @@ class NavtaraHistoryTab extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.r),
           side: BorderSide(
-            color: isSelected ? AppColors.deepOrange : maroon.withOpacity(0.1),
+            color: isSelected
+                ? AppColors.deepOrange
+                : maroon.withValues(alpha: 0.1),
           ),
         ),
       );
@@ -157,7 +159,7 @@ class NavtaraHistoryTab extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -172,7 +174,7 @@ class NavtaraHistoryTab extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                 decoration: BoxDecoration(
-                  color: maroon.withOpacity(0.1),
+                  color: maroon.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4.r),
                 ),
                 child: AutoTranslateText(
@@ -258,7 +260,7 @@ class NavtaraHistoryTab extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4.r),
       ),
       child: AutoTranslateText(

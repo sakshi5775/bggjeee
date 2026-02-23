@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/comment_model.dart';
 import 'package:astrobharataiuser/screens/blogs/service/blog_service.dart';
 import 'package:get/get.dart';

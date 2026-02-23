@@ -24,7 +24,7 @@ class TarotFortuneCookieWidget extends StatelessWidget {
       if (response == null) {
         // Show loading state
         return Container(
-          color: Colors.black.withOpacity(0.7),
+          color: Colors.black.withValues(alpha: 0.7),
           child: const Center(child: CircularProgressIndicator()),
         );
       }
@@ -32,7 +32,7 @@ class TarotFortuneCookieWidget extends StatelessWidget {
       return GestureDetector(
         onTap: () => controller.closeReading(),
         child: Container(
-          color: Colors.black.withOpacity(0.7),
+          color: Colors.black.withValues(alpha: 0.7),
           child: Center(
             child: GestureDetector(
               onTap: () {},
@@ -55,7 +55,7 @@ class TarotFortuneCookieWidget extends StatelessWidget {
                           border: Border.all(color: Colors.amber, width: 3),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
+                              color: Colors.black.withValues(alpha: 0.3),
                               blurRadius: 20,
                               offset: const Offset(0, 10),
                             ),
@@ -80,7 +80,7 @@ class TarotFortuneCookieWidget extends StatelessWidget {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(12.r),
                                 border: Border.all(
-                                  color: Colors.amber.withOpacity(0.3),
+                                  color: Colors.amber.withValues(alpha: 0.3),
                                 ),
                               ),
                               child: AutoTranslateText(

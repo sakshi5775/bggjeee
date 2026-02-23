@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/ecommerce_home_controller.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
@@ -93,7 +93,7 @@ class PromotionalBannerWidget extends StatelessWidget {
         AutoTranslateText(
           '• ${offer['subtitle']!}',
           style: TextStyle(
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha: 0.8),
             fontSize: 11.04.sp,
             fontWeight: FontWeight.w400,
             height: 1.33,

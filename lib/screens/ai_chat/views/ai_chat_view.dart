@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/screens/ai_chat/controllers/ai_chat_controller.dart';
@@ -38,7 +38,8 @@ class AiChatView extends BasePage<AiChatController> {
           top: !hideHeader,
           child: Column(
             children: [
-              if (!hideHeader) CommonHeader(title: 'AI Chat'),
+              if (!hideHeader)
+                CommonHeader(title: 'AI Chat', showBackButton: showBackButton),
 
               // Category Filter Chips
               // SizedBox(height: 16.h),

@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,29 +7,49 @@ import 'package:get/get.dart';
 class LalKitabController extends BaseController {
   // Lal Kitab table data for main page (removed Cloud)
   final lalKitabTableData = [
-    {'left': 'Lal Kitab Kundli', 'right': 'Prediction and Remedies', 'hasApi': true, 'hasApiRight': true},
-    {'left': 'Debts', 'right': 'Varsha Kundli', 'hasApi': true, 'hasApiRight': true},
-    {'left': 'Lal Kitab Dasha', 'right': 'Teva Type', 'hasApi': false, 'hasApiRight': false},
+    {
+      'left': 'Lal Kitab Kundli',
+      'right': 'Prediction and Remedies',
+      'hasApi': true,
+      'hasApiRight': true,
+    },
+    {
+      'left': 'Debts',
+      'right': 'Varsha Kundli',
+      'hasApi': true,
+      'hasApiRight': true,
+    },
+    {
+      'left': 'Lal Kitab Dasha',
+      'right': 'Teva Type',
+      'hasApi': false,
+      'hasApiRight': false,
+    },
     {'left': 'House', 'right': 'Planet', 'hasApi': true, 'hasApiRight': true},
-    {'left': 'Chart', 'right': 'Ask a question', 'hasApi': true, 'hasApiRight': false},
+    {
+      'left': 'Chart',
+      'right': 'Ask a question',
+      'hasApi': true,
+      'hasApiRight': false,
+    },
   ];
 
   // Form data
   final formData = Rxn<Map<String, dynamic>>();
-  
+
   // Current tab index: 0 = TABLE VIEW, 1-7 = specific tabs (matches kundli_result_view pattern)
   final selectedTabIndex = 0.obs;
-  
+
   // PageController for swipeable tabs
   late PageController pageController;
 
   // ScrollController for tab bar (match kundli_result_view)
   final ScrollController tabsScrollController = ScrollController();
   final Map<int, GlobalKey> tabKeys = {};
-  
+
   // Varshphal year selector (default to current year)
   final selectedVarshphalYear = DateTime.now().year.obs;
-  
+
   // API data
   final lalKitabHoroscopeData = Rxn<Map<String, dynamic>>();
   final lalKitabDebtsData = Rxn<Map<String, dynamic>>();
@@ -38,7 +58,7 @@ class LalKitabController extends BaseController {
   final lalKitabPlanetsData = Rxn<Map<String, dynamic>>();
   final lalKitabChartData = Rxn<Map<String, dynamic>>();
   final lalKitabVarshphalChartData = Rxn<Map<String, dynamic>>();
-  
+
   // Loading states
   final isLoadingLalKitabHoroscope = false.obs;
   final isLoadingLalKitabDebts = false.obs;
@@ -47,7 +67,7 @@ class LalKitabController extends BaseController {
   final isLoadingLalKitabPlanets = false.obs;
   final isLoadingLalKitabChart = false.obs;
   final isLoadingLalKitabVarshphalChart = false.obs;
-  
+
   // Service
   final _kundliService = KundliService();
 
@@ -58,25 +78,32 @@ class LalKitabController extends BaseController {
     pageController = PageController(initialPage: 0);
     _loadData();
   }
-  
+
   @override
   void onClose() {
     pageController.dispose();
     tabsScrollController.dispose();
     super.onClose();
   }
-  
+
   // Handle page change from swipe
   void onPageChanged(int index) {
     selectedTabIndex.value = index;
     if (index == 0) return; // Table view
-    if (index == 1 && lalKitabHoroscopeData.value == null) fetchLalKitabHoroscope();
-    else if (index == 2 && lalKitabRemediesData.value == null) fetchLalKitabRemedies();
-    else if (index == 3 && lalKitabDebtsData.value == null) fetchLalKitabDebts();
-    else if (index == 4 && lalKitabVarshphalChartData.value == null) fetchLalKitabVarshphalChart();
-    else if (index == 5 && lalKitabHousesData.value == null) fetchLalKitabHouses();
-    else if (index == 6 && lalKitabPlanetsData.value == null) fetchLalKitabPlanets();
-    else if (index == 7 && lalKitabChartData.value == null) fetchLalKitabChart();
+    if (index == 1 && lalKitabHoroscopeData.value == null)
+      fetchLalKitabHoroscope();
+    else if (index == 2 && lalKitabRemediesData.value == null)
+      fetchLalKitabRemedies();
+    else if (index == 3 && lalKitabDebtsData.value == null)
+      fetchLalKitabDebts();
+    else if (index == 4 && lalKitabVarshphalChartData.value == null)
+      fetchLalKitabVarshphalChart();
+    else if (index == 5 && lalKitabHousesData.value == null)
+      fetchLalKitabHouses();
+    else if (index == 6 && lalKitabPlanetsData.value == null)
+      fetchLalKitabPlanets();
+    else if (index == 7 && lalKitabChartData.value == null)
+      fetchLalKitabChart();
   }
 
   // Navigate to specific tab (called from tab tap)
@@ -89,13 +116,20 @@ class LalKitabController extends BaseController {
       );
     }
     selectedTabIndex.value = index;
-    if (index == 1 && lalKitabHoroscopeData.value == null) fetchLalKitabHoroscope();
-    else if (index == 2 && lalKitabRemediesData.value == null) fetchLalKitabRemedies();
-    else if (index == 3 && lalKitabDebtsData.value == null) fetchLalKitabDebts();
-    else if (index == 4 && lalKitabVarshphalChartData.value == null) fetchLalKitabVarshphalChart();
-    else if (index == 5 && lalKitabHousesData.value == null) fetchLalKitabHouses();
-    else if (index == 6 && lalKitabPlanetsData.value == null) fetchLalKitabPlanets();
-    else if (index == 7 && lalKitabChartData.value == null) fetchLalKitabChart();
+    if (index == 1 && lalKitabHoroscopeData.value == null)
+      fetchLalKitabHoroscope();
+    else if (index == 2 && lalKitabRemediesData.value == null)
+      fetchLalKitabRemedies();
+    else if (index == 3 && lalKitabDebtsData.value == null)
+      fetchLalKitabDebts();
+    else if (index == 4 && lalKitabVarshphalChartData.value == null)
+      fetchLalKitabVarshphalChart();
+    else if (index == 5 && lalKitabHousesData.value == null)
+      fetchLalKitabHouses();
+    else if (index == 6 && lalKitabPlanetsData.value == null)
+      fetchLalKitabPlanets();
+    else if (index == 7 && lalKitabChartData.value == null)
+      fetchLalKitabChart();
   }
 
   void _loadData() {
@@ -109,7 +143,11 @@ class LalKitabController extends BaseController {
   void navigateToTableView() {
     selectedTabIndex.value = 0;
     if (pageController.hasClients) {
-      pageController.animateToPage(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      pageController.animateToPage(
+        0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     }
   }
 
@@ -169,7 +207,7 @@ class LalKitabController extends BaseController {
 
     try {
       isLoadingLalKitabHoroscope.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -178,7 +216,11 @@ class LalKitabController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Lal Kitab Horoscope');
         isLoadingLalKitabHoroscope.value = false;
         return;
@@ -216,7 +258,7 @@ class LalKitabController extends BaseController {
 
     try {
       isLoadingLalKitabDebts.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -225,7 +267,11 @@ class LalKitabController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Lal Kitab Debts');
         isLoadingLalKitabDebts.value = false;
         return;
@@ -263,7 +309,7 @@ class LalKitabController extends BaseController {
 
     try {
       isLoadingLalKitabRemedies.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -272,7 +318,11 @@ class LalKitabController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Lal Kitab Remedies');
         isLoadingLalKitabRemedies.value = false;
         return;
@@ -310,7 +360,7 @@ class LalKitabController extends BaseController {
 
     try {
       isLoadingLalKitabHouses.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -319,7 +369,11 @@ class LalKitabController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Lal Kitab Houses');
         isLoadingLalKitabHouses.value = false;
         return;
@@ -357,7 +411,7 @@ class LalKitabController extends BaseController {
 
     try {
       isLoadingLalKitabPlanets.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -366,7 +420,11 @@ class LalKitabController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Lal Kitab Planets');
         isLoadingLalKitabPlanets.value = false;
         return;
@@ -404,7 +462,7 @@ class LalKitabController extends BaseController {
 
     try {
       isLoadingLalKitabChart.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -415,7 +473,11 @@ class LalKitabController extends BaseController {
       final style = form['style'] as String? ?? 'north';
       final coloredPlanets = form['colored_planets'] as bool? ?? true;
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Lal Kitab Chart');
         isLoadingLalKitabChart.value = false;
         return;
@@ -456,7 +518,7 @@ class LalKitabController extends BaseController {
 
     try {
       isLoadingLalKitabVarshphalChart.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -467,7 +529,11 @@ class LalKitabController extends BaseController {
       final style = form['style'] as String? ?? 'north';
       final coloredPlanets = form['colored_planets'] as bool? ?? true;
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Lal Kitab Varshphal Chart');
         isLoadingLalKitabVarshphalChart.value = false;
         return;
@@ -476,7 +542,10 @@ class LalKitabController extends BaseController {
       // Auto-generate varshphal_date from DOB (DD/MM) + selected year
       // Varshphal is calculated from birthday to birthday, not by calendar year
       // IMPORTANT: varshphal_date must be different from birth date
-      final varshphalDate = _validateAndAdjustVarshphalDate(date, selectedVarshphalYear.value);
+      final varshphalDate = _validateAndAdjustVarshphalDate(
+        date,
+        selectedVarshphalYear.value,
+      );
 
       final data = await _kundliService.getLalKitabVarshphalChart(
         date: date,
@@ -503,34 +572,36 @@ class LalKitabController extends BaseController {
           'Error',
           'Failed to fetch Varshphal Chart. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
     } catch (e) {
       isLoadingLalKitabVarshphalChart.value = false;
       debugPrint('Error fetching Lal Kitab Varshphal Chart data: $e');
-      
+
       // Check if error is related to same date issue
       final errorString = e.toString().toLowerCase();
-      if (errorString.contains('running year') || 
+      if (errorString.contains('running year') ||
           errorString.contains('house mapping') ||
           errorString.contains('400')) {
         // Auto-adjust year and retry
-        debugPrint('Detected same date error. Auto-adjusting year and retrying...');
+        debugPrint(
+          'Detected same date error. Auto-adjusting year and retrying...',
+        );
         final adjustedYear = selectedVarshphalYear.value + 1;
         selectedVarshphalYear.value = adjustedYear;
-        
+
         // Retry after a short delay
         Future.delayed(Duration(milliseconds: 500), () {
           fetchLalKitabVarshphalChart();
         });
-        
+
         Get.snackbar(
           'Info',
           'Varshphal date adjusted to next year (birthday to birthday calculation).',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.orange.withOpacity(0.8),
+          backgroundColor: Colors.orange.withValues(alpha: 0.8),
           colorText: Colors.white,
           duration: Duration(seconds: 3),
         );
@@ -540,7 +611,7 @@ class LalKitabController extends BaseController {
           'Error',
           'Failed to fetch Varshphal Chart. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
@@ -580,18 +651,21 @@ class LalKitabController extends BaseController {
     // Clear existing chart data to force refresh
     lalKitabVarshphalChartData.value = null;
     // If chart data was already loaded, refresh it with new year
-    if (selectedTabIndex.value == 3) { // Varshphal tab is selected
+    if (selectedTabIndex.value == 3) {
+      // Varshphal tab is selected
       fetchLalKitabVarshphalChart();
     }
   }
-  
+
   /// Validate and adjust varshphal date if it matches birth date
   String _validateAndAdjustVarshphalDate(String birthDate, int year) {
     String varshphalDate = _generateVarshphalDate(birthDate, year);
-    
+
     // If varshphal_date matches birth date, increment year by 1
     if (varshphalDate == birthDate) {
-      debugPrint('Warning: varshphal_date ($varshphalDate) matches birth date ($birthDate). Auto-incrementing year.');
+      debugPrint(
+        'Warning: varshphal_date ($varshphalDate) matches birth date ($birthDate). Auto-incrementing year.',
+      );
       final adjustedYear = year + 1;
       varshphalDate = _generateVarshphalDate(birthDate, adjustedYear);
       // Update the selected year to reflect the adjustment
@@ -599,8 +673,7 @@ class LalKitabController extends BaseController {
         selectedVarshphalYear.value = adjustedYear;
       }
     }
-    
+
     return varshphalDate;
   }
 }
-
