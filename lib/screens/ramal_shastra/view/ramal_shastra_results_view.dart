@@ -1,14 +1,11 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/ramal_shastra_model.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
-import 'package:astrobharataiuser/screens/ramal_shastra/controller/ramal_shastra_controller.dart';
-import 'package:astrobharataiuser/screens/ramal_shastra/service/ramal_shastra_service.dart';
 import 'package:astrobharataiuser/core/services/pdf_generator_service.dart';
 import 'package:astrobharataiuser/data_model/pdf_metadata.dart';
 import 'package:astrobharataiuser/data_model/pdf_section.dart';
@@ -49,44 +46,6 @@ class RamalShastraResultsView extends StatelessWidget {
               title: 'Results',
               customActions: [
                 IconButton(
-                  onPressed: () => Get.toNamed(AppRoutes.ramalShastraStats),
-                  icon: Icon(
-                    Icons.bar_chart,
-                    color: '#6F221E'.toColor(),
-                    size: 24.w,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => Get.toNamed(AppRoutes.ramalShastraHistory),
-                  icon: Icon(
-                    Icons.history,
-                    color: '#6F221E'.toColor(),
-                    size: 24.w,
-                  ),
-                ),
-                if (result.readingId != null)
-                  PopupMenuButton<String>(
-                    icon: Icon(
-                      Icons.more_vert,
-                      color: '#6F221E'.toColor(),
-                      size: 24.w,
-                    ),
-                    onSelected: (value) {
-                      if (value == 'delete') {
-                        _showDeleteDialog(result.readingId!);
-                      }
-                    },
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: 'delete',
-                        child: Text(
-                          'Delete Reading',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ),
-                    ],
-                  ),
-                IconButton(
                   onPressed: () => _exportToPdf(result),
                   icon: Icon(
                     Icons.picture_as_pdf_rounded,
@@ -96,34 +55,6 @@ class RamalShastraResultsView extends StatelessWidget {
                 ),
               ],
             ),
-            if (result.readingId != null)
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 12.w,
-                    vertical: 6.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20.r),
-                    border: Border.all(color: '#F5D7B8'.toColor()),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.tag, color: "#F38B3B".toColor(), size: 14.w),
-                      Spacing.w(4),
-                      AutoTranslateText(
-                        'Reading ID: ${result.readingId}',
-                        style: MyTextTheme.smallBCB.copyWith(
-                          color: '#3E2723'.toColor(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -221,86 +152,6 @@ class RamalShastraResultsView extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  void _showDeleteDialog(String readingId) {
-    Get.dialog<bool>(
-      AlertDialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.r),
-        ),
-        title: AutoTranslateText(
-          'Delete Reading',
-          style: MyTextTheme.largeBCB.copyWith(
-            color: '#3E2723'.toColor(),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: AutoTranslateText(
-          'Are you sure you want to delete this reading? This action cannot be undone.',
-          style: MyTextTheme.mediumBCN.copyWith(color: '#666666'.toColor()),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(result: false),
-            child: AutoTranslateText(
-              'Cancel',
-              style: MyTextTheme.mediumBCN.copyWith(color: '#666666'.toColor()),
-            ),
-          ),
-          TextButton(
-            onPressed: () async {
-              Get.back(result: true);
-              try {
-                final controller = Get.find<RamalShastraController>();
-                final index = controller.historyReadings.indexWhere(
-                  (r) => r.readingId == readingId,
-                );
-                if (index >= 0) {
-                  await controller.deleteReading(readingId, index);
-                  Get.snackbar(
-                    'Success',
-                    'Reading deleted successfully',
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: Colors.green,
-                    colorText: Colors.white,
-                  );
-                  Get.back(); // Go back to history or previous screen
-                } else {
-                  // If not in history, delete directly via service
-                  final service = RamalShastraService();
-                  await service.deleteRamal(readingId);
-                  Get.snackbar(
-                    'Success',
-                    'Reading deleted successfully',
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: Colors.green,
-                    colorText: Colors.white,
-                  );
-                  Get.back();
-                }
-              } catch (e) {
-                Get.snackbar(
-                  'Error',
-                  'Failed to delete reading: ${e.toString()}',
-                  snackPosition: SnackPosition.BOTTOM,
-                  backgroundColor: Colors.red,
-                  colorText: Colors.white,
-                );
-              }
-            },
-            child: AutoTranslateText(
-              'Delete',
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: Colors.red,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

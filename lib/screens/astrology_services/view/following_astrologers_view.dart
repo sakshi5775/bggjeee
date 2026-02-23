@@ -12,7 +12,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class FollowingAstrologersView extends StatelessWidget {
-  const FollowingAstrologersView({Key? key}) : super(key: key);
+  final bool showBackButton;
+  const FollowingAstrologersView({Key? key, this.showBackButton = true})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,7 @@ class FollowingAstrologersView extends StatelessWidget {
               // Header Section
               CommonHeader(
                 title: 'Following',
+                showBackButton: showBackButton,
                 customActions: [
                   Obx(() {
                     final controller =
@@ -459,4 +462,3 @@ class FollowingAstrologersView extends StatelessWidget {
     }
   }
 }
-

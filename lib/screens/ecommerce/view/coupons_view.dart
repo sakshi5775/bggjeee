@@ -11,7 +11,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class CouponsView extends GetView<CouponsController> {
-  const CouponsView({super.key});
+  final bool showBackButton;
+  const CouponsView({super.key, this.showBackButton = true});
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +26,7 @@ class CouponsView extends GetView<CouponsController> {
           children: [
             CommonHeader(
               title: 'Available Coupons',
+              showBackButton: showBackButton,
               subtitle: AutoTranslateText(
                 'Save more with exclusive offers',
                 style: TextStyle(
@@ -506,7 +508,10 @@ class _InfoChip extends StatelessWidget {
           ],
         ),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.saffron.withValues(alpha: 0.2), width: 1),
+        border: Border.all(
+          color: AppColors.saffron.withValues(alpha: 0.2),
+          width: 1,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -543,4 +548,3 @@ class _InfoChip extends StatelessWidget {
     );
   }
 }
-

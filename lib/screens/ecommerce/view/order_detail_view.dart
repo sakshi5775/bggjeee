@@ -10,7 +10,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class OrderDetailView extends GetView<OrderDetailController> {
-  const OrderDetailView({super.key});
+  final bool showBackButton;
+  const OrderDetailView({super.key, this.showBackButton = true});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,10 @@ class OrderDetailView extends GetView<OrderDetailController> {
             if (order == null) {
               return Column(
                 children: [
-                  CommonHeader(title: 'Order Details'),
+                  CommonHeader(
+                    title: 'Order Details',
+                    showBackButton: showBackButton,
+                  ),
                   Expanded(
                     child: Center(
                       child: AutoTranslateText(
@@ -48,7 +52,10 @@ class OrderDetailView extends GetView<OrderDetailController> {
 
             return Column(
               children: [
-                CommonHeader(title: 'Order Details'),
+                CommonHeader(
+                  title: 'Order Details',
+                  showBackButton: showBackButton,
+                ),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: EdgeInsets.all(16.w),

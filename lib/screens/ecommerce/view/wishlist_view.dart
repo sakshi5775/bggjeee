@@ -13,7 +13,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class WishlistView extends GetView<WishlistController> {
-  const WishlistView({super.key});
+  final bool showBackButton;
+  const WishlistView({super.key, this.showBackButton = true});
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +31,7 @@ class WishlistView extends GetView<WishlistController> {
           children: [
             CommonHeader(
               title: 'My Wishlist',
+              showBackButton: showBackButton,
               subtitle: Obx(() {
                 final count = controller.items.length;
                 return AutoTranslateText(
@@ -225,8 +227,12 @@ class _WishlistItemCard extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: [
-                                      AppColors.textSecondary.withValues(alpha: 0.1),
-                                      AppColors.textSecondary.withValues(alpha: 0.05),
+                                      AppColors.textSecondary.withValues(
+                                        alpha: 0.1,
+                                      ),
+                                      AppColors.textSecondary.withValues(
+                                        alpha: 0.05,
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -255,7 +261,9 @@ class _WishlistItemCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(6.r),
                             boxShadow: [
                               BoxShadow(
-                                color: '#F38B3B'.toColor().withValues(alpha: 0.3),
+                                color: '#F38B3B'.toColor().withValues(
+                                  alpha: 0.3,
+                                ),
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
                               ),
@@ -368,7 +376,9 @@ class _WishlistItemCard extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(16.r),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: '#F38B3B'.toColor().withValues(alpha: 0.4),
+                                    color: '#F38B3B'.toColor().withValues(
+                                      alpha: 0.4,
+                                    ),
                                     blurRadius: 12,
                                     offset: const Offset(0, 6),
                                   ),
@@ -436,7 +446,9 @@ class _WishlistItemCard extends StatelessWidget {
                               color: AppColors.sacredRed.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(16.r),
                               border: Border.all(
-                                color: AppColors.sacredRed.withValues(alpha: 0.3),
+                                color: AppColors.sacredRed.withValues(
+                                  alpha: 0.3,
+                                ),
                                 width: 1.5,
                               ),
                             ),
@@ -594,4 +606,3 @@ class _EmptyWishlist extends StatelessWidget {
     );
   }
 }
-

@@ -11,7 +11,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class SupportTicketsListView extends GetView<SupportTicketController> {
-  const SupportTicketsListView({super.key});
+  final bool showBackButton;
+  const SupportTicketsListView({super.key, this.showBackButton = true});
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +45,10 @@ class SupportTicketsListView extends GetView<SupportTicketController> {
         ),
         body: Column(
           children: [
-            CommonHeader(title: 'Support Tickets'),
+            CommonHeader(
+              title: 'Support Tickets',
+              showBackButton: showBackButton,
+            ),
             Obx(() => _buildFilters()),
             Expanded(
               child: Obx(() {
@@ -339,4 +343,3 @@ class _TicketCard extends StatelessWidget {
     }
   }
 }
-

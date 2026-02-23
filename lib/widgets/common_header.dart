@@ -28,6 +28,7 @@ class CommonHeader extends StatelessWidget {
   final bool showCart;
   final bool showSearch;
   final VoidCallback? onSearchTap;
+  final bool? showBackButton;
 
   final VoidCallback? onBackTap;
 
@@ -45,6 +46,7 @@ class CommonHeader extends StatelessWidget {
     this.showLanguage = true,
     this.showCart = true,
     this.showSearch = true,
+    this.showBackButton,
     this.onSearchTap,
   });
 
@@ -317,8 +319,8 @@ class CommonHeader extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  // Back button (Navigator.canPop)
-                  if (Navigator.canPop(context))
+                  // Back button (Navigator.canPop or explicit showBackButton)
+                  if (showBackButton ?? Navigator.canPop(context))
                     IconButton(
                       onPressed: onBackTap ?? () => Navigator.pop(context),
                       style: IconButton.styleFrom(
@@ -403,4 +405,3 @@ class CommonHeader extends StatelessWidget {
     );
   }
 }
-

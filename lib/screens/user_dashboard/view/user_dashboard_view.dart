@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/all_astrologers_view.dart';
 import 'package:astrobharataiuser/screens/live_stream/view/live_stream_view.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
@@ -4751,6 +4752,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     final controller = Get.isRegistered<UserDashboardController>()
         ? Get.find<UserDashboardController>()
         : null;
+    final mainController = Get.find<UserMainController>();
     return Drawer(
       width: Get.width > 600 ? Get.width * 0.70 : null,
       backgroundColor: const Color(
@@ -4947,7 +4949,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     isSelected: true,
                     onTap: () {
                       Navigator.of(context).pop();
-                      Get.offNamed('/user-home', id: 1);
+                      mainController.changePage(0);
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -4958,7 +4960,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     badgeText: 'New',
                     onTap: () {
                       Navigator.of(context).pop();
-                      Get.toNamed(AppRoutes.aichat);
+                      mainController.changePage(3);
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -4967,7 +4969,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Digital Consultation',
                     onTap: () {
                       Navigator.of(context).pop();
-                      Get.toNamed(AppRoutes.astrologyServices);
+                      mainController.changePage(1);
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -5003,7 +5005,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Live',
                     onTap: () {
                       Navigator.of(context).pop();
-                      Get.toNamed(AppRoutes.liveAstrologers);
+                      mainController.changePage(2);
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -5012,7 +5014,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Consult',
                     onTap: () {
                       Navigator.of(context).pop();
-                      Get.toNamed(AppRoutes.astrologyServices);
+                      mainController.changePage(1);
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -5021,7 +5023,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'History',
                     onTap: () {
                       Navigator.of(context).pop();
-                      Get.toNamed(AppRoutes.consultationHistory);
+                      Get.toNamed(AppRoutes.consultationHistory, id: 1);
                     },
                   ),
                 ],
@@ -5310,7 +5312,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Profile',
                     onTap: () {
                       Navigator.of(context).pop();
-                      Get.toNamed(AppRoutes.profile);
+                      mainController.changePage(4);
                     },
                   ),
                 ],

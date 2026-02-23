@@ -50,13 +50,11 @@ class AllAstrologersView extends StatelessWidget {
                 _buildFiltersOnly(context, controller)
               else ...[
                 CommonHeader(
-                  title:
-                      'Chat with Astrologer', // Or dynamic title if needed, but 'All Astrologers' or 'Chat with Astrologer' is standard
-
+                  title: 'Chat with Astrologer',
+                  showBackButton: showBackButton,
                   showWallet: true,
                   showCart: true,
-                  showSearch:
-                      true, // Assuming we want search here too, or disable if not appropriate. Original had wallet/cart.
+                  showSearch: true,
                 ),
                 _buildFiltersOnly(context, controller),
               ],
@@ -235,7 +233,9 @@ class AllAstrologersView extends StatelessWidget {
                             border: isSelected
                                 ? null
                                 : Border.all(
-                                    color: AppColors.saffron.withValues(alpha: 0.3),
+                                    color: AppColors.saffron.withValues(
+                                      alpha: 0.3,
+                                    ),
                                     width: 1,
                                   ),
                             boxShadow: isSelected
@@ -742,4 +742,3 @@ class AllAstrologersView extends StatelessWidget {
     }
   }
 }
-

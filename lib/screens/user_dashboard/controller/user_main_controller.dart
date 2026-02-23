@@ -8,6 +8,21 @@ import 'package:astrobharataiuser/screens/ecommerce/binding/profile_binding.dart
 import 'package:astrobharataiuser/screens/ecommerce/view/profile_view.dart';
 import 'package:astrobharataiuser/screens/live_astrologers/view/live_astrologers_view.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/view/consultation_history_view.dart';
+import 'package:astrobharataiuser/screens/ecommerce/view/kundli_report_history_view.dart';
+import 'package:astrobharataiuser/screens/ecommerce/view/orders_view.dart';
+import 'package:astrobharataiuser/screens/ecommerce/binding/orders_binding.dart';
+import 'package:astrobharataiuser/screens/ecommerce/view/wishlist_view.dart';
+import 'package:astrobharataiuser/screens/ecommerce/binding/wishlist_binding.dart';
+import 'package:astrobharataiuser/screens/ecommerce/view/coupons_view.dart';
+import 'package:astrobharataiuser/screens/ecommerce/binding/coupons_binding.dart';
+import 'package:astrobharataiuser/screens/support/view/support_tickets_list_view.dart';
+import 'package:astrobharataiuser/screens/support/binding/support_ticket_binding.dart';
+import 'package:astrobharataiuser/screens/ecommerce/view/order_detail_view.dart';
+import 'package:astrobharataiuser/screens/ecommerce/binding/order_detail_binding.dart';
+import 'package:astrobharataiuser/screens/ecommerce/view/addresses_view.dart';
+import 'package:astrobharataiuser/screens/ecommerce/binding/address_binding.dart';
+import 'package:astrobharataiuser/screens/astrology_services/view/following_astrologers_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -19,8 +34,52 @@ class BottomNavItem {
   const BottomNavItem({required this.label, required this.icon});
 }
 
+class NestedNavObserver extends NavigatorObserver {
+  final VoidCallback onStackChanged;
+
+  NestedNavObserver(this.onStackChanged);
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPush(route, previousRoute);
+    onStackChanged();
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPop(route, previousRoute);
+    onStackChanged();
+  }
+
+  @override
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didRemove(route, previousRoute);
+    onStackChanged();
+  }
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+    onStackChanged();
+  }
+}
+
 class UserMainController extends GetxController {
   final selectedIndex = 0.obs;
+  final canPopNested = false.obs;
+
+  late final NestedNavObserver observer;
+
+  @override
+  void onInit() {
+    super.onInit();
+    observer = NestedNavObserver(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final nav = Get.nestedKey(1)?.currentState;
+        canPopNested.value = nav?.canPop() ?? false;
+      });
+    });
+  }
 
   /// Bottom nav items: Home, Chat, Call, AI, Profile. Update this list to change nav dynamically.
   final RxList<BottomNavItem> navItems = <BottomNavItem>[
@@ -44,7 +103,7 @@ class UserMainController extends GetxController {
   // ---------------- ROUTING ----------------
   Route? onGenerateRoute(RouteSettings settings) {
     final args = settings.arguments as Map<String, dynamic>?;
-    final showBackButton = args?['showBackButton'] as bool? ?? false;
+    final showBackButton = args?['showBackButton'] as bool? ?? true;
 
     switch (settings.name) {
       case '/user-home':
@@ -78,11 +137,60 @@ class UserMainController extends GetxController {
           binding: ProfileBinding(),
         );
 
-      default:
+      case AppRoutes.kundliReportHistory:
         return GetPageRoute(
-          page: () => const UserDashboardView(),
-          binding: UserDashboardBinding(),
+          page: () => KundliReportHistoryView(showBackButton: showBackButton),
+          binding: ProfileBinding(),
         );
+
+      case AppRoutes.orders:
+        return GetPageRoute(
+          page: () => OrdersView(showBackButton: showBackButton),
+          binding: OrdersBinding(),
+        );
+
+      case AppRoutes.wishlist:
+        return GetPageRoute(
+          page: () => WishlistView(showBackButton: showBackButton),
+          binding: WishlistBinding(),
+        );
+
+      case AppRoutes.coupons:
+        return GetPageRoute(
+          page: () => CouponsView(showBackButton: showBackButton),
+          binding: CouponsBinding(),
+        );
+
+      case AppRoutes.supportTickets:
+        return GetPageRoute(
+          page: () => SupportTicketsListView(showBackButton: showBackButton),
+          binding: SupportTicketBinding(),
+        );
+
+      case AppRoutes.orderDetail:
+        return GetPageRoute(
+          page: () => OrderDetailView(showBackButton: showBackButton),
+          binding: OrderDetailBinding(),
+        );
+
+      case AppRoutes.consultationHistory:
+        return GetPageRoute(
+          page: () => ConsultationHistoryView(showBackButton: showBackButton),
+        );
+
+      case AppRoutes.addresses:
+        return GetPageRoute(
+          page: () => AddressesView(showBackButton: showBackButton),
+          binding: AddressBinding(),
+        );
+
+      case AppRoutes.followingAstrologers:
+        return GetPageRoute(
+          page: () => FollowingAstrologersView(showBackButton: showBackButton),
+        );
+
+      default:
+        return GetPageRoute(page: () => const UserDashboardView());
     }
   }
 
@@ -113,15 +221,22 @@ class UserMainController extends GetxController {
     // Chat, Call, AI, Profile: no back button when opened from bottom nav.
     final noBack = index != 0;
     final args = noBack ? {'showBackButton': false} : null;
-    Get.offNamed(pages[index], id: 1, arguments: args);
+    Get.offAllNamed(pages[index], id: 1, arguments: args);
   }
 
   // ---------------- BACK HANDLER ----------------
-  void handleBackNavigation() {
+  Future<bool> handleBackNavigation() async {
     final nav = Get.nestedKey(1)?.currentState;
     if (nav != null && nav.canPop()) {
       nav.pop();
+      return false;
     }
-    // At tab root: bottom nav visible, no back — do nothing.
+
+    if (selectedIndex.value != 0) {
+      changePage(0);
+      return false;
+    }
+
+    return true;
   }
 }

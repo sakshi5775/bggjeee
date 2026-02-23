@@ -152,10 +152,7 @@ class RamalShastraController extends GetxController {
       }
 
       // Navigate to results
-      Get.offAllNamed(
-        AppRoutes.ramalShastraResults,
-        arguments: {'result': result},
-      );
+      Get.toNamed(AppRoutes.ramalShastraResults, arguments: {'result': result});
     } catch (e) {
       isAnalyzing.value = false;
       errorMessage.value = e.toString();

@@ -34,6 +34,10 @@ class ProfileController extends BaseController {
   final isHistoryLoading = false.obs;
   final reportHistory = <ReportHistoryItem>[].obs;
 
+  // Filter state for reports
+  final selectedEmailStatus = 'all'.obs;
+  final searchReportType = ''.obs;
+
   final isLoading = false.obs;
   final isUpdatingProfile = false.obs;
 
@@ -842,11 +846,11 @@ class ProfileController extends BaseController {
   }
 
   void onAddressesTap() {
-    Get.toNamed(AppRoutes.addresses);
+    Get.toNamed(AppRoutes.addresses, id: 1);
   }
 
   void onFollowingTap() {
-    Get.toNamed(AppRoutes.followingAstrologers);
+    Get.toNamed(AppRoutes.followingAstrologers, id: 1);
   }
 
   Future<void> onLogoutTap({bool allDevices = false}) async {
@@ -907,7 +911,11 @@ class ProfileController extends BaseController {
   Future<void> loadReportHistory() async {
     try {
       isHistoryLoading.value = true;
-      final response = await _reportService.getReportHistory(limit: 5);
+      final response = await _reportService.getReportHistory(
+        limit: 10,
+        reportType: searchReportType.value,
+        emailStatus: selectedEmailStatus.value,
+      );
       if (response != null && response.data != null) {
         reportHistory.assignAll(response.data!.reports ?? []);
       }
@@ -923,10 +931,26 @@ class ProfileController extends BaseController {
   Future<void> viewReport(ReportHistoryItem item) async {
     if (item.id == null) return;
 
+    final fileName = "${item.reportName ?? 'Report'}_${item.id}.pdf";
     try {
+      // 1. Quick check for cached file
+      final cachedFile = await PdfGeneratorService.getReportFile(fileName);
+      if (await cachedFile.exists()) {
+        await OpenFile.open(cachedFile.path);
+        return; // Opened from cache, no need to show loader or download
+      }
+
+      // 2. Not in cache, show loader and download
       isHistoryLoading.value = true;
-      // Get detail to ensure we have the correct download URL
-      final downloadUrl = await _reportService.getReportUrl(item.id!);
+      // prioritize downloadUrl from the item if available
+      String? downloadUrl =
+          item.downloadUrl ?? item.s3DownloadUrl ?? item.thirdPartyDownloadUrl;
+
+      // If not available, fetch via detail API
+      if (downloadUrl == null || downloadUrl.isEmpty) {
+        downloadUrl = await _reportService.getReportUrl(item.id!);
+      }
+
       if (downloadUrl != null) {
         // Fetch bytes from URL
         final response = await http.get(Uri.parse(downloadUrl));
@@ -935,7 +959,7 @@ class ProfileController extends BaseController {
           // Use PdfGeneratorService to download and open the file
           final file = await PdfGeneratorService.downloadPdf(
             pdfBytes: pdfBytes,
-            fileName: "${item.reportName ?? 'Report'}_${item.id}.pdf",
+            fileName: fileName,
           );
           await OpenFile.open(file.path);
         } else {

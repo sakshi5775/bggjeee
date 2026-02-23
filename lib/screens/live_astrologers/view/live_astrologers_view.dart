@@ -35,6 +35,7 @@ class LiveAstrologersView extends StatelessWidget {
             // Header
             CommonHeader(
               title: 'Astro Live Streaming Hub',
+              showBackButton: showBackButton,
               customActions: [
                 GestureDetector(
                   onTap: () {
@@ -407,4 +408,3 @@ class LiveAstrologersView extends StatelessWidget {
     );
   }
 }
-

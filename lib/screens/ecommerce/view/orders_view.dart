@@ -11,7 +11,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class OrdersView extends GetView<OrdersController> {
-  const OrdersView({super.key});
+  final bool showBackButton;
+  const OrdersView({super.key, this.showBackButton = true});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,11 @@ class OrdersView extends GetView<OrdersController> {
         backgroundColor: Colors.transparent,
         body: Column(
           children: [
-            CommonHeader(title: 'My Orders', customActions: [_filterDialog()]),
+            CommonHeader(
+              title: 'My Orders',
+              showBackButton: showBackButton,
+              customActions: [_filterDialog()],
+            ),
             Padding(padding: EdgeInsets.all(16.w), child: _buildFilters()),
             Expanded(
               child: Obx(() {
@@ -686,4 +691,3 @@ String? _resolveOrderImage(OrderItem? item) {
   }
   return null;
 }
-

@@ -93,6 +93,13 @@ class PdfGeneratorService {
     required Uint8List pdfBytes,
     required String fileName,
   }) async {
+    final File file = await getReportFile(fileName);
+    await file.writeAsBytes(pdfBytes);
+    return file;
+  }
+
+  /// Gets the file object for a given filename without writing to it
+  static Future<File> getReportFile(String fileName) async {
     Directory? directory;
     if (Platform.isAndroid) {
       directory = Directory('/storage/emulated/0/Download');
@@ -104,9 +111,7 @@ class PdfGeneratorService {
     }
 
     final String filePath = '${directory!.path}/$fileName';
-    final File file = File(filePath);
-    await file.writeAsBytes(pdfBytes);
-    return file;
+    return File(filePath);
   }
 
   /// Builds the PDF and returns bytes
@@ -730,4 +735,3 @@ class _PdfThemeConfig {
     required this.lineHeight,
   });
 }
-

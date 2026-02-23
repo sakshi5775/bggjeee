@@ -218,6 +218,7 @@ class ReportService {
     int page = 1,
     int limit = 10,
     String? reportType,
+    String? emailStatus,
     String? email,
   }) async {
     try {
@@ -225,7 +226,12 @@ class ReportService {
       final queryParams = {
         'page': page.toString(),
         'limit': limit.toString(),
-        if (reportType != null) 'reportType': reportType,
+        if (reportType != null && reportType.isNotEmpty)
+          'reportType': reportType,
+        if (emailStatus != null &&
+            emailStatus.isNotEmpty &&
+            emailStatus != 'all')
+          'emailStatus': emailStatus,
         if (email != null) 'email': email,
       };
 
@@ -233,7 +239,7 @@ class ReportService {
         'http://3.109.91.254:8010/api/pdf/history',
       ).replace(queryParameters: queryParams);
 
-      final response = await Get.find<http.Client>().get(
+      final response = await http.get(
         uri,
         headers: {'accept': '*/*', 'Authorization': 'Bearer $token'},
       );
@@ -254,7 +260,7 @@ class ReportService {
       final token = UserData().accessToken;
       final uri = Uri.parse('http://3.109.91.254:8010/api/pdf/history/$id');
 
-      final response = await Get.find<http.Client>().get(
+      final response = await http.get(
         uri,
         headers: {'accept': '*/*', 'Authorization': 'Bearer $token'},
       );

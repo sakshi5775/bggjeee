@@ -151,6 +151,11 @@ class ReportHistoryItem {
   String? reportKey;
   String? reportName;
   String? generatedAt;
+  String? downloadUrl;
+  String? s3DownloadUrl;
+  String? thirdPartyDownloadUrl;
+  String? emailStatus;
+  String? emailSentAt;
 
   ReportHistoryItem({
     this.id,
@@ -158,6 +163,11 @@ class ReportHistoryItem {
     this.reportKey,
     this.reportName,
     this.generatedAt,
+    this.downloadUrl,
+    this.s3DownloadUrl,
+    this.thirdPartyDownloadUrl,
+    this.emailStatus,
+    this.emailSentAt,
   });
 
   ReportHistoryItem.fromJson(Map<String, dynamic> json) {
@@ -166,6 +176,11 @@ class ReportHistoryItem {
     reportKey = json['reportKey'];
     reportName = json['reportName'];
     generatedAt = json['generatedAt'];
+    downloadUrl = json['downloadUrl'];
+    s3DownloadUrl = json['s3DownloadUrl'];
+    thirdPartyDownloadUrl = json['thirdPartyDownloadUrl'];
+    emailStatus = json['emailStatus'];
+    emailSentAt = json['emailSentAt'];
   }
 
   Map<String, dynamic> toJson() {
@@ -175,6 +190,11 @@ class ReportHistoryItem {
     data['reportKey'] = reportKey;
     data['reportName'] = reportName;
     data['generatedAt'] = generatedAt;
+    data['downloadUrl'] = downloadUrl;
+    data['s3DownloadUrl'] = s3DownloadUrl;
+    data['thirdPartyDownloadUrl'] = thirdPartyDownloadUrl;
+    data['emailStatus'] = emailStatus;
+    data['emailSentAt'] = emailSentAt;
     return data;
   }
 }
