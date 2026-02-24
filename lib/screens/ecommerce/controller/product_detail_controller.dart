@@ -6,7 +6,7 @@ import 'package:astrobharataiuser/screens/ecommerce/controller/wishlist_controll
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:astrobharataiuser/core/services/share_service.dart';
 import 'package:intl/intl.dart';
 
 class ProductDetailController extends BaseController {
@@ -569,7 +569,7 @@ class ProductDetailController extends BaseController {
     }
   }
 
-  /// Share product via different platforms
+  /// Share product via ShareService
   Future<void> shareProduct() async {
     final currentProduct = product.value;
     if (currentProduct == null) {
@@ -584,54 +584,35 @@ class ProductDetailController extends BaseController {
     }
 
     try {
-      // Build shareable message
-      final productName = currentProduct.name ?? 'Product';
-      final productDescription =
-          currentProduct.shortDescription ??
-          currentProduct.description ??
-          'Check out this amazing product!';
+      final productId = currentProduct.id ?? currentProduct.slug ?? '';
+      if (productId.isEmpty) {
+        Get.snackbar(
+          'Error',
+          'Product ID not available for sharing',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return;
+      }
 
       // Format price
-      final priceFormatter = NumberFormat.currency(
-        symbol: '₹',
-        decimalDigits: 0,
-      );
       final currentPrice =
           currentProduct.currentPrice ??
           currentProduct.discountedPrice ??
-          currentProduct.basePrice ??
-          0.0;
-      final priceText = priceFormatter.format(currentPrice);
+          currentProduct.basePrice;
+      final priceText = currentPrice != null
+          ? NumberFormat.currency(
+              symbol: '',
+              decimalDigits: 0,
+            ).format(currentPrice)
+          : null;
 
-      // Build product link (using product ID or slug)
-      String productLink = '';
-      if (currentProduct.id != null && currentProduct.id!.isNotEmpty) {
-        // You can replace this with your actual web URL or deep link
-        productLink = 'https://astrobharatai.com/product/${currentProduct.id}';
-      } else if (currentProduct.slug != null &&
-          currentProduct.slug!.isNotEmpty) {
-        productLink =
-            'https://astrobharatai.com/product/${currentProduct.slug}';
-      } else {
-        productLink = 'https://astrobharatai.com/products';
-      }
-
-      // Build share text
-      final shareText =
-          '''
-🌟 $productName
-
-$productDescription
-
-💰 Price: $priceText
-
-🔗 View Product: $productLink
-
-Download AstroBharatAI App to explore more products!
-''';
-
-      // Share using share_plus
-      await Share.share(shareText, subject: productName);
+      await ShareService.shareProduct(
+        productId: productId,
+        productName: currentProduct.name,
+        price: priceText,
+      );
     } catch (e) {
       Get.snackbar(
         'Error',

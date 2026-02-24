@@ -238,6 +238,13 @@ class EndPoints {
       'users/api/users/voice/$callId/cancel';
   static String voiceDelete(String callId) => 'users/api/users/voice/$callId';
 
+  /// Learning Portal Course Types
+  static const String courseTypes =
+      'learning-portal/api/learning-portal/course-types';
+
+  /// Learning Portal Pillars
+  static const String pillars = 'learning-portal/api/learning-portal/pillars';
+
   /// Learning Portal Courses
   static const String courses = 'learning-portal/api/learning-portal/courses';
   static String courseById(String id) =>

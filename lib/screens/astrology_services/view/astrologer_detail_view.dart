@@ -1,4 +1,5 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/core/services/share_service.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
@@ -210,7 +211,10 @@ class AstrologerDetailView extends StatelessWidget {
           color: Colors.transparent,
           child: InkWell(
             onTap: () {
-              // Add share functionality here
+              ShareService.shareAstrologer(
+                astrologerId: controller.astrologer.astrologerId,
+                astrologerName: controller.astrologer.displayName,
+              );
             },
             borderRadius: BorderRadius.circular(20.r),
             child: Padding(

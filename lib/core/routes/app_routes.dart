@@ -66,6 +66,7 @@ class AppRoutes {
   static const String liveWebinars = '/live-webinars';
   static const String liveWebinarSession = '/live-webinar-session';
   static const String myLearning = '/my-learning';
+  static const String spiritualPillarCourses = '/spiritual-pillar-courses';
 
   // Chat Routes
   static const String personaChat = '/persona-chat';

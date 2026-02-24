@@ -1,5 +1,7 @@
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/data_model/course_model.dart';
+import 'package:astrobharataiuser/data_model/course_type_model.dart';
+import 'package:astrobharataiuser/data_model/pillar_model.dart';
 import 'package:astrobharataiuser/data_model/webinar_model.dart'; // Added
 import 'package:astrobharataiuser/screens/courses/services/courses_service.dart';
 import 'package:astrobharataiuser/screens/courses/services/webinar_service.dart'; // Added
@@ -54,35 +56,32 @@ class CoursesController extends BaseController
   // Description expanded state per course id (for Read More / Show Less)
   final RxMap<String, bool> descExpandedMap = <String, bool>{}.obs;
 
-  // Bounce animation controllers — one per courseType step
-  static const List<String> _courseTypes = [
-    'introcourse',
-    'diplomacourse',
-    'bachelorcourse',
-    'mastercourse',
-    'grandmaster',
-  ];
+  // Learning journey course types (fetched from API)
+  final RxList<CourseTypeModel> courseTypesList = <CourseTypeModel>[].obs;
+  final RxBool isCourseTypesLoading = false.obs;
+
+  // Bounce animation controllers — created dynamically after courseTypes load
   final Map<String, AnimationController> _bounceControllers = {};
-  final RxMap<String, double> bounceScaleMap =
-      <String, double>{}.obs; // 0.0-1.0 for each courseType
+  final RxMap<String, double> bounceScaleMap = <String, double>{}.obs;
+
+  // Spiritual Pillars (fetched from API)
+  final RxList<PillarModel> pillarsList = <PillarModel>[].obs;
+  final RxBool isPillarsLoading = false.obs;
+
+  // Spiritual Pillar Courses screen state
+  final RxList<CourseModel> pillarCourses = <CourseModel>[].obs;
+  final RxBool isPillarCoursesLoading = false.obs;
+  final RxString pillarCoursesError = ''.obs;
+  final RxString selectedCourseTypeId = ''.obs; // selected courseType filter
+  final RxString selectedPillarId = ''.obs; // selected pillar filter
 
   @override
   void onInit() {
     super.onInit();
-    // Initialise one bounce AnimationController per courseType
-    for (final ct in _courseTypes) {
-      final ac = AnimationController(
-        vsync: this,
-        duration: const Duration(milliseconds: 120),
-        lowerBound: 0.94,
-        upperBound: 1.0,
-      )..value = 1.0;
-      _bounceControllers[ct] = ac;
-      bounceScaleMap[ct] = 1.0;
-      ac.addListener(() => bounceScaleMap[ct] = ac.value);
-    }
     loadBanners();
     loadCourses(refresh: true);
+    fetchCourseTypes();
+    fetchPillars();
     searchController.addListener(_performSearch);
     _updateLiveWebinar();
   }
@@ -102,12 +101,85 @@ class CoursesController extends BaseController
     descExpandedMap[courseId] = !(descExpandedMap[courseId] ?? false);
   }
 
-  // Trigger bounce animation for a journey card
-  Future<void> triggerBounce(String courseType) async {
-    final ac = _bounceControllers[courseType];
+  // Trigger bounce animation for a journey card (keyed by courseType id)
+  Future<void> triggerBounce(String courseTypeId) async {
+    final ac = _bounceControllers[courseTypeId];
     if (ac == null) return;
     await ac.reverse();
     await ac.forward();
+  }
+
+  // Initialise bounce controllers after courseTypes are fetched
+  void _initBounceControllers() {
+    // Dispose old ones first
+    for (final ac in _bounceControllers.values) {
+      ac.dispose();
+    }
+    _bounceControllers.clear();
+    bounceScaleMap.clear();
+
+    for (final ct in courseTypesList) {
+      final ac = AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 120),
+        lowerBound: 0.94,
+        upperBound: 1.0,
+      )..value = 1.0;
+      _bounceControllers[ct.id] = ac;
+      bounceScaleMap[ct.id] = 1.0;
+      ac.addListener(() => bounceScaleMap[ct.id] = ac.value);
+    }
+  }
+
+  // Fetch course types for the learning journey section
+  Future<void> fetchCourseTypes() async {
+    isCourseTypesLoading.value = true;
+    try {
+      final response = await _coursesService.getCourseTypes();
+      courseTypesList.value = response?.courseTypes ?? [];
+      _initBounceControllers();
+    } catch (e) {
+      debugPrint('Failed to fetch course types: $e');
+    } finally {
+      isCourseTypesLoading.value = false;
+    }
+  }
+
+  // Fetch spiritual pillars for the pillars grid
+  Future<void> fetchPillars() async {
+    isPillarsLoading.value = true;
+    try {
+      final response = await _coursesService.getPillars();
+      pillarsList.value = response?.pillars ?? [];
+    } catch (e) {
+      debugPrint('Failed to fetch pillars: $e');
+    } finally {
+      isPillarsLoading.value = false;
+    }
+  }
+
+  // Fetch courses filtered by courseType + pillar for the pillar courses screen
+  Future<void> fetchPillarCourses() async {
+    isPillarCoursesLoading.value = true;
+    pillarCoursesError.value = '';
+    pillarCourses.clear();
+    try {
+      final response = await _coursesService.getCourses(
+        isPublished: true,
+        courseType: selectedCourseTypeId.value.isNotEmpty
+            ? selectedCourseTypeId.value
+            : null,
+        pillar: selectedPillarId.value.isNotEmpty
+            ? selectedPillarId.value
+            : null,
+        limit: 50,
+      );
+      pillarCourses.value = response?.courses ?? [];
+    } catch (e) {
+      pillarCoursesError.value = e.toString();
+    } finally {
+      isPillarCoursesLoading.value = false;
+    }
   }
 
   // Load courses

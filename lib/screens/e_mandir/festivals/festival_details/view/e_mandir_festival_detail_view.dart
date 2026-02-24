@@ -6,7 +6,7 @@ import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:astrobharataiuser/core/services/share_service.dart';
 
 class EMandirFestivalDetailView extends GetView<FestivalDetailController> {
   const EMandirFestivalDetailView({super.key});
@@ -224,7 +224,9 @@ class EMandirFestivalDetailView extends GetView<FestivalDetailController> {
   }
 
   void _shareFestival(String title, String description) {
-    final shareText = '$title\n\n$description';
-    Share.share(shareText, subject: title);
+    ShareService.shareFestival(
+      festivalId: controller.festival.id,
+      festivalName: title,
+    );
   }
 }

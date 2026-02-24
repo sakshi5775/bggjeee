@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/binding/auth_binding/signup_binding.dart';
 import 'package:astrobharataiuser/binding/blog_binding/all_blogs_binding.dart';
 import 'package:astrobharataiuser/binding/chat_binding/chat_binding.dart';
 import 'package:astrobharataiuser/binding/courses_binding/courses_binding.dart';
+import 'package:astrobharataiuser/screens/courses/views/spiritual_pillar_courses.dart';
 import 'package:astrobharataiuser/binding/courses_binding/live_webinars_binding.dart'; // Added
 import 'package:astrobharataiuser/binding/courses_binding/my_learning_binding.dart';
 import 'package:astrobharataiuser/binding/dashboard_binding/user_main_binding.dart';
@@ -1671,6 +1672,13 @@ class PageRoutes {
     GetPage(
       name: AppRoutes.aboutUs,
       page: () => const AboutUsView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.spiritualPillarCourses,
+      page: () => const SpiritualPillarCoursesView(),
+      binding: CoursesBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),

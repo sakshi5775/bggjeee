@@ -16,6 +16,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 
+import '../../../core/services/share_service.dart';
+
 class LiveAstrologersView extends StatelessWidget {
   final bool showBackButton;
 
@@ -394,11 +396,9 @@ class LiveAstrologersView extends StatelessWidget {
           // Share icon
           GestureDetector(
             onTap: () {
-              // TODO: Implement share functionality
-              Get.snackbar(
-                'Info',
-                'Share feature coming soon',
-                snackPosition: SnackPosition.BOTTOM,
+              ShareService.shareAstrologer(
+                astrologerId: stream.astrologerId,
+                astrologerName: astrologerName,
               );
             },
             child: Icon(

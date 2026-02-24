@@ -4765,9 +4765,6 @@ class UserDashboardView extends BasePage<UserDashboardController> {
   }
 
   static Widget buildDrawer(BuildContext context) {
-    final controller = Get.isRegistered<UserDashboardController>()
-        ? Get.find<UserDashboardController>()
-        : null;
     final mainController = Get.find<UserMainController>();
     return Drawer(
       width: Get.width > 600 ? Get.width * 0.70 : null,
