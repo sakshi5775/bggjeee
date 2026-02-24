@@ -215,7 +215,7 @@ class KundliResultController extends BaseController {
   final isLoadingAshtakvargaChart = false.obs;
 
   // Divisional Chart data
-  final divisionalChartData = Rxn<Map<String, dynamic>>();
+  final divisionalChartSvgData = Rxn<String>();
   final isLoadingDivisionalChart = false.obs;
   final selectedDivisionForChart = Rxn<String>();
 
@@ -765,7 +765,7 @@ class KundliResultController extends BaseController {
     if (divisionalChartIndex != -1 && index == divisionalChartIndex) {
       // Don't fetch automatically, user needs to select a division first
       selectedDivisionForChart.value = null;
-      divisionalChartData.value = null;
+      divisionalChartSvgData.value = null;
     }
 
     // Fetch Ascendant Report when ASCENDANT REPORT tab is selected
@@ -1032,7 +1032,7 @@ class KundliResultController extends BaseController {
         return;
       }
 
-      final data = await _kundliService.getDivisionalChart(
+      final data = await _kundliService.generateDivisionalChartSvg(
         date: date,
         time: time,
         latitude: latitude,
@@ -1040,13 +1040,23 @@ class KundliResultController extends BaseController {
         tz: tz,
         division: division,
         lang: lang,
+        style: form['style'] as String? ?? 'north',
+        coloredPlanets: form['coloredPlanets'] as bool? ?? true,
+        color: '#ed6f30',
       );
 
       isLoadingDivisionalChart.value = false;
 
-      if (data != null && data['response'] != null) {
-        divisionalChartData.value = data['response'] as Map<String, dynamic>;
-        debugPrint('Divisional Chart data loaded successfully for $division');
+      if (data != null) {
+        final svgString = data['data'] as String?;
+        if (svgString != null && svgString.isNotEmpty) {
+          divisionalChartSvgData.value = svgString;
+          debugPrint('Divisional Chart SVG loaded successfully for $division');
+        } else {
+          debugPrint(
+            'Divisional Chart SVG Data is null or empty for $division',
+          );
+        }
       } else {
         debugPrint('Failed to fetch Divisional Chart data for $division');
       }

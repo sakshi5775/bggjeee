@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/live_stream_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/live_stream_service.dart';
@@ -11,6 +12,7 @@ class LiveAstrologersController extends BaseController {
 
   // Tab state
   final RxInt selectedTab = 0.obs; // 0 = ONGOING, 1 = UPCOMING
+  Timer? _liveStreamPollTimer;
 
   // ONGOING streams (live)
   final RxList<LiveStreamModel> liveStreams = <LiveStreamModel>[].obs;
@@ -33,6 +35,39 @@ class LiveAstrologersController extends BaseController {
     super.onInit();
     loadLiveStreams();
     loadUpcomingStreams();
+    _startPolling();
+  }
+
+  void _startPolling() {
+    _liveStreamPollTimer?.cancel();
+    _liveStreamPollTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+      if (selectedTab.value == 0) {
+        _pollLiveStreams();
+      }
+    });
+  }
+
+  Future<void> _pollLiveStreams() async {
+    try {
+      final response = await _liveStreamService.getLiveStreams(
+        page: 1,
+        limit: 100,
+        useCache: false,
+      );
+      if (response != null) {
+        liveStreams.value = response.streams
+            .where((s) => s.status == 'LIVE')
+            .toList();
+      }
+    } catch (e) {
+      debugPrint('Error polling live streams: $e');
+    }
+  }
+
+  @override
+  void onClose() {
+    _liveStreamPollTimer?.cancel();
+    super.onClose();
   }
 
   // Load live streams (ONGOING tab)

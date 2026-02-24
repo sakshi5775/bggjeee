@@ -75,7 +75,7 @@ class AstrologyToolWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 110.h,
+      height: 125.h,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -122,14 +122,13 @@ class AstrologyToolWidget extends StatelessWidget {
       },
       behavior: HitTestBehavior.opaque,
       child: Container(
-        width: 70.w,
-        height: 80.h,
+        width: 75.w,
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(16.r)),
         child: Column(
           children: [
-            // Image section - takes most of the space
+            // Image section
             Expanded(
-              flex: 7,
+              flex: 5,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16.r),
                 child: Stack(
@@ -203,32 +202,24 @@ class AstrologyToolWidget extends StatelessWidget {
                 ),
               ),
             ),
-            // Label section - compact at bottom with transparent background
+            // Label section - compact at bottom
             Expanded(
               flex: 3,
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final screenWidth = MediaQuery.of(context).size.width;
-
-                  // Define breakpoint (you can adjust 600 based on your design system)
-                  final bool isPhone = screenWidth < 600;
-
-                  return Container(
-                    child: Center(
-                      child: AutoTranslateText(
-                        label,
-                        style: MyTextTheme.mediumBCB.copyWith(
-                          color: maroon,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 9.5.sp,
-                        ),
-                        textAlign: TextAlign.center,
-                        maxLines: isPhone ? 2 : 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  );
-                },
+              child: Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.only(top: 4.h),
+                child: AutoTranslateText(
+                  label,
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: maroon,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 10.sp,
+                    height: 1.1,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.visible,
+                ),
               ),
             ),
           ],

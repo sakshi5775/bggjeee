@@ -232,7 +232,11 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 tabs: controller.sliderTabs,
                 selectedIndex: controller.selectedSliderIndex.value,
                 onTabSelected: (index) {
-                  controller.selectedSliderIndex.value = index;
+                  if (controller.sliderTabs[index] == 'Horoscope') {
+                    Get.toNamed(AppRoutes.horoscopeForm);
+                  } else {
+                    controller.selectedSliderIndex.value = index;
+                  }
                 },
               ),
             ),
@@ -253,17 +257,29 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         final v = details.velocity.pixelsPerSecond.dx;
         final cur = controller.selectedSliderIndex.value;
         if (v < -_kSwipeVelocityThreshold) {
-          final newIndex = (cur + 1).clamp(0, n - 1);
-          debugPrint(
-            "SLIDER: Swipe left detected, changing index from $cur to $newIndex",
-          );
-          controller.selectedSliderIndex.value = newIndex;
+          int newIndex = cur + 1;
+          while (newIndex < n &&
+              controller.sliderTabs[newIndex] == 'Horoscope') {
+            newIndex++;
+          }
+          if (newIndex < n) {
+            debugPrint(
+              "SLIDER: Swipe left detected, changing index from $cur to $newIndex",
+            );
+            controller.selectedSliderIndex.value = newIndex;
+          }
         } else if (v > _kSwipeVelocityThreshold) {
-          final newIndex = (cur - 1).clamp(0, n - 1);
-          debugPrint(
-            "SLIDER: Swipe right detected, changing index from $cur to $newIndex",
-          );
-          controller.selectedSliderIndex.value = newIndex;
+          int newIndex = cur - 1;
+          while (newIndex >= 0 &&
+              controller.sliderTabs[newIndex] == 'Horoscope') {
+            newIndex--;
+          }
+          if (newIndex >= 0) {
+            debugPrint(
+              "SLIDER: Swipe right detected, changing index from $cur to $newIndex",
+            );
+            controller.selectedSliderIndex.value = newIndex;
+          }
         }
       },
       child: _buildSliderBody(context),
@@ -3637,6 +3653,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
 
             child: AutoTranslateText(
               displayName,
+              translate: false,
               style: AppTypography.h3.copyWith(
                 color: '#68171E'.toColor(),
                 fontWeight: FontWeight.w500,
@@ -5538,9 +5555,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
   }
 
   Widget _buildLiveAstrologerProfile(int index, LiveStreamModel stream) {
-    final profilePicture = controller.getProfilePictureForAstrologer(
-      stream.astrologerId,
-    );
+    final profilePicture =
+        stream.astrologerPhoto ??
+        controller.getProfilePictureForAstrologer(stream.astrologerId);
     final isLive = stream.status == 'LIVE';
     final borderColor = isLive ? "#00C853".toColor() : Colors.red;
     final badgeColor = isLive ? "#00C853".toColor() : Colors.red;
@@ -5639,6 +5656,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             width: 70.w,
             child: AutoTranslateText(
               stream.astrologerName,
+              translate: false,
               style: AppTypography.h3.copyWith(
                 color: '#68171E'.toColor(),
                 fontWeight: FontWeight.w500,
@@ -5761,6 +5779,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             width: 70.w,
             child: AutoTranslateText(
               astrologerName,
+              translate: false,
               style: AppTypography.h3.copyWith(
                 color: '#68171E'.toColor(),
                 fontWeight: FontWeight.w500,

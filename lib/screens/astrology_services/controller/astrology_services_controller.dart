@@ -114,7 +114,10 @@ class AstrologyServicesController extends GetxController {
           matchingAstrologer != null &&
               matchingAstrologer.specializations.isNotEmpty
           ? matchingAstrologer.specializations.first
-          : 'Astrology';
+          : (stream.astrologerSpecializations != null &&
+                    stream.astrologerSpecializations!.isNotEmpty
+                ? stream.astrologerSpecializations!.first
+                : 'Astrology');
 
       // Get rating from matching astrologer or use default
       final rating = matchingAstrologer != null
@@ -150,7 +153,9 @@ class AstrologyServicesController extends GetxController {
 
       // Get profile picture from matching astrologer or use default
       final image =
-          matchingAstrologer?.profilePicture ?? 'assets/app/astrology.png';
+          stream.astrologerPhoto ??
+          matchingAstrologer?.profilePicture ??
+          'assets/app/astrology.png';
 
       // Get name from matching astrologer or fall back to stream name
       final name = matchingAstrologer != null

@@ -134,6 +134,7 @@ class AllAstrologerWidget extends BasePage<UserDashboardController> {
                               width: 70.w,
                               child: AutoTranslateText(
                                 astrologerName,
+                                translate: false,
                                 style: AppTypography.h3.copyWith(
                                   color: '#68171E'.toColor(),
                                   fontWeight: FontWeight.w500,
@@ -316,6 +317,7 @@ class ChatCallAstrologerWidget extends BasePage<UserDashboardController> {
                               width: 70.w,
                               child: AutoTranslateText(
                                 astrologerName,
+                                translate: false,
                                 style: AppTypography.h3.copyWith(
                                   color: '#68171E'.toColor(),
                                   fontWeight: FontWeight.w500,

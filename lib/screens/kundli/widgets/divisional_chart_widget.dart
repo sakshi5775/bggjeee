@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/screens/kundli/widgets/consult_astrologer_card
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../../utils/app_colors.dart';
@@ -42,7 +43,7 @@ class DivisionalChartWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       final selectedDivision = controller.selectedDivisionForChart.value;
-      final data = controller.divisionalChartData.value;
+      final svgData = controller.divisionalChartSvgData.value;
 
       return SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
@@ -73,7 +74,7 @@ class DivisionalChartWidget extends StatelessWidget {
                   _buildDivisionSlider(selectedDivision),
                   Padding(
                     padding: EdgeInsets.all(10.w),
-                    child: _buildContent(context, selectedDivision, data),
+                    child: _buildContent(context, selectedDivision, svgData),
                   ),
                 ],
               ),
@@ -167,13 +168,13 @@ class DivisionalChartWidget extends StatelessWidget {
   Widget _buildContent(
     BuildContext context,
     String? selectedDivision,
-    Map<String, dynamic>? data,
+    String? svgData,
   ) {
     if (controller.isLoadingDivisionalChart.value) {
       return _buildLoadingState(selectedDivision);
     }
-    if (selectedDivision != null && data != null) {
-      return _buildDataTable(context, data, selectedDivision);
+    if (selectedDivision != null && svgData != null && svgData.isNotEmpty) {
+      return _buildSvgChart(context, selectedDivision, svgData);
     }
     return _buildEmptyState();
   }
@@ -230,13 +231,11 @@ class DivisionalChartWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildDataTable(
+  Widget _buildSvgChart(
     BuildContext context,
-    Map<String, dynamic> data,
     String selectedDivision,
+    String svgData,
   ) {
-    final houseNo = data['house_no'] as Map<String, dynamic>? ?? {};
-    final zodiacNo = data['zodiac_no'] as Map<String, dynamic>? ?? {};
     final divisionInfo = divisions.firstWhere(
       (d) => d['code'] == selectedDivision,
       orElse: () => {
@@ -282,280 +281,38 @@ class DivisionalChartWidget extends StatelessWidget {
           ],
         ),
         Spacing.h(10),
-        _buildHouseTable(context, houseNo, 'House', Icons.home_outlined),
-        Spacing.h(10),
-        _buildZodiacTable(context, zodiacNo, 'Zodiac', Icons.star_outline),
-      ],
-    );
-  }
-
-  Widget _buildHouseTable(
-    BuildContext context,
-    Map<String, dynamic> houseNo,
-    String title,
-    IconData icon,
-  ) {
-    return _buildCompactTable(
-      context: context,
-      title: title,
-      icon: icon,
-      columnLabel: 'House',
-      rowCount: 12,
-      rowKey: (i) => (i + 1).toString(),
-      cellLabel: (k) => 'H$k',
-      getPlanets: (k) => houseNo[k] as List<dynamic>? ?? [],
-    );
-  }
-
-  Widget _buildZodiacTable(
-    BuildContext context,
-    Map<String, dynamic> zodiacNo,
-    String title,
-    IconData icon,
-  ) {
-    return _buildCompactTable(
-      context: context,
-      title: title,
-      icon: icon,
-      columnLabel: 'Zodiac',
-      rowCount: 12,
-      rowKey: (i) => (i + 1).toString(),
-      cellLabel: (k) => 'Z$k',
-      getPlanets: (k) => zodiacNo[k] as List<dynamic>? ?? [],
-    );
-  }
-
-  Widget _buildCompactTable({
-    required BuildContext context,
-    required String title,
-    required IconData icon,
-    required String columnLabel,
-    required int rowCount,
-    required String Function(int i) rowKey,
-    required String Function(String k) cellLabel,
-    required List<dynamic> Function(String k) getPlanets,
-  }) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    // final col1 = (screenWidth * 0.22).clamp(56.0, 90.0);
-    // final col2 = (screenWidth * 0.68).clamp(180.0, 320.0);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(icon, size: 14.w, color: "#ed6f30".toColor()),
-            Spacing.w(6),
-            AutoTranslateText(
-              title,
-              style: MyTextTheme.smallBCB.copyWith(
-                color: "#6F221E".toColor(),
-                fontWeight: FontWeight.w600,
-                fontSize: 12.sp,
-              ),
-            ),
-          ],
-        ),
-        Spacing.h(6),
-        Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(8.r),
-            border: Border.all(
-              color: "#6F221E".toColor().withValues(alpha: 0.12),
-              width: 1,
-            ),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8.r),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Table(
-                  border: TableBorder.all(
-                    color: "#6F221E".toColor().withValues(alpha: 0.12),
-                    width: 1,
-                  ),
-                  columnWidths: {
-                    0: FixedColumnWidth(Get.width * 0.2),
-                    1: FixedColumnWidth(Get.width * 0.7),
-                  },
-                  children: [
-                    TableRow(
-                      decoration: BoxDecoration(
-                        color: "#ed6f30".toColor().withValues(alpha: 0.1),
-                      ),
-                      children: [
-                        _buildTableHeaderCell(columnLabel),
-                        _buildTableHeaderCell('Planets'),
-                      ],
-                    ),
-                    ...List.generate(rowCount, (i) {
-                      final k = rowKey(i);
-                      return TableRow(
-                        decoration: BoxDecoration(
-                          color: i % 2 == 0
-                              ? Colors.white
-                              : "#ed6f30".toColor().withValues(alpha: 0.04),
-                        ),
-                        children: [
-                          _buildTableDataCell(cellLabel(k), isHeader: true),
-                          _buildPlanetsCell(getPlanets(k)),
-                        ],
-                      );
-                    }),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTableHeaderCell(String text) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 6.w),
-      child: AutoTranslateText(
-        text,
-        textAlign: TextAlign.center,
-        style: MyTextTheme.smallBCB.copyWith(
-          color: "#6F221E".toColor(),
-          fontWeight: FontWeight.w600,
-          fontSize: 11.sp,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTableDataCell(String text, {bool isHeader = false}) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 6.w),
-      child: AutoTranslateText(
-        text,
-        textAlign: TextAlign.center,
-        style: MyTextTheme.smallBCB.copyWith(
-          color: "#6F221E".toColor(),
-          fontWeight: isHeader ? FontWeight.w600 : FontWeight.w500,
-          fontSize: 11.sp,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPlanetsCell(List<dynamic> planets) {
-    if (planets.isEmpty) {
-      return Padding(
-        padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
-        child: Center(
-          child: AutoTranslateText(
-            '—',
-            style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withValues(alpha: 0.35),
-              fontSize: 11.sp,
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 8.w),
-      child: Wrap(
-        spacing: 5.w,
-        runSpacing: 5.h,
-        children: planets.map<Widget>((planet) {
-          final planetData = planet as Map<String, dynamic>;
-          final name = planetData['name']?.toString() ?? '--';
-          final fullName = planetData['full_name']?.toString() ?? '';
-          final zodiac = planetData['zodiac']?.toString() ?? '';
-          final retro = planetData['retro'] as bool? ?? false;
-          final sub = fullName.isNotEmpty && zodiac.isNotEmpty
-              ? '$fullName, $zodiac'
-              : fullName.isNotEmpty
-              ? fullName
-              : zodiac;
-
-          return Container(
-            constraints: BoxConstraints(maxWidth: 110.w),
-            padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
-            decoration: BoxDecoration(
-              color: retro
-                  ? "#ed6f30".toColor().withValues(alpha: 0.1)
-                  : "#6F221E".toColor().withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(6.r),
-              border: Border.all(
-                color: retro
-                    ? "#ed6f30".toColor().withValues(alpha: 0.3)
-                    : "#6F221E".toColor().withValues(alpha: 0.12),
-                width: 1,
-              ),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: AutoTranslateText(
-                        name,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        style: MyTextTheme.smallBCB.copyWith(
-                          color: retro
-                              ? "#ed6f30".toColor()
-                              : "#6F221E".toColor(),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 10.sp,
-                        ),
-                      ),
-                    ),
-                    if (retro) ...[
-                      SizedBox(width: 2.w),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 3.w,
-                          vertical: 1.h,
-                        ),
-                        decoration: BoxDecoration(
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final chartSize = constraints.maxWidth;
+            return Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8.r),
+                child: SizedBox(
+                  width: chartSize,
+                  height: chartSize,
+                  child: SvgPicture.string(
+                    svgData,
+                    width: chartSize,
+                    height: chartSize,
+                    fit: BoxFit.contain,
+                    alignment: Alignment.center,
+                    placeholderBuilder: (context) => Container(
+                      color: Colors.grey.withValues(alpha: 0.08),
+                      child: Center(
+                        child: CircularProgressIndicator(
                           color: "#ed6f30".toColor(),
-                          borderRadius: BorderRadius.circular(2.r),
-                        ),
-                        child: AutoTranslateText(
-                          'R',
-                          style: MyTextTheme.smallBCB.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 9.sp,
-                          ),
+                          strokeWidth: 2,
                         ),
                       ),
-                    ],
-                  ],
-                ),
-                if (sub.isNotEmpty) ...[
-                  SizedBox(height: 2.h),
-                  AutoTranslateText(
-                    sub,
-                    style: MyTextTheme.smallBCN.copyWith(
-                      color: "#6F221E".toColor().withValues(alpha: 0.6),
-                      fontSize: 9.sp,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                    semanticsLabel: '$selectedDivision Chart',
                   ),
-                ],
-              ],
-            ),
-          );
-        }).toList(),
-      ),
+                ),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }

@@ -123,10 +123,12 @@ class LiveAstrologersView extends StatelessWidget {
     LiveAstrologersController controller,
     LiveStreamModel stream,
   ) {
-    final profilePicture = controller.getProfilePictureForAstrologer(
-      stream.astrologerId,
-    );
-    final astrologerName = controller.getAstrologerName(stream.astrologerId);
+    final profilePicture =
+        stream.astrologerPhoto ??
+        controller.getProfilePictureForAstrologer(stream.astrologerId);
+    final astrologerName = stream.astrologerName != 'Unknown'
+        ? stream.astrologerName
+        : controller.getAstrologerName(stream.astrologerId);
 
     return GestureDetector(
       onTap: () async {
@@ -229,6 +231,7 @@ class LiveAstrologersView extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 4.w),
               child: AutoTranslateText(
                 astrologerName,
+                translate: false,
                 style: MyTextTheme.smallBCB
                     .copyWith(
                       color: const Color(0xFF68171E),
@@ -359,6 +362,7 @@ class LiveAstrologersView extends StatelessWidget {
               children: [
                 AutoTranslateText(
                   astrologerName,
+                  translate: false,
                   style: MyTextTheme.mediumBCB
                       .copyWith(
                         color: const Color(0xFF68171E),

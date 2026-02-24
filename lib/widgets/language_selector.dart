@@ -3,7 +3,8 @@ import 'package:get/get.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/core/localization/language_controller_v2.dart';
 import 'package:astrobharataiuser/core/models/app_language_model.dart';
-import 'package:astrobharataiuser/core/models/app_language_model.dart' as lang_service;
+import 'package:astrobharataiuser/core/models/app_language_model.dart'
+    as lang_service;
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 
 /// Language selector widget with dropdown
@@ -12,11 +13,7 @@ class LanguageSelector extends StatefulWidget {
   final Color? iconColor;
   final double? iconSize;
 
-  const LanguageSelector({
-    super.key,
-    this.iconColor,
-    this.iconSize,
-  });
+  const LanguageSelector({super.key, this.iconColor, this.iconSize});
 
   @override
   State<LanguageSelector> createState() => _LanguageSelectorState();
@@ -94,37 +91,38 @@ class _LanguageSelectorState extends State<LanguageSelector> {
           },
           itemBuilder: (BuildContext context) {
             return _languages.map((language) {
-              final isSelected = languageController.currentLanguageValue?.code == language.code;
-              
+              final isSelected =
+                  languageController.currentLanguageValue?.code ==
+                  language.code;
+
               return PopupMenuItem<AppLanguageModel>(
                 value: language,
                 child: Row(
                   children: [
                     if (isSelected)
-                      Icon(
-                        Icons.check,
-                        size: 20,
-                        color: "#6F221E".toColor(),
-                      )
+                      Icon(Icons.check, size: 20, color: "#6F221E".toColor())
                     else
                       const SizedBox(width: 20),
                     const SizedBox(width: 8),
                     Expanded(
                       child: AutoTranslateText(
                         language.nameNative,
+                        translate: false, // Don't translate language names
                         style: TextStyle(
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                          color: isSelected ? "#6F221E".toColor() : Colors.black87,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                          color: isSelected
+                              ? "#6F221E".toColor()
+                              : Colors.black87,
                         ),
                       ),
                     ),
                     const SizedBox(width: 8),
                     AutoTranslateText(
                       '(${language.nameEn})',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
+                      translate: false, // Don't translate language names
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     ),
                   ],
                 ),
@@ -136,4 +134,3 @@ class _LanguageSelectorState extends State<LanguageSelector> {
     );
   }
 }
-

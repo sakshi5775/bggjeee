@@ -30,9 +30,7 @@ class AstrologerModel {
       availability: Availability.fromJson(
         json['availability'] as Map<String, dynamic>? ?? {},
       ),
-      metrics: Metrics.fromJson(
-        json['metrics'] as Map<String, dynamic>? ?? {},
-      ),
+      metrics: Metrics.fromJson(json['metrics'] as Map<String, dynamic>? ?? {}),
       metadata: Metadata.fromJson(
         json['metadata'] as Map<String, dynamic>? ?? {},
       ),
@@ -55,22 +53,19 @@ class AstrologerModel {
   bool get isOnline => availability.status == 'ONLINE';
   bool get isFeatured => metadata.featuredAstrologer;
   bool get isPremium => metadata.premiumAstrologer;
-  
+
   // Get price for voice call (per minute)
-  double? get voicePricePerMin => services.voice.enabled 
-      ? (services.voice.pricePerMinute ?? 0.0) 
-      : null;
-  
+  double? get voicePricePerMin =>
+      services.voice.enabled ? (services.voice.pricePerMinute ?? 0.0) : null;
+
   // Get price for video call (per minute)
-  double? get videoPricePerMin => services.video.enabled 
-      ? (services.video.pricePerMinute ?? 0.0) 
-      : null;
-  
+  double? get videoPricePerMin =>
+      services.video.enabled ? (services.video.pricePerMinute ?? 0.0) : null;
+
   // Get price for chat (per minute)
-  double? get chatPricePerMin => services.chat.enabled 
-      ? (services.chat.pricePerMinute ?? 0.0) 
-      : null;
-  
+  double? get chatPricePerMin =>
+      services.chat.enabled ? (services.chat.pricePerMinute ?? 0.0) : null;
+
   // Backward compatibility - alias for chatPricePerMin
   double? get chatPrice => chatPricePerMin;
 }
@@ -100,11 +95,13 @@ class BasicInfo {
       displayName: (json['displayName'] ?? json['fullName'] ?? '').toString(),
       profilePicture: json['profilePicture']?.toString(),
       bio: (json['bio'] ?? '').toString(),
-      languages: (json['languages'] as List<dynamic>?)
+      languages:
+          (json['languages'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
           [],
-      specializations: (json['specializations'] as List<dynamic>?)
+      specializations:
+          (json['specializations'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
           [],
@@ -119,10 +116,7 @@ class Experience {
   final int years;
   final String description;
 
-  Experience({
-    required this.years,
-    required this.description,
-  });
+  Experience({required this.years, required this.description});
 
   factory Experience.fromJson(Map<String, dynamic> json) {
     return Experience(
@@ -153,9 +147,7 @@ class Services {
       video: VideoService.fromJson(
         json['video'] as Map<String, dynamic>? ?? {},
       ),
-      chat: ChatService.fromJson(
-        json['chat'] as Map<String, dynamic>? ?? {},
-      ),
+      chat: ChatService.fromJson(json['chat'] as Map<String, dynamic>? ?? {}),
       reports: ReportsService.fromJson(
         json['reports'] as Map<String, dynamic>? ?? {},
       ),
@@ -184,8 +176,8 @@ class VoiceService {
       currency: json['currency'] as String? ?? 'INR',
       totalCalls: (json['totalCalls'] as num?)?.toInt() ?? 0,
       totalDuration: (json['totalDuration'] as num?)?.toInt() ?? 0,
-      pricePerMinute: json['pricePerMinute'] != null 
-          ? (json['pricePerMinute'] as num).toDouble() 
+      pricePerMinute: json['pricePerMinute'] != null
+          ? (json['pricePerMinute'] as num).toDouble()
           : null,
     );
   }
@@ -212,8 +204,8 @@ class VideoService {
       currency: json['currency'] as String? ?? 'INR',
       totalCalls: (json['totalCalls'] as num?)?.toInt() ?? 0,
       totalDuration: (json['totalDuration'] as num?)?.toInt() ?? 0,
-      pricePerMinute: json['pricePerMinute'] != null 
-          ? (json['pricePerMinute'] as num).toDouble() 
+      pricePerMinute: json['pricePerMinute'] != null
+          ? (json['pricePerMinute'] as num).toDouble()
           : null,
     );
   }
@@ -223,8 +215,8 @@ class ChatService {
   final bool enabled;
   final String currency;
   final int totalChats;
-  final double? pricePerMinute; // CHANGED: Now uses pricePerMinute instead of pricePerMessage
-  
+  final double?
+  pricePerMinute; // CHANGED: Now uses pricePerMinute instead of pricePerMessage
 
   ChatService({
     required this.enabled,
@@ -239,11 +231,11 @@ class ChatService {
       currency: json['currency'] as String? ?? 'INR',
       totalChats: (json['totalChats'] as num?)?.toInt() ?? 0,
       // Support both pricePerMinute (new) and pricePerMessage (old) for backward compatibility
-      pricePerMinute: json['pricePerMinute'] != null 
-          ? (json['pricePerMinute'] as num).toDouble() 
-          : (json['pricePerMinute'] != null 
-              ? (json['pricePerMinute'] as num).toDouble() 
-              : null),
+      pricePerMinute: json['pricePerMinute'] != null
+          ? (json['pricePerMinute'] as num).toDouble()
+          : (json['pricePerMinute'] != null
+                ? (json['pricePerMinute'] as num).toDouble()
+                : null),
     );
   }
 }
@@ -263,7 +255,8 @@ class ReportsService {
     return ReportsService(
       enabled: json['enabled'] as bool? ?? false,
       totalReports: (json['totalReports'] as num?)?.toInt() ?? 0,
-      types: (json['types'] as List<dynamic>?)
+      types:
+          (json['types'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
           [],
@@ -274,14 +267,10 @@ class ReportsService {
 class Availability {
   final String status;
 
-  Availability({
-    required this.status,
-  });
+  Availability({required this.status});
 
   factory Availability.fromJson(Map<String, dynamic> json) {
-    return Availability(
-      status: json['status'] as String? ?? 'OFFLINE',
-    );
+    return Availability(status: json['status'] as String? ?? 'OFFLINE');
   }
 }
 
@@ -289,16 +278,11 @@ class Metrics {
   final Rating rating;
   final Consultations consultations;
 
-  Metrics({
-    required this.rating,
-    required this.consultations,
-  });
+  Metrics({required this.rating, required this.consultations});
 
   factory Metrics.fromJson(Map<String, dynamic> json) {
     return Metrics(
-      rating: Rating.fromJson(
-        json['rating'] as Map<String, dynamic>? ?? {},
-      ),
+      rating: Rating.fromJson(json['rating'] as Map<String, dynamic>? ?? {}),
       consultations: Consultations.fromJson(
         json['consultations'] as Map<String, dynamic>? ?? {},
       ),
@@ -320,7 +304,8 @@ class Rating {
   factory Rating.fromJson(Map<String, dynamic> json) {
     return Rating(
       distribution: RatingDistribution.fromJson(
-          json['distribution'] as Map<String, dynamic>? ?? {}),
+        json['distribution'] as Map<String, dynamic>? ?? {},
+      ),
       average: (json['average'] as num?)?.toDouble() ?? 0.0,
       totalRatings: (json['totalRatings'] as num?)?.toInt() ?? 0,
     );
@@ -357,10 +342,7 @@ class Consultations {
   final int total;
   final int completed;
 
-  Consultations({
-    required this.total,
-    required this.completed,
-  });
+  Consultations({required this.total, required this.completed});
 
   factory Consultations.fromJson(Map<String, dynamic> json) {
     return Consultations(
@@ -374,10 +356,7 @@ class Metadata {
   final bool featuredAstrologer;
   final bool premiumAstrologer;
 
-  Metadata({
-    required this.featuredAstrologer,
-    required this.premiumAstrologer,
-  });
+  Metadata({required this.featuredAstrologer, required this.premiumAstrologer});
 
   factory Metadata.fromJson(Map<String, dynamic> json) {
     return Metadata(
@@ -391,10 +370,7 @@ class AstrologerResponse {
   final List<AstrologerModel> astrologers;
   final AstrologerPagination pagination;
 
-  AstrologerResponse({
-    required this.astrologers,
-    required this.pagination,
-  });
+  AstrologerResponse({required this.astrologers, required this.pagination});
 
   factory AstrologerResponse.fromJson(Map<String, dynamic> json) {
     final data = json['data'] as Map<String, dynamic>;
@@ -498,7 +474,8 @@ class AstrologerReview {
           : null,
       userDisplayInfo: json['userDisplayInfo'] != null
           ? UserDisplayInfo.fromJson(
-              json['userDisplayInfo'] as Map<String, dynamic>)
+              json['userDisplayInfo'] as Map<String, dynamic>,
+            )
           : null,
       helpfulCount: json['helpfulCount'] as int? ?? 0,
       reportedCount: json['reportedCount'] as int? ?? 0,
@@ -558,4 +535,3 @@ class AstrologerReviewPagination {
     );
   }
 }
-

@@ -245,6 +245,7 @@ class KidsSpecialistAstrologersWidget
               padding: EdgeInsets.symmetric(horizontal: 12.w),
               child: AutoTranslateText(
                 name,
+                translate: false,
                 style: AppTypography.h3.copyWith(
                   color: '#68171E'.toColor(),
                   fontSize: 12.sp,

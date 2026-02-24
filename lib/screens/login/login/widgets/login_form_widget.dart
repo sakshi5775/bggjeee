@@ -51,23 +51,19 @@ class LoginFormWidget extends StatelessWidget {
           }),
           Spacing.h(8),
 
-          // Password Field - Only show for email login
-          Obx(
-            () => controller.isEmailMode.value
-                ? Column(
-                    children: [
-                      MyTextField(
-                        controller: controller.passwordController,
-                        headerText: 'Password',
-                        hintText: 'Enter your password',
-                        isPasswordField: true,
-                        prefixIcon: const Icon(Icons.lock_outline),
-                        validator: controller.validatePassword,
-                      ),
-                      Spacing.h(3),
-                    ],
-                  )
-                : const SizedBox.shrink(),
+          // Password Field - Always show
+          Column(
+            children: [
+              MyTextField(
+                controller: controller.passwordController,
+                headerText: 'Password',
+                hintText: 'Enter your password',
+                isPasswordField: true,
+                prefixIcon: const Icon(Icons.lock_outline),
+                validator: controller.validatePassword,
+              ),
+              Spacing.h(3),
+            ],
           ),
 
           Align(

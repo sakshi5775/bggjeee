@@ -9,6 +9,8 @@ class LiveStreamModel {
   final int currentViewers;
   final int totalGifts;
   final DateTime? startedAt;
+  final String? astrologerPhoto;
+  final List<String>? astrologerSpecializations;
 
   LiveStreamModel({
     required this.streamId,
@@ -19,6 +21,8 @@ class LiveStreamModel {
     required this.currentViewers,
     required this.totalGifts,
     this.startedAt,
+    this.astrologerPhoto,
+    this.astrologerSpecializations,
   });
 
   factory LiveStreamModel.fromJson(Map<String, dynamic> json) {
@@ -33,6 +37,11 @@ class LiveStreamModel {
       startedAt: json['startedAt'] != null
           ? DateTime.parse(json['startedAt'] as String)
           : null,
+      astrologerPhoto: json['astrologerPhoto'] as String?,
+      astrologerSpecializations:
+          (json['astrologerSpecializations'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList(),
     );
   }
 }
@@ -41,10 +50,7 @@ class LiveStreamResponse {
   final List<LiveStreamModel> streams;
   final LiveStreamPagination pagination;
 
-  LiveStreamResponse({
-    required this.streams,
-    required this.pagination,
-  });
+  LiveStreamResponse({required this.streams, required this.pagination});
 
   factory LiveStreamResponse.fromJson(Map<String, dynamic> json) {
     final data = json['data'] as List<dynamic>;
@@ -111,7 +117,9 @@ class JoinStreamResponse {
       appId: data['appId'] as String,
       tokenExpiresAt: DateTime.parse(data['tokenExpiresAt'] as String),
       astrologerId: data['astrologer']?['astrologerId'] as String? ?? '',
-      streamInfo: StreamInfo.fromJson(data['streamInfo'] as Map<String, dynamic>),
+      streamInfo: StreamInfo.fromJson(
+        data['streamInfo'] as Map<String, dynamic>,
+      ),
     );
   }
 }
@@ -141,20 +149,21 @@ class GiftCatalog {
   final List<Gift> gifts;
   final List<Reaction> reactions;
 
-  GiftCatalog({
-    required this.gifts,
-    required this.reactions,
-  });
+  GiftCatalog({required this.gifts, required this.reactions});
 
   factory GiftCatalog.fromJson(Map<String, dynamic> json) {
     final data = json['data'] as Map<String, dynamic>;
     return GiftCatalog(
-      gifts: (data['gifts'] as List<dynamic>?)
+      gifts:
+          (data['gifts'] as List<dynamic>?)
               ?.map((e) => Gift.fromJson(e as Map<String, dynamic>))
-              .toList() ?? [],
-      reactions: (data['reactions'] as List<dynamic>?)
-                  ?.map((e) => Reaction.fromJson(e as Map<String, dynamic>))
-                  .toList() ?? [],
+              .toList() ??
+          [],
+      reactions:
+          (data['reactions'] as List<dynamic>?)
+              ?.map((e) => Reaction.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
     );
   }
 }
@@ -190,11 +199,7 @@ class Reaction {
   final String icon;
   final String name;
 
-  Reaction({
-    required this.type,
-    required this.icon,
-    required this.name,
-  });
+  Reaction({required this.type, required this.icon, required this.name});
 
   factory Reaction.fromJson(Map<String, dynamic> json) {
     return Reaction(
@@ -319,7 +324,8 @@ class StreamScheduling {
       scheduledEndTime: DateTime.parse(json['scheduledEndTime'] as String),
       title: json['title'] as String? ?? '',
       description: json['description'] as String? ?? '',
-      estimatedDurationMinutes: (json['estimatedDurationMinutes'] as num?)?.toInt() ?? 60,
+      estimatedDurationMinutes:
+          (json['estimatedDurationMinutes'] as num?)?.toInt() ?? 60,
       rsvpCount: (json['rsvpCount'] as num?)?.toInt() ?? 0,
     );
   }
@@ -343,7 +349,9 @@ class UpcomingStreamModel {
       streamId: json['streamId'] as String,
       astrologerId: json['astrologerId'] as String,
       astrologerName: json['astrologerName'] as String? ?? 'Unknown',
-      scheduling: StreamScheduling.fromJson(json['scheduling'] as Map<String, dynamic>),
+      scheduling: StreamScheduling.fromJson(
+        json['scheduling'] as Map<String, dynamic>,
+      ),
     );
   }
 }
@@ -352,10 +360,7 @@ class UpcomingStreamsResponse {
   final List<UpcomingStreamModel> streams;
   final LiveStreamPagination pagination;
 
-  UpcomingStreamsResponse({
-    required this.streams,
-    required this.pagination,
-  });
+  UpcomingStreamsResponse({required this.streams, required this.pagination});
 
   factory UpcomingStreamsResponse.fromJson(Map<String, dynamic> json) {
     final data = json['data'] as List<dynamic>;
@@ -387,7 +392,9 @@ class ScheduledStreamModel {
     return ScheduledStreamModel(
       streamId: json['streamId'] as String,
       status: json['status'] as String? ?? 'SCHEDULED',
-      scheduling: StreamScheduling.fromJson(json['scheduling'] as Map<String, dynamic>),
+      scheduling: StreamScheduling.fromJson(
+        json['scheduling'] as Map<String, dynamic>,
+      ),
       currentViewers: (json['currentViewers'] as num?)?.toInt() ?? 0,
     );
   }
@@ -469,7 +476,9 @@ class StreamReportModel {
       reportId: json['reportId'] as String,
       reportedAt: DateTime.parse(json['reportedAt'] as String),
       streamSnapshot: json['streamSnapshot'] != null
-          ? StreamSnapshot.fromJson(json['streamSnapshot'] as Map<String, dynamic>)
+          ? StreamSnapshot.fromJson(
+              json['streamSnapshot'] as Map<String, dynamic>,
+            )
           : null,
     );
   }
@@ -502,10 +511,7 @@ class StreamReportsResponse {
   final List<StreamReportModel> reports;
   final LiveStreamPagination pagination;
 
-  StreamReportsResponse({
-    required this.reports,
-    required this.pagination,
-  });
+  StreamReportsResponse({required this.reports, required this.pagination});
 
   factory StreamReportsResponse.fromJson(Map<String, dynamic> json) {
     final data = json['data'] as List<dynamic>;
@@ -519,4 +525,3 @@ class StreamReportsResponse {
     );
   }
 }
-
