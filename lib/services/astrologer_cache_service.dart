@@ -138,6 +138,8 @@ class AstrologerCacheService {
       'currentViewers': stream.currentViewers,
       'totalGifts': stream.totalGifts,
       'startedAt': stream.startedAt?.toIso8601String(),
+      'astrologerPhoto': stream.astrologerPhoto,
+      'astrologerSpecializations': stream.astrologerSpecializations,
     };
   }
 

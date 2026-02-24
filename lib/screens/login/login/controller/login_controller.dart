@@ -4,15 +4,12 @@ import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/services/notification_service.dart';
 import 'package:astrobharataiuser/screens/login/login/service/login_service.dart';
-import 'package:astrobharataiuser/screens/otp/service/otp_service.dart';
 import 'package:country_code_picker/country_code_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LoginController extends BaseController {
   final LoginService _loginService = LoginService();
-  final OtpService _otpService = OtpService();
   late final TextEditingController phoneController;
   late final TextEditingController emailController;
   late final TextEditingController passwordController;
@@ -93,20 +90,19 @@ class LoginController extends BaseController {
       if (identifier.isEmpty) {
         identifier = phoneController.text.trim();
       }
-      if (password.isEmpty) {
-        showErrorMessage(
-          title: "Error",
-          message: "Password is required for email login",
-        );
-        return;
-      }
     } else {
       final phoneNumber = phoneController.text.trim();
       final countryCode = selectedCountryCode.value.dialCode ?? '+91';
       identifier = '$countryCode$phoneNumber';
     }
 
-    identifier = identifier; // To avoid unused variable warning if modified
+    if (password.isEmpty) {
+      showErrorMessage(
+        title: "Error",
+        message: "Password is required for login",
+      );
+      return;
+    }
 
     CrashlyticsService.trackAction(
       "AUTH",
@@ -116,57 +112,29 @@ class LoginController extends BaseController {
 
     await runWithLoading(
       () async {
-        if (!isEmailMode.value) {
-          // Phone login - send OTP
-          if (kDebugMode) {
-            print('Login: Phone login - sending OTP to: $identifier');
+        // Password login for both phone and email
+        final loginModel = await _loginService.login(identifier, password);
+        if (loginModel != null) {
+          CrashlyticsService.trackAction("AUTH", "LOGIN_SUCCESS");
+          UserData().addLoginData(loginModel.toJson());
+
+          // Set user ID for future crashes
+          CrashlyticsService.setUser(loginModel.user?.userId ?? "unknown");
+
+          // Link user to OneSignal for targeted notifications
+          final userId = loginModel.user?.userId;
+          if (userId != null && userId.isNotEmpty) {
+            NotificationService.instance.setExternalUserId(userId);
           }
-          final otpSent = await _otpService.sendOtp(phone: identifier);
-          if (otpSent) {
-            CrashlyticsService.trackAction("AUTH", "OTP_SENT");
-            if (kDebugMode) {
-              print('Login: OTP sent successfully, navigating to OTP page');
-            }
-            await Future.delayed(const Duration(milliseconds: 300));
-            Get.offNamed(
-              AppRoutes.otp,
-              arguments: {
-                'destination': identifier,
-                'userType': 'USER',
-                'isRegistration': false,
-              },
-            );
-          } else {
-            CrashlyticsService.trackAction("AUTH", "OTP_FAIL");
-            if (kDebugMode) {
-              print('Login: Failed to send OTP');
-            }
-          }
+
+          await Future.delayed(const Duration(milliseconds: 500));
+          Get.offAllNamed(AppRoutes.userDashboard);
         } else {
-          // Email login
-          final loginModel = await _loginService.login(identifier, password);
-          if (loginModel != null) {
-            CrashlyticsService.trackAction("AUTH", "LOGIN_SUCCESS");
-            UserData().addLoginData(loginModel.toJson());
-
-            // Set user ID for future crashes
-            CrashlyticsService.setUser(loginModel.user?.userId ?? "unknown");
-
-            // Link user to OneSignal for targeted notifications
-            final userId = loginModel.user?.userId;
-            if (userId != null && userId.isNotEmpty) {
-              NotificationService.instance.setExternalUserId(userId);
-            }
-
-            await Future.delayed(const Duration(milliseconds: 500));
-            Get.offAllNamed(AppRoutes.userDashboard);
-          } else {
-            CrashlyticsService.trackAction("AUTH", "LOGIN_FAIL");
-          }
+          CrashlyticsService.trackAction("AUTH", "LOGIN_FAIL");
         }
       },
       showBusy: true,
-      successMessage: isEmailMode.value ? "Login successful!" : null,
+      successMessage: "Login successful!",
     );
   }
 
@@ -221,10 +189,6 @@ class LoginController extends BaseController {
   }
 
   String? validatePassword(String? value) {
-    // Password is only required for email login
-    if (!isEmailMode.value) {
-      return null; // Skip validation for phone login
-    }
     if (value == null || value.isEmpty) {
       return 'Please enter your password';
     }

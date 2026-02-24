@@ -154,187 +154,223 @@ class ProductDetailView extends StatelessWidget {
       ),
       child: SafeArea(
         top: false,
-        child: Row(
-          children: [
-            // Quantity Selector
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(20.r),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Obx(() {
-                    final quantity = controller.quantity.value;
-                    final available = controller.availableQuantity;
-                    final maxAllowed = available > 0
-                        ? (available < CartController.maxQuantity
-                              ? available
-                              : CartController.maxQuantity)
-                        : CartController.minQuantity;
-                    final canDecrease = quantity > CartController.minQuantity;
-                    final canIncrease = quantity < maxAllowed && available > 0;
+        child: Obx(() {
+          final outOfStock = controller.isOutOfStock;
 
-                    return Row(
-                      children: [
-                        IconButton(
-                          style: IconButton.styleFrom(
-                            backgroundColor: '#E3B341'.toColor(),
-                          ),
-                          icon: Icon(Icons.remove, size: 20.h),
-                          onPressed: canDecrease
-                              ? controller.decrementQuantity
-                              : null,
-                          color: canDecrease
-                              ? Colors.white
-                              : Colors.white.withValues(alpha: 0.4),
-                          padding: EdgeInsets.all(8.w),
-                          constraints: BoxConstraints(
-                            minWidth: 32,
-                            minHeight: 32,
-                          ),
-                        ),
-                        Container(
-                          width: 29.w,
-                          alignment: Alignment.center,
-                          child: AutoTranslateText(
-                            '$quantity',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w400,
-                              fontSize: 16,
-                              color: Colors.white,
+          if (outOfStock) {
+            return SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: null, // Disabled when out of stock
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: '#E3B341'.toColor(),
+                  foregroundColor: '#3D0C11'.toColor(),
+                  disabledBackgroundColor: '#E3B341'.toColor().withValues(
+                    alpha: 0.5,
+                  ),
+                  disabledForegroundColor: '#3D0C11'.toColor().withValues(
+                    alpha: 0.5,
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 12.h),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25.r),
+                  ),
+                  elevation: 0,
+                ),
+                child: AutoTranslateText(
+                  'Out of Stock',
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            );
+          }
+
+          return Row(
+            children: [
+              // Quantity Selector
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Obx(() {
+                      final quantity = controller.quantity.value;
+                      final available = controller.availableQuantity;
+                      final maxAllowed = available > 0
+                          ? (available < CartController.maxQuantity
+                                ? available
+                                : CartController.maxQuantity)
+                          : CartController.minQuantity;
+                      final canDecrease = quantity > CartController.minQuantity;
+                      final canIncrease =
+                          quantity < maxAllowed && available > 0;
+
+                      return Row(
+                        children: [
+                          IconButton(
+                            style: IconButton.styleFrom(
+                              backgroundColor: '#E3B341'.toColor(),
+                            ),
+                            icon: Icon(Icons.remove, size: 20.h),
+                            onPressed: canDecrease
+                                ? controller.decrementQuantity
+                                : null,
+                            color: canDecrease
+                                ? Colors.white
+                                : Colors.white.withValues(alpha: 0.4),
+                            padding: EdgeInsets.all(8.w),
+                            constraints: BoxConstraints(
+                              minWidth: 32,
+                              minHeight: 32,
                             ),
                           ),
-                        ),
-                        IconButton(
-                          style: IconButton.styleFrom(
-                            backgroundColor: '#E3B341'.toColor(),
-                          ),
-                          icon: Icon(Icons.add, size: 20),
-                          onPressed: canIncrease
-                              ? controller.incrementQuantity
-                              : null,
-                          color: canIncrease
-                              ? Colors.white
-                              : Colors.white.withValues(alpha: 0.4),
-                          padding: EdgeInsets.all(8.w),
-                          constraints: BoxConstraints(
-                            minWidth: 32,
-                            minHeight: 32,
-                          ),
-                        ),
-                      ],
-                    );
-                  }),
-                ],
-              ),
-            ),
-            SizedBox(width: 8.w),
-            // Add Button
-            Expanded(
-              child: Obx(() {
-                final currentProduct = controller.product.value;
-                final isProcessing = currentProduct != null
-                    ? controller.cartController.isProductUpdating(
-                        currentProduct,
-                      )
-                    : false;
-                final outOfStock = controller.isOutOfStock;
-
-                return ElevatedButton(
-                  onPressed:
-                      isProcessing || currentProduct == null || outOfStock
-                      ? null
-                      : () => controller.addToCart(),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white.withValues(alpha: 0.3),
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(vertical: 12.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.r),
-                      side: BorderSide(color: '#E3B341'.toColor(), width: 0.68),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: isProcessing
-                      ? SizedBox(
-                          width: 20.w,
-                          height: 20.h,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.shopping_cart_outlined, size: 18.h),
-                            SizedBox(width: 8.w),
-                            AutoTranslateText(
-                              outOfStock ? 'Out of Stock' : 'Add',
+                          Container(
+                            width: 29.w,
+                            alignment: Alignment.center,
+                            child: AutoTranslateText(
+                              '$quantity',
                               style: TextStyle(
                                 fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 16,
                                 color: Colors.white,
                               ),
                             ),
-                          ],
-                        ),
-                );
-              }),
-            ),
-            SizedBox(width: 8.w),
-            // Buy Now Button
-            Expanded(
-              child: Obx(() {
-                final currentProduct = controller.product.value;
-                final isProcessing = currentProduct != null
-                    ? controller.cartController.isProductUpdating(
-                        currentProduct,
-                      )
-                    : false;
-                final outOfStock = controller.isOutOfStock;
-
-                return ElevatedButton(
-                  onPressed:
-                      isProcessing || currentProduct == null || outOfStock
-                      ? null
-                      : () => controller.buyNow(),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: '#E3B341'.toColor(),
-                    foregroundColor: '#3D0C11'.toColor(),
-                    padding: EdgeInsets.symmetric(vertical: 12.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.r),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: isProcessing
-                      ? SizedBox(
-                          width: 20.w,
-                          height: 20.h,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: '#3D0C11'.toColor(),
                           ),
+                          IconButton(
+                            style: IconButton.styleFrom(
+                              backgroundColor: '#E3B341'.toColor(),
+                            ),
+                            icon: Icon(Icons.add, size: 20),
+                            onPressed: canIncrease
+                                ? controller.incrementQuantity
+                                : null,
+                            color: canIncrease
+                                ? Colors.white
+                                : Colors.white.withValues(alpha: 0.4),
+                            padding: EdgeInsets.all(8.w),
+                            constraints: BoxConstraints(
+                              minWidth: 32,
+                              minHeight: 32,
+                            ),
+                          ),
+                        ],
+                      );
+                    }),
+                  ],
+                ),
+              ),
+              SizedBox(width: 8.w),
+              // Add Button
+              Expanded(
+                child: Obx(() {
+                  final currentProduct = controller.product.value;
+                  final isProcessing = currentProduct != null
+                      ? controller.cartController.isProductUpdating(
+                          currentProduct,
                         )
-                      : AutoTranslateText(
-                          'Buy Now',
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                            color: '#3D0C11'.toColor(),
-                          ),
+                      : false;
+
+                  return ElevatedButton(
+                    onPressed: isProcessing || currentProduct == null
+                        ? null
+                        : () => controller.addToCart(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white.withValues(alpha: 0.3),
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 12.h),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25.r),
+                        side: BorderSide(
+                          color: '#E3B341'.toColor(),
+                          width: 0.68,
                         ),
-                );
-              }),
-            ),
-          ],
-        ),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: isProcessing
+                        ? SizedBox(
+                            width: 20.w,
+                            height: 20.h,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.shopping_cart_outlined, size: 18.h),
+                              SizedBox(width: 8.w),
+                              AutoTranslateText(
+                                'Add',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                  );
+                }),
+              ),
+              SizedBox(width: 8.w),
+              // Buy Now Button
+              Expanded(
+                child: Obx(() {
+                  final currentProduct = controller.product.value;
+                  final isProcessing = currentProduct != null
+                      ? controller.cartController.isProductUpdating(
+                          currentProduct,
+                        )
+                      : false;
+
+                  return ElevatedButton(
+                    onPressed: isProcessing || currentProduct == null
+                        ? null
+                        : () => controller.buyNow(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: '#E3B341'.toColor(),
+                      foregroundColor: '#3D0C11'.toColor(),
+                      padding: EdgeInsets.symmetric(vertical: 12.h),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25.r),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: isProcessing
+                        ? SizedBox(
+                            width: 20.w,
+                            height: 20.h,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: '#3D0C11'.toColor(),
+                            ),
+                          )
+                        : AutoTranslateText(
+                            'Buy Now',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                              color: '#3D0C11'.toColor(),
+                            ),
+                          ),
+                  );
+                }),
+              ),
+            ],
+          );
+        }),
       ),
     );
   }
@@ -567,4 +603,3 @@ class ProductDetailView extends StatelessWidget {
     );
   }
 }
-

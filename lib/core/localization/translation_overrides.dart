@@ -355,6 +355,12 @@ class TranslationOverrides {
     'CAPRICORN': {'hi': 'मकर'},
     'AQUARIUS': {'hi': 'कुंभ'},
     'PISCES': {'hi': 'मीन'},
+    // Specific Product Terms
+    'Karungali': {'hi': 'करुंगली'},
+    'KARUNGALI': {'hi': 'करुंगली'},
+    'karungali': {'hi': 'करुंगली'},
+    'Karungali Bracelet': {'hi': 'करुंगली ब्रेसलेट'},
+    'KARUNGALI BRACELET': {'hi': 'करुंगली ब्रेसलेट'},
     // App Tagline - DO NOT TRANSLATE
     'STAR ALIGN DESTINY DIVINE': {
       'hi': 'STAR ALIGN DESTINY DIVINE',

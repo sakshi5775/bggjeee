@@ -391,6 +391,8 @@ class UserDashboardController extends BaseController
     loadYouTubeVideos();
     // Translate static strings
     _translateUIStrings();
+    // Start polling live streams data for the dashboard
+    _startLiveStreamPolling();
 
     // Listen for language changes
     if (Get.isRegistered<LanguageControllerV2>()) {
@@ -536,6 +538,8 @@ class UserDashboardController extends BaseController
     });
   }
 
+  Timer? _liveStreamPollTimer;
+
   @override
   void onClose() {
     _shouldAnimate = false;
@@ -548,19 +552,23 @@ class UserDashboardController extends BaseController
     bookPoojaPageController.value.dispose();
     adsPageController.value.dispose();
     liveVideoIconController.dispose();
+    _liveStreamPollTimer?.cancel();
     super.onClose();
   }
 
-  Future<void> loadLiveStreams() async {
+  Future<void> loadLiveStreams({bool useCache = false}) async {
     await runWithLoading(
       () async {
         isLoadingLiveStreams.value = true;
-        final response = await _liveStreamService.getLiveStreams(limit: 20);
+        final response = await _liveStreamService.getLiveStreams(
+          limit: 20,
+          useCache: useCache,
+        );
         if (response != null) {
           liveStreams.value = response.streams
               .where((stream) => stream.status == 'LIVE')
               .toList();
-          await _loadAstrologerDetails(liveStreams);
+          await _loadAstrologerDetails(liveStreams, useCache: useCache);
         }
       },
       showBusy: false,
@@ -570,8 +578,14 @@ class UserDashboardController extends BaseController
 
   final RxList<AstrologerModel> allAstrologer = <AstrologerModel>[].obs;
 
-  Future<void> _loadAstrologerDetails(List<LiveStreamModel> streams) async {
-    final response = await _astrologerService.getAstrologers(limit: 100);
+  Future<void> _loadAstrologerDetails(
+    List<LiveStreamModel> streams, {
+    bool useCache = false,
+  }) async {
+    final response = await _astrologerService.getAstrologers(
+      limit: 100,
+      useCache: useCache,
+    );
     if (response != null) {
       for (final astrologer in response.astrologers) {
         final name = astrologer.displayName.isNotEmpty
@@ -582,10 +596,33 @@ class UserDashboardController extends BaseController
         astrologerProfilePictures[astrologer.id] = astrologer.profilePicture;
         astrologerNames[astrologer.astrologerId] = name;
         astrologerNames[astrologer.id] = name;
-        if (!allAstrologer.contains(astrologer)) {
-          allAstrologer.add(astrologer);
-        }
       }
+      allAstrologer.assignAll(response.astrologers);
+    }
+  }
+
+  void _startLiveStreamPolling() {
+    _liveStreamPollTimer?.cancel();
+    _liveStreamPollTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+      // Poll without disrupting the UI with loading dialogs, only update data in background
+      _pollLiveStreams();
+    });
+  }
+
+  Future<void> _pollLiveStreams() async {
+    try {
+      final response = await _liveStreamService.getLiveStreams(
+        limit: 20,
+        useCache: false,
+      );
+      if (response != null) {
+        liveStreams.value = response.streams
+            .where((stream) => stream.status == 'LIVE')
+            .toList();
+        await _loadAstrologerDetails(liveStreams, useCache: false);
+      }
+    } catch (e) {
+      debugPrint('Error polling live streams on dashboard: $e');
     }
   }
 

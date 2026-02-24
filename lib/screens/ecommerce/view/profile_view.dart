@@ -279,8 +279,10 @@ class ProfileView extends GetView<ProfileController> {
   Widget _buildHeaderCard() {
     return Builder(
       builder: (context) {
+        final localImage = controller.profilePicture.value;
         final avatarUrl = controller.profileImageUrl.value;
-        final hasAvatar = avatarUrl.isNotEmpty;
+        final hasNetworkImage = avatarUrl.isNotEmpty;
+        final hasAvatar = hasNetworkImage || localImage != null;
 
         return Container(
           width: double.infinity,
@@ -337,7 +339,12 @@ class ProfileView extends GetView<ProfileController> {
                                   width: 3,
                                 ),
 
-                                image: hasAvatar
+                                image: localImage != null
+                                    ? DecorationImage(
+                                        image: FileImage(localImage),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : hasNetworkImage
                                     ? DecorationImage(
                                         image: NetworkImage(avatarUrl),
                                         fit: BoxFit.cover,

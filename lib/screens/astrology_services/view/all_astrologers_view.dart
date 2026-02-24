@@ -400,6 +400,7 @@ class AllAstrologersView extends StatelessWidget {
                       Expanded(
                         child: AutoTranslateText(
                           astrologer.displayName,
+                          translate: false,
                           style: AppTypography.h3.copyWith(
                             color: '#68171E'.toColor(),
                             fontSize: 12.sp,

@@ -13,7 +13,7 @@ class LiveStreamService {
   Future<LiveStreamResponse?> getLiveStreams({
     int page = 1,
     int limit = 20,
-    bool useCache = true,
+    bool useCache = false, // Changed to false: live streams must be real-time
   }) async {
     // Try cache first (only for page 1)
     if (useCache && page == 1) {
@@ -21,19 +21,24 @@ class LiveStreamService {
       if (cached != null) {
         debugPrint('Using cached live streams data');
         // Try to fetch fresh data in background
-        _fetchAndCacheLiveStreams(page: page, limit: limit);
+        _fetchAndCacheLiveStreams(page: page, limit: limit, useCache: useCache);
         return cached;
       }
     }
 
     // Fetch from API
-    return await _fetchAndCacheLiveStreams(page: page, limit: limit);
+    return await _fetchAndCacheLiveStreams(
+      page: page,
+      limit: limit,
+      useCache: useCache,
+    );
   }
 
   /// Internal method to fetch and cache live streams
   Future<LiveStreamResponse?> _fetchAndCacheLiveStreams({
     int page = 1,
     int limit = 20,
+    bool useCache = false,
   }) async {
     final query = <String, dynamic>{
       'page': page.toString(),
@@ -59,7 +64,7 @@ class LiveStreamService {
       }
     }
 
-    if (page == 1) {
+    if (useCache && page == 1) {
       final cached = AstrologerCacheService.getCachedLiveStreams();
       if (cached != null) return cached;
     }

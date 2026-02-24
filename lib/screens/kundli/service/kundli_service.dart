@@ -3830,6 +3830,78 @@ class KundliService {
     }
   }
 
+  /// Get Divisional Chart SVG
+  Future<Map<String, dynamic>?> generateDivisionalChartSvg({
+    required String date,
+    required String time,
+    required double latitude,
+    required double longitude,
+    required double tz,
+    required String division, // e.g., "D9", "D60"
+    String lang = 'en',
+    String style = 'north',
+    bool coloredPlanets = true,
+    String color = '#ed6f30',
+  }) async {
+    try {
+      final encodedColor = color.startsWith('#') ? color : '#$color';
+      final queryParams = <String, String>{
+        'date': date,
+        'time': time,
+        'latitude': latitude.toString(),
+        'longitude': longitude.toString(),
+        'tz': tz.toString(),
+        'lang': lang,
+        'style': style,
+        'colored_planets': coloredPlanets.toString(),
+        'color': encodedColor,
+      };
+
+      // API expects lower case code like 'd1', 'd9'
+      final endpoint = 'chart/${division.toLowerCase()}';
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/$endpoint',
+      ).replace(queryParameters: queryParams);
+
+      final currentToken = UserData().accessToken?.trim();
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () => throw Exception('Request timeout'),
+          );
+
+      if (kDebugMode) {
+        debugPrint('Chart SVG API URL: ${uri.toString()}');
+        debugPrint('Chart SVG API Status: ${response.statusCode}');
+      }
+
+      if (response.statusCode == 200) {
+        final responseBody = response.body.trim();
+        try {
+          final decoded = json.decode(responseBody);
+          if (decoded is String) return {'data': decoded};
+          if (decoded is Map<String, dynamic>) return decoded;
+          return {'data': responseBody};
+        } catch (_) {
+          return {'data': responseBody};
+        }
+      }
+      return null;
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error fetching $division SVG: $e');
+      return null;
+    }
+  }
+
   /// Get Ascendant Report
   Future<Map<String, dynamic>?> getAscendantReport({
     required String date, // Format: dd/mm/yyyy

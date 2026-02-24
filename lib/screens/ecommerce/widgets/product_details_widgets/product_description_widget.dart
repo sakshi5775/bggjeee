@@ -153,4 +153,3 @@ class ProductDescriptionWidget extends StatelessWidget {
     });
   }
 }
-

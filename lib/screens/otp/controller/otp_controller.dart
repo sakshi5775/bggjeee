@@ -51,6 +51,22 @@ class OTPController extends BaseController {
   }
 
   Future<void> resendOtp() async {
+    // Check if user is already logged in before triggering API
+    final userData = UserData();
+    if (userData.accessToken != null && userData.accessToken!.isNotEmpty) {
+      showSuccessMessage(
+        title: 'Already Verified',
+        message: 'Your registration is already complete. Redirecting...',
+      );
+      await Future.delayed(const Duration(milliseconds: 500));
+      if (Get.nestedKey(1)?.currentState != null) {
+        Get.back();
+      } else {
+        Get.offAllNamed(AppRoutes.userDashboard);
+      }
+      return;
+    }
+
     try {
       setLoadingState(true);
       final identifier = maskedDestination.value;
@@ -216,4 +232,3 @@ class OTPController extends BaseController {
     Get.offNamed(AppRoutes.login);
   }
 }
-

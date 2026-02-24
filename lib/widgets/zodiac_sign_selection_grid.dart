@@ -45,7 +45,7 @@ class ZodiacSignSelectionGrid extends StatelessWidget {
         crossAxisCount: 3,
         crossAxisSpacing: 12.w,
         mainAxisSpacing: 12.h,
-        childAspectRatio: 0.85,
+        childAspectRatio: 0.75,
       ),
       itemCount: zodiacSigns.length,
       itemBuilder: (context, index) {
@@ -67,28 +67,31 @@ class ZodiacSignSelectionGrid extends StatelessWidget {
       onTap: () => onSignSelected(name),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           // Card with Image
-          Flexible(
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(color: borderColor, width: 1.5),
-                  boxShadow: [
-                    BoxShadow(
-                      color: shadowColor,
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                      spreadRadius: 0,
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(12.w),
+          AspectRatio(
+            aspectRatio: 1,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: borderColor, width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: shadowColor,
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                    spreadRadius: 0,
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: name.toLowerCase() == 'pisces'
+                    ? EdgeInsets.zero
+                    : EdgeInsets.all(12.w),
+                child: Transform.scale(
+                  scale: name.toLowerCase() == 'pisces' ? 1.45 : 1.0,
                   child:
                       (imagePath.startsWith('http://') ||
                           imagePath.startsWith('https://'))
@@ -129,7 +132,7 @@ class ZodiacSignSelectionGrid extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 4.h),
+          SizedBox(height: 8.h),
           // Zodiac Name below the card
           AutoTranslateText(
             name,
@@ -149,4 +152,3 @@ class ZodiacSignSelectionGrid extends StatelessWidget {
     );
   }
 }
-
