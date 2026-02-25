@@ -16,6 +16,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/services/share_service.dart';
+
 class PrashnaKundaliResultsView extends StatelessWidget {
   const PrashnaKundaliResultsView({Key? key}) : super(key: key);
 
@@ -60,7 +62,10 @@ class PrashnaKundaliResultsView extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: () {
-                    // Share functionality
+                    // ShareService.shareKundli(
+                    //   kundliId: result.answerToQuestion,
+                    //   userName: result.,
+                    // );
                   },
                   icon: Icon(
                     Icons.share,

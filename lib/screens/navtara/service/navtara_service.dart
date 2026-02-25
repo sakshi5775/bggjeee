@@ -47,7 +47,7 @@ class NavtaraService with ApiHelperMixin {
       final response = await _apiClient.postApi(
         EndPoints.navtaraAnalyze,
         body,
-        timeout: timeout ?? const Duration(minutes: 5),
+        // timeout: timeout ?? const Duration(minutes: 5),
       );
       debugPrint('Navtara Analyze Response Code: ${response.statusCode}');
       debugPrint('Navtara Analyze Response Body: ${response.body}');
@@ -89,7 +89,7 @@ class NavtaraService with ApiHelperMixin {
       final response = await _apiClient.postApi(
         EndPoints.navtaraCompatibility,
         body,
-        timeout: timeout ?? const Duration(minutes: 5),
+        // timeout: timeout ?? const Duration(minutes: 5),
       );
       debugPrint('Navtara Compatibility Response Code: ${response.statusCode}');
       debugPrint('Navtara Compatibility Response Body: ${response.body}');
@@ -128,7 +128,7 @@ class NavtaraService with ApiHelperMixin {
       final response = await _apiClient.postApi(
         EndPoints.navtaraTiming,
         body,
-        timeout: timeout ?? const Duration(minutes: 5),
+        // timeout: timeout ?? const Duration(minutes: 5),
       );
       debugPrint('Navtara Timing Response Code: ${response.statusCode}');
       debugPrint('Navtara Timing Response Body: ${response.body}');

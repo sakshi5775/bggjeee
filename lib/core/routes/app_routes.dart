@@ -139,6 +139,10 @@ class AppRoutes {
   static const String arVastu = '/ar-vastu';
   static const String arOnboarding = '/ar-onboarding';
   static const String vastuCorrection = '/vastu-correction';
+
+  // E-Mandir Wallpaper
+  static const String eMandirWallpaper = '/e-mandir-wallpaper';
+  static const String eMandirWallpaperStory = '/e-mandir-wallpaper-story';
   static const String expertMode = '/expert-mode';
 
   // Live Stream Reports Routes

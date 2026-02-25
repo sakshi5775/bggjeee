@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/controller/virtual_darshan_controller.dart';
+import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/mandir_header_widget.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/offering_bottom_sheet_widget.dart';
+import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/collection_bottom_sheet.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -8,8 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
-
-import '../../../../utils/app_colors.dart';
 
 class VirtualDarshanView extends GetView<VirtualDarshanController> {
   const VirtualDarshanView({super.key});
@@ -20,28 +20,52 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
       body: SafeArea(
         child: Stack(
           children: [
-            // Vertical Image/Video Reel - Center of screen (like Instagram Reels)
-            Obx(
-              () => controller.godsCount == 0
-                  ? const Center(child: CircularProgressIndicator())
-                  : PageView.builder(
-                      controller: controller.verticalPageController,
-                      scrollDirection: Axis.vertical,
-                      itemCount: controller.godsCount,
-                      onPageChanged: (index) {
-                        controller.currentGodIndex.value = index;
-                      },
-                      itemBuilder: (context, index) {
-                        final mediaUrl = controller.getGodImageAt(index);
-                        if (VirtualDarshanController.isVideoUrl(mediaUrl)) {
-                          return _VirtualDarshanVideoPlayer(
-                            key: ValueKey('video_$index'),
-                            videoUrl: mediaUrl,
-                          );
-                        }
-                        return _buildGodImageDisplay(mediaUrl);
-                      },
-                    ),
+            // Vertical Image/Video Reel wrapped with horizontal swipe
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onHorizontalDragEnd: (details) {
+                // Swipe left → next category, swipe right → previous
+                if (details.primaryVelocity == null) return;
+                if (details.primaryVelocity! < -200) {
+                  // Swipe left → next category
+                  controller.swipeToCategory(
+                    controller.currentCategoryIndex.value + 1,
+                  );
+                } else if (details.primaryVelocity! > 200) {
+                  // Swipe right → previous category
+                  controller.swipeToCategory(
+                    controller.currentCategoryIndex.value - 1,
+                  );
+                }
+              },
+              child: Obx(() {
+                if (controller.isLoadingCategoryImages.value) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: Colors.orange),
+                  );
+                }
+                if (controller.godsCount == 0) {
+                  return const Center(child: Text('No Data Found'));
+                }
+                return PageView.builder(
+                  controller: controller.verticalPageController,
+                  scrollDirection: Axis.vertical,
+                  itemCount: controller.godsCount,
+                  onPageChanged: (index) {
+                    controller.currentGodIndex.value = index;
+                  },
+                  itemBuilder: (context, index) {
+                    final mediaUrl = controller.getGodImageAt(index);
+                    if (VirtualDarshanController.isVideoUrl(mediaUrl)) {
+                      return _VirtualDarshanVideoPlayer(
+                        key: ValueKey('video_$index'),
+                        videoUrl: mediaUrl,
+                      );
+                    }
+                    return _buildGodImageDisplay(mediaUrl);
+                  },
+                );
+              }),
             ),
             IgnorePointer(
               child: Center(
@@ -69,63 +93,53 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                 ),
               ),
             ),
-            Positioned(
-              top: 10.h,
-              left: 10.w,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  InkWell(
-                    onTap: () => Get.back(),
-                    child: _CircleIcon(Icons.arrow_back),
-                  ),
-                  SizedBox(width: 10.w),
-                  AutoTranslateText(
-                    'Virtual Darshan',
-                    style: AppTypography.h2.copyWith(
-                      color: AppColors.deepOrange,
-                    ),
-                  ),
-                ],
-              ),
+            // Mandir decorative header
+            const Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: MandirHeaderWidget(),
             ),
 
+            // Positioned(
+            //   top: 14.h,
+            //   left: 10.w,
+            //   child: InkWell(
+            //     onTap: () => Get.back(),
+            //     child: _CircleIcon(Icons.arrow_back),
+            //   ),
+            // ),
             Positioned(
               top: 10.h,
               right: 10.w,
               child: InkWell(
                 onTap: () {},
                 child: Container(
-                  height: 50.h,
-                  padding: EdgeInsets.all(2.w),
+                  padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30.r),
                     color: Colors.white,
                     border: Border.all(color: Colors.orange),
                   ),
                   child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Padding(
-                        padding: EdgeInsets.all(8.0.w),
-                        child: Obx(
-                          () => AutoTranslateText(
-                            controller.punyaWallet.value?.wallet?.coins
-                                    .toString() ??
-                                '0',
-                            style: AppTypography.h3.copyWith(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500,
-                            ),
+                      Obx(
+                        () => AutoTranslateText(
+                          controller.punyaWallet.value?.wallet?.coins
+                                  .toString() ??
+                              '0',
+                          style: AppTypography.h2.copyWith(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.all(4.0.w),
-                        child: CircleAvatar(
-                          radius: 20.r,
-                          backgroundImage: const AssetImage(
-                            AppConstant.eMandirOmmIcon,
-                          ),
+                      SizedBox(width: 4.w),
+                      CircleAvatar(
+                        radius: 14.r,
+                        backgroundImage: const AssetImage(
+                          AppConstant.eMandirOmmIcon,
                         ),
                       ),
                     ],
@@ -134,100 +148,6 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
               ),
             ),
 
-            Obx(
-              () => controller.godsCount == 0
-                  ? const SizedBox.shrink()
-                  : Positioned(
-                      top: 60.h,
-                      left: 12.w,
-                      right: 2.w,
-                      child: SizedBox(
-                        height: 50.h,
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(2.w),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30.r),
-                                color: Colors.white,
-                              ),
-                              child: Row(
-                                children: [
-                                  _buildGodAvatar(
-                                    controller.currentGodImage,
-                                    radius: 20.r,
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.all(4.0.w),
-                                    child: AutoTranslateText(
-                                      controller.currentGodName,
-                                      style: AppTypography.body1.copyWith(
-                                        color: Colors.orange,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(width: 10.w),
-                            Expanded(
-                              child: ListView.builder(
-                                controller: controller.scrollController,
-                                itemCount: controller.godsCount,
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (_, index) {
-                                  final isSelected =
-                                      controller.currentGodIndex.value == index;
-                                  final godMedia = controller.getGodImageAt(
-                                    index,
-                                  );
-                                  final isVideo =
-                                      VirtualDarshanController.isVideoUrl(
-                                        godMedia,
-                                      );
-                                  return GestureDetector(
-                                    onTap: () =>
-                                        controller.navigateToGod(index),
-                                    child: Container(
-                                      margin: EdgeInsets.symmetric(
-                                        horizontal: 4.w,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: isSelected
-                                            ? Border.all(
-                                                color: Colors.orange,
-                                                width: 3,
-                                              )
-                                            : null,
-                                        gradient: const LinearGradient(
-                                          colors: [
-                                            Colors.orange,
-                                            Colors.deepOrange,
-                                          ],
-                                        ),
-                                      ),
-                                      child: ClipOval(
-                                        child: Container(
-                                          width: 50.r,
-                                          height: 40.r,
-                                          color: Colors.grey.shade200,
-                                          child: isVideo
-                                              ? _buildVideoThumbnail(size: 40.r)
-                                              : _buildThumbnailImage(godMedia),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-            ),
             Obx(
               () => Positioned(
                 bottom: 90.h,
@@ -276,58 +196,18 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                 child: Image.asset(AppConstant.eMandirSankhIcon),
               ),
             ),
+            Positioned(
+              bottom: 150.h,
+              left: 18.w,
+              child: InkWell(
+                onTap: () => showCollectionBottomSheet(context),
+                child: Image.asset(AppConstant.eMandirSankhIcon),
+              ),
+            ),
           ],
         ),
       ),
     );
-  }
-
-  /// Build a circular avatar that handles both image and video URLs.
-  Widget _buildGodAvatar(String mediaUrl, {required double radius}) {
-    if (VirtualDarshanController.isVideoUrl(mediaUrl)) {
-      return CircleAvatar(
-        radius: radius,
-        backgroundColor: Colors.grey.shade800,
-        child: Icon(Icons.videocam_rounded, color: Colors.orange, size: radius),
-      );
-    }
-    return CircleAvatar(
-      radius: radius,
-      backgroundColor: Colors.grey.shade200,
-      backgroundImage: mediaUrl.startsWith('http')
-          ? NetworkImage(mediaUrl)
-          : AssetImage(mediaUrl) as ImageProvider,
-    );
-  }
-
-  /// Build a small play-icon overlay for video thumbnails in the horizontal list.
-  Widget _buildVideoThumbnail({required double size}) {
-    return Container(
-      width: size,
-      height: size,
-      color: Colors.grey.shade800,
-      child: Center(
-        child: Icon(
-          Icons.play_circle_fill_rounded,
-          color: Colors.orange,
-          size: size * 0.6,
-        ),
-      ),
-    );
-  }
-
-  /// Build an image thumbnail for the horizontal list.
-  Widget _buildThumbnailImage(String imageUrl) {
-    if (imageUrl.startsWith('http')) {
-      return Image.network(
-        imageUrl,
-        fit: BoxFit.fill,
-        width: 40.r,
-        height: 40.r,
-        errorBuilder: (_, __, ___) => Icon(Icons.person, size: 24.r),
-      );
-    }
-    return Image.asset(imageUrl, fit: BoxFit.cover, width: 50.r, height: 40.r);
   }
 
   /// Build full-screen image display for the vertical PageView.
@@ -442,8 +322,8 @@ class _VirtualDarshanVideoPlayerState
 
     try {
       await _videoController.initialize();
-      _videoController.setLooping(true);
-      _videoController.setVolume(0); // Start muted
+      _videoController.setLooping(false);
+      _videoController.setVolume(0);
       _videoController.play();
 
       if (mounted) {

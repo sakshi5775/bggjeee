@@ -383,6 +383,16 @@ class AppConstant {
   static const String eMandirButton4 = 'assets/images/Button (4).png';
   static const String coin = 'assets/icons/coin.png';
 
+  static const String mandirHeaderImage =
+      '$s3BaseUrl/Astro+Service/DigiMandirDesign.png';
+
+  static const String leftGhantaImage = '$s3BaseUrl/Digital+Pooja/ghanta.png';
+
+  static const String rightGhantaImage =
+      '$s3BaseUrl/Digital+Pooja/GhantaRightFacing.png';
+
+  static const String bellSound = '$s3BaseUrl/Astro+Service/BellSound.mp3';
+
   /// Digital Education images
   /// digital education Spiritual Pillars images
 

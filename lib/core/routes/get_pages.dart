@@ -294,11 +294,27 @@ import '../../screens/e_mandir/address_form/view/address_form_view.dart';
 import '../../screens/e_mandir/puja_booking_form/view/puja_booking_form_view.dart';
 import '../../screens/e_mandir/my_bookings/view/my_bookings_view.dart';
 import '../../screens/e_mandir/my_bookings/view/my_booking_detail_view.dart';
+import '../../screens/e_mandir/e_mandir_collection/e_mandir_wallpaper/view/e_mandir_wallpaper_view.dart';
+import '../../binding/e_mandir_binding/e_mandir_wallpaper_binding.dart';
+import '../../screens/e_mandir/e_mandir_collection/e_mandir_wallpaper/view/e_mandir_wallpaper_story_view.dart';
+import '../../binding/e_mandir_binding/e_mandir_wallpaper_story_binding.dart';
 
 class PageRoutes {
   static const INITIAL = AppRoutes.root;
   static const leftToRight = Transition.leftToRight;
   static final routes = [
+    GetPage(
+      name: AppRoutes.eMandirWallpaper,
+      page: () => const EMandirWallpaperView(),
+      transition: Transition.rightToLeft,
+      binding: EMandirWallpaperBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.eMandirWallpaperStory,
+      page: () => const EMandirWallpaperStoryView(),
+      transition: Transition.fadeIn,
+      binding: EMandirWallpaperStoryBinding(),
+    ),
     GetPage(
       name: AppRoutes.root,
       page: () => const WaitingScreenView(),
