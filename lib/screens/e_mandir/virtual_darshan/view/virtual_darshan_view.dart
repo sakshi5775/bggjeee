@@ -84,9 +84,33 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
 
                     return Transform.translate(
                       offset: Offset(x, y),
-                      child: Image.asset(
-                        AppConstant.eMandirAartiIcon,
-                        width: 50.w,
+                      child: Builder(
+                        builder: (_) {
+                          final thaliIdx = controller.pujaItemCategories
+                              .indexWhere(
+                                (c) =>
+                                    c.slug.toLowerCase().contains('thali') ||
+                                    c.name.toLowerCase().contains('thali'),
+                              );
+                          final thaliImg = thaliIdx != -1
+                              ? controller.pujaItemCategories[thaliIdx].image
+                              : null;
+                          if (thaliImg != null && thaliImg.isNotEmpty) {
+                            return Image.network(
+                              thaliImg,
+                              width: 50.w,
+                              fit: BoxFit.contain,
+                              errorBuilder: (_, __, ___) => Image.asset(
+                                AppConstant.eMandirAartiIcon,
+                                width: 50.w,
+                              ),
+                            );
+                          }
+                          return Image.asset(
+                            AppConstant.eMandirAartiIcon,
+                            width: 50.w,
+                          );
+                        },
                       ),
                     );
                   },
@@ -184,10 +208,11 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                   AppConstant.eMandirThaliIcon,
                   fit: BoxFit.cover,
                   errorBuilder: (_, __, ___) =>
-                      Image.asset(AppConstant.eMandirLadduIcon),
+                      Image.asset(AppConstant.eMandirAartiIcon),
                 ),
               ),
             ),
+
             Positioned(
               bottom: 22.h,
               left: 18.w,
@@ -196,6 +221,60 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                 child: Image.asset(AppConstant.eMandirSankhIcon),
               ),
             ),
+            // Thali at bottom center
+            Obx(() {
+              // Find the "Thali" category from the list
+              final thaliIndex = controller.pujaItemCategories.indexWhere(
+                (c) =>
+                    c.slug.toLowerCase().contains('thali') ||
+                    c.name.toLowerCase().contains('thali'),
+              );
+              final thaliCategory = thaliIndex != -1
+                  ? controller.pujaItemCategories[thaliIndex]
+                  : null;
+              final thaliImage = thaliCategory?.image;
+
+              return Positioned(
+                bottom: 16.h,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: InkWell(
+                    onTap: () {
+                      // Switch tab to Thali before opening the sheet
+                      if (thaliIndex != -1 &&
+                          controller.offeringTabController != null &&
+                          thaliIndex <
+                              controller.offeringTabController!.length) {
+                        controller.offeringTabController!.animateTo(thaliIndex);
+                        controller.selectedCategoryIndex.value = thaliIndex;
+                        controller.loadCategoryItems(
+                          controller.pujaItemCategories[thaliIndex].id,
+                        );
+                      }
+                      _openOfferingBottomSheet(context);
+                    },
+                    child: (thaliImage != null && thaliImage.isNotEmpty)
+                        ? Image.network(
+                            thaliImage,
+                            fit: BoxFit.contain,
+                            width: 75.w,
+                            height: 75.h,
+                            errorBuilder: (_, __, ___) => Image.asset(
+                              AppConstant.eMandirLadduIcon,
+                              width: 75.w,
+                              height: 75.h,
+                            ),
+                          )
+                        : Image.asset(
+                            AppConstant.eMandirLadduIcon,
+                            width: 75.w,
+                            height: 75.h,
+                          ),
+                  ),
+                ),
+              );
+            }),
             Positioned(
               bottom: 150.h,
               left: 18.w,
@@ -223,50 +302,36 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
       width: double.infinity,
       height: double.infinity,
       decoration: const BoxDecoration(color: Colors.black),
-      child: imageUrl.startsWith('http')
-          ? Image.network(
-              imageUrl,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: double.infinity,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                  child: CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
-                        : null,
-                    color: Colors.orange,
-                  ),
-                );
-              },
-              errorBuilder: (context, error, stackTrace) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.error_outline,
-                        size: 48,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Failed to load image',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            )
-          : Image.asset(
-              imageUrl,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: double.infinity,
+      child: Image.network(
+        imageUrl,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Center(
+            child: CircularProgressIndicator(
+              value: loadingProgress.expectedTotalBytes != null
+                  ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!
+                  : null,
+              color: Colors.orange,
             ),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.image, size: 48, color: Colors.white),
+                const SizedBox(height: 8),
+                const Text('loading...', style: TextStyle(color: Colors.white)),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 

@@ -214,14 +214,20 @@ class MandirHeaderWidget extends StatelessWidget {
                 Positioned(
                   left: -42.w,
                   top: 40.h,
-                  child: _GhantaBell(imageUrl: AppConstant.rightGhantaImage),
+                  child: _GhantaBell(
+                    imageUrl: AppConstant.rightGhantaImage,
+                    swingDirection: -1,
+                  ),
                 ),
 
                 // Right ghanta hanging from arch
                 Positioned(
                   right: -42.w,
                   top: 40.h,
-                  child: _GhantaBell(imageUrl: AppConstant.leftGhantaImage),
+                  child: _GhantaBell(
+                    imageUrl: AppConstant.leftGhantaImage,
+                    swingDirection: 1,
+                  ),
                 ),
               ],
             ),
@@ -250,77 +256,125 @@ class MandirHeaderWidget extends StatelessWidget {
 /// An animated ghanta bell that swings on load and on tap.
 class _GhantaBell extends StatefulWidget {
   final String imageUrl;
+  final int swingDirection; // -1 = left, 1 = right
 
-  const _GhantaBell({required this.imageUrl});
+  const _GhantaBell({required this.imageUrl, this.swingDirection = -1});
 
   @override
   State<_GhantaBell> createState() => _GhantaBellState();
 }
 
 class _GhantaBellState extends State<_GhantaBell>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _swingController;
   late Animation<double> _swingAnimation;
+
+  // Separate controller for smooth continuous aarti swinging
+  late AnimationController _aartiSwingController;
+  late Animation<double> _aartiSwingAnimation;
+
   final AudioPlayer _audioPlayer = AudioPlayer();
+  Worker? _aartiWorker;
+  bool _isAartiSwinging = false;
 
   @override
   void initState() {
     super.initState();
+
+    // Original tap-to-swing (decaying swing)
     _swingController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 5000),
     );
-
     _swingAnimation = TweenSequence<double>([
       TweenSequenceItem(
         tween: Tween(
           begin: 0.0,
-          end: 0.25,
+          end: 0.06 * widget.swingDirection,
         ).chain(CurveTween(curve: Curves.easeOut)),
         weight: 15,
       ),
       TweenSequenceItem(
         tween: Tween(
-          begin: 0.25,
-          end: -0.20,
+          begin: 0.06 * widget.swingDirection,
+          end: -0.04 * widget.swingDirection,
         ).chain(CurveTween(curve: Curves.easeInOut)),
         weight: 20,
       ),
       TweenSequenceItem(
         tween: Tween(
-          begin: -0.20,
-          end: 0.15,
+          begin: -0.04 * widget.swingDirection,
+          end: 0.03 * widget.swingDirection,
         ).chain(CurveTween(curve: Curves.easeInOut)),
         weight: 20,
       ),
       TweenSequenceItem(
         tween: Tween(
-          begin: 0.15,
-          end: -0.08,
+          begin: 0.03 * widget.swingDirection,
+          end: -0.02 * widget.swingDirection,
         ).chain(CurveTween(curve: Curves.easeInOut)),
         weight: 20,
       ),
       TweenSequenceItem(
         tween: Tween(
-          begin: -0.08,
+          begin: -0.02 * widget.swingDirection,
           end: 0.0,
         ).chain(CurveTween(curve: Curves.easeIn)),
         weight: 25,
       ),
     ]).animate(_swingController);
 
-    _startSwing();
+    // Smooth continuous pendulum for aarti mode (goes 0 → 0.20, then reverses)
+    _aartiSwingController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _aartiSwingAnimation = Tween<double>(
+      begin: 0.0,
+      end: 0.04 * widget.swingDirection,
+    ).chain(CurveTween(curve: Curves.easeInOut)).animate(_aartiSwingController);
+
+    // Listen to aarti state
+    if (Get.isRegistered<VirtualDarshanController>()) {
+      final controller = Get.find<VirtualDarshanController>();
+      _aartiWorker = ever(controller.isAartiActive, (bool active) {
+        if (active) {
+          _startLoopingSwing();
+        } else {
+          _stopLoopingSwing();
+        }
+      });
+      if (controller.isAartiActive.value) {
+        _startLoopingSwing();
+      } else {
+        _startSwing();
+      }
+    } else {
+      _startSwing();
+    }
+  }
+
+  void _startLoopingSwing() {
+    _swingController.reset();
+    _aartiSwingController.repeat(reverse: true);
+    setState(() => _isAartiSwinging = true);
+  }
+
+  void _stopLoopingSwing() {
+    _aartiSwingController.reset();
+    setState(() => _isAartiSwinging = false);
   }
 
   @override
   void dispose() {
+    _aartiWorker?.dispose();
     _swingController.dispose();
+    _aartiSwingController.dispose();
     _audioPlayer.dispose();
     super.dispose();
   }
 
   void _startSwing() {
-    // Play sound when swing starts
     if (!_swingController.isAnimating) {
       _audioPlayer.play(UrlSource(AppConstant.bellSound));
       _swingController.forward(from: 0.0);
@@ -333,10 +387,13 @@ class _GhantaBellState extends State<_GhantaBell>
       behavior: HitTestBehavior.opaque,
       onTap: _startSwing,
       child: AnimatedBuilder(
-        animation: _swingAnimation,
+        animation: _isAartiSwinging ? _aartiSwingAnimation : _swingAnimation,
         builder: (_, child) {
+          final angle = _isAartiSwinging
+              ? _aartiSwingAnimation.value
+              : _swingAnimation.value;
           return Transform.rotate(
-            angle: _swingAnimation.value * math.pi,
+            angle: angle * math.pi,
             alignment: Alignment.topCenter,
             child: child,
           );

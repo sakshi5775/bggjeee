@@ -161,6 +161,7 @@ class VirtualDarshanController extends BaseController
     AppConstant.eMandirFlower3,
   ];
   final List<FallingFlowerState> activeFlowers = [];
+  final RxBool isAartiActive = false.obs;
 
   // Selection State
   final selectedOfferingIcon = AppConstant.eMandirLadduIcon.obs;
@@ -405,6 +406,7 @@ class VirtualDarshanController extends BaseController
       aartiController.reset();
       audioPlayer.stop();
       stopFlowerRain();
+      isAartiActive.value = false;
     } else {
       aartiController.repeat();
       audioPlayer.stop();
@@ -413,6 +415,7 @@ class VirtualDarshanController extends BaseController
         print("AUDIO ERROR: $e");
       });
       startFlowerRain(context);
+      isAartiActive.value = true;
     }
   }
 
