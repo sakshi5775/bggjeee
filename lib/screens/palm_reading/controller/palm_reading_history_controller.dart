@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/data_model/palm_reading_model.dart';
 import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class PalmReadingHistoryController extends GetxController {
   final RxList<PalmReadingData> historyList = <PalmReadingData>[].obs;
@@ -253,7 +254,7 @@ class PalmReadingHistoryController extends GetxController {
     final controller = Get.find<PalmReadingController>();
     controller.palmReadingData.value = reading;
     controller.currentReadingId.value = reading.readingId ?? '';
-    Get.toNamed('/palm-reading-detail');
+    UserMainController.pushInCurrentTab('/palm-reading-detail');
   }
 }
 

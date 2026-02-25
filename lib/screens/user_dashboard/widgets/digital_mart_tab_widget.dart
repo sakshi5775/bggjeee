@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 /// Digital Mart tab: compact grid of product categories.
 class DigitalMartTabWidget extends StatelessWidget {
@@ -69,9 +70,9 @@ class DigitalMartTabWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (category.id != null) {
-          Get.toNamed('/product-list', arguments: {'category': category});
+          UserMainController.pushInCurrentTab('/product-list', arguments: {'category': category});
         } else if (category.slug != null) {
-          Get.toNamed(
+          UserMainController.pushInCurrentTab(
             '/product-list',
             arguments: {'categorySlug': category.slug},
           );

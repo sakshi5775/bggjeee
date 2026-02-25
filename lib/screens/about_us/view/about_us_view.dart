@@ -8,6 +8,7 @@ import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class AboutUsView extends StatelessWidget {
   const AboutUsView({super.key});
@@ -717,7 +718,7 @@ class AboutUsView extends StatelessWidget {
     required bool isNetworkImage,
   }) {
     return GestureDetector(
-      onTap: () => Get.toNamed(route),
+      onTap: () => UserMainController.pushInCurrentTab(route),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
         decoration: BoxDecoration(

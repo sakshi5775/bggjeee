@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/data_model/category_model.dart';
 import 'package:astrobharataiuser/data_model/product_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class ProductListController extends BaseController {
   final EcommerceService _ecommerceService = EcommerceService();
@@ -430,7 +431,7 @@ class ProductListController extends BaseController {
   }
 
   void navigateToProductDetail(ProductModel product, {String? heroTag}) {
-    Get.toNamed(
+    UserMainController.pushInCurrentTab(
       '/product-detail',
       arguments: {'product': product, if (heroTag != null) 'heroTag': heroTag},
     );

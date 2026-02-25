@@ -1,6 +1,5 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
-import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -9,7 +8,6 @@ import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
 class ReportsSectionWidget extends BasePage<UserDashboardController> {
   const ReportsSectionWidget({super.key});
@@ -43,7 +41,7 @@ class ReportsSectionWidget extends BasePage<UserDashboardController> {
                 ),
               ),
               GestureDetector(
-                onTap: () => Get.toNamed(AppRoutes.allReports),
+                onTap: () => controller.selectedSliderIndex.value = 1,
                 child: Padding(
                   padding: EdgeInsets.only(right: 6.w),
                   child: AutoTranslateText(
@@ -81,7 +79,7 @@ class ReportsSectionWidget extends BasePage<UserDashboardController> {
 
   Widget _buildReportCard({required String title, required String imagePath}) {
     return GestureDetector(
-      onTap: () => Get.toNamed(AppRoutes.allReports),
+      onTap: () => controller.selectedSliderIndex.value = 1,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

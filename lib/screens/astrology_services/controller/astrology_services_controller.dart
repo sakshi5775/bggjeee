@@ -76,6 +76,7 @@ class AstrologyServicesController extends GetxController {
   // Search controller
   final TextEditingController searchController = TextEditingController();
   Timer? searchDebounceTimer;
+  Timer? _liveStreamPollTimer;
 
   // Computed lists
   List<Map<String, dynamic>> get recommendedAstrologers {
@@ -242,6 +243,14 @@ class AstrologyServicesController extends GetxController {
     loadLiveStreams();
     loadRemedyCategories();
     loadBanners();
+    _startPolling();
+  }
+
+  void _startPolling() {
+    _liveStreamPollTimer?.cancel();
+    _liveStreamPollTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+      loadLiveStreams(showLoader: false);
+    });
   }
 
   /// Load remedy categories for Remedies section
@@ -279,21 +288,27 @@ class AstrologyServicesController extends GetxController {
     }
   }
 
-  Future<void> loadLiveStreams() async {
-    isLoadingLiveStreams.value = true;
+  Future<void> loadLiveStreams({bool showLoader = true}) async {
+    if (showLoader) isLoadingLiveStreams.value = true;
     try {
-      final response = await _liveStreamService.getLiveStreams(limit: 20);
+      final response = await _liveStreamService.getLiveStreams(
+        limit: 20,
+        useCache: false,
+      );
       if (response != null) {
-        // Filter to only show LIVE streams
         liveStreams.value = response.streams
-            .where((stream) => stream.status == 'LIVE')
+            .where(
+              (stream) =>
+                  stream.status.toUpperCase() != 'COMPLETED' &&
+                  stream.status.toUpperCase() != 'ENDED',
+            )
             .toList();
       }
     } catch (e) {
       debugPrint('Error loading live streams: $e');
       // Handle error silently or show message
     } finally {
-      isLoadingLiveStreams.value = false;
+      if (showLoader) isLoadingLiveStreams.value = false;
     }
   }
 
@@ -470,6 +485,7 @@ class AstrologyServicesController extends GetxController {
   void onClose() {
     searchDebounceTimer?.cancel();
     _filterDebounceTimer?.cancel();
+    _liveStreamPollTimer?.cancel();
     searchController.dispose();
     super.onClose();
   }

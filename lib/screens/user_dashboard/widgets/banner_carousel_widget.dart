@@ -244,7 +244,7 @@ class _BannerVideoWidgetState extends State<_BannerVideoWidget> {
         children: [
           SizedBox.expand(
             child: FittedBox(
-              fit: BoxFit.cover,
+              fit: BoxFit.fill,
               child: SizedBox(
                 width: _controller.value.size.width,
                 height: _controller.value.size.height,
@@ -465,7 +465,7 @@ class _BannerCarouselWidgetState extends State<BannerCarouselWidget> {
       imageUrl: banner.mediaUrl,
       width: double.infinity,
       height: double.infinity,
-      fit: BoxFit.cover,
+      fit: BoxFit.fill,
       placeholder: (context, url) {
         print('🖼️ Loading image: $url');
         return const _BannerSkeletonShimmer();

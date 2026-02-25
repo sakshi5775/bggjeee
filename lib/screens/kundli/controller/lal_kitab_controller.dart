@@ -90,8 +90,8 @@ class LalKitabController extends BaseController {
   void onPageChanged(int index) {
     selectedTabIndex.value = index;
     if (index == 0) return; // Table view
-    if (index == 1 && lalKitabHoroscopeData.value == null)
-      fetchLalKitabHoroscope();
+    if (index == 1 && lalKitabChartData.value == null)
+      fetchLalKitabChart();
     else if (index == 2 && lalKitabRemediesData.value == null)
       fetchLalKitabRemedies();
     else if (index == 3 && lalKitabDebtsData.value == null)
@@ -102,8 +102,8 @@ class LalKitabController extends BaseController {
       fetchLalKitabHouses();
     else if (index == 6 && lalKitabPlanetsData.value == null)
       fetchLalKitabPlanets();
-    else if (index == 7 && lalKitabChartData.value == null)
-      fetchLalKitabChart();
+    else if (index == 7 && lalKitabHoroscopeData.value == null)
+      fetchLalKitabHoroscope();
   }
 
   // Navigate to specific tab (called from tab tap)
@@ -116,8 +116,8 @@ class LalKitabController extends BaseController {
       );
     }
     selectedTabIndex.value = index;
-    if (index == 1 && lalKitabHoroscopeData.value == null)
-      fetchLalKitabHoroscope();
+    if (index == 1 && lalKitabChartData.value == null)
+      fetchLalKitabChart();
     else if (index == 2 && lalKitabRemediesData.value == null)
       fetchLalKitabRemedies();
     else if (index == 3 && lalKitabDebtsData.value == null)
@@ -128,8 +128,8 @@ class LalKitabController extends BaseController {
       fetchLalKitabHouses();
     else if (index == 6 && lalKitabPlanetsData.value == null)
       fetchLalKitabPlanets();
-    else if (index == 7 && lalKitabChartData.value == null)
-      fetchLalKitabChart();
+    else if (index == 7 && lalKitabHoroscopeData.value == null)
+      fetchLalKitabHoroscope();
   }
 
   void _loadData() {

@@ -11,6 +11,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class CoursesSectionWidget extends BasePage<UserDashboardController> {
   const CoursesSectionWidget({super.key});
@@ -95,7 +96,7 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
                 curve: Curves.easeOut,
               );
             } catch (e) {
-              Get.toNamed(AppRoutes.courses);
+              UserMainController.pushInCurrentTab(AppRoutes.courses);
             }
           },
           child: Padding(
@@ -132,7 +133,7 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
           );
         } catch (e) {
           // Fallback if controller not found
-          Get.toNamed(AppRoutes.courseDetail, arguments: course.id);
+          UserMainController.pushInCurrentTab(AppRoutes.courseDetail, arguments: course.id);
         }
       },
       child: SizedBox(

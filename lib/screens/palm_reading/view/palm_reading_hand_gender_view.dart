@@ -10,6 +10,7 @@ import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class PalmReadingHandGenderView extends StatelessWidget {
   const PalmReadingHandGenderView({Key? key}) : super(key: key);
@@ -312,7 +313,7 @@ class PalmReadingHandGenderView extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: TextButton(
-        onPressed: () => Get.toNamed(AppRoutes.palmReadingUpload),
+        onPressed: () => UserMainController.pushInCurrentTab(AppRoutes.palmReadingUpload),
         child: AutoTranslateText(
           'Skip',
           style: MyTextTheme.mediumBCB.copyWith(

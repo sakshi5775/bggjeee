@@ -10,6 +10,7 @@ import 'package:astrobharataiuser/screens/ramal_shastra/controller/ramal_shastra
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class RamalShastraCastingDotsView extends StatefulWidget {
   const RamalShastraCastingDotsView({Key? key}) : super(key: key);
@@ -52,7 +53,7 @@ class _RamalShastraCastingDotsViewState
     } else {
       // All 16 taps collected
       controller.generatePointsFromDots(tapCounts);
-      Get.toNamed(AppRoutes.ramalShastraConfirmation);
+      UserMainController.pushInCurrentTab(AppRoutes.ramalShastraConfirmation);
     }
   }
 

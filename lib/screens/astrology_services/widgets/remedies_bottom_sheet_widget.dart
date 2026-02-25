@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 import '../../../utils/app_colors.dart';
 
@@ -142,9 +143,8 @@ class RemediesBottomSheetWidget extends StatelessWidget {
                       child: GestureDetector(
                         onTap: () {
                           Get.back();
-                          Get.offNamed(
+                          UserMainController.pushInCurrentTab(
                             '/user-shop',
-                            id: 1,
                             arguments: {'showBackButton': true},
                           );
                         },
@@ -182,9 +182,9 @@ class RemediesBottomSheetWidget extends StatelessWidget {
         Get.back();
         // Navigate to product list with category filter
         if (category.id != null) {
-          Get.toNamed('/product-list', arguments: {'category': category});
+          UserMainController.pushInCurrentTab('/product-list', arguments: {'category': category});
         } else if (category.slug != null) {
-          Get.toNamed(
+          UserMainController.pushInCurrentTab(
             '/product-list',
             arguments: {'categorySlug': category.slug},
           );

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 import '../../../app_manager/ext/hex_color_ext.dart';
 import '../../../app_manager/my_text_theme.dart';
@@ -116,7 +117,7 @@ class AstrologyToolWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         _requireLogin(
-          () async => Get.toNamed(route),
+          () async => UserMainController.pushInCurrentTab(route),
           message: 'Login to access this service.',
         );
       },

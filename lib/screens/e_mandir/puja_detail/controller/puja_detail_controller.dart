@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/puja_model.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/puja_service.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class PujaDetailController extends BaseController {
   final PujaService _pujaService = PujaService();
@@ -137,7 +138,7 @@ class PujaDetailController extends BaseController {
         0;
 
     // Navigate to address selection page
-    Get.toNamed(
+    UserMainController.pushInCurrentTab(
       AppRoutes.addressSelection,
       arguments: {
         'pujaId': puja.value!.id,

@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/screens/astrologer_registration/service/astrol
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class AstrologerRegistrationController extends GetxController {
   final AstrologerRegistrationService _service =
@@ -144,7 +145,7 @@ class AstrologerRegistrationController extends GetxController {
           colorText: Colors.white,
           snackPosition: SnackPosition.BOTTOM,
         );
-        Get.toNamed(AppRoutes.astrologerRegistrationOtp);
+        UserMainController.pushInCurrentTab(AppRoutes.astrologerRegistrationOtp);
       } else {
         Get.snackbar(
           'Error',

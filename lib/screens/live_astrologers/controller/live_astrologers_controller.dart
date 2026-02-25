@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/live_stream_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/live_stream_service.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
+import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
@@ -20,6 +21,7 @@ class LiveAstrologersController extends BaseController {
   final RxMap<String, String?> astrologerProfilePictures =
       <String, String?>{}.obs;
   final RxMap<String, String?> astrologerNames = <String, String?>{}.obs;
+  final RxList<AstrologerModel> allAstrologers = <AstrologerModel>[].obs;
 
   // UPCOMING streams (scheduled)
   final RxList<UpcomingStreamModel> upcomingStreams =
@@ -40,7 +42,7 @@ class LiveAstrologersController extends BaseController {
 
   void _startPolling() {
     _liveStreamPollTimer?.cancel();
-    _liveStreamPollTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+    _liveStreamPollTimer = Timer.periodic(const Duration(seconds: 10), (_) {
       if (selectedTab.value == 0) {
         _pollLiveStreams();
       }
@@ -56,7 +58,11 @@ class LiveAstrologersController extends BaseController {
       );
       if (response != null) {
         liveStreams.value = response.streams
-            .where((s) => s.status == 'LIVE')
+            .where(
+              (stream) =>
+                  stream.status.toUpperCase() != 'COMPLETED' &&
+                  stream.status.toUpperCase() != 'ENDED',
+            )
             .toList();
       }
     } catch (e) {
@@ -80,11 +86,14 @@ class LiveAstrologersController extends BaseController {
       );
 
       if (response != null) {
-        // Filter for LIVE status only
         liveStreams.value = response.streams
-            .where((s) => s.status == 'LIVE')
+            .where(
+              (stream) =>
+                  stream.status.toUpperCase() != 'COMPLETED' &&
+                  stream.status.toUpperCase() != 'ENDED',
+            )
             .toList();
-        await _loadAstrologerDetails(liveStreams);
+        await _loadAstrologerDetails();
       }
     } catch (e) {
       debugPrint('Error loading live streams: $e');
@@ -114,7 +123,7 @@ class LiveAstrologersController extends BaseController {
   }
 
   // Load astrologer details for live streams
-  Future<void> _loadAstrologerDetails(List<LiveStreamModel> streams) async {
+  Future<void> _loadAstrologerDetails() async {
     try {
       final astrologerResponse = await _astrologerService.getAstrologers(
         limit: 100,
@@ -137,6 +146,7 @@ class LiveAstrologersController extends BaseController {
 
         astrologerProfilePictures.value = profileMap;
         astrologerNames.value = nameMap;
+        allAstrologers.value = astrologerResponse.astrologers;
       }
     } catch (e) {
       debugPrint('Error loading astrologer details: $e');

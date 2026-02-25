@@ -19,6 +19,7 @@ import 'package:astrobharataiuser/screens/vastu/widgets/safe_get_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class HomeVastuCompassView extends StatefulWidget {
   const HomeVastuCompassView({Key? key}) : super(key: key);
@@ -136,7 +137,7 @@ class _HomeVastuCompassViewState extends State<HomeVastuCompassView>
                     IconButton(
                       onPressed: () {
                         final args = {'roomConfig': roomConfig};
-                        Get.toNamed(AppRoutes.arVastu, arguments: args);
+                        UserMainController.pushInCurrentTab(AppRoutes.arVastu, arguments: args);
                       },
                       icon: Icon(
                         Icons.camera_alt,
@@ -327,7 +328,7 @@ class _HomeVastuCompassViewState extends State<HomeVastuCompassView>
               child: SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
-                  onPressed: () => Get.toNamed(
+                  onPressed: () => UserMainController.pushInCurrentTab(
                     AppRoutes.vastuCorrection,
                     arguments: {'roomConfig': roomConfig},
                   ),
@@ -443,7 +444,7 @@ class _HomeVastuCompassViewState extends State<HomeVastuCompassView>
           // SizedBox(
           //   width: double.infinity,
           //   child: ElevatedButton.icon(
-          //     onPressed: () => Get.toNamed(
+          //     onPressed: () => UserMainController.pushInCurrentTab(
           //       AppRoutes.arVastu,
           //       arguments: {'roomConfig': roomConfig},
           //     ),

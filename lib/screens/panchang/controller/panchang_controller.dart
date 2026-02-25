@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -388,37 +389,37 @@ class PanchangController extends BaseController {
     selectedNavTab.value = tab;
     // TODO: Handle navigation to different tabs
     if (tab == 'Horoscope') {
-      Get.toNamed('/horoscope');
+      UserMainController.pushInCurrentTab('/horoscope');
     } else if (tab == 'Reports') {
-      Get.toNamed('/stream-reports');
+      UserMainController.pushInCurrentTab('/stream-reports');
     }
   }
 
   void onFeatureTap(Map<String, dynamic> feature) {
     final title = feature['title'] as String;
     if (title == 'Daily Panchang') {
-      Get.toNamed(AppRoutes.dailyPanchang);
+      UserMainController.pushInCurrentTab(AppRoutes.dailyPanchang);
     } else if (title == 'Monthly Calendar') {
-      Get.toNamed(AppRoutes.monthlyCalendar);
+      UserMainController.pushInCurrentTab(AppRoutes.monthlyCalendar);
     } else if (title == 'Hindu Calendar') {
-      Get.toNamed(AppRoutes.hinduCalendar);
+      UserMainController.pushInCurrentTab(AppRoutes.hinduCalendar);
     } else if (title == 'Yearly Vrat') {
-      Get.toNamed(AppRoutes.yearlyVrat);
+      UserMainController.pushInCurrentTab(AppRoutes.yearlyVrat);
     } else if (title.startsWith('Festival ')) {
       // Handle dynamic festival year title (e.g., "Festival 2025", "Festival 2026")
-      Get.toNamed(AppRoutes.festivalYearly);
+      UserMainController.pushInCurrentTab(AppRoutes.festivalYearly);
     } else if (title == 'Hora') {
-      Get.toNamed(AppRoutes.hora);
+      UserMainController.pushInCurrentTab(AppRoutes.hora);
     } else if (title == 'Chogadia') {
-      Get.toNamed(AppRoutes.chogadia);
+      UserMainController.pushInCurrentTab(AppRoutes.chogadia);
     } else if (title == 'Muhurat') {
-      Get.toNamed(AppRoutes.muhurat);
+      UserMainController.pushInCurrentTab(AppRoutes.muhurat);
     } else if (title == 'Rahu Kaal') {
-      Get.toNamed(AppRoutes.rahukaal);
+      UserMainController.pushInCurrentTab(AppRoutes.rahukaal);
     } else if (title == 'Bhadra') {
-      Get.toNamed(AppRoutes.bhadra);
+      UserMainController.pushInCurrentTab(AppRoutes.bhadra);
     } else if (title == 'Other Calendars') {
-      Get.toNamed(AppRoutes.otherCalendars);
+      UserMainController.pushInCurrentTab(AppRoutes.otherCalendars);
     } else {
       Get.snackbar(
         'Coming Soon',

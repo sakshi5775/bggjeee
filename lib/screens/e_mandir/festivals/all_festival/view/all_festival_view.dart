@@ -8,6 +8,7 @@ import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class AllFestivalView extends GetView<AllFestivalController> {
   const AllFestivalView({super.key});
@@ -98,7 +99,7 @@ class _FestivalListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Get.toNamed(
+        UserMainController.pushInCurrentTab(
           AppRoutes.eMandirFestivalDetail,
           arguments: {'festival': festival},
         );

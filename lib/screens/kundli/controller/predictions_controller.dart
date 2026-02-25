@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/widgets/zodiac_sign_selection_grid.dart';
 
 class PredictionsController extends BaseController {
@@ -473,7 +474,7 @@ class PredictionsController extends BaseController {
             message:
                 'Please generate Kundli first to view Rudraksha suggestion.',
           );
-          Get.toNamed(
+          UserMainController.pushInCurrentTab(
             AppRoutes.kundliForm,
             arguments: {'targetRoute': AppRoutes.predictions},
           );
@@ -502,7 +503,7 @@ class PredictionsController extends BaseController {
           showInfoMessage(
             message: 'Please generate Kundli first to view Lal Kitab report.',
           );
-          Get.toNamed(
+          UserMainController.pushInCurrentTab(
             AppRoutes.kundliForm,
             arguments: {'targetRoute': AppRoutes.predictions},
           );
@@ -565,13 +566,13 @@ class PredictionsController extends BaseController {
       showInfoMessage(
         message: 'Please generate Kundli first to view Dosh report.',
       );
-      Get.toNamed(
+      UserMainController.pushInCurrentTab(
         AppRoutes.kundliForm,
         arguments: {'targetRoute': AppRoutes.dosh},
       );
       return;
     }
-    Get.toNamed(AppRoutes.dosh, arguments: {'formData': formData.value});
+    UserMainController.pushInCurrentTab(AppRoutes.dosh, arguments: {'formData': formData.value});
   }
 
   void _navigateToSadeSati() {
@@ -579,13 +580,13 @@ class PredictionsController extends BaseController {
       showInfoMessage(
         message: 'Please generate Kundli first to view Sade Sati report.',
       );
-      Get.toNamed(
+      UserMainController.pushInCurrentTab(
         AppRoutes.kundliForm,
         arguments: {'targetRoute': AppRoutes.sadeSati},
       );
       return;
     }
-    Get.toNamed(AppRoutes.sadeSati, arguments: {'formData': formData.value});
+    UserMainController.pushInCurrentTab(AppRoutes.sadeSati, arguments: {'formData': formData.value});
   }
 
   void _navigateToGemstonesReport() {
@@ -593,13 +594,13 @@ class PredictionsController extends BaseController {
       showInfoMessage(
         message: 'Please generate Kundli first to view Gemstones report.',
       );
-      Get.toNamed(
+      UserMainController.pushInCurrentTab(
         AppRoutes.kundliForm,
         arguments: {'targetRoute': AppRoutes.gemstonesReport},
       );
       return;
     }
-    Get.toNamed(
+    UserMainController.pushInCurrentTab(
       AppRoutes.gemstonesReport,
       arguments: {'formData': formData.value},
     );
@@ -610,13 +611,13 @@ class PredictionsController extends BaseController {
       showInfoMessage(
         message: 'Please generate Kundli first to view Planet Consideration.',
       );
-      Get.toNamed(
+      UserMainController.pushInCurrentTab(
         AppRoutes.kundliForm,
         arguments: {'targetRoute': AppRoutes.planets},
       );
       return;
     }
-    Get.toNamed(AppRoutes.planets, arguments: {'formData': formData.value});
+    UserMainController.pushInCurrentTab(AppRoutes.planets, arguments: {'formData': formData.value});
   }
 
   void _navigateToTransitToday() {
@@ -624,13 +625,13 @@ class PredictionsController extends BaseController {
       showInfoMessage(
         message: 'Please generate Kundli first to view Transit Today.',
       );
-      Get.toNamed(
+      UserMainController.pushInCurrentTab(
         AppRoutes.kundliForm,
         arguments: {'targetRoute': AppRoutes.transitToday},
       );
       return;
     }
-    Get.toNamed(
+    UserMainController.pushInCurrentTab(
       AppRoutes.transitToday,
       arguments: {'formData': formData.value},
     );

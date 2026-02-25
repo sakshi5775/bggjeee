@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/svg_assets.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
@@ -13,40 +14,43 @@ class ComingSoonPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: "#FFFCF3".toColor(),
-      body: Column(
-        children: [
-          const CommonHeader(
-            title: 'Coming Soon',
-            showWallet: false,
-            showLanguage: false,
-            showCart: false,
-            showSearch: false,
-          ),
-          Expanded(
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SvgAssets(
-                    path: AppConstant.logo,
-                    width: 160.w,
-                    height: 160.h,
-                  ),
-                  Spacing.h(16),
-                  AutoTranslateText(
-                    'This page is coming soon.',
-                    style: AppTypography.body1.copyWith(
-                      color: "#6F221E".toColor(),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        // backgroundColor: "#FFFCF3".toColor(),
+        body: Column(
+          children: [
+            const CommonHeader(
+              title: 'Coming Soon',
+              showWallet: false,
+              showLanguage: false,
+              showCart: false,
+              showSearch: false,
+            ),
+            Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.network(
+                      AppConstant.logo,
+                      width: 160.w,
+                      height: 160.h,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+                    Spacing.h(16),
+                    AutoTranslateText(
+                      'This page is coming soon.',
+                      style: AppTypography.body1.copyWith(
+                        color: "#6F221E".toColor(),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

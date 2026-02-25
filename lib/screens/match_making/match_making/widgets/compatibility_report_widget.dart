@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class CompatibilityReportWidget extends StatelessWidget {
   final Map<String, dynamic> data;
@@ -294,7 +295,7 @@ class CompatibilityReportWidget extends StatelessWidget {
                 TextButton(
                   onPressed: () {
                     // Navigate to Girl Full Kundli
-                    Get.toNamed(
+                    UserMainController.pushInCurrentTab(
                       AppRoutes.matchMakingFullKundli,
                       arguments: {
                         'isBoy': false,
@@ -406,7 +407,7 @@ class CompatibilityReportWidget extends StatelessWidget {
                 TextButton(
                   onPressed: () {
                     // Navigate to Boy Full Kundli
-                    Get.toNamed(
+                    UserMainController.pushInCurrentTab(
                       AppRoutes.matchMakingFullKundli,
                       arguments: {
                         'isBoy': true,
@@ -1145,7 +1146,7 @@ class CompatibilityReportWidget extends StatelessWidget {
             child: OutlinedButton(
               onPressed: () {
                 // Navigate to remedies page
-                Get.toNamed(
+                UserMainController.pushInCurrentTab(
                   AppRoutes.dosh,
                   arguments: {
                     'source': 'matchMakingRemedies',
@@ -1228,7 +1229,7 @@ class CompatibilityReportWidget extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () {
                 // Navigate to astrologers list for marriage expert chat
-                Get.toNamed(
+                UserMainController.pushInCurrentTab(
                   AppRoutes.allAstrologers,
                   arguments: {'source': 'matchMakingChat'},
                 );

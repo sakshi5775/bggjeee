@@ -11,6 +11,7 @@ import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class PalmReadingView extends StatelessWidget {
   const PalmReadingView({super.key});
@@ -45,7 +46,7 @@ class PalmReadingView extends StatelessWidget {
                     customActions: [
                       IconButton(
                         onPressed: () =>
-                            Get.toNamed(AppRoutes.palmReadingHistory),
+                            UserMainController.pushInCurrentTab(AppRoutes.palmReadingHistory),
                         icon: Icon(
                           Icons.access_time,
                           color: '#3E2723'.toColor(),
@@ -332,7 +333,7 @@ class PalmReadingView extends StatelessWidget {
             ],
           ),
           child: ElevatedButton(
-            onPressed: () => Get.toNamed(AppRoutes.palmReadingForm),
+            onPressed: () => UserMainController.pushInCurrentTab(AppRoutes.palmReadingForm),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
               foregroundColor: Colors.white,

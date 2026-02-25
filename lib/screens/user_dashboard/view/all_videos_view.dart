@@ -23,7 +23,9 @@ class AllVideosView extends BasePage<AllVideosController> {
     return DefaultTabController(
       length: 2,
       child: Container(
-        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+        decoration: hideHeader
+            ? null
+            : BoxDecoration(gradient: AppColors.gradientBackground),
         child: Scaffold(
           backgroundColor: Colors.transparent,
           body: Column(
@@ -151,7 +153,12 @@ class AllVideosView extends BasePage<AllVideosController> {
 
   Widget _buildYouTubeGrid() {
     return GridView.builder(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.only(
+        left: 16.w,
+        right: 16.w,
+        top: 16.h,
+        bottom: hideHeader ? 80.h : 16.h,
+      ),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 12.w,
@@ -172,7 +179,12 @@ class AllVideosView extends BasePage<AllVideosController> {
 
   Widget _buildYouTubeList() {
     return ListView.builder(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.only(
+        left: 16.w,
+        right: 16.w,
+        top: 16.h,
+        bottom: hideHeader ? 80.h : 16.h,
+      ),
       itemCount: controller.videos.length,
       itemBuilder: (context, index) {
         final video = controller.videos[index];

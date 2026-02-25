@@ -12,6 +12,7 @@ import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/banner_carousel_widget.dart';
@@ -678,10 +679,10 @@ class AllBlogsView extends BasePage<AllBlogsController> {
   }
 
   void _navigateToBlogDetail(Blog blog) {
-    Get.toNamed(AppRoutes.blogDetail, arguments: blog);
+    UserMainController.pushInCurrentTab(AppRoutes.blogDetail, arguments: blog);
   }
 
   void _navigateToCreateBlog() async {
-    await Get.toNamed(AppRoutes.createBlog);
+    await UserMainController.pushInCurrentTab(AppRoutes.createBlog);
   }
 }

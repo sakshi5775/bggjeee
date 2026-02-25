@@ -1,4 +1,4 @@
-﻿import 'package:astrobharataiuser/app_manager/network_image.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/order_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/orders_controller.dart';
@@ -8,6 +8,7 @@ import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:intl/intl.dart';
 
 class OrdersView extends GetView<OrdersController> {
@@ -212,7 +213,7 @@ class _OrderCard extends StatelessWidget {
 
     return InkWell(
       onTap: () =>
-          Get.toNamed(AppRoutes.orderDetail, arguments: {'order': order}),
+          UserMainController.pushInCurrentTab(AppRoutes.orderDetail, arguments: {'order': order}),
       borderRadius: BorderRadius.circular(20.r),
       child: Container(
         decoration: BoxDecoration(

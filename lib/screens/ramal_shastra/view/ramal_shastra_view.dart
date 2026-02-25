@@ -11,6 +11,7 @@ import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class RamalShastraView extends StatelessWidget {
   const RamalShastraView({super.key});
@@ -32,7 +33,7 @@ class RamalShastraView extends StatelessWidget {
                       message: 'Login to view your Ramal Shastra history.',
                     );
                     if (ok) {
-                      Get.toNamed(AppRoutes.ramalShastraHistory);
+                      UserMainController.pushInCurrentTab(AppRoutes.ramalShastraHistory);
                     }
                   },
                   icon: Icon(
@@ -184,7 +185,7 @@ class RamalShastraView extends StatelessWidget {
                           'Please login to continue with Ramal Shastra reading.',
                     );
                     if (ok) {
-                      Get.toNamed(AppRoutes.ramalShastraQuestion);
+                      UserMainController.pushInCurrentTab(AppRoutes.ramalShastraQuestion);
                     }
                   },
                   style: ElevatedButton.styleFrom(

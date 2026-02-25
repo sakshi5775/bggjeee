@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:astrobharataiuser/widgets/report_insufficient_balance_dialog.dart';
@@ -663,11 +664,11 @@ class KundliFormController extends BaseController {
 
         // If targetRoute is provided, navigate to that route instead of kundliResult
         if (targetRoute != null && targetRoute!.isNotEmpty) {
-          Get.toNamed(targetRoute!, arguments: {'formData': formDataMap});
+          UserMainController.pushInCurrentTab(targetRoute!, arguments: {'formData': formDataMap});
         } else {
           // Navigate to result page with data (default behavior)
           // Note: name and gender are included in formData but NOT sent to API
-          Get.toNamed(
+          UserMainController.pushInCurrentTab(
             AppRoutes.kundliResult,
             arguments: {'kundliData': data, 'formData': formDataMap},
           );
@@ -714,7 +715,7 @@ class KundliFormController extends BaseController {
 
       if (downloadUrl != null && downloadUrl.isNotEmpty) {
         // Navigate to the new in-app PDF viewer
-        Get.toNamed(
+        UserMainController.pushInCurrentTab(
           AppRoutes.reportPdfView,
           arguments: {
             'pdfUrl': downloadUrl,

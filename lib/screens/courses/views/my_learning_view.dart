@@ -10,6 +10,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class MyLearningView extends BasePage<MyLearningController> {
   const MyLearningView({super.key});
@@ -414,7 +415,7 @@ class MyLearningView extends BasePage<MyLearningController> {
                   child: ElevatedButton(
                     onPressed: () {
                       // Open Course Player directly (Udemy behavior)
-                      Get.toNamed(AppRoutes.coursePlayer, arguments: course.id);
+                      UserMainController.pushInCurrentTab(AppRoutes.coursePlayer, arguments: course.id);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.saffron,

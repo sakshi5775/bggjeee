@@ -160,7 +160,7 @@ class _DigitalLearningBannerSliderState
           children: [
             // Video Layer
             FittedBox(
-              fit: BoxFit.cover,
+              fit: BoxFit.fill,
               child: SizedBox(
                 width: _videoPlayerController!.value.size.width,
                 height: _videoPlayerController!.value.size.height,
@@ -251,7 +251,7 @@ class _DigitalLearningBannerSliderState
       // Image Banners
       return Image.network(
         _banners[index],
-        fit: BoxFit.cover,
+        fit: BoxFit.fill,
         width: double.infinity,
         errorBuilder: (context, error, stackTrace) {
           // Fallback or placeholder

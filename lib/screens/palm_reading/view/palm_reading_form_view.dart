@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class PalmReadingFormView extends StatelessWidget {
   const PalmReadingFormView({super.key});
@@ -337,7 +338,7 @@ class PalmReadingFormView extends StatelessWidget {
     return Padding(
       padding: AppPaddings.symmetric(h: 16),
       child: TextButton(
-        onPressed: () => Get.toNamed(AppRoutes.palmReadingHandGender),
+        onPressed: () => UserMainController.pushInCurrentTab(AppRoutes.palmReadingHandGender),
         child: AutoTranslateText(
           'Skip',
           style: MyTextTheme.mediumBCB.copyWith(

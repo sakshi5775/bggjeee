@@ -345,7 +345,7 @@ class AppConstant {
   static const String zodiacPisces =
       'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Pisces.png';
 
-  // E-Mandir Images
+  // Digital Mandir Images
   static const String eMandirGanesha = 'assets/images/ganesha.png';
   static const String eMandirLiveDarshan = 'assets/images/live_darshan.png';
   static const String eMandirAartiIcon = 'assets/images/aarti_icon.png';

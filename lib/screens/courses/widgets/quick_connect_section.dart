@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 import '../../../utils/app_colors.dart';
 
@@ -56,7 +57,7 @@ class QuickConnectSection extends StatelessWidget {
               const Color(0xFF4facfe),
               const Color(0xFF00f2fe),
             ], // Blue gradient
-            onTap: () => Get.toNamed(AppRoutes.allAstrologers),
+            onTap: () => UserMainController.pushInCurrentTab(AppRoutes.allAstrologers),
           ),
           SizedBox(height: 16.h),
           _buildConnectOption(
@@ -67,7 +68,7 @@ class QuickConnectSection extends StatelessWidget {
               const Color(0xFFfa709a),
               const Color(0xFFfee140),
             ], // Pink/Yellow gradient
-            onTap: () => Get.toNamed(AppRoutes.aichat),
+            onTap: () => UserMainController.pushInCurrentTab(AppRoutes.aichat),
           ),
         ],
       ),

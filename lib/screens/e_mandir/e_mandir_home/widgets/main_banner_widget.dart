@@ -38,7 +38,7 @@ class MainBannerWidget extends GetView<NamasteHomeController> {
             isNetworkImage
                 ? CachedNetworkImage(
                     imageUrl: imageUrl,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill,
                     width: double.infinity,
                     height: 450.h,
                     placeholder: (context, url) =>
@@ -48,7 +48,7 @@ class MainBannerWidget extends GetView<NamasteHomeController> {
                   )
                 : Image.asset(
                     imageUrl,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill,
                     width: double.infinity,
                     height: 450.h,
                   ),

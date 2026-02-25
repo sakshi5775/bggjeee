@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class OtherCalendarsController extends BaseController {
   // Selected year
@@ -30,7 +31,7 @@ class OtherCalendarsController extends BaseController {
   void onCalendarTap(Map<String, dynamic> calendar) {
     final route = calendar['route'] as String?;
     if (route != null) {
-      Get.toNamed(route);
+      UserMainController.pushInCurrentTab(route);
     } else {
       final title = calendar['title'] as String;
       Get.snackbar(

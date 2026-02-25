@@ -2,6 +2,7 @@
 // import 'package:astrobharataiuser/screens/courses/services/webinar_service.dart';
 // import 'package:astrobharataiuser/data_model/webinar_model.dart';
 // import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 // class LiveWebinarsController extends BaseController {
 //   final WebinarService _webinarService = Get.put(
@@ -178,7 +179,7 @@
 
 //       if (response != null) {
 //         // Navigate
-//         // Get.toNamed(AppRoutes.liveWebinarSession, arguments: ...);
+//         // UserMainController.pushInCurrentTab(AppRoutes.liveWebinarSession, arguments: ...);
 //         Get.snackbar("Success", "Joined ${response.channelName}");
 //       } else {
 //         showErrorMessage(title: "Error", message: "Failed to join webinar");
@@ -199,6 +200,7 @@ import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/courses/services/webinar_service.dart';
 import 'package:astrobharataiuser/data_model/webinar_model.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class LiveWebinarsController extends BaseController {
   final WebinarService _webinarService = Get.find<WebinarService>();
@@ -517,7 +519,7 @@ class LiveWebinarsController extends BaseController {
 
       if (response != null) {
         // Navigate to live session with join response data
-        Get.toNamed(
+        UserMainController.pushInCurrentTab(
           '/live-webinar-session',
           arguments: {
             'webinarId': webinar.webinarId!,
@@ -542,7 +544,7 @@ class LiveWebinarsController extends BaseController {
       if (e.toString().contains("409") ||
           e.toString().contains("already exists")) {
         // User is already in this session - navigate anyway
-        Get.toNamed(
+        UserMainController.pushInCurrentTab(
           '/live-webinar-session',
           arguments: {
             'webinarId': webinar.webinarId!,

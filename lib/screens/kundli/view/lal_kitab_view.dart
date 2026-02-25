@@ -59,9 +59,9 @@ class LalKitabView extends BasePage<LalKitabController> {
     const maroon = Color(0xFF6F221E);
 
     return Container(
-      height: 48.h,
+      width: double.infinity,
       color: Colors.transparent,
-      padding: EdgeInsets.symmetric(vertical: 6.h),
+      padding: EdgeInsets.only(top: 4.h, bottom: 12.h),
       child: Obx(() {
         final selectedIndex = controller.selectedTabIndex.value;
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -181,7 +181,7 @@ class LalKitabView extends BasePage<LalKitabController> {
       case 0:
         return LalKitabTableWidget(controller: controller);
       case 1:
-        return LalKitabKundliWidget(controller: controller);
+        return LalKitabChartWidget(controller: controller);
       case 2:
         return LalKitabRemediesWidget(controller: controller);
       case 3:
@@ -193,7 +193,7 @@ class LalKitabView extends BasePage<LalKitabController> {
       case 6:
         return LalKitabPlanetsWidget(controller: controller);
       case 7:
-        return LalKitabChartWidget(controller: controller);
+        return LalKitabKundliWidget(controller: controller);
       default:
         return LalKitabTableWidget(controller: controller);
     }

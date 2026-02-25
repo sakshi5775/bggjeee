@@ -11,6 +11,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
@@ -103,7 +104,7 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
 
       // Navigate to scanning screen
       if (mounted) {
-        Get.toNamed('/palm-reading-scanning');
+        UserMainController.pushInCurrentTab('/palm-reading-scanning');
       }
     } catch (e) {
       if (mounted) {

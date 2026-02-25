@@ -65,7 +65,6 @@ class PredictionsView extends BasePage<PredictionsController> {
     const maroon = Color(0xFF6F221E);
 
     return Container(
-      height: 48.h,
       color: Colors.transparent,
       padding: EdgeInsets.symmetric(vertical: 6.h),
       child: Obx(() {

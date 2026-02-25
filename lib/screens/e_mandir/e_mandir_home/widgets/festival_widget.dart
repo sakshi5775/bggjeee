@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 /// Horizontal scrollable list of festivals (max 5), with a "View All" button.
 class FestivalWidget extends GetView<NamasteHomeController> {
@@ -44,7 +45,7 @@ class FestivalWidget extends GetView<NamasteHomeController> {
               if (controller.festivals.length > 5)
                 GestureDetector(
                   onTap: () {
-                    Get.toNamed(
+                    UserMainController.pushInCurrentTab(
                       AppRoutes.allFestivals,
                       arguments: {'festivals': controller.festivals.toList()},
                     );
@@ -89,7 +90,7 @@ class _FestivalCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Get.toNamed(
+        UserMainController.pushInCurrentTab(
           AppRoutes.eMandirFestivalDetail,
           arguments: {'festival': festival},
         );

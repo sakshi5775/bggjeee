@@ -9,6 +9,7 @@ import 'package:astrobharataiuser/core/routes/get_pages.dart';
 import 'package:astrobharataiuser/firebase_options.dart';
 import 'package:astrobharataiuser/theme/app_theme.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,8 @@ import './apihelper/dependencies/dependencies.dart' as dep;
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:astrobharataiuser/core/controllers/global_nav_controller.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/widgets/user_bottom_nav.dart';
 
 List<Locale>? _cachedSupportedLocales;
 
@@ -152,6 +155,8 @@ void main() {
         Get.put(CustomTranslationService(), permanent: true);
       }
 
+      Get.put(GlobalNavController(), permanent: true);
+
       runApp(const MyApp());
     },
     (error, stack) {
@@ -178,7 +183,15 @@ class CrashlyticsNavigatorObserver extends NavigatorObserver {
   @override
   void didPop(Route route, Route? previousRoute) {
     super.didPop(route, previousRoute);
-    CrashlyticsNavigatorObserver().didPush(previousRoute!, null);
+    if (previousRoute != null) {
+      CrashlyticsService.setKey(
+        "screen",
+        previousRoute.settings.name ?? "unknown",
+      );
+      CrashlyticsService.log(
+        "NAVIGATION:POP_TO | screen:${previousRoute.settings.name}",
+      );
+    }
   }
 }
 
@@ -333,16 +346,79 @@ class MyApp extends StatelessWidget {
                 themeMode: ThemeMode.light,
                 navigatorObservers: [CrashlyticsNavigatorObserver()],
 
-                builder: (context, child) {
-                  return Obx(() {
-                    final isOnline = NetworkService.instance.isConnected.value;
-                    return Stack(
-                      children: [
-                        child!,
-                        if (!isOnline) const GlobalOfflineScreen(),
-                      ],
-                    );
+                routingCallback: (routing) {
+                  if (routing == null) return;
+                  final route = routing.current.split('?').first;
+                  print('GlobalNav: routingCallback route=$route');
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (Get.isRegistered<GlobalNavController>()) {
+                      Get.find<GlobalNavController>().updateRoute(route);
+                    }
                   });
+                },
+
+                builder: (context, child) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      gradient: AppColors.gradientBackground,
+                    ),
+                    child: Stack(
+                      children: [
+                        Column(
+                          children: [
+                            Expanded(
+                              child: PopScope(
+                                canPop: false,
+                                onPopInvoked: (didPop) async {
+                                  if (didPop) return;
+                                  print('GlobalNav: Root PopScope triggered');
+                                  if (Get.isRegistered<GlobalNavController>()) {
+                                    final navController =
+                                        Get.find<GlobalNavController>();
+                                    final handled = navController
+                                        .handleBackNavigation();
+                                    if (!handled) {
+                                      print(
+                                        'GlobalNav: Back not handled, exiting app',
+                                      );
+                                      SystemNavigator.pop();
+                                    }
+                                  } else {
+                                    SystemNavigator.pop();
+                                  }
+                                },
+                                child: child ?? const SizedBox(),
+                              ),
+                            ),
+                            Obx(() {
+                              if (!Get.isRegistered<GlobalNavController>()) {
+                                return const SizedBox.shrink();
+                              }
+                              final navController =
+                                  Get.find<GlobalNavController>();
+                              final showNav = navController.showBottomNav;
+                              final isKeyboardOpen =
+                                  MediaQuery.of(context).viewInsets.bottom > 0;
+
+                              if (showNav && !isKeyboardOpen) {
+                                return const Material(
+                                  elevation: 8.0,
+                                  child: UserBottomNav(),
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            }),
+                          ],
+                        ),
+                        Obx(() {
+                          final isOnline =
+                              NetworkService.instance.isConnected.value;
+                          if (!isOnline) return const GlobalOfflineScreen();
+                          return const SizedBox.shrink();
+                        }),
+                      ],
+                    ),
+                  );
                 },
               );
             },

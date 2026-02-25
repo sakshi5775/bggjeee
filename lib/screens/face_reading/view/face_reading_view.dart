@@ -11,6 +11,7 @@ import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class FaceReadingView extends StatelessWidget {
   const FaceReadingView({super.key});
@@ -53,7 +54,7 @@ class FaceReadingView extends StatelessWidget {
                         message: 'Login to view your face reading history.',
                       );
                       if (ok) {
-                        Get.toNamed(AppRoutes.faceReadingHistory);
+                        UserMainController.pushInCurrentTab(AppRoutes.faceReadingHistory);
                       }
                     },
                   ),
@@ -230,7 +231,7 @@ class FaceReadingView extends StatelessWidget {
                       message: 'Please login to continue with face reading.',
                     );
                     if (ok) {
-                      Get.toNamed(AppRoutes.faceReadingUpload);
+                      UserMainController.pushInCurrentTab(AppRoutes.faceReadingUpload);
                     }
                   },
                   style: ElevatedButton.styleFrom(

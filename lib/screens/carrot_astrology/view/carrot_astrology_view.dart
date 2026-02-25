@@ -12,6 +12,7 @@ import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class CarrotAstrologyView extends StatelessWidget {
   const CarrotAstrologyView({Key? key}) : super(key: key);
@@ -53,7 +54,7 @@ class CarrotAstrologyView extends StatelessWidget {
                               'Login to view your carrot astrology history.',
                         );
                         if (ok) {
-                          Get.toNamed(AppRoutes.carrotAstrologyHistory);
+                          UserMainController.pushInCurrentTab(AppRoutes.carrotAstrologyHistory);
                         }
                       },
                     ),
@@ -219,7 +220,7 @@ class CarrotAstrologyView extends StatelessWidget {
                   ],
                 ),
                 child: ElevatedButton(
-                  onPressed: () => Get.toNamed(AppRoutes.carrotAstrologyForm),
+                  onPressed: () => UserMainController.pushInCurrentTab(AppRoutes.carrotAstrologyForm),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     foregroundColor: '#ffffff'.toColor(),

@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/widgets/zodiac_sign_selection_grid.dart';
 
 class CarrotAstrologySignSelectionView extends StatelessWidget {
@@ -29,7 +30,7 @@ class CarrotAstrologySignSelectionView extends StatelessWidget {
                   cardBorderColor: CarrotAstrologyColors.orangeColor,
                   onSignSelected: (name) {
                     // Navigate to carrot astrology results with selected sign
-                    Get.toNamed(
+                    UserMainController.pushInCurrentTab(
                       AppRoutes.carrotAstrologyResults,
                       arguments: {'selectedSign': name},
                     );

@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/data_model/address_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/address_selection/service/puja_address_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class AddressSelectionController extends BaseController {
   final PujaAddressService _addressService = PujaAddressService();
@@ -114,7 +115,7 @@ class AddressSelectionController extends BaseController {
 
   Future<void> onEditAddress(AddressModel address) async {
     // Navigate to edit address page and wait for result
-    final result = await Get.toNamed(
+    final result = await UserMainController.pushInCurrentTab(
       AppRoutes.addressForm,
       arguments: {'address': address},
     );
@@ -127,7 +128,7 @@ class AddressSelectionController extends BaseController {
 
   Future<void> onAddNewAddress() async {
     // Navigate to add new address page and wait for result
-    final result = await Get.toNamed(AppRoutes.addressForm);
+    final result = await UserMainController.pushInCurrentTab(AppRoutes.addressForm);
 
     // Refresh list if new address was added
     if (result == true) {
@@ -148,7 +149,7 @@ class AddressSelectionController extends BaseController {
     }
 
     // Navigate to booking form with all required data
-    Get.toNamed(
+    UserMainController.pushInCurrentTab(
       AppRoutes.pujaBookingForm,
       arguments: {
         'pujaId': pujaId,

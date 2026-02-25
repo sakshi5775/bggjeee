@@ -1,4 +1,4 @@
-﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
@@ -10,6 +10,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:intl/intl.dart';
 
 import '../controller/user_dashboard_controller.dart';
@@ -42,7 +43,7 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                 GestureDetector(
                   onTap: () {
                     // Navigate to view all poojas
-                    Get.toNamed(AppRoutes.bookPuja);
+                    UserMainController.pushInCurrentTab(AppRoutes.bookPuja);
                   },
                   child: AutoTranslateText(
                     'View all',
@@ -130,7 +131,7 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
     return GestureDetector(
       onTap: () {
         if (puja.id != null && puja.id!.isNotEmpty) {
-          Get.toNamed(AppRoutes.pujaDetail, arguments: puja.id);
+          UserMainController.pushInCurrentTab(AppRoutes.pujaDetail, arguments: puja.id);
         }
       },
       child: Card(
@@ -358,13 +359,13 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                                     // Navigate to puja detail page
                                     if (puja.id != null &&
                                         puja.id!.isNotEmpty) {
-                                      Get.toNamed(
+                                      UserMainController.pushInCurrentTab(
                                         AppRoutes.pujaDetail,
                                         arguments: puja.id,
                                       );
                                     } else {
                                       // Fallback to book puja page
-                                      Get.toNamed(AppRoutes.bookPuja);
+                                      UserMainController.pushInCurrentTab(AppRoutes.bookPuja);
                                     }
                                   },
                                   child: Container(

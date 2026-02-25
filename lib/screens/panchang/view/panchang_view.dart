@@ -46,7 +46,7 @@ class PanchangView extends BasePage<PanchangController> {
                     _buildPanchangToolsSection(),
 
                     // Bottom spacing
-                    Spacing.h(40),
+                    Spacing.h(hideHeader ? 80 : 40),
                   ],
                 ),
               ),

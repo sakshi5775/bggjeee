@@ -17,21 +17,35 @@ class NetworkService extends GetxService {
 
   void _startPolling() {
     _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
       checkConnectivity();
     });
   }
 
+  int _failedAttempts = 0;
+  static const int _maxFailedAttempts =
+      3; // Tolerate 2-3 drops before showing offline screen
+
   Future<bool> checkConnectivity() async {
     try {
       final result = await InternetAddress.lookup(
-        'google.com',
-      ).timeout(const Duration(seconds: 3));
+        'dns.google', // Use a highly reliable DNS
+      ).timeout(const Duration(seconds: 4));
+
       final connected = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
-      isConnected.value = connected;
+
+      if (connected) {
+        _failedAttempts = 0; // Reset on success
+        if (!isConnected.value) {
+          isConnected.value = true;
+        }
+      }
       return connected;
     } catch (_) {
-      isConnected.value = false;
+      _failedAttempts++;
+      if (_failedAttempts >= _maxFailedAttempts) {
+        isConnected.value = false;
+      }
       return false;
     }
   }

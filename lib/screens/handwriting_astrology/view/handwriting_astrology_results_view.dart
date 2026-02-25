@@ -13,6 +13,7 @@ import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboa
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class HandwritingAstrologyResultsView extends StatelessWidget {
   const HandwritingAstrologyResultsView({Key? key}) : super(key: key);
@@ -87,7 +88,7 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
                     size: 22.w,
                   ),
                   onPressed: () =>
-                      Get.toNamed(AppRoutes.handwritingAstrologyHistory),
+                      UserMainController.pushInCurrentTab(AppRoutes.handwritingAstrologyHistory),
                 ),
               ],
             ),
@@ -1234,7 +1235,7 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
           Spacing.h(16),
           ElevatedButton(
             onPressed: () {
-              Get.toNamed(AppRoutes.astrologyServices);
+              UserMainController.pushInCurrentTab(AppRoutes.astrologyServices);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,

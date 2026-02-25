@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/screens/astrology_services/services/astrologer
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class AstrologerChatHistoryController extends BaseController {
   final AstrologerChatService _chatService = AstrologerChatService();
@@ -181,7 +182,7 @@ class AstrologerChatHistoryController extends BaseController {
   /// Navigate to chat session detail
   void navigateToChat(String chatId, AstrologerModel? astrologer) {
     if (astrologer != null) {
-      Get.toNamed(
+      UserMainController.pushInCurrentTab(
         '/astrologer-chat',
         arguments: {'astrologer': astrologer, 'initialChatId': chatId},
       );

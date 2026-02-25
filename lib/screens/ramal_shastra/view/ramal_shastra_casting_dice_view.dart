@@ -11,6 +11,7 @@ import 'package:astrobharataiuser/screens/ramal_shastra/controller/ramal_shastra
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class RamalShastraCastingDiceView extends StatefulWidget {
   const RamalShastraCastingDiceView({Key? key}) : super(key: key);
@@ -80,7 +81,7 @@ class _RamalShastraCastingDiceViewState
     } else {
       // All 16 values collected (4 rounds × 4 dice)
       controller.generatePointsFromDice(allDiceValues);
-      Get.toNamed(AppRoutes.ramalShastraConfirmation);
+      UserMainController.pushInCurrentTab(AppRoutes.ramalShastraConfirmation);
     }
   }
 

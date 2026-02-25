@@ -8,6 +8,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 import '../../../app_manager/ext/hex_color_ext.dart';
 import '../../../theme/app_typography.dart';
@@ -37,7 +38,7 @@ class AllAstrologerWidget extends BasePage<UserDashboardController> {
                   padding: EdgeInsets.only(right: 6.w),
                   child: GestureDetector(
                     onTap: () {
-                      Get.toNamed(AppRoutes.allAstrologers);
+                      UserMainController.pushInCurrentTab(AppRoutes.allAstrologers);
                     },
                     child: AutoTranslateText(
                       "View All",
@@ -73,7 +74,7 @@ class AllAstrologerWidget extends BasePage<UserDashboardController> {
                           : astrologer.name;
                       return GestureDetector(
                         onTap: () {
-                          Get.toNamed(
+                          UserMainController.pushInCurrentTab(
                             AppRoutes.astrologerDetail,
                             arguments: {"astrologer": astrologer},
                           );
@@ -200,7 +201,7 @@ class ChatCallAstrologerWidget extends BasePage<UserDashboardController> {
                   padding: EdgeInsets.only(right: 6.w),
                   child: GestureDetector(
                     onTap: () {
-                      Get.toNamed(AppRoutes.allAstrologers);
+                      UserMainController.pushInCurrentTab(AppRoutes.allAstrologers);
                     },
                     child: AutoTranslateText(
                       "View All",
@@ -236,7 +237,7 @@ class ChatCallAstrologerWidget extends BasePage<UserDashboardController> {
                           : astrologer.name;
                       return GestureDetector(
                         onTap: () {
-                          Get.toNamed(
+                          UserMainController.pushInCurrentTab(
                             AppRoutes.astrologerDetail,
                             arguments: {"astrologer": astrologer},
                           );

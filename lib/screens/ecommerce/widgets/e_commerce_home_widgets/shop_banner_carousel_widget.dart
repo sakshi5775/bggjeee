@@ -100,7 +100,7 @@ class _ShopBannerCarouselWidgetState extends State<ShopBannerCarouselWidget> {
                 child: isNetworkImage
                     ? Image.network(
                         imageUrl,
-                        fit: BoxFit.cover,
+                        fit: BoxFit.fill,
                         width: double.infinity,
                         height: double.infinity,
                         loadingBuilder: (context, child, loadingProgress) {
@@ -131,7 +131,7 @@ class _ShopBannerCarouselWidgetState extends State<ShopBannerCarouselWidget> {
                       )
                     : Image.asset(
                         imageUrl,
-                        fit: BoxFit.cover,
+                        fit: BoxFit.fill,
                         width: double.infinity,
                         height: double.infinity,
                         errorBuilder: (context, error, stackTrace) {

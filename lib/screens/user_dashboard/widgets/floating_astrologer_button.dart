@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import '../../../utils/app_colors.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 
@@ -28,7 +29,7 @@ class _FloatingAstrologerButtonState extends State<FloatingAstrologerButton>
             label: "Chat",
             onTap: () {
               setState(() => isOpen = false);
-              Get.toNamed(AppRoutes.allAstrologers);
+              UserMainController.pushInCurrentTab(AppRoutes.allAstrologers);
             },
           ),
           const SizedBox(height: 12),
@@ -37,7 +38,7 @@ class _FloatingAstrologerButtonState extends State<FloatingAstrologerButton>
             label: "Call",
             onTap: () {
               setState(() => isOpen = false);
-              Get.toNamed(AppRoutes.allAstrologers);
+              UserMainController.pushInCurrentTab(AppRoutes.allAstrologers);
             },
           ),
           const SizedBox(height: 16),

@@ -10,6 +10,7 @@ import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:intl/intl.dart';
 
@@ -527,7 +528,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 15.w),
       child: GestureDetector(
-        onTap: () => Get.toNamed(AppRoutes.monthlyCalendar),
+        onTap: () => UserMainController.pushInCurrentTab(AppRoutes.monthlyCalendar),
         child: Container(
           width: double.infinity,
           padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
@@ -620,7 +621,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  Get.toNamed(AppRoutes.astrologyServices);
+                  UserMainController.pushInCurrentTab(AppRoutes.astrologyServices);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,

@@ -10,6 +10,7 @@ import 'package:astrobharataiuser/screens/vastu/model/vastu_room_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class OfficeVastuListView extends StatelessWidget {
   const OfficeVastuListView({Key? key}) : super(key: key);
@@ -65,7 +66,7 @@ class OfficeVastuListView extends StatelessWidget {
       padding: EdgeInsets.only(bottom: 12.h),
       child: GestureDetector(
         onTap: () {
-          Get.toNamed(
+          UserMainController.pushInCurrentTab(
             AppRoutes.officeVastuCompass,
             arguments: {'roomType': room.roomType},
           );

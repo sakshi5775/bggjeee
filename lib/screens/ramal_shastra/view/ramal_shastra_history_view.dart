@@ -11,6 +11,7 @@ import 'package:astrobharataiuser/screens/ramal_shastra/controller/ramal_shastra
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:intl/intl.dart';
 
 class RamalShastraHistoryView extends StatefulWidget {
@@ -168,7 +169,7 @@ class _RamalShastraHistoryViewState extends State<RamalShastraHistoryView> {
       ),
       child: InkWell(
         onTap: () {
-          Get.toNamed(
+          UserMainController.pushInCurrentTab(
             AppRoutes.ramalShastraDetail,
             arguments: {'result': reading},
           );

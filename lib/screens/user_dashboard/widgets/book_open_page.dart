@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../../../../theme/app_typography.dart';
 import '../../../../utils/app_constant.dart';
@@ -215,7 +216,7 @@ class _BookOpenPageState extends State<BookOpenPage>
                   ),
                   const SizedBox(height: 12),
                   GestureDetector(
-                    onTap: () => Get.toNamed(AppRoutes.courses),
+                    onTap: () => UserMainController.pushInCurrentTab(AppRoutes.courses),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 13,

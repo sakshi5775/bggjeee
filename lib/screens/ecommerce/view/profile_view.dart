@@ -1,10 +1,11 @@
-﻿import 'dart:io';
+import 'dart:io';
 
 import 'package:astrobharataiuser/app_manager/common/image_picker.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/data_model/order_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/profile_controller.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
@@ -55,7 +56,9 @@ class ProfileView extends GetView<ProfileController> {
                     Padding(
                       padding: EdgeInsets.only(right: 4.w),
                       child: TextButton.icon(
-                        onPressed: () => Get.toNamed(AppRoutes.login),
+                        onPressed: () => UserMainController.pushInCurrentTab(
+                          AppRoutes.login,
+                        ),
                         icon: Icon(
                           Icons.login,
                           color: '#6F221E'.toColor(),
@@ -548,7 +551,7 @@ class ProfileView extends GetView<ProfileController> {
         icon: Icons.shopping_bag_outlined,
         label: 'Orders',
         subtitle: '${controller.ordersCount} Orders',
-        onTap: () => Get.toNamed(AppRoutes.orders, id: 1),
+        onTap: () => Navigator.of(context).pushNamed(AppRoutes.orders),
       ),
       _ProfileAction(
         icon: Icons.local_florist_outlined,
@@ -560,7 +563,7 @@ class ProfileView extends GetView<ProfileController> {
         icon: Icons.auto_awesome_outlined,
         label: 'Wishlist',
         subtitle: '${controller.wishlistCount} Items',
-        onTap: () => Get.toNamed(AppRoutes.wishlist, id: 1),
+        onTap: () => Navigator.of(context).pushNamed(AppRoutes.wishlist),
       ),
       _ProfileAction(
         icon: Icons.favorite,
@@ -578,13 +581,14 @@ class ProfileView extends GetView<ProfileController> {
         icon: Icons.percent,
         label: 'Coupons',
         subtitle: '${controller.couponCount} Coupons',
-        onTap: () => Get.toNamed(AppRoutes.coupons, id: 1),
+        onTap: () => Navigator.of(context).pushNamed(AppRoutes.coupons),
       ),
       _ProfileAction(
         icon: Icons.history_edu_outlined,
         label: 'Kundli Reports',
         subtitle: '${controller.reportHistory.length} Reports',
-        onTap: () => Get.toNamed(AppRoutes.kundliReportHistory, id: 1),
+        onTap: () =>
+            Navigator.of(context).pushNamed(AppRoutes.kundliReportHistory),
       ),
     ];
 
@@ -900,7 +904,9 @@ class ProfileView extends GetView<ProfileController> {
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  onTap: () => Get.toNamed(AppRoutes.supportTickets, id: 1),
+                  onTap: () => UserMainController.pushInCurrentTab(
+                    AppRoutes.supportTickets,
+                  ),
                   borderRadius: BorderRadius.circular(14.r),
                   child: Padding(
                     padding: EdgeInsets.symmetric(
@@ -2093,9 +2099,8 @@ class _RecentOrderTile extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
-            Get.toNamed(
+            UserMainController.pushInCurrentTab(
               AppRoutes.orderDetail,
-              id: 1,
               arguments: {'orderId': order.id ?? order.orderId},
             );
           },

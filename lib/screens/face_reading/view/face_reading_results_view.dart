@@ -14,6 +14,7 @@ import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboa
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class FaceReadingResultsView extends StatelessWidget {
   const FaceReadingResultsView({Key? key}) : super(key: key);
@@ -83,7 +84,7 @@ class FaceReadingResultsView extends StatelessWidget {
                       color: '#6F221E'.toColor(),
                       size: 22.w,
                     ),
-                    onPressed: () => Get.toNamed(AppRoutes.faceReadingHistory),
+                    onPressed: () => UserMainController.pushInCurrentTab(AppRoutes.faceReadingHistory),
                   ),
                 ],
               ),
@@ -355,7 +356,7 @@ class FaceReadingResultsView extends StatelessWidget {
   }) {
     return InkWell(
       onTap: () {
-        Get.toNamed(
+        UserMainController.pushInCurrentTab(
           AppRoutes.faceReadingCategoryDetail,
           arguments: {
             'categoryType': categoryType,
@@ -570,7 +571,7 @@ class FaceReadingResultsView extends StatelessWidget {
   ) {
     return InkWell(
       onTap: () {
-        Get.toNamed(
+        UserMainController.pushInCurrentTab(
           AppRoutes.faceReadingFeatureDetail,
           arguments: {
             'title': title,
@@ -678,7 +679,7 @@ class FaceReadingResultsView extends StatelessWidget {
           Spacing.h(16),
           ElevatedButton(
             onPressed: () {
-              Get.toNamed(AppRoutes.astrologyServices);
+              UserMainController.pushInCurrentTab(AppRoutes.astrologyServices);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,

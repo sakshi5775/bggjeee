@@ -1,9 +1,9 @@
-import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/banner_model.dart';
 import 'package:astrobharataiuser/screens/horoscope/controller/horoscope_main_controller.dart';
 import 'package:astrobharataiuser/screens/horoscope/widgets/daily_prediction_widget.dart';
 import 'package:astrobharataiuser/widgets/zodiac_sign_selection_grid.dart';
+import 'package:astrobharataiuser/screens/horoscope/controller/horoscope_form_controller.dart';
+import 'package:astrobharataiuser/screens/horoscope/view/horoscope_form_view.dart';
 import 'package:astrobharataiuser/screens/horoscope/widgets/weekly_prediction_widget.dart';
 import 'package:astrobharataiuser/screens/horoscope/widgets/monthly_prediction_widget.dart';
 import 'package:astrobharataiuser/screens/horoscope/widgets/yearly_prediction_widget.dart';
@@ -11,6 +11,7 @@ import 'package:astrobharataiuser/screens/user_dashboard/service/banner_service.
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/banner_carousel_widget.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -77,12 +78,49 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       child: Obx(() {
-        // Step 1: Category selection
+        // Step 1: Show embedded form if category selected but sign not yet picked
+        if (controller.showEmbeddedForm.value) {
+          Get.put(HoroscopeFormController());
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      controller.showEmbeddedForm.value = false;
+                      controller.selectedCategory.value = null;
+                      Get.delete<HoroscopeFormController>();
+                    },
+                    child: Icon(
+                      Icons.arrow_back,
+                      color: AppColors.textPrimary,
+                      size: 24.w,
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: AutoTranslateText(
+                      'Enter Details',
+                      style: AppTypography.h2.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Expanded(child: const HoroscopeFormView(isEmbedded: true)),
+            ],
+          );
+        }
+
+        // Step 2: Category selection
         if (controller.selectedCategory.value == null) {
           return _buildCategorySelection(controller);
         }
 
-        // Step 2: Zodiac selection (if category selected but no zodiac)
+        // Step 3: Zodiac selection (if form skipped or returned)
         if (controller.selectedZodiac.value == null) {
           return _buildZodiacSelection(controller);
         }
@@ -102,7 +140,7 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
           _buildBannersSection(),
           SizedBox(height: 8),
           _buildGrid(controller),
-          SizedBox(height: 8.h),
+          SizedBox(height: 80.h),
         ],
       ),
     );
@@ -160,7 +198,13 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
     IconData icon,
   ) {
     return GestureDetector(
-      onTap: () => controller.selectedCategory.value = label,
+      onTap: () {
+        controller.selectedCategory.value = label;
+        controller.showEmbeddedForm.value = true;
+
+        // Pass the category to the form controller via arguments
+        Get.parameters['category'] = label;
+      },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
         decoration: BoxDecoration(
@@ -218,8 +262,8 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
             children: [
               GestureDetector(
                 onTap: () {
-                  controller.selectedCategory.value = null;
                   controller.selectedZodiac.value = null;
+                  controller.showEmbeddedForm.value = true;
                 },
                 child: Icon(
                   Icons.arrow_back,
@@ -244,10 +288,11 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
             onSignSelected: (name) {
               controller.selectedZodiac.value = name;
               controller.selectedSign.value = name;
+              controller.isManualSignSelection.value = true;
               _fetchDataForCategory(controller);
             },
           ),
-          SizedBox(height: 54.h),
+          SizedBox(height: 80.h),
         ],
       ),
     );
@@ -265,7 +310,14 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
           children: [
             GestureDetector(
               onTap: () {
-                controller.selectedZodiac.value = null;
+                if (controller.isManualSignSelection.value) {
+                  controller.selectedZodiac.value = null;
+                  controller.isManualSignSelection.value = false;
+                } else {
+                  controller.selectedZodiac.value = null;
+                  controller.showEmbeddedForm.value = true;
+                }
+
                 // Clear data
                 controller.dailyPredictionData.value = null;
                 controller.weeklyPredictionData.value = null;
@@ -292,6 +344,7 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
         ),
         SizedBox(height: 16.h),
         Expanded(child: _buildCategoryContent(controller, category)),
+        SizedBox(height: 80.h),
       ],
     );
   }

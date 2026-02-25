@@ -11,6 +11,7 @@ import 'package:astrobharataiuser/widgets/language_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 
 /// Standard Common Header for the application.
@@ -133,7 +134,7 @@ class CommonHeader extends StatelessWidget {
                     final route = searchService.searchRoute(value.trim());
                     if (route != null) {
                       Get.back();
-                      Get.toNamed(route);
+                      UserMainController.pushInCurrentTab(route);
                     } else {
                       Get.snackbar(
                         'Search',
@@ -160,7 +161,7 @@ class CommonHeader extends StatelessWidget {
                         final route = searchService.searchRoute(query);
                         if (route != null) {
                           Get.back();
-                          Get.toNamed(route);
+                          UserMainController.pushInCurrentTab(route);
                         } else {
                           Get.snackbar(
                             'Search',
@@ -253,7 +254,9 @@ class CommonHeader extends StatelessWidget {
                   children: [
                     if (showWallet)
                       IconButton(
-                        onPressed: () => Get.toNamed(AppRoutes.wallet),
+                        onPressed: () => UserMainController.pushInCurrentTab(
+                          AppRoutes.wallet,
+                        ),
                         style: IconButton.styleFrom(
                           padding: EdgeInsets.zero,
                           minimumSize: Size(36.w, 36.h),
@@ -272,7 +275,8 @@ class CommonHeader extends StatelessWidget {
                       ),
                     if (showCart)
                       IconButton(
-                        onPressed: () => Get.toNamed(AppRoutes.cart),
+                        onPressed: () =>
+                            UserMainController.pushInCurrentTab(AppRoutes.cart),
                         style: IconButton.styleFrom(
                           padding: EdgeInsets.zero,
                           minimumSize: Size(36.w, 36.h),
@@ -322,7 +326,20 @@ class CommonHeader extends StatelessWidget {
                   // Back button (Navigator.canPop or explicit showBackButton)
                   if (showBackButton ?? Navigator.canPop(context))
                     IconButton(
-                      onPressed: onBackTap ?? () => Navigator.pop(context),
+                      onPressed:
+                          onBackTap ??
+                          () {
+                            // If we can pop within the current tab navigator, pop
+                            if (Navigator.canPop(context)) {
+                              Navigator.pop(context);
+                            } else {
+                              // At tab root → use central back handler (goes to previous tab)
+                              if (Get.isRegistered<UserMainController>()) {
+                                Get.find<UserMainController>()
+                                    .handleBackNavigation();
+                              }
+                            }
+                          },
                       style: IconButton.styleFrom(
                         padding: EdgeInsets.zero,
                         minimumSize: Size(36.w, 36.h),
@@ -353,9 +370,14 @@ class CommonHeader extends StatelessWidget {
                   if (showHome)
                     IconButton(
                       onPressed: () {
+                        // Pop to root of current tab first
                         Navigator.of(
                           context,
                         ).popUntil((route) => route.isFirst);
+                        // Then switch to Home tab
+                        if (Get.isRegistered<UserMainController>()) {
+                          Get.find<UserMainController>().changeTab(0);
+                        }
                       },
                       icon: Icon(
                         Icons.home_outlined,

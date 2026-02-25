@@ -1,4 +1,4 @@
-﻿import 'package:astrobharataiuser/core/base/base_controller.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/product_model.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/cart_controller.dart';
@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/screens/ecommerce/controller/wishlist_controll
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
 
@@ -415,12 +416,12 @@ class ProductDetailController extends BaseController {
     if (success) {
       final synced = cartController.quantityForProduct(productToUse);
       quantity.value = synced > 0 ? synced : 1;
-      Get.toNamed(AppRoutes.cart);
+      UserMainController.pushInCurrentTab(AppRoutes.cart);
     }
   }
 
   void navigateToProduct(ProductModel product, {String? heroTag}) {
-    Get.toNamed(
+    UserMainController.pushInCurrentTab(
       '/product-detail',
       arguments: {'product': product, if (heroTag != null) 'heroTag': heroTag},
     );

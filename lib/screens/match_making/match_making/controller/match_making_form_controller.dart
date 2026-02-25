@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/screens/user_dashboard/service/report_service.
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:intl/intl.dart';
 import 'package:astrobharataiuser/widgets/report_insufficient_balance_dialog.dart';
 import 'package:astrobharataiuser/apihelper/api_provider/networkException/exception.dart';
@@ -578,7 +579,7 @@ class MatchMakingFormController extends BaseController {
           'girlSign': '',
         };
 
-        Get.toNamed(
+        UserMainController.pushInCurrentTab(
           '/match-making-result',
           arguments: {
             'response': responseValue is Map<String, dynamic>
@@ -657,7 +658,7 @@ class MatchMakingFormController extends BaseController {
 
       if (downloadUrl != null && downloadUrl.isNotEmpty) {
         // Navigate to the new in-app PDF viewer
-        Get.toNamed(
+        UserMainController.pushInCurrentTab(
           AppRoutes.reportPdfView,
           arguments: {'pdfUrl': downloadUrl, 'title': 'Matchmaking Report'},
         );

@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 import '../../../../core/routes/app_routes.dart';
 
@@ -146,7 +147,7 @@ class RemediesGridSection extends GetView<RemediesController> {
 
                   GestureDetector(
                     onTap: () {
-                      Get.toNamed(
+                      UserMainController.pushInCurrentTab(
                         AppRoutes.remedyCategoryListing,
                         arguments: {
                           'categoryId': remedy.id ?? '',

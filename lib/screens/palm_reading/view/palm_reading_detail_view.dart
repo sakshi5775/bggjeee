@@ -11,6 +11,7 @@ import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class PalmReadingDetailView extends StatelessWidget {
   const PalmReadingDetailView({Key? key}) : super(key: key);
@@ -157,7 +158,7 @@ class PalmReadingDetailView extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton.icon(
               onPressed: () {
-                Get.toNamed(AppRoutes.astrologyServices);
+                UserMainController.pushInCurrentTab(AppRoutes.astrologyServices);
               },
               icon: Icon(
                 Icons.chat_bubble_outline,
@@ -545,7 +546,7 @@ class PalmReadingDetailView extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                Get.toNamed(AppRoutes.astrologyServices);
+                UserMainController.pushInCurrentTab(AppRoutes.astrologyServices);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF5F2221),

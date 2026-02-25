@@ -1,4 +1,4 @@
-﻿import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
@@ -10,6 +10,7 @@ import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class FollowingAstrologersView extends StatelessWidget {
   final bool showBackButton;
@@ -173,7 +174,7 @@ class FollowingAstrologersView extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Get.toNamed(AppRoutes.astrologerDetail, arguments: astrologer);
+        UserMainController.pushInCurrentTab(AppRoutes.astrologerDetail, arguments: astrologer);
       },
       child: Container(
         margin: EdgeInsets.only(bottom: 16.h),
@@ -368,7 +369,7 @@ class FollowingAstrologersView extends StatelessWidget {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          Get.toNamed(
+                          UserMainController.pushInCurrentTab(
                             AppRoutes.astrologerDetail,
                             arguments: astrologer,
                           );

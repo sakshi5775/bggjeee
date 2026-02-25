@@ -1,6 +1,7 @@
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/numerology/service/numerology_service.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class NumerologyReportsController extends BaseController {
@@ -222,7 +223,7 @@ class NumerologyReportsController extends BaseController {
               break;
             case 'loshu_grid':
               // Navigate to Lo Shu Grid result
-              Get.toNamed(
+              UserMainController.pushInCurrentTab(
                 '/loshu-grid-result',
                 arguments: {
                   ...actualResponseData,
@@ -235,7 +236,7 @@ class NumerologyReportsController extends BaseController {
           }
 
           if (resultType.isNotEmpty) {
-            Get.toNamed(
+            UserMainController.pushInCurrentTab(
               '/numerology-result',
               arguments: {'type': resultType, 'data': actualResponseData},
             );

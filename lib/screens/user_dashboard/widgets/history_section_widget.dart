@@ -9,6 +9,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class HistorySectionWidget extends BasePage<UserDashboardController> {
   const HistorySectionWidget({super.key});
@@ -31,7 +32,7 @@ class HistorySectionWidget extends BasePage<UserDashboardController> {
                 ),
               ),
               GestureDetector(
-                onTap: () => Get.toNamed(AppRoutes.consultationHistory),
+                onTap: () => UserMainController.pushInCurrentTab(AppRoutes.consultationHistory),
                 child: Padding(
                   padding: EdgeInsets.only(right: 6.w),
                   child: AutoTranslateText(
@@ -54,7 +55,7 @@ class HistorySectionWidget extends BasePage<UserDashboardController> {
 
   Widget _buildHistoryPlaceholderCard(BuildContext context) {
     return GestureDetector(
-      onTap: () => Get.toNamed(AppRoutes.consultationHistory),
+      onTap: () => UserMainController.pushInCurrentTab(AppRoutes.consultationHistory),
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
@@ -118,12 +119,12 @@ class HistorySectionWidget extends BasePage<UserDashboardController> {
             //   children: [
             //     _buildActionButton(
             //       icon: Icons.chat_bubble_outline,
-            //       onTap: () => Get.toNamed(AppRoutes.consultationHistory),
+            //       onTap: () => UserMainController.pushInCurrentTab(AppRoutes.consultationHistory),
             //     ),
             //     Spacing.h(6),
             //     _buildActionButton(
             //       icon: Icons.description_outlined,
-            //       onTap: () => Get.toNamed(AppRoutes.consultationHistory),
+            //       onTap: () => UserMainController.pushInCurrentTab(AppRoutes.consultationHistory),
             //     ),
             //   ],
             // ),

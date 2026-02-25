@@ -10,6 +10,7 @@ import 'package:astrobharataiuser/app_manager/svg_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 import '../../../core/routes/app_routes.dart';
 
@@ -48,7 +49,7 @@ class DailyAstrologersWidget extends BasePage<UserDashboardController> {
               // GestureDetector(
               //   onTap: () {
               //     // Navigate to view all daily astrologers
-              //     // Get.toNamed(AppRoutes.dailyAstrologers);
+              //     // UserMainController.pushInCurrentTab(AppRoutes.dailyAstrologers);
               //   },
               //   child: AutoTranslateText(
               //     'View All',
@@ -89,20 +90,20 @@ class DailyAstrologersWidget extends BasePage<UserDashboardController> {
       onTap: () {
         switch (title) {
           case "Today's Horoscope":
-            Get.toNamed(AppRoutes.horoscopeForm);
+            UserMainController.pushInCurrentTab(AppRoutes.horoscopeForm);
             break;
           case "Today's Tarot":
           case "Today's Tarot Reading":
-            Get.toNamed(AppRoutes.tarotReading);
+            UserMainController.pushInCurrentTab(AppRoutes.tarotReading);
             break;
           case 'All About 2026':
-            Get.toNamed(AppRoutes.comingSoon);
+            UserMainController.pushInCurrentTab(AppRoutes.comingSoon);
             break;
           case 'Todays Panchang':
-            Get.toNamed(AppRoutes.panchang);
+            UserMainController.pushInCurrentTab(AppRoutes.panchang);
             break;
           case "Today's Numerology":
-            Get.toNamed(AppRoutes.numerologyForm);
+            UserMainController.pushInCurrentTab(AppRoutes.numerologyForm);
             break;
           default:
             // Handle any other cases or log for debugging

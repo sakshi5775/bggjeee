@@ -51,7 +51,6 @@ class PlanetsView extends BasePage<PlanetsController> {
     final tabs = ['Overview', 'Transit', 'Detailed', 'Western'];
 
     return Container(
-      height: 48.h,
       padding: EdgeInsets.symmetric(vertical: 6.h),
       child: Obx(() {
         final selectedIndex = controller.selectedTabIndex.value;

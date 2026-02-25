@@ -67,21 +67,27 @@ class LalKitabChartWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final size = constraints.maxWidth;
-                  return Container(
-                    width: size,
-                    height: size,
-                    padding: EdgeInsets.all(16.w),
-                    child: SvgPicture.string(
-                      svgData,
-                      width: size - 32.w,
-                      height: size - 32.w,
-                      fit: BoxFit.contain,
-                    ),
-                  );
-                },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildTitleRow('Lal Kitab Kundli', Icons.menu_book_rounded),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final size = constraints.maxWidth;
+                      return Container(
+                        width: size,
+                        height: size,
+                        padding: EdgeInsets.all(16.w),
+                        child: SvgPicture.string(
+                          svgData,
+                          width: size - 32.w,
+                          height: size - 32.w,
+                          fit: BoxFit.contain,
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
             Spacing.h(12),
@@ -91,5 +97,38 @@ class LalKitabChartWidget extends StatelessWidget {
         ),
       );
     });
+  }
+
+  Widget _buildTitleRow(String title, IconData icon) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      decoration: BoxDecoration(
+        color: '#ed6f30'.toColor().withValues(alpha: 0.08),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16.r),
+          topRight: Radius.circular(16.r),
+        ),
+        border: Border(
+          bottom: BorderSide(
+            color: '#ed6f30'.toColor().withValues(alpha: 0.25),
+            width: 1,
+          ),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 18.w, color: '#ed6f30'.toColor()),
+          Spacing.w(8),
+          AutoTranslateText(
+            title,
+            style: MyTextTheme.mediumBCB.copyWith(
+              color: '#6F221E'.toColor(),
+              fontWeight: FontWeight.w600,
+              fontSize: 14.sp,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

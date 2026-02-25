@@ -1,4 +1,4 @@
-﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/address_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/cart_controller.dart';
@@ -13,6 +13,7 @@ import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:intl/intl.dart';
 
 enum _AddressAction { edit, setDefault, delete }
@@ -130,7 +131,7 @@ class CartView extends GetView<CartController> {
                             borderRadius: BorderRadius.circular(12.r),
                           ),
                           child: TextButton(
-                            onPressed: () => Get.toNamed(AppRoutes.savedItems),
+                            onPressed: () => UserMainController.pushInCurrentTab(AppRoutes.savedItems),
                             style: TextButton.styleFrom(
                               padding: EdgeInsets.symmetric(
                                 horizontal: 16.w,
@@ -410,7 +411,7 @@ class _CouponSection extends StatelessWidget {
                   ),
                 ),
                 TextButton(
-                  onPressed: () => Get.toNamed(AppRoutes.coupons),
+                  onPressed: () => UserMainController.pushInCurrentTab(AppRoutes.coupons),
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.symmetric(horizontal: 8.w),
                     minimumSize: Size.zero,

@@ -12,9 +12,12 @@ import 'package:astrobharataiuser/utils/error_formatter.dart';
 import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/app_manager/common/image_picker.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
 import 'package:intl/intl.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/service/user_profile_service.dart';
+import 'package:astrobharataiuser/app_manager/user_data.dart';
 
 class PalmReadingController extends GetxController {
   // Form fields
@@ -52,6 +55,7 @@ class PalmReadingController extends GetxController {
   DateTime? _selectedDate;
   AppLanguageModel? _selectedLanguageModel;
   final ApiRepository _apiRepository = Get.find();
+  final UserProfileService _userProfileService = UserProfileService();
 
   @override
   void onInit() {
@@ -59,6 +63,7 @@ class PalmReadingController extends GetxController {
 
     // Set default language to first language (index 0)
     _setDefaultLanguage();
+    _loadUserProfileData();
 
     // Listen to form changes
     nameController.addListener(_validateForm);
@@ -82,6 +87,38 @@ class PalmReadingController extends GetxController {
     } catch (e) {
       // If loading fails, keep empty selection
       print('Error loading default language: $e');
+    }
+  }
+
+  Future<void> _loadUserProfileData() async {
+    try {
+      final userId = UserData().getLoginData.user?.userId;
+      if (userId == null) return;
+      final profile = await _userProfileService.getProfile(userId);
+      if (profile == null) return;
+
+      if (profile.personalInfo != null) {
+        final fullName = profile.personalInfo!.fullName;
+        if (fullName != null &&
+            fullName.isNotEmpty &&
+            nameController.text.isEmpty) {
+          nameController.text = fullName;
+        }
+        final gender = profile.personalInfo!.gender;
+        if (gender != null &&
+            gender.isNotEmpty &&
+            selectedGender.value.isEmpty) {
+          if (gender.toUpperCase() == 'MALE') {
+            selectedGender.value = 'Male';
+          } else if (gender.toUpperCase() == 'FEMALE') {
+            selectedGender.value = 'Female';
+          } else {
+            selectedGender.value = gender;
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading profile: $e');
     }
   }
 
@@ -206,7 +243,7 @@ class PalmReadingController extends GetxController {
   }
 
   void onStartReading() {
-    Get.toNamed(AppRoutes.palmReadingForm);
+    UserMainController.pushInCurrentTab(AppRoutes.palmReadingForm);
   }
 
   // Direct upload method - allows skipping form
@@ -216,7 +253,7 @@ class PalmReadingController extends GetxController {
       if (pickedFile != null) {
         selectedPalmImage.value = pickedFile;
         // Navigate directly to scanning screen
-        Get.toNamed(AppRoutes.palmReadingScanning);
+        UserMainController.pushInCurrentTab(AppRoutes.palmReadingScanning);
       }
     } catch (e) {
       Get.snackbar('Error', 'Failed to upload image');
@@ -230,7 +267,7 @@ class PalmReadingController extends GetxController {
       if (pickedFile != null) {
         selectedPalmImage.value = pickedFile;
         // Navigate directly to scanning screen
-        Get.toNamed(AppRoutes.palmReadingScanning);
+        UserMainController.pushInCurrentTab(AppRoutes.palmReadingScanning);
       }
     } catch (e) {
       Get.snackbar('Error', 'Failed to take photo');
@@ -239,22 +276,22 @@ class PalmReadingController extends GetxController {
 
   void onContinueFromForm() {
     // Form fields are now optional, so we can continue even if not filled
-    Get.toNamed(AppRoutes.palmReadingTime);
+    UserMainController.pushInCurrentTab(AppRoutes.palmReadingTime);
   }
 
   void onContinueFromTime() {
     // Time is now optional, so we can continue even if not filled
-    Get.toNamed(AppRoutes.palmReadingHandGender);
+    UserMainController.pushInCurrentTab(AppRoutes.palmReadingHandGender);
   }
 
   void onContinueFromHandGender() {
     // Hand and gender are now optional, so we can continue even if not selected
-    Get.toNamed(AppRoutes.palmReadingUpload);
+    UserMainController.pushInCurrentTab(AppRoutes.palmReadingUpload);
   }
 
   Future<void> takePhoto(BuildContext context) async {
     // Navigate to camera view instead of using image picker
-    Get.toNamed(AppRoutes.palmReadingCamera);
+    UserMainController.pushInCurrentTab(AppRoutes.palmReadingCamera);
   }
 
   Future<void> uploadFromGallery(BuildContext context) async {
@@ -263,7 +300,7 @@ class PalmReadingController extends GetxController {
       if (pickedFile != null) {
         selectedPalmImage.value = pickedFile;
         // Navigate to scanning screen
-        Get.toNamed(AppRoutes.palmReadingScanning);
+        UserMainController.pushInCurrentTab(AppRoutes.palmReadingScanning);
       }
     } catch (e) {
       Get.snackbar('Error', 'Failed to upload from gallery');
@@ -272,7 +309,7 @@ class PalmReadingController extends GetxController {
 
   void onContinueFromUpload() {
     if (selectedPalmImage.value != null) {
-      Get.toNamed(AppRoutes.palmReadingScanning);
+      UserMainController.pushInCurrentTab(AppRoutes.palmReadingScanning);
     }
   }
 
@@ -513,7 +550,7 @@ class PalmReadingController extends GetxController {
   // Get prediction - navigate to detail view
   void onGetPrediction() {
     if (palmReadingData.value != null) {
-      Get.toNamed(AppRoutes.palmReadingDetail);
+      UserMainController.pushInCurrentTab(AppRoutes.palmReadingDetail);
     } else {
       Get.snackbar('Error', 'No reading data available');
     }

@@ -10,6 +10,7 @@ import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class HandwritingAstrologyView extends StatelessWidget {
   const HandwritingAstrologyView({super.key});
@@ -44,7 +45,7 @@ class HandwritingAstrologyView extends StatelessWidget {
                           'Login to view your handwriting reading history.',
                     );
                     if (ok) {
-                      Get.toNamed(AppRoutes.handwritingAstrologyHistory);
+                      UserMainController.pushInCurrentTab(AppRoutes.handwritingAstrologyHistory);
                     }
                   },
                 ),
@@ -204,7 +205,7 @@ class HandwritingAstrologyView extends StatelessWidget {
                 ),
                 child: ElevatedButton(
                   onPressed: () =>
-                      Get.toNamed(AppRoutes.handwritingAstrologyUpload),
+                      UserMainController.pushInCurrentTab(AppRoutes.handwritingAstrologyUpload),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     foregroundColor: '#ffffff'.toColor(),

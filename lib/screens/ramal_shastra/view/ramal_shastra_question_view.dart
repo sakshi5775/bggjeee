@@ -10,6 +10,7 @@ import 'package:astrobharataiuser/screens/ramal_shastra/controller/ramal_shastra
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:intl/intl.dart';
 import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 
@@ -125,7 +126,7 @@ class RamalShastraQuestionView extends StatelessWidget {
                                   child: ElevatedButton(
                                     onPressed: () {
                                       if (formKey.currentState!.validate()) {
-                                        Get.toNamed(
+                                        UserMainController.pushInCurrentTab(
                                           AppRoutes.ramalShastraMethod,
                                         );
                                       }

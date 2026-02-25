@@ -42,7 +42,7 @@ class LalKitabKundliWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: [
-              _buildTitleRow('Lal Kitab Kundli', Icons.menu_book_rounded),
+              _buildTitleRow('Chart', Icons.pie_chart_rounded),
               _buildTableHeader(const ['Sign', 'Sign Name', 'Planets']),
               ...response.asMap().entries.map(
                 (e) => _buildTableRow(e.value as Map<String, dynamic>, e.key),

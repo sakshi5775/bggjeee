@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
@@ -323,7 +324,7 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
                     onPressed: () {
                       // Navigate to AR mode for full remedy experience
                       if (roomConfig != null) {
-                        Get.toNamed(
+                        UserMainController.pushInCurrentTab(
                           AppRoutes.arVastu,
                           arguments: {'roomConfig': roomConfig},
                         );
@@ -390,7 +391,7 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
-              onPressed: () => Get.toNamed(
+              onPressed: () => UserMainController.pushInCurrentTab(
                 AppRoutes.arVastu,
                 arguments: {'roomConfig': roomConfig},
               ),

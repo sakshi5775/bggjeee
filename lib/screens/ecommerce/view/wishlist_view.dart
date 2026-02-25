@@ -1,4 +1,4 @@
-﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/wishlist_model.dart';
@@ -10,6 +10,7 @@ import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:intl/intl.dart';
 
 class WishlistView extends GetView<WishlistController> {
@@ -187,7 +188,7 @@ class _WishlistItemCard extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(20.r),
           onTap: product != null && !disableActions
-              ? () => Get.toNamed(
+              ? () => UserMainController.pushInCurrentTab(
                   AppRoutes.productDetail,
                   arguments: {'product': product},
                 )

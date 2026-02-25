@@ -10,6 +10,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class OurServicesCarouselWidget extends StatefulWidget {
   const OurServicesCarouselWidget({super.key});
@@ -145,9 +146,9 @@ class _OurServicesCarouselWidgetState extends State<OurServicesCarouselWidget> {
       onTap: () {
         final args = service['args'] as Map<String, dynamic>?;
         if (args != null) {
-          Get.toNamed(service['route'] as String, arguments: args);
+          UserMainController.pushInCurrentTab(service['route'] as String, arguments: args);
         } else {
-          Get.toNamed(service['route'] as String);
+          UserMainController.pushInCurrentTab(service['route'] as String);
         }
       },
       child: Container(

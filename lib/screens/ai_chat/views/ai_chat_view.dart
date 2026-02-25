@@ -13,6 +13,7 @@ import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class AiChatView extends BasePage<AiChatController> {
   final bool showBackButton;
@@ -142,7 +143,12 @@ class AiChatView extends BasePage<AiChatController> {
     AiChatController controller,
   ) {
     return GridView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      padding: EdgeInsets.only(
+        left: 16.w,
+        right: 16.w,
+        top: 8.h,
+        bottom: hideHeader ? 80.h : 8.h,
+      ),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 12.w,
@@ -172,7 +178,7 @@ class AiChatView extends BasePage<AiChatController> {
         return PersonaCard(
           persona: filteredList[index],
           onTap: () {
-            Get.toNamed(
+            UserMainController.pushInCurrentTab(
               AppRoutes.personaDetail,
               arguments: {
                 'personaId': filteredList[index].id,
@@ -189,7 +195,7 @@ class AiChatView extends BasePage<AiChatController> {
               estimatedMinutes: 15,
             );
             if (canProceed) {
-              Get.toNamed(
+              UserMainController.pushInCurrentTab(
                 AppRoutes.personaVoiceCall,
                 arguments: {'personaId': persona.id, 'persona': persona},
               );
@@ -209,7 +215,12 @@ class AiChatView extends BasePage<AiChatController> {
     AiChatController controller,
   ) {
     return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      padding: EdgeInsets.only(
+        left: 16.w,
+        right: 16.w,
+        top: 8.h,
+        bottom: hideHeader ? 80.h : 8.h,
+      ),
       itemCount: filteredList.length + (controller.hasMoreData.value ? 1 : 0),
       itemBuilder: (context, index) {
         if (index == filteredList.length) {
@@ -235,7 +246,7 @@ class AiChatView extends BasePage<AiChatController> {
           child: PersonaListCard(
             persona: filteredList[index],
             onTap: () {
-              Get.toNamed(
+              UserMainController.pushInCurrentTab(
                 AppRoutes.personaDetail,
                 arguments: {
                   'personaId': filteredList[index].id,
@@ -252,7 +263,7 @@ class AiChatView extends BasePage<AiChatController> {
                 estimatedMinutes: 15,
               );
               if (canProceed) {
-                Get.toNamed(
+                UserMainController.pushInCurrentTab(
                   AppRoutes.personaVoiceCall,
                   arguments: {'personaId': persona.id, 'persona': persona},
                 );
@@ -288,7 +299,7 @@ class AiChatView extends BasePage<AiChatController> {
     );
     if (profileResult == null) return;
 
-    Get.toNamed(
+    UserMainController.pushInCurrentTab(
       AppRoutes.personaChat,
       arguments: {
         'persona': persona,

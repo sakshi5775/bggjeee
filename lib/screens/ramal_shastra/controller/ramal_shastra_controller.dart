@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/data_model/ramal_shastra_model.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/service/ramal_shastra_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
 
@@ -152,7 +153,7 @@ class RamalShastraController extends GetxController {
       }
 
       // Navigate to results
-      Get.toNamed(AppRoutes.ramalShastraResults, arguments: {'result': result});
+      UserMainController.pushInCurrentTab(AppRoutes.ramalShastraResults, arguments: {'result': result});
     } catch (e) {
       isAnalyzing.value = false;
       errorMessage.value = e.toString();
