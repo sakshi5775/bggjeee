@@ -25,6 +25,9 @@ class AppRoutes {
   static const String astrologerVideoCall = '/astrologer-video-call';
   static const String aichat = '/ai-chat';
 
+  // Divya Darshan
+  static const String divyaDarshan = '/divya-darshan';
+
   // Blog Routes
 
   static const String blogDetail = '/blog-detail';

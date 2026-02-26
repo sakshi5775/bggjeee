@@ -5,6 +5,9 @@ import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/screens/e_mandir/e_mandir_collection/divya_darshan/controller/divya_darshan_controller.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -16,6 +19,7 @@ class MandirHeaderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<VirtualDarshanController>();
+    final divyaDarshanController = Get.put(DivyaDarshanController());
 
     return SizedBox(
       width: double.infinity,
@@ -53,43 +57,26 @@ class MandirHeaderWidget extends StatelessWidget {
                 if (count == 0) return const SizedBox.shrink();
                 return Row(
                   children: [
-                    // Fixed: special label button
+                    // Fixed: special label button replaced with animated circular avatar
                     Padding(
                       padding: EdgeInsets.only(left: 12.w),
-                      child: GestureDetector(
-                        onTap: () {
-                          // TODO: handle special button tap
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 8.w,
-                            vertical: 8.h,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(24.r),
-                            color: Colors.white,
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.star,
-                                color: Colors.orange,
-                                size: 18.r,
-                              ),
-                              SizedBox(width: 4.w),
-                              Text(
-                                'बुधवार विशेष',
-                                style: TextStyle(
-                                  color: Colors.orange,
-                                  fontSize: 11.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      child: Obx(() {
+                        final items = divyaDarshanController.divyaDarshanItems;
+                        if (items.isEmpty || items.first.godCategory == null) {
+                          return const SizedBox.shrink();
+                        }
+
+                        final firstItem = items.first;
+                        final String imageUrl =
+                            firstItem.godCategory!.godImageUrl;
+
+                        return _AnimatedStoryAvatar(
+                          imageUrl: imageUrl,
+                          onTap: () {
+                            Get.toNamed(AppRoutes.divyaDarshan);
+                          },
+                        );
+                      }),
                     ),
 
                     // Fixed: divider + spacing
@@ -405,6 +392,93 @@ class _GhantaBellState extends State<_GhantaBell>
           fit: BoxFit.contain,
           errorBuilder: (_, __, ___) => SizedBox(width: 80.w, height: 110.h),
         ),
+      ),
+    );
+  }
+}
+
+class _AnimatedStoryAvatar extends StatefulWidget {
+  final String imageUrl;
+  final VoidCallback onTap;
+  const _AnimatedStoryAvatar({required this.imageUrl, required this.onTap});
+
+  @override
+  State<_AnimatedStoryAvatar> createState() => _AnimatedStoryAvatarState();
+}
+
+class _AnimatedStoryAvatarState extends State<_AnimatedStoryAvatar>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animController;
+
+  @override
+  void initState() {
+    super.initState();
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 4),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _animController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          RotationTransition(
+            turns: _animController,
+            child: Container(
+              width: 48.r,
+              height: 48.r,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: SweepGradient(
+                  colors: [
+                    Color(0xFFE1306C),
+                    Color(0xFFF77737),
+                    Color(0xFFFCAF45),
+                    Color(0xFF833AB4),
+                    Color(0xFFE1306C),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Container(
+            width: 44.r,
+            height: 44.r,
+            padding: EdgeInsets.all(2.r),
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(21.r),
+              child: CachedNetworkImage(
+                imageUrl: widget.imageUrl,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  color: Colors.grey.withOpacity(0.3),
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.orange,
+                    ),
+                  ),
+                ),
+                errorWidget: (context, url, error) =>
+                    const Icon(Icons.error, color: Colors.red),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

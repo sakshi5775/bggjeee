@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/controller/virtual_darshan_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/mandir_header_widget.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/offering_bottom_sheet_widget.dart';
@@ -26,13 +27,16 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
               onHorizontalDragEnd: (details) {
                 // Swipe left → next category, swipe right → previous
                 if (details.primaryVelocity == null) return;
+
                 if (details.primaryVelocity! < -200) {
                   // Swipe left → next category
+                  _stopAllAnimations(controller, context);
                   controller.swipeToCategory(
                     controller.currentCategoryIndex.value + 1,
                   );
                 } else if (details.primaryVelocity! > 200) {
                   // Swipe right → previous category
+                  _stopAllAnimations(controller, context);
                   controller.swipeToCategory(
                     controller.currentCategoryIndex.value - 1,
                   );
@@ -67,56 +71,101 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                 );
               }),
             ),
-            IgnorePointer(
-              child: Center(
-                child: AnimatedBuilder(
-                  animation: controller.aartiController,
-                  builder: (_, __) {
-                    if (!controller.aartiController.isAnimating) {
-                      return const SizedBox();
-                    }
+            // Unified Thali: animates from bottom center to circular Aarti path
+            Obx(() {
+              final thaliImage = controller.thaliItemImage.value;
+              final thaliIndex = controller.pujaItemCategories.indexWhere(
+                (c) =>
+                    c.slug.toLowerCase().contains('thali') ||
+                    c.name.toLowerCase().contains('thali'),
+              );
 
-                    final t = controller.aartiController.value;
-                    const radius = 140.0;
-                    final angle = 2 * pi * t;
-                    final x = radius * cos(angle);
-                    final y = radius * sin(angle);
+              return AnimatedBuilder(
+                animation: Listenable.merge([
+                  controller.thaliTransitionController,
+                  controller.aartiController,
+                ]),
+                builder: (context, child) {
+                  // Screen dimensions for calculating the center
+                  final size = MediaQuery.of(context).size;
+                  final centerX = size.width / 2;
+                  final centerY = size.height / 2;
 
-                    return Transform.translate(
-                      offset: Offset(x, y),
-                      child: Builder(
-                        builder: (_) {
-                          final thaliIdx = controller.pujaItemCategories
-                              .indexWhere(
-                                (c) =>
-                                    c.slug.toLowerCase().contains('thali') ||
-                                    c.name.toLowerCase().contains('thali'),
-                              );
-                          final thaliImg = thaliIdx != -1
-                              ? controller.pujaItemCategories[thaliIdx].image
-                              : null;
-                          if (thaliImg != null && thaliImg.isNotEmpty) {
-                            return Image.network(
-                              thaliImg,
-                              width: 50.w,
-                              fit: BoxFit.contain,
-                              errorBuilder: (_, __, ___) => Image.asset(
-                                AppConstant.eMandirAartiIcon,
-                                width: 50.w,
-                              ),
+                  // 1. Bottom Docked Position
+                  // The dock is at bottom: 16.h, visually centered.
+                  final dockedY =
+                      size.height -
+                      16.h -
+                      60.h; // roughly the vertical center of the dock
+                  final dockedX = centerX;
+
+                  // 2. Aarti Circular Path
+                  // Calculate where it should be on the circle right now
+                  final t = controller.aartiController.value;
+                  const radius = 140.0;
+                  final angle = 2 * pi * t;
+                  final circleDx = radius * cos(angle);
+                  final circleDy = radius * sin(angle);
+
+                  // Absolute circular position relative to top-left
+                  final aartiX = centerX + circleDx;
+                  final aartiY = centerY + circleDy;
+
+                  // 3. Interpolate between Dock and Aarti Circle based on transition animation
+                  final progress = controller.thaliTransitionAnimation.value;
+
+                  // When progress is 0.0, thali is at docked position.
+                  // When progress is 1.0, thali is on the Aarti circle.
+                  final currentX = lerpDouble(dockedX, aartiX, progress)!;
+                  final currentY = lerpDouble(dockedY, aartiY, progress)!;
+
+                  // Scale up slightly when in Aarti mode
+                  final thaliScale = lerpDouble(120.w, 150.w, progress)!;
+
+                  return Positioned(
+                    left: currentX - (thaliScale / 2),
+                    top: currentY - (thaliScale / 2),
+                    child: InkWell(
+                      onTap: () {
+                        // Only open bottom sheet if NOT doing Aarti
+                        if (progress == 0.0) {
+                          if (thaliIndex != -1 &&
+                              controller.offeringTabController != null &&
+                              thaliIndex <
+                                  controller.offeringTabController!.length) {
+                            controller.offeringTabController!.animateTo(
+                              thaliIndex,
+                            );
+                            controller.selectedCategoryIndex.value = thaliIndex;
+                            controller.loadCategoryItems(
+                              controller.pujaItemCategories[thaliIndex].id,
                             );
                           }
-                          return Image.asset(
-                            AppConstant.eMandirAartiIcon,
-                            width: 50.w,
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
+                          _openOfferingBottomSheet(context);
+                        }
+                      },
+                      child: (thaliImage.isNotEmpty)
+                          ? Image.network(
+                              thaliImage,
+                              fit: BoxFit.contain,
+                              width: thaliScale,
+                              height: thaliScale,
+                              errorBuilder: (_, __, ___) => Image.asset(
+                                AppConstant.eMandirLadduIcon,
+                                width: thaliScale * 0.8,
+                                height: thaliScale * 0.8,
+                              ),
+                            )
+                          : Image.asset(
+                              AppConstant.eMandirLadduIcon,
+                              width: 75.w,
+                              height: 75.h,
+                            ),
+                    ),
+                  );
+                },
+              );
+            }),
             // Mandir decorative header
             const Positioned(
               top: 0,
@@ -221,66 +270,12 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                 child: Image.asset(AppConstant.eMandirSankhIcon),
               ),
             ),
-            // Thali at bottom center
-            Obx(() {
-              // Find the "Thali" category from the list
-              final thaliIndex = controller.pujaItemCategories.indexWhere(
-                (c) =>
-                    c.slug.toLowerCase().contains('thali') ||
-                    c.name.toLowerCase().contains('thali'),
-              );
-              final thaliCategory = thaliIndex != -1
-                  ? controller.pujaItemCategories[thaliIndex]
-                  : null;
-              final thaliImage = thaliCategory?.image;
-
-              return Positioned(
-                bottom: 16.h,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: InkWell(
-                    onTap: () {
-                      // Switch tab to Thali before opening the sheet
-                      if (thaliIndex != -1 &&
-                          controller.offeringTabController != null &&
-                          thaliIndex <
-                              controller.offeringTabController!.length) {
-                        controller.offeringTabController!.animateTo(thaliIndex);
-                        controller.selectedCategoryIndex.value = thaliIndex;
-                        controller.loadCategoryItems(
-                          controller.pujaItemCategories[thaliIndex].id,
-                        );
-                      }
-                      _openOfferingBottomSheet(context);
-                    },
-                    child: (thaliImage != null && thaliImage.isNotEmpty)
-                        ? Image.network(
-                            thaliImage,
-                            fit: BoxFit.contain,
-                            width: 75.w,
-                            height: 75.h,
-                            errorBuilder: (_, __, ___) => Image.asset(
-                              AppConstant.eMandirLadduIcon,
-                              width: 75.w,
-                              height: 75.h,
-                            ),
-                          )
-                        : Image.asset(
-                            AppConstant.eMandirLadduIcon,
-                            width: 75.w,
-                            height: 75.h,
-                          ),
-                  ),
-                ),
-              );
-            }),
             Positioned(
-              bottom: 150.h,
-              left: 18.w,
+              bottom: 22.h,
+              right: 18.w,
               child: InkWell(
                 onTap: () => showCollectionBottomSheet(context),
-                child: Image.asset(AppConstant.eMandirSankhIcon),
+                child: Image.asset(AppConstant.eMandirLibraryAarti),
               ),
             ),
           ],
@@ -541,20 +536,22 @@ class _VirtualDarshanVideoPlayerState
   }
 }
 
-class _CircleIcon extends StatelessWidget {
-  final IconData icon;
-
-  const _CircleIcon(this.icon);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(10.w),
-      decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.4),
-        shape: BoxShape.circle,
-      ),
-      child: Icon(icon, color: Colors.white, size: 26.sp),
-    );
+void _stopAllAnimations(
+  VirtualDarshanController controller,
+  BuildContext context,
+) {
+  if (controller.isAartiActive.value) {
+    controller.toggleAarti(context);
   }
+
+  // Stop raining flowers
+  controller.activeFlowers.clear();
+  controller.flowerTimer?.cancel();
+  controller.flowerTimer = null;
+
+  // Stop Audio Contexts
+  try {
+    controller.audioPlayer.pause();
+    controller.shankhPlayer.stop();
+  } catch (_) {}
 }

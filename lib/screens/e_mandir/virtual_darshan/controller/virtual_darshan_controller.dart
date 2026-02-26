@@ -152,6 +152,8 @@ class VirtualDarshanController extends BaseController
   final PageController horizontalPageController = PageController();
   final PageController verticalPageController = PageController();
   late AnimationController aartiController;
+  late AnimationController thaliTransitionController;
+  late Animation<double> thaliTransitionAnimation;
   final AudioPlayer audioPlayer = AudioPlayer();
   final AudioPlayer shankhPlayer = AudioPlayer();
   Timer? flowerTimer;
@@ -178,6 +180,9 @@ class VirtualDarshanController extends BaseController
   final RxBool isLoadingCategoryItems = false.obs;
   final RxInt selectedCategoryIndex = 0.obs;
 
+  // Specific image for the Thali icon on the main screen (from thali's first item)
+  final RxString thaliItemImage = ''.obs;
+
   // Offering Bottom Sheet Tab Controller
   TabController? offeringTabController;
 
@@ -191,6 +196,14 @@ class VirtualDarshanController extends BaseController
     aartiController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 6),
+    );
+    thaliTransitionController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+    thaliTransitionAnimation = CurvedAnimation(
+      parent: thaliTransitionController,
+      curve: Curves.easeInOut,
     );
     audioPlayer.setReleaseMode(ReleaseMode.loop);
     shankhPlayer.setReleaseMode(ReleaseMode.stop);
@@ -213,6 +226,35 @@ class VirtualDarshanController extends BaseController
           vsync: this,
         );
         offeringTabController!.addListener(_onTabChanged);
+
+        // Pre-fetch the Thali category specifically to get its first item's image
+        try {
+          final thaliIndex = response.items.indexWhere(
+            (c) =>
+                c.slug.toLowerCase().contains('thali') ||
+                c.name.toLowerCase().contains('thali'),
+          );
+          if (thaliIndex != -1) {
+            final thaliRes = await _pujaItemCategoryService.getCategoryById(
+              response.items[thaliIndex].id,
+            );
+            if (thaliRes != null &&
+                thaliRes.success &&
+                thaliRes.category != null) {
+              if (thaliRes.category!.items.isNotEmpty) {
+                thaliItemImage.value =
+                    thaliRes.category!.items.first.image ?? '';
+              } else {
+                thaliItemImage.value =
+                    response.items[thaliIndex].image ??
+                    ''; // fallback to category image
+              }
+            }
+          }
+        } catch (e) {
+          print('Error fetching explicit thali category item: $e');
+        }
+
         // Load first category items by default
         if (pujaItemCategories.isNotEmpty) {
           await loadCategoryItems(pujaItemCategories.first.id);
@@ -392,6 +434,7 @@ class VirtualDarshanController extends BaseController
     }
     activeFlowers.clear();
     aartiController.dispose();
+    thaliTransitionController.dispose();
     offeringTabController?.dispose();
     scrollController.dispose();
     horizontalPageController.dispose();
@@ -402,13 +445,21 @@ class VirtualDarshanController extends BaseController
   }
 
   void toggleAarti(BuildContext context) {
-    if (aartiController.isAnimating) {
+    if (aartiController.isAnimating || thaliTransitionController.value > 0.0) {
+      // Stop Aarti and move thali down
       aartiController.reset();
+      thaliTransitionController.reverse();
       audioPlayer.stop();
       stopFlowerRain();
       isAartiActive.value = false;
     } else {
-      aartiController.repeat();
+      // Move thali up
+      thaliTransitionController.forward().then((_) {
+        // Start Aarti rotation once thali is in the center
+        if (isAartiActive.value) {
+          aartiController.repeat();
+        }
+      });
       audioPlayer.stop();
       audioPlayer.setReleaseMode(ReleaseMode.loop);
       audioPlayer.play(UrlSource(AppConstant.aartiMp3)).catchError((e) {

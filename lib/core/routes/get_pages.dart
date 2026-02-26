@@ -38,6 +38,8 @@ import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/screens/ai_chat/voice_call/views/persona_voice_call_view.dart';
 import 'package:astrobharataiuser/screens/ai_chat/voice_call/views/persona_voice_history_view.dart';
 import 'package:astrobharataiuser/screens/e_mandir/bhakti_chakra/view/bhakti_chakra_view.dart';
+import 'package:astrobharataiuser/screens/e_mandir/e_mandir_collection/divya_darshan/view/divya_darshan_story_view.dart';
+import 'package:astrobharataiuser/screens/e_mandir/e_mandir_collection/divya_darshan/binding/divya_darshan_binding.dart';
 import 'package:astrobharataiuser/binding/e_mandir_binding/bhakti_chakra_binding.dart';
 import 'package:astrobharataiuser/screens/e_mandir/devotional_library/view/devotional_library_view.dart';
 import 'package:astrobharataiuser/binding/e_mandir_binding/devotional_library_binding.dart';
@@ -1644,6 +1646,13 @@ class PageRoutes {
       name: AppRoutes.pujaBookingForm,
       page: () => const PujaBookingFormView(),
       binding: PujaBookingFormBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.divyaDarshan,
+      page: () => const DivyaDarshanStoryView(),
+      binding: DivyaDarshanBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),
