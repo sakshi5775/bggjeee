@@ -30,15 +30,7 @@ class UserBottomNav extends StatelessWidget {
         ),
         child: Container(
           height: 70.h,
-          padding: EdgeInsets.only(
-            left: 8.w,
-            right: 8.w,
-            top: 8.h,
-            bottom:
-                8.h +
-                MediaQuery.of(context).padding.bottom /
-                    2, // Only pad half the safe area to prevent huge gaps
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List.generate(

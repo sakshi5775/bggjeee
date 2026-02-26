@@ -195,235 +195,236 @@ class CommonHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Top row: Logo + Actions
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Logo section
-                Expanded(
-                  child: Row(
-                    spacing: 8,
-                    children: [
-                      Image.network(
-                        AppConstant.logo,
-                        width: 40.w,
-                        height: 40.h,
-                        fit: BoxFit.contain,
-                      ),
-                      Expanded(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          alignment: Alignment.centerLeft,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SvgAssets(
-                                path: 'assets/app/AstrobharatAi .svg',
-                                width: 110.w,
-                                height: 26.h,
-                              ),
-                              AutoTranslateText(
-                                "STARS ALIGN DESTINY DIVINE",
-                                style: AppTypography.label.copyWith(
-                                  color: '#6F221E'.toColor(),
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.2,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                translate: false,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Action icons
-                Row(
-                  mainAxisSize: MainAxisSize.min,
+    final statusBarHeight = MediaQuery.of(context).padding.top;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Top row: Logo + Actions
+        Padding(
+          padding: EdgeInsets.only(
+            left: 10.w,
+            right: 10.w,
+            top: statusBarHeight + 4,
+            bottom: 2.h,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Logo section
+              Expanded(
+                child: Row(
+                  spacing: 8,
                   children: [
-                    if (showWallet)
-                      IconButton(
-                        onPressed: () => UserMainController.pushInCurrentTab(
-                          AppRoutes.wallet,
-                        ),
-                        style: IconButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: Size(36.w, 36.h),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        icon: Icon(
-                          Icons.account_balance_wallet,
-                          size: 22.w,
-                          color: '#6F221E'.toColor(),
-                        ),
-                      ),
-                    if (showLanguage)
-                      LanguageSelector(
-                        iconColor: '#6F221E'.toColor(),
-                        iconSize: 22.w,
-                      ),
-                    if (showCart)
-                      IconButton(
-                        onPressed: () =>
-                            UserMainController.pushInCurrentTab(AppRoutes.cart),
-                        style: IconButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: Size(36.w, 36.h),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        icon: SvgAssets(
-                          path: 'assets/app/cart.svg',
-                          width: 22.w,
-                          height: 22.h,
-                          colorFilter: ColorFilter.mode(
-                            '#6F221E'.toColor(),
-                            BlendMode.srcIn,
-                          ),
+                    Image.network(
+                      AppConstant.logo,
+                      width: 40.w,
+                      height: 40.h,
+                      fit: BoxFit.contain,
+                    ),
+                    Expanded(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SvgAssets(
+                              path: 'assets/app/AstrobharatAi .svg',
+                              width: 110.w,
+                              height: 26.h,
+                            ),
+                            AutoTranslateText(
+                              "STARS ALIGN DESTINY DIVINE",
+                              style: AppTypography.label.copyWith(
+                                color: '#6F221E'.toColor(),
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.2,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              translate: false,
+                            ),
+                          ],
                         ),
                       ),
-                    if (showSearch)
-                      IconButton(
-                        onPressed:
-                            onSearchTap ?? () => _showSearchDialog(context),
-                        style: IconButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: Size(36.w, 36.h),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        icon: Icon(
-                          Icons.search,
-                          size: 22.w,
-                          color: '#6F221E'.toColor(),
-                        ),
-                      ),
+                    ),
                   ],
                 ),
-              ],
-            ),
-          ),
-          // Title row (if title provided)
-          if ((title != null && title!.isNotEmpty) || titleWidget != null) ...[
-            Padding(
-              padding: EdgeInsets.only(
-                left: 10.w,
-                right: 10.w,
-                bottom: 6.h,
-                top: 2.h,
               ),
-              child: Row(
+              // Action icons
+              Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Back button (Navigator.canPop or explicit showBackButton)
-                  if (showBackButton ?? Navigator.canPop(context))
+                  if (showWallet)
                     IconButton(
-                      onPressed:
-                          onBackTap ??
-                          () {
-                            // If we can pop within the current tab navigator, pop
-                            if (Navigator.canPop(context)) {
-                              Navigator.pop(context);
-                            } else {
-                              // At tab root → use central back handler (goes to previous tab)
-                              if (Get.isRegistered<UserMainController>()) {
-                                Get.find<UserMainController>()
-                                    .handleBackNavigation();
-                              }
-                            }
-                          },
+                      onPressed: () =>
+                          UserMainController.pushInCurrentTab(AppRoutes.wallet),
                       style: IconButton.styleFrom(
                         padding: EdgeInsets.zero,
                         minimumSize: Size(36.w, 36.h),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                       icon: Icon(
-                        Icons.arrow_back_ios_new,
-                        size: 20.w,
-                        color: '#6F221E'.toColor(),
-                      ),
-                    ),
-                  // Title
-                  Expanded(
-                    child:
-                        titleWidget ??
-                        AutoTranslateText(
-                          title!,
-                          style: MyTextTheme.largeBCB.copyWith(
-                            color: '#6F221E'.toColor(),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18.sp,
-                          ),
-                        ),
-                  ),
-                  // Custom actions
-                  if (customActions != null) ...customActions!,
-                  // Home icon (always visible if showHome)
-                  if (showHome)
-                    IconButton(
-                      onPressed: () {
-                        // Pop to root of current tab first
-                        Navigator.of(
-                          context,
-                        ).popUntil((route) => route.isFirst);
-                        // Then switch to Home tab
-                        if (Get.isRegistered<UserMainController>()) {
-                          Get.find<UserMainController>().changeTab(0);
-                        }
-                      },
-                      icon: Icon(
-                        Icons.home_outlined,
+                        Icons.account_balance_wallet,
                         size: 22.w,
                         color: '#6F221E'.toColor(),
                       ),
+                    ),
+                  if (showLanguage)
+                    LanguageSelector(
+                      iconColor: '#6F221E'.toColor(),
+                      iconSize: 22.w,
+                    ),
+                  if (showCart)
+                    IconButton(
+                      onPressed: () =>
+                          UserMainController.pushInCurrentTab(AppRoutes.cart),
                       style: IconButton.styleFrom(
                         padding: EdgeInsets.zero,
                         minimumSize: Size(36.w, 36.h),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
+                      icon: SvgAssets(
+                        path: 'assets/app/cart.svg',
+                        width: 22.w,
+                        height: 22.h,
+                        colorFilter: ColorFilter.mode(
+                          '#6F221E'.toColor(),
+                          BlendMode.srcIn,
+                        ),
+                      ),
                     ),
-                  // Drawer icon (if enabled)
-                  if (showDrawer)
+                  if (showSearch)
                     IconButton(
                       onPressed:
-                          onMenuTap ??
-                          () {
-                            Scaffold.of(context).openDrawer();
-                          },
+                          onSearchTap ?? () => _showSearchDialog(context),
                       style: IconButton.styleFrom(
                         padding: EdgeInsets.zero,
                         minimumSize: Size(36.w, 36.h),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                       icon: Icon(
-                        Icons.menu,
+                        Icons.search,
                         size: 22.w,
                         color: '#6F221E'.toColor(),
                       ),
                     ),
                 ],
               ),
+            ],
+          ),
+        ),
+        // Title row (if title provided)
+        if ((title != null && title!.isNotEmpty) || titleWidget != null) ...[
+          Padding(
+            padding: EdgeInsets.only(
+              left: 10.w,
+              right: 10.w,
+              bottom: 6.h,
+              top: 2.h,
             ),
-            if (subtitle != null)
-              Padding(
-                padding: EdgeInsets.only(
-                  left: Navigator.canPop(context) ? 56.w : 16.w,
-                  right: 16.w,
-                  bottom: 8.h,
+            child: Row(
+              children: [
+                // Back button (Navigator.canPop or explicit showBackButton)
+                if (showBackButton ?? Navigator.canPop(context))
+                  IconButton(
+                    onPressed:
+                        onBackTap ??
+                        () {
+                          // If we can pop within the current tab navigator, pop
+                          if (Navigator.canPop(context)) {
+                            Navigator.pop(context);
+                          } else {
+                            // At tab root → use central back handler (goes to previous tab)
+                            if (Get.isRegistered<UserMainController>()) {
+                              Get.find<UserMainController>()
+                                  .handleBackNavigation();
+                            }
+                          }
+                        },
+                    style: IconButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      minimumSize: Size(36.w, 36.h),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    icon: Icon(
+                      Icons.arrow_back_ios_new,
+                      size: 20.w,
+                      color: '#6F221E'.toColor(),
+                    ),
+                  ),
+                // Title
+                Expanded(
+                  child:
+                      titleWidget ??
+                      AutoTranslateText(
+                        title!,
+                        style: MyTextTheme.largeBCB.copyWith(
+                          color: '#6F221E'.toColor(),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.sp,
+                        ),
+                      ),
                 ),
-                child: subtitle!,
+                // Custom actions
+                if (customActions != null) ...customActions!,
+                // Home icon (always visible if showHome)
+                if (showHome)
+                  IconButton(
+                    onPressed: () {
+                      // Pop to root of current tab first
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                      // Then switch to Home tab
+                      if (Get.isRegistered<UserMainController>()) {
+                        Get.find<UserMainController>().changeTab(0);
+                      }
+                    },
+                    icon: Icon(
+                      Icons.home_outlined,
+                      size: 22.w,
+                      color: '#6F221E'.toColor(),
+                    ),
+                    style: IconButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      minimumSize: Size(36.w, 36.h),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                  ),
+                // Drawer icon (if enabled)
+                if (showDrawer)
+                  IconButton(
+                    onPressed:
+                        onMenuTap ??
+                        () {
+                          Scaffold.of(context).openDrawer();
+                        },
+                    style: IconButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      minimumSize: Size(36.w, 36.h),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    icon: Icon(
+                      Icons.menu,
+                      size: 22.w,
+                      color: '#6F221E'.toColor(),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          if (subtitle != null)
+            Padding(
+              padding: EdgeInsets.only(
+                left: Navigator.canPop(context) ? 56.w : 16.w,
+                right: 16.w,
+                bottom: 8.h,
               ),
-          ],
+              child: subtitle!,
+            ),
         ],
-      ),
+      ],
     );
   }
 }

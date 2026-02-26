@@ -401,9 +401,12 @@ class MyApp extends StatelessWidget {
                                   MediaQuery.of(context).viewInsets.bottom > 0;
 
                               if (showNav && !isKeyboardOpen) {
-                                return const Material(
-                                  elevation: 8.0,
-                                  child: UserBottomNav(),
+                                return const SafeArea(
+                                  top: false,
+                                  child: Material(
+                                    elevation: 8.0,
+                                    child: UserBottomNav(),
+                                  ),
                                 );
                               }
                               return const SizedBox.shrink();
