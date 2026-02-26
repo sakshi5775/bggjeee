@@ -1,4 +1,5 @@
 import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../data_model/e_mandir_wallpaper_model.dart';
 import '../service/e_mandir_wallpaper_service.dart';
@@ -19,11 +20,31 @@ class EMandirWallpaperController extends BaseController {
 
   final RxList<WallpaperItem> wallpapers = <WallpaperItem>[].obs;
   GodCategory? currentCategory;
+  final ScrollController filterScrollController = ScrollController();
 
   @override
   void onInit() {
     super.onInit();
     fetchWallpapers();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    _scrollToSelectedFilter();
+  }
+
+  void _scrollToSelectedFilter() {
+    final index = filters.indexOf(selectedFilter.value);
+    if (index != -1 && filterScrollController.hasClients) {
+      // Calculate approximate position. Each chip is roughly ~100 width.
+      final offset = index * 100.0;
+      filterScrollController.animateTo(
+        offset,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   void onChangeFilter(String filter) {

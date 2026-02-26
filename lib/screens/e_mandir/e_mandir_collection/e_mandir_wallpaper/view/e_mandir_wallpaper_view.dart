@@ -39,6 +39,7 @@ class EMandirWallpaperView extends BasePage<EMandirWallpaperController> {
             height: 40.h,
             child: Obx(() {
               return ListView.builder(
+                controller: controller.filterScrollController,
                 scrollDirection: Axis.horizontal,
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 itemCount: controller.filters.length,
