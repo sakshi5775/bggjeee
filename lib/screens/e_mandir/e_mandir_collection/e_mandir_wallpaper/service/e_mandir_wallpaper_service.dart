@@ -1,6 +1,7 @@
 import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
 import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
 import 'package:astrobharataiuser/screens/e_mandir/e_mandir_collection/e_mandir_wallpaper/data_model/e_mandir_wallpaper_model.dart';
+import 'package:astrobharataiuser/screens/e_mandir/e_mandir_collection/e_mandir_wallpaper/data_model/daily_thought_model.dart';
 import 'package:get/get.dart';
 
 class EMandirWallpaperService {
@@ -35,6 +36,23 @@ class EMandirWallpaperService {
       return null;
     } catch (e) {
       print('Error fetching daily wallpapers: $e');
+      return null;
+    }
+  }
+
+  /// Fetch daily thoughts based on filter (today, morning, evening, night)
+  Future<DailyThoughtResponse?> getDailyThoughts(String filter) async {
+    try {
+      final response = await _apiRepository.getApi(
+        '${EndPoints.dailyThoughts}/$filter',
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return DailyThoughtResponse.fromJson(response.body);
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching daily thoughts: $e');
       return null;
     }
   }

@@ -148,6 +148,10 @@ class AppRoutes {
   static const String eMandirWallpaperStory = '/e-mandir-wallpaper-story';
   static const String expertMode = '/expert-mode';
 
+  // Chalisa Routes
+  static const String chalisa = '/chalisa';
+  static const String chalisaDetail = '/chalisa-detail';
+
   // Live Stream Reports Routes
   static const String streamReports = '/stream-reports';
 

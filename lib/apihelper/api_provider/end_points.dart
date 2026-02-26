@@ -57,8 +57,14 @@ class EndPoints {
   static String pujaItemCategoryById(String categoryId) =>
       'sri-mandir/api/puja-item-categories/$categoryId';
 
-  /// divya darshan
   static const String divyaDarshan = 'sri-mandir/api/divya-darshan';
+
+  /// daily thoughts
+  static const String dailyThoughts = 'sri-mandir/api/daily-thoughts';
+
+  /// chalisas
+  static const String chalisas = 'sri-mandir/api/chalisas';
+  static String chalisaById(String id) => 'sri-mandir/api/chalisas/$id';
 
   /// daily wallpapers
   static const String dailyWallpapers = 'sri-mandir/api/daily-wallpapers';

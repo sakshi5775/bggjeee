@@ -300,11 +300,27 @@ import '../../screens/e_mandir/e_mandir_collection/e_mandir_wallpaper/view/e_man
 import '../../binding/e_mandir_binding/e_mandir_wallpaper_binding.dart';
 import '../../screens/e_mandir/e_mandir_collection/e_mandir_wallpaper/view/e_mandir_wallpaper_story_view.dart';
 import '../../binding/e_mandir_binding/e_mandir_wallpaper_story_binding.dart';
+import '../../screens/e_mandir/e_mandir_collection/chalisa/view/chalisa_view.dart';
+import '../../binding/e_mandir_binding/chalisa_binding.dart';
+import '../../screens/e_mandir/e_mandir_collection/chalisa/view/chalisa_detail_view.dart';
+import '../../binding/e_mandir_binding/chalisa_detail_binding.dart';
 
 class PageRoutes {
   static const INITIAL = AppRoutes.root;
   static const leftToRight = Transition.leftToRight;
   static final routes = [
+    GetPage(
+      name: AppRoutes.chalisa,
+      page: () => const ChalisaView(),
+      transition: Transition.rightToLeft,
+      binding: ChalisaBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.chalisaDetail,
+      page: () => const ChalisaDetailView(),
+      transition: Transition.rightToLeft,
+      binding: ChalisaDetailBinding(),
+    ),
     GetPage(
       name: AppRoutes.eMandirWallpaper,
       page: () => const EMandirWallpaperView(),
@@ -851,7 +867,7 @@ class PageRoutes {
     ),
     GetPage(
       name: AppRoutes.horoscopeForm,
-      page: () => const HoroscopeFormView(),
+      page: () => const HoroscopeFormView(hideHeader: false),
       binding: HoroscopeFormBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),

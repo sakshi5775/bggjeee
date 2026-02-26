@@ -13,7 +13,11 @@ void showCollectionBottomSheet(BuildContext context) {
       gradientColors: [Colors.orange.shade300, Colors.deepOrange],
       imageAsset: AppConstant.servicePanchang, // Assuming valid asset
       onTap: () {
-        // Handle Panchang tap or use generic route if available
+        Get.back();
+        Get.toNamed(
+          AppRoutes.eMandirWallpaper,
+          arguments: {'initialFilter': 'Panchang'},
+        );
       },
     ),
     CollectionItemModel(
@@ -21,7 +25,11 @@ void showCollectionBottomSheet(BuildContext context) {
       gradientColors: [Colors.purpleAccent.shade100, Colors.deepPurple],
       icon: Icons.star_border, // Using standard icon as fallback
       onTap: () {
-        // Handle Rashifal tap
+        Get.back();
+        Get.toNamed(
+          AppRoutes.eMandirWallpaper,
+          arguments: {'initialFilter': 'Rashifal'},
+        );
       },
     ),
     CollectionItemModel(
@@ -29,7 +37,8 @@ void showCollectionBottomSheet(BuildContext context) {
       gradientColors: [Colors.orangeAccent, Colors.redAccent],
       icon: Icons.temple_hindu,
       onTap: () {
-        // Handle Divya Darshan tap
+        Get.back();
+        Get.toNamed(AppRoutes.divyaDarshan);
       },
     ),
     CollectionItemModel(
@@ -45,13 +54,25 @@ void showCollectionBottomSheet(BuildContext context) {
       title: 'Greetings',
       gradientColors: [Colors.lightGreen.shade400, Colors.green.shade700],
       icon: Icons.mail_outline,
-      onTap: () {},
+      onTap: () {
+        Get.back();
+        Get.toNamed(
+          AppRoutes.eMandirWallpaper,
+          arguments: {'initialFilter': 'Greetings'},
+        );
+      },
     ),
     CollectionItemModel(
       title: 'Festivals',
       gradientColors: [Colors.blue.shade400, Colors.indigo],
       icon: Icons.lightbulb_outline,
-      onTap: () {},
+      onTap: () {
+        Get.back();
+        Get.toNamed(
+          AppRoutes.eMandirWallpaper,
+          arguments: {'initialFilter': 'Library'},
+        );
+      },
     ),
     CollectionItemModel(
       title: 'Aarti',
@@ -63,7 +84,10 @@ void showCollectionBottomSheet(BuildContext context) {
       title: 'Chalisa',
       gradientColors: [Colors.pinkAccent, Colors.pink.shade700],
       icon: Icons.music_note,
-      onTap: () {},
+      onTap: () {
+        Get.back();
+        Get.toNamed(AppRoutes.chalisa);
+      },
     ),
   ];
 

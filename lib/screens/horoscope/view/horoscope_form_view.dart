@@ -14,7 +14,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class HoroscopeFormView extends BasePage<HoroscopeFormController> {
-  const HoroscopeFormView({super.key});
+  final bool hideHeader;
+  const HoroscopeFormView({super.key, this.hideHeader = false});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
         drawer: UserDashboardView.buildDrawer(context),
         body: Column(
           children: [
-            const CommonHeader(title: 'Horoscope'),
+            if (!hideHeader) const CommonHeader(title: 'Horoscope'),
             Expanded(
               child: SingleChildScrollView(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 0.h),
