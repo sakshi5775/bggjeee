@@ -4219,4 +4219,138 @@ class KundliService {
       return null;
     }
   }
+
+  // ===== Kundli Profile CRUD (port 8002) =====
+
+  static const String _profileBaseUrl =
+      'http://3.109.91.254:8002/api/users/kundli-profile';
+
+  /// GET all saved kundli profiles
+  Future<List<Map<String, dynamic>>> getSavedKundliProfiles() async {
+    try {
+      final currentToken = UserData().accessToken?.trim();
+      final uri = Uri.parse(_profileBaseUrl);
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Accept': 'application/json',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(const Duration(seconds: 15));
+
+      if (kDebugMode) {
+        debugPrint('GET Kundli Profiles Status: ${response.statusCode}');
+      }
+
+      if (response.statusCode == 200) {
+        final body = json.decode(response.body) as Map<String, dynamic>;
+        if (body['success'] == true && body['data'] != null) {
+          return List<Map<String, dynamic>>.from(body['data']);
+        }
+      }
+      return [];
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Error fetching saved kundli profiles: $e');
+      }
+      return [];
+    }
+  }
+
+  /// POST create a new kundli profile
+  Future<Map<String, dynamic>?> createKundliProfile({
+    required String name,
+    required String gender,
+    required String dateOfBirth,
+    required String birthTime,
+    required String timezone,
+    required String birthPlace,
+    required double latitude,
+    required double longitude,
+  }) async {
+    try {
+      final currentToken = UserData().accessToken?.trim();
+      final uri = Uri.parse(_profileBaseUrl);
+
+      final body = json.encode({
+        'name': name,
+        'gender': gender,
+        'dateOfBirth': dateOfBirth,
+        'birthTime': birthTime,
+        'timezone': timezone,
+        'birthPlace': birthPlace,
+        'latitude': latitude,
+        'longitude': longitude,
+      });
+
+      final response = await http
+          .post(
+            uri,
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+            body: body,
+          )
+          .timeout(const Duration(seconds: 15));
+
+      if (kDebugMode) {
+        debugPrint('POST Kundli Profile Status: ${response.statusCode}');
+        debugPrint('POST Kundli Profile Response: ${response.body}');
+      }
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final respBody = json.decode(response.body) as Map<String, dynamic>;
+        if (respBody['success'] == true) {
+          return respBody['data'] as Map<String, dynamic>?;
+        }
+      }
+      return null;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Error creating kundli profile: $e');
+      }
+      return null;
+    }
+  }
+
+  /// DELETE a kundli profile by ID
+  Future<bool> deleteKundliProfile(String id) async {
+    try {
+      final currentToken = UserData().accessToken?.trim();
+      final uri = Uri.parse('$_profileBaseUrl/$id');
+
+      final response = await http
+          .delete(
+            uri,
+            headers: {
+              'Accept': 'application/json',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(const Duration(seconds: 15));
+
+      if (kDebugMode) {
+        debugPrint('DELETE Kundli Profile Status: ${response.statusCode}');
+      }
+
+      if (response.statusCode == 200) {
+        final body = json.decode(response.body) as Map<String, dynamic>;
+        return body['success'] == true;
+      }
+      return false;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Error deleting kundli profile: $e');
+      }
+      return false;
+    }
+  }
 }

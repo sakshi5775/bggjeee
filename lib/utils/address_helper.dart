@@ -89,7 +89,47 @@ class AddressHelper {
     return null;
   }
 
-  /// Gets timezone from latitude and longitude coordinates using Google Time Zone API
+  /// Cache for timezone offsets to avoid repeated API calls
+  static final Map<String, double> _timezoneCache = {};
+
+  /// Gets numeric timezone offset (e.g. 5.5) from coordinates using Google Timezone API
+  /// Results are cached by rounded lat/lng to reduce API calls
+  static Future<double?> getTimezoneOffsetFromCoordinates(
+    double latitude,
+    double longitude,
+  ) async {
+    final key =
+        '${latitude.toStringAsFixed(2)},${longitude.toStringAsFixed(2)}';
+    if (_timezoneCache.containsKey(key)) {
+      return _timezoneCache[key];
+    }
+
+    try {
+      final timestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      final uri = Uri.parse(
+        '$_timezoneBaseUrl?location=$latitude,$longitude&timestamp=$timestamp&key=$_apiKey',
+      );
+
+      final response = await http.get(uri);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body) as Map<String, dynamic>;
+
+        if (data['status'] == 'OK') {
+          final rawOffset = (data['rawOffset'] as num?)?.toDouble() ?? 0;
+          final dstOffset = (data['dstOffset'] as num?)?.toDouble() ?? 0;
+          final totalOffset = (rawOffset + dstOffset) / 3600;
+          _timezoneCache[key] = totalOffset;
+          return totalOffset;
+        }
+      }
+    } catch (e) {
+      print('Error getting timezone offset: $e');
+    }
+    return null;
+  }
+
+  /// Gets timezone ID from latitude and longitude coordinates using Google Time Zone API
   static Future<String?> getTimezoneFromCoordinates(
     double latitude,
     double longitude,

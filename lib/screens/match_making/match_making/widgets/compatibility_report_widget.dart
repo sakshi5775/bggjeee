@@ -27,6 +27,7 @@ class CompatibilityReportWidget extends StatelessWidget {
   final bool showNavtaraOnly;
   final bool showNavtaraSection;
   final Widget? navtaraWidget;
+  final String matchLabel;
 
   const CompatibilityReportWidget({
     super.key,
@@ -42,6 +43,7 @@ class CompatibilityReportWidget extends StatelessWidget {
     this.showNavtaraOnly = false,
     this.showNavtaraSection = true,
     this.navtaraWidget,
+    this.matchLabel = 'Gun Milan',
   });
 
   @override
@@ -118,6 +120,7 @@ class CompatibilityReportWidget extends StatelessWidget {
               matchStatus,
               showSeparateTotal,
               rawTotal,
+              matchLabel,
             ),
           ),
           Spacing.h(20),
@@ -476,6 +479,7 @@ class CompatibilityReportWidget extends StatelessWidget {
     String matchStatus,
     bool showSeparateTotal,
     num? rawTotal,
+    String matchLabel,
   ) {
     final displayScore = score.toStringAsFixed(0);
     final displayTotal = rawTotal?.toString() ?? totalScore.toStringAsFixed(0);
@@ -522,7 +526,7 @@ class CompatibilityReportWidget extends StatelessWidget {
                   ),
                   Spacing.h(4),
                   AutoTranslateText(
-                    'Gun Milan',
+                    matchLabel,
                     style: MyTextTheme.smallBCN.copyWith(
                       color: "#6F221E".toColor().withValues(alpha: 0.7),
                     ),

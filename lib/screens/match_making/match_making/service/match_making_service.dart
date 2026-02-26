@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 class MatchMakingService {
   /// Base URL for match making API (port 8010)
   static const String _matchMakingBaseUrl =
-      'http://3.109.91.254:8000/api/numerology/api';
+      'http://3.109.91.254:8010/api/vedic/matching';
 
   /// Get Ashtakoot matching with astro details
   Future<Map<String, dynamic>?> getAshtakootMatching({
@@ -40,7 +40,7 @@ class MatchMakingService {
 
       // Build URI with query parameters
       final uri = Uri.parse(
-        '$_matchMakingBaseUrl/vedic/matching/ashtakoot-with-astro-details',
+        '$_matchMakingBaseUrl/ashtakoot-with-astro-details',
       ).replace(queryParameters: queryParams);
 
       // Get authorization token
@@ -104,7 +104,7 @@ class MatchMakingService {
     String lang = 'en',
   }) async {
     return _getWithParams(
-      path: 'vedic/matching/dashakoot-with-astro-details',
+      path: 'dashakoot-with-astro-details',
       params: {
         'boyDob': boyDob,
         'boyTob': boyTob,
@@ -135,7 +135,7 @@ class MatchMakingService {
     String lang = 'en',
   }) async {
     return _getWithParams(
-      path: 'vedic/matching/aggregate-match',
+      path: 'aggregate-match',
       params: {
         'boyDob': boyDob,
         'boyTob': boyTob,
@@ -166,7 +166,7 @@ class MatchMakingService {
     String lang = 'en',
   }) async {
     return _getWithParams(
-      path: 'vedic/matching/rajju-vedha-details',
+      path: 'rajju-vedha-details',
       params: {
         'boyDob': boyDob,
         'boyTob': boyTob,
@@ -197,7 +197,7 @@ class MatchMakingService {
     String lang = 'en',
   }) async {
     return _getWithParams(
-      path: 'vedic/matching/papasamaya-match',
+      path: 'papasamaya-match',
       params: {
         'boyDob': boyDob,
         'boyTob': boyTob,
@@ -220,7 +220,7 @@ class MatchMakingService {
     String lang = 'en',
   }) async {
     return _getWithParams(
-      path: 'vedic/matching/nakshatra-match',
+      path: 'nakshatra-match',
       params: {'boyStar': boyStar, 'girlStar': girlStar, 'lang': lang},
     );
   }
@@ -231,7 +231,7 @@ class MatchMakingService {
     String lang = 'en',
   }) async {
     return _getWithParams(
-      path: 'vedic/matching/western-match',
+      path: 'western-match',
       params: {'boySign': boySign, 'girlSign': girlSign, 'lang': lang},
     );
   }
@@ -281,5 +281,123 @@ class MatchMakingService {
       'Match API ($path) returned status code: ${response.statusCode}',
     );
     return null;
+  }
+
+  // ===== Matchmaking Profile CRUD (port 8002) =====
+
+  static const String _profileBaseUrl =
+      'http://3.109.91.254:8002/api/users/matchmaking-profile';
+
+  /// GET all saved matchmaking profiles
+  Future<List<Map<String, dynamic>>> getSavedMatchmakingProfiles() async {
+    try {
+      final currentToken = UserData().accessToken?.trim();
+      final uri = Uri.parse(_profileBaseUrl);
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Accept': 'application/json',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(const Duration(seconds: 15));
+
+      if (kDebugMode) {
+        debugPrint('GET Matchmaking Profiles Status: ${response.statusCode}');
+      }
+
+      if (response.statusCode == 200) {
+        final body = json.decode(response.body) as Map<String, dynamic>;
+        if (body['success'] == true && body['data'] != null) {
+          return List<Map<String, dynamic>>.from(body['data']);
+        }
+      }
+      return [];
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Error fetching saved matchmaking profiles: $e');
+      }
+      return [];
+    }
+  }
+
+  /// POST create a new matchmaking profile
+  Future<Map<String, dynamic>?> createMatchmakingProfile({
+    required Map<String, dynamic> boy,
+    required Map<String, dynamic> girl,
+  }) async {
+    try {
+      final currentToken = UserData().accessToken?.trim();
+      final uri = Uri.parse(_profileBaseUrl);
+
+      final reqBody = json.encode({'boy': boy, 'girl': girl});
+
+      final response = await http
+          .post(
+            uri,
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+            body: reqBody,
+          )
+          .timeout(const Duration(seconds: 15));
+
+      if (kDebugMode) {
+        debugPrint('POST Matchmaking Profile Status: ${response.statusCode}');
+      }
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final respBody = json.decode(response.body) as Map<String, dynamic>;
+        if (respBody['success'] == true) {
+          return respBody['data'] as Map<String, dynamic>?;
+        }
+      }
+      return null;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Error creating matchmaking profile: $e');
+      }
+      return null;
+    }
+  }
+
+  /// DELETE a matchmaking profile by ID
+  Future<bool> deleteMatchmakingProfile(String id) async {
+    try {
+      final currentToken = UserData().accessToken?.trim();
+      final uri = Uri.parse('$_profileBaseUrl/$id');
+
+      final response = await http
+          .delete(
+            uri,
+            headers: {
+              'Accept': 'application/json',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(const Duration(seconds: 15));
+
+      if (kDebugMode) {
+        debugPrint('DELETE Matchmaking Profile Status: ${response.statusCode}');
+      }
+
+      if (response.statusCode == 200) {
+        final body = json.decode(response.body) as Map<String, dynamic>;
+        return body['success'] == true;
+      }
+      return false;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Error deleting matchmaking profile: $e');
+      }
+      return false;
+    }
   }
 }

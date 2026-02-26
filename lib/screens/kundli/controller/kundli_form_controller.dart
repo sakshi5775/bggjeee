@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'package:astrobharataiuser/app_manager/user_data.dart';
+
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/service/user_profile_service.dart';
+
 import 'package:astrobharataiuser/utils/address_helper.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/report_service.dart';
 import 'package:flutter/foundation.dart';
@@ -18,7 +18,7 @@ import 'package:astrobharataiuser/apihelper/api_provider/networkException/except
 
 class KundliFormController extends BaseController {
   final KundliService _kundliService = KundliService();
-  final UserProfileService _userProfileService = UserProfileService();
+
   final ReportService _reportService = ReportService();
 
   // PDF Generation Mode
@@ -69,6 +69,29 @@ class KundliFormController extends BaseController {
   final selectedTime = TimeOfDay.now().obs;
   final selectedLocation = 'Fetching Location...'.obs;
 
+  // ===== NEW: Tab & Saved Kundli State =====
+  final selectedTabIndex =
+      1.obs; // 0 = Saved Kundli, 1 = New Kundli (default New)
+  final savedKundliList = <Map<String, dynamic>>[].obs;
+  final isLoadingSavedKundli = false.obs;
+  final saveKundliChecked = false.obs;
+  final searchQuery = ''.obs;
+  final editingKundliId =
+      Rxn<String>(); // non-null when editing an existing profile
+  final isOpeningSavedKundli =
+      false.obs; // loading state for opening saved kundli
+
+  /// Filtered saved kundli list based on search query
+  List<Map<String, dynamic>> get filteredKundliList {
+    if (searchQuery.value.isEmpty) return savedKundliList;
+    final q = searchQuery.value.toLowerCase();
+    return savedKundliList.where((k) {
+      final name = (k['name'] ?? '').toString().toLowerCase();
+      final place = (k['birthPlace'] ?? '').toString().toLowerCase();
+      return name.contains(q) || place.contains(q);
+    }).toList();
+  }
+
   // Flag to track if controller is disposed
   bool _isDisposed = false;
 
@@ -87,112 +110,249 @@ class KundliFormController extends BaseController {
         reportType = args['reportType'];
         reportVariant = args['variant'];
       }
+      // If editing a saved kundli profile, prefill form
+      if (args['editKundliProfile'] != null) {
+        final profile = args['editKundliProfile'] as Map<String, dynamic>;
+        selectedTabIndex.value = 1; // Switch to New Kundli tab
+        _prefillFromProfile(profile);
+      }
     }
     _initializeForm();
-    _loadUserProfileData();
+    fetchSavedKundliProfiles();
   }
 
-  /// Load user profile (name, gender, DOB, time of birth, location) to prefill Kundli form.
-  /// Ensures saved profile DOB and TOB are used instead of current date/time when available.
-  Future<void> _loadUserProfileData() async {
+  /// Prefill form fields from a saved kundli profile (for edit mode)
+  void _prefillFromProfile(Map<String, dynamic> profile) {
+    editingKundliId.value = profile['_id']?.toString();
+    nameController.text = profile['name'] ?? '';
+
+    final gender = profile['gender']?.toString();
+    if (gender != null && gender.isNotEmpty) {
+      if (genderOptions.contains(gender)) {
+        selectedGender.value = gender;
+      }
+    }
+
+    // Parse dateOfBirth (API format: MM/dd/yyyy) to display format dd/MM/yyyy
+    final dob = profile['dateOfBirth']?.toString();
+    if (dob != null && dob.isNotEmpty) {
+      try {
+        // API returns MM/dd/yyyy
+        final parts = dob.split('/');
+        if (parts.length == 3) {
+          final month = int.parse(parts[0]);
+          final day = int.parse(parts[1]);
+          final year = int.parse(parts[2]);
+          final date = DateTime(year, month, day);
+          selectedDate.value = date;
+          dateController.text = DateFormat('dd/MM/yyyy').format(date);
+        }
+      } catch (e) {
+        debugPrint('Error parsing profile DOB: $e');
+      }
+    }
+
+    // Parse birthTime
+    final birthTime = profile['birthTime']?.toString();
+    if (birthTime != null && birthTime.isNotEmpty) {
+      try {
+        // Parse "12:00 PM" format
+        final format = DateFormat('hh:mm a');
+        final dt = format.parse(birthTime);
+        selectedTime.value = TimeOfDay(hour: dt.hour, minute: dt.minute);
+        timeController.text = DateFormat('HH:mm').format(dt);
+      } catch (e) {
+        debugPrint('Error parsing birth time: $e');
+      }
+    }
+
+    // Set location
+    final place = profile['birthPlace']?.toString();
+    if (place != null && place.isNotEmpty) {
+      selectedLocation.value = place;
+    }
+
+    // Set coordinates
+    if (profile['latitude'] != null) {
+      latitudeController.text = profile['latitude'].toString();
+    }
+    if (profile['longitude'] != null) {
+      longitudeController.text = profile['longitude'].toString();
+    }
+
+    // Parse timezone
+    final tz = profile['timezone']?.toString();
+    if (tz != null && tz.isNotEmpty) {
+      // Parse "IST +5:30" format to numeric 5.5
+      try {
+        final match = RegExp(r'([+-]?\d+):(\d+)').firstMatch(tz);
+        if (match != null) {
+          final hours = int.parse(match.group(1)!);
+          final minutes = int.parse(match.group(2)!);
+          final offset = hours + (minutes / 60.0);
+          timezoneController.text = offset.toString();
+        } else {
+          timezoneController.text = '5.5';
+        }
+      } catch (e) {
+        timezoneController.text = '5.5';
+      }
+    }
+  }
+
+  // ===== Saved Kundli API Methods =====
+
+  /// Fetch all saved kundli profiles
+  Future<void> fetchSavedKundliProfiles() async {
     try {
-      final userId = UserData().getLoginData.user?.userId;
-      if (userId == null) return;
-      final profile = await _userProfileService.getProfile(userId);
-      if (profile == null) return;
-      if (_isDisposed) return;
+      isLoadingSavedKundli.value = true;
+      final profiles = await _kundliService.getSavedKundliProfiles();
+      savedKundliList.assignAll(profiles);
+    } catch (e) {
+      debugPrint('Error fetching saved kundli profiles: $e');
+    } finally {
+      isLoadingSavedKundli.value = false;
+    }
+  }
 
-      // Prefill name and gender
-      if (profile.personalInfo != null) {
-        final fullName = profile.personalInfo!.fullName;
-        if (fullName != null &&
-            fullName.isNotEmpty &&
-            nameController.text.isEmpty) {
-          nameController.text = fullName;
-        }
-        final gender = profile.personalInfo!.gender;
-        if (gender != null &&
-            gender.isNotEmpty &&
-            selectedGender.value == null) {
-          if (gender.toUpperCase() == 'MALE') {
-            selectedGender.value = 'Male';
-          } else if (gender.toUpperCase() == 'FEMALE') {
-            selectedGender.value = 'Female';
-          } else {
-            selectedGender.value = gender;
-          }
-        }
-      }
-
-      // Prefill DOB from personalInfo.dateOfBirth or birthChart.generatedAt
-      String? dateStr = profile.personalInfo?.dateOfBirth;
-      if (dateStr == null && profile.birthChart?.generatedAt != null) {
-        dateStr = profile.birthChart!.generatedAt!;
-      }
-      if (dateStr != null && dateStr.isNotEmpty) {
-        try {
-          DateTime? dob;
-          final isoDate = DateTime.tryParse(dateStr);
-          if (isoDate != null) {
-            dob = isoDate;
-          } else {
-            final parts = dateStr.split(RegExp(r'[/\-]'));
-            if (parts.length >= 3) {
-              int? day, month, year;
-              // yyyy-MM-dd (e.g. 2002-01-30) vs dd/MM/yyyy (e.g. 30/01/2002)
-              if (parts[0].length == 4 && int.tryParse(parts[0]) != null) {
-                year = int.tryParse(parts[0]);
-                month = int.tryParse(parts[1]);
-                day = int.tryParse(parts[2]);
-              } else {
-                day = int.tryParse(parts[0]);
-                month = int.tryParse(parts[1]);
-                year = int.tryParse(parts[2]);
-              }
-              if (day != null && month != null && year != null) {
-                dob = DateTime(year, month, day);
-              }
-            }
-          }
-          if (dob != null && !_isDisposed) {
-            selectedDate.value = dob;
-            dateController.text = DateFormat('dd/MM/yyyy').format(dob);
-          }
-        } catch (e) {
-          debugPrint('Error parsing profile DOB: $e');
-        }
-      }
-
-      // Prefill time of birth from birthChart.birthTime
-      if (profile.birthChart?.birthTime != null && !_isDisposed) {
-        final bt = profile.birthChart!.birthTime!;
-        final h = (bt.hour ?? 0).clamp(0, 23);
-        final m = (bt.minute ?? 0).clamp(0, 59);
-        selectedTime.value = TimeOfDay(hour: h, minute: m);
-        timeController.text = DateFormat(
-          'HH:mm',
-        ).format(DateTime(0, 1, 1, h, m));
-      }
-
-      // Prefill birth place / location from birthChart.birthPlace
-      if (profile.birthChart?.birthPlace != null && !_isDisposed) {
-        final place = profile.birthChart!.birthPlace!;
-        if (place.latitude != null && place.longitude != null) {
-          latitudeController.text = place.latitude!.toStringAsFixed(6);
-          longitudeController.text = place.longitude!.toStringAsFixed(6);
-        }
-        if (place.timezone != null && place.timezone!.isNotEmpty) {
-          timezoneController.text = place.timezone!;
-        }
-        final city = place.city ?? '';
-        final state = place.state ?? '';
-        if (city.isNotEmpty) {
-          selectedLocation.value = state.isNotEmpty ? '$city, $state' : city;
-        }
+  /// Delete a saved kundli profile
+  Future<void> deleteSavedKundliProfile(String id) async {
+    try {
+      final success = await _kundliService.deleteKundliProfile(id);
+      if (success) {
+        savedKundliList.removeWhere((k) => k['_id'] == id);
+        showSuccessMessage(
+          title: 'Success',
+          message: 'Kundli profile deleted successfully',
+        );
+      } else {
+        showErrorMessage(
+          title: 'Error',
+          message: 'Failed to delete kundli profile',
+        );
       }
     } catch (e) {
-      debugPrint('Error loading user profile for Kundli form: $e');
+      showErrorMessage(
+        title: 'Error',
+        message: 'Error deleting kundli profile',
+      );
     }
+  }
+
+  /// Open a saved kundli: generate kundli from saved profile data and navigate to result
+  Future<void> openSavedKundli(Map<String, dynamic> profile) async {
+    try {
+      isOpeningSavedKundli.value = true;
+
+      // Parse profile data to form parameters
+      final name = profile['name'] ?? '';
+      final gender = profile['gender'] ?? '';
+      final place = profile['birthPlace'] ?? '';
+      final lat = (profile['latitude'] is num)
+          ? (profile['latitude'] as num).toDouble()
+          : double.tryParse(profile['latitude']?.toString() ?? '') ?? 0.0;
+      final lon = (profile['longitude'] is num)
+          ? (profile['longitude'] as num).toDouble()
+          : double.tryParse(profile['longitude']?.toString() ?? '') ?? 0.0;
+
+      // Parse DOB from API format MM/dd/yyyy to dd/MM/yyyy for kundli API
+      String date = '';
+      final dob = profile['dateOfBirth']?.toString();
+      if (dob != null && dob.isNotEmpty) {
+        try {
+          final parts = dob.split('/');
+          if (parts.length == 3) {
+            date = '${parts[1]}/${parts[0]}/${parts[2]}'; // dd/MM/yyyy
+          }
+        } catch (e) {
+          debugPrint('Error parsing DOB: $e');
+        }
+      }
+
+      // Parse birth time from "12:00 PM" to "HH:mm"
+      String time = '';
+      final bt = profile['birthTime']?.toString();
+      if (bt != null && bt.isNotEmpty) {
+        try {
+          final format = DateFormat('hh:mm a');
+          final dt = format.parse(bt);
+          time = DateFormat('HH:mm').format(dt);
+        } catch (e) {
+          debugPrint('Error parsing birth time: $e');
+        }
+      }
+
+      // Parse timezone
+      double tz = 5.5;
+      final tzStr = profile['timezone']?.toString();
+      if (tzStr != null && tzStr.isNotEmpty) {
+        try {
+          final match = RegExp(r'([+-]?\d+):(\d+)').firstMatch(tzStr);
+          if (match != null) {
+            final hours = int.parse(match.group(1)!);
+            final minutes = int.parse(match.group(2)!);
+            tz = hours + (minutes / 60.0);
+          }
+        } catch (e) {
+          debugPrint('Error parsing timezone: $e');
+        }
+      }
+
+      if (date.isEmpty || time.isEmpty) {
+        showErrorMessage(title: 'Error', message: 'Invalid profile data');
+        return;
+      }
+
+      const colorHex = '#ed6f30';
+
+      final data = await _kundliService.generateKundli(
+        date: date,
+        time: time,
+        latitude: lat,
+        longitude: lon,
+        tz: tz,
+        lang: 'en',
+        style: 'north',
+        coloredPlanets: true,
+        color: colorHex,
+      );
+
+      if (data != null) {
+        final formDataMap = {
+          'name': name,
+          'gender': gender,
+          'date': date,
+          'time': time,
+          'latitude': lat,
+          'longitude': lon,
+          'timezone': tz,
+          'language': 'en',
+          'style': 'north',
+          'coloredPlanets': true,
+          'color': colorHex,
+          'selectedLocation': place,
+          'place': place,
+          'city': place,
+        };
+
+        UserMainController.pushInCurrentTab(
+          AppRoutes.kundliResult,
+          arguments: {'kundliData': data, 'formData': formDataMap},
+        );
+      } else {
+        showErrorMessage(title: 'Error', message: 'Failed to generate kundli');
+      }
+    } catch (e) {
+      showErrorMessage(title: 'Error', message: 'Error: ${e.toString()}');
+    } finally {
+      isOpeningSavedKundli.value = false;
+    }
+  }
+
+  /// Edit a saved kundli: prefill form and switch to New Kundli tab
+  void editSavedKundli(Map<String, dynamic> profile) {
+    _prefillFromProfile(profile);
+    selectedTabIndex.value = 1; // Switch to New Kundli tab
   }
 
   @override
@@ -621,6 +781,11 @@ class KundliFormController extends BaseController {
         return;
       }
 
+      // Save kundli profile if checkbox is checked and it's new data (not editing)
+      if (saveKundliChecked.value && editingKundliId.value == null) {
+        _saveKundliProfile(latitude, longitude, tz);
+      }
+
       if (isGeneratePdfMode) {
         await _generatePdfReport(latitude, longitude, tz);
         return;
@@ -664,7 +829,10 @@ class KundliFormController extends BaseController {
 
         // If targetRoute is provided, navigate to that route instead of kundliResult
         if (targetRoute != null && targetRoute!.isNotEmpty) {
-          UserMainController.pushInCurrentTab(targetRoute!, arguments: {'formData': formDataMap});
+          UserMainController.pushInCurrentTab(
+            targetRoute!,
+            arguments: {'formData': formDataMap},
+          );
         } else {
           // Navigate to result page with data (default behavior)
           // Note: name and gender are included in formData but NOT sent to API
@@ -681,6 +849,62 @@ class KundliFormController extends BaseController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  /// Save kundli profile via POST API (fire-and-forget, non-blocking)
+  void _saveKundliProfile(double latitude, double longitude, double tz) {
+    // Convert dd/MM/yyyy to MM/dd/yyyy for API
+    String apiDateOfBirth = '';
+    try {
+      final parts = dateController.text.split('/');
+      if (parts.length == 3) {
+        apiDateOfBirth = '${parts[1]}/${parts[0]}/${parts[2]}';
+      }
+    } catch (e) {
+      debugPrint('Error converting date format: $e');
+    }
+
+    // Convert 24h time to 12h format for API
+    String apiBirthTime = '';
+    try {
+      final t = selectedTime.value;
+      final dt = DateTime(0, 1, 1, t.hour, t.minute);
+      apiBirthTime = DateFormat('hh:mm a').format(dt);
+    } catch (e) {
+      debugPrint('Error formatting birth time: $e');
+    }
+
+    // Build timezone string like "IST +5:30"
+    String apiTimezone = 'IST +5:30';
+    try {
+      final hours = tz.truncate();
+      final minutes = ((tz - hours) * 60).round();
+      apiTimezone = 'IST +$hours:${minutes.toString().padLeft(2, '0')}';
+    } catch (e) {
+      debugPrint('Error formatting timezone: $e');
+    }
+
+    // Fire and forget - don't block the main flow
+    _kundliService
+        .createKundliProfile(
+          name: nameController.text.trim().isNotEmpty
+              ? nameController.text.trim()
+              : 'Unknown',
+          gender: selectedGender.value ?? 'Male',
+          dateOfBirth: apiDateOfBirth,
+          birthTime: apiBirthTime,
+          timezone: apiTimezone,
+          birthPlace: selectedLocation.value,
+          latitude: latitude,
+          longitude: longitude,
+        )
+        .then((_) {
+          debugPrint('Kundli profile saved successfully');
+          fetchSavedKundliProfiles(); // Refresh list
+        })
+        .catchError((e) {
+          debugPrint('Error saving kundli profile: $e');
+        });
   }
 
   /// Internal method to handle PDF report generation
