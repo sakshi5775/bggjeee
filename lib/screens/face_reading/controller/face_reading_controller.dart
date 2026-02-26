@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_c
 import 'package:astrobharataiuser/utils/error_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 
 class FaceReadingController extends GetxController {
@@ -197,7 +198,7 @@ class FaceReadingController extends GetxController {
       }
 
       // Navigate to results screen
-      Get.toNamed(AppRoutes.faceReadingResults, arguments: {'result': result});
+      UserMainController.pushInCurrentTab(AppRoutes.faceReadingResults, arguments: {'result': result});
     } catch (e) {
       // Close loader on error
       if (Get.isDialogOpen == true) {

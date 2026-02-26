@@ -148,10 +148,10 @@ class OTPView extends BasePage<OTPController> {
                                     SizedBox(width: 12.w),
                                 onCompleted: controller.submitOtp,
                                 cursor: Align(
-                                  alignment: Alignment.bottomCenter,
+                                  alignment: Alignment.center,
                                   child: Container(
-                                    width: 2,
-                                    height: 20.h,
+                                    width: 2.w,
+                                    height: 26.sp,
                                     color: AppColors.saffron,
                                   ),
                                 ),

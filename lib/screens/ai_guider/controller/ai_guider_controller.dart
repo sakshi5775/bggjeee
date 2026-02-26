@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/utils/language_detector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:uuid/uuid.dart';
 
@@ -796,86 +797,86 @@ class AiGuiderController extends BaseController {
       case 'TAROT_HOME':
       case 'TAROT':
         debugPrint('AI Guider: Navigating to Tarot: ${AppRoutes.tarotReading}');
-        Get.toNamed(AppRoutes.tarotReading);
+        UserMainController.pushInCurrentTab(AppRoutes.tarotReading);
         break;
       case 'KUNDLI_FORM':
       case 'KUNDLI':
         debugPrint('AI Guider: Navigating to Kundli: ${AppRoutes.kundliForm}');
-        Get.toNamed(AppRoutes.kundliForm);
+        UserMainController.pushInCurrentTab(AppRoutes.kundliForm);
         break;
       case 'HOROSCOPE':
       case 'HOROSCOPE_MAIN':
         debugPrint(
           'AI Guider: Navigating to Horoscope: ${AppRoutes.horoscope}',
         );
-        Get.toNamed(AppRoutes.horoscope);
+        UserMainController.pushInCurrentTab(AppRoutes.horoscope);
         break;
       case 'LIVE_ASTROLOGER':
       case 'ASTROLOGER':
         debugPrint(
           'AI Guider: Navigating to Live Astrologer: ${AppRoutes.liveAstrologers}',
         );
-        Get.toNamed(AppRoutes.liveAstrologers);
+        UserMainController.pushInCurrentTab(AppRoutes.liveAstrologers);
         break;
       case 'ASTROLOGY_SERVICES':
         debugPrint(
           'AI Guider: Navigating to Astrology Services: ${AppRoutes.astrologyServices}',
         );
-        Get.toNamed(AppRoutes.astrologyServices);
+        UserMainController.pushInCurrentTab(AppRoutes.astrologyServices);
         break;
       case 'PANCHANG':
       case 'PANCHANG_HOME':
         debugPrint('AI Guider: Navigating to Panchang: ${AppRoutes.panchang}');
-        Get.toNamed(AppRoutes.panchang);
+        UserMainController.pushInCurrentTab(AppRoutes.panchang);
         break;
       case 'NUMEROLOGY':
       case 'NUMEROLOGY_HOME':
         debugPrint(
           'AI Guider: Navigating to Numerology: ${AppRoutes.numerology}',
         );
-        Get.toNamed(AppRoutes.numerology);
+        UserMainController.pushInCurrentTab(AppRoutes.numerology);
         break;
       case 'PALM_READING':
       case 'PALM_READING_HOME':
         debugPrint(
           'AI Guider: Navigating to Palm Reading: ${AppRoutes.palmReading}',
         );
-        Get.toNamed(AppRoutes.palmReading);
+        UserMainController.pushInCurrentTab(AppRoutes.palmReading);
         break;
       case 'FACE_READING':
       case 'FACE_READING_HOME':
         debugPrint(
           'AI Guider: Navigating to Face Reading: ${AppRoutes.faceReading}',
         );
-        Get.toNamed(AppRoutes.faceReading);
+        UserMainController.pushInCurrentTab(AppRoutes.faceReading);
         break;
       case 'MATCH_MAKING':
       case 'MATCH_MAKING_HOME':
         debugPrint(
           'AI Guider: Navigating to Match Making: ${AppRoutes.matchMakingGif}',
         );
-        Get.toNamed(AppRoutes.matchMakingGif);
+        UserMainController.pushInCurrentTab(AppRoutes.matchMakingGif);
         break;
       case 'WALLET':
         debugPrint('AI Guider: Navigating to Wallet: ${AppRoutes.wallet}');
-        Get.toNamed(AppRoutes.wallet);
+        UserMainController.pushInCurrentTab(AppRoutes.wallet);
         break;
       case 'BLOGS':
       case 'BLOG_HOME':
         debugPrint('AI Guider: Navigating to Blogs: ${AppRoutes.allBlogs}');
-        Get.toNamed(AppRoutes.allBlogs);
+        UserMainController.pushInCurrentTab(AppRoutes.allBlogs);
         break;
       case 'COURSES':
       case 'COURSES_HOME':
         debugPrint('AI Guider: Navigating to Courses: ${AppRoutes.courses}');
-        Get.toNamed(AppRoutes.courses);
+        UserMainController.pushInCurrentTab(AppRoutes.courses);
         break;
       case 'HANDWRITING_ASTROLOGY':
       case 'HANDWRITING':
         debugPrint(
           'AI Guider: Navigating to Handwriting: ${AppRoutes.handwritingAstrology}',
         );
-        Get.toNamed(AppRoutes.handwritingAstrology);
+        UserMainController.pushInCurrentTab(AppRoutes.handwritingAstrology);
         break;
       case 'USER_DASHBOARD':
       case 'DASHBOARD':
@@ -883,7 +884,7 @@ class AiGuiderController extends BaseController {
         debugPrint(
           'AI Guider: Navigating to Dashboard: ${AppRoutes.userDashboard}',
         );
-        Get.toNamed(AppRoutes.userDashboard);
+        UserMainController.pushInCurrentTab(AppRoutes.userDashboard);
         break;
       default:
         debugPrint('AI Guider: Unknown page value: $page');

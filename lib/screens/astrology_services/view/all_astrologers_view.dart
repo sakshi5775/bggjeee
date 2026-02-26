@@ -8,6 +8,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 import '../../../theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
@@ -167,7 +168,11 @@ class AllAstrologersView extends StatelessWidget {
                               ),
                             ),
                           ),
-                          SliverPadding(padding: EdgeInsets.only(bottom: 16.h)),
+                          SliverPadding(
+                            padding: EdgeInsets.only(
+                              bottom: hideHeader ? 80.h : 16.h,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -292,7 +297,7 @@ class AllAstrologersView extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Get.toNamed('/astrologer-detail', arguments: astrologer);
+        UserMainController.pushInCurrentTab('/astrologer-detail', arguments: astrologer);
       },
       child: Container(
         margin: EdgeInsets.only(bottom: 12.h),

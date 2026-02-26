@@ -176,6 +176,14 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
                                             as Map<String, dynamic>?,
                                   )
                                 : null,
+                            showNavtaraSection: _activeTab == 'Navtara',
+                            matchLabel: _activeTab == 'Papasamaya Match'
+                                ? 'Papa Match'
+                                : _activeTab == 'Nakshatra Match'
+                                ? 'Star Match'
+                                : _activeTab == 'Western Match'
+                                ? 'Zodiac Match'
+                                : 'Gun Milan',
                             navtaraWidget: _activeTab == 'Navtara'
                                 ? Center(
                                     child: ElevatedButton(
@@ -231,76 +239,79 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
       'Papasamaya Match',
       'Nakshatra Match',
       'Western Match',
-      'Nakshatra Match',
-      'Western Match',
       'Navtara',
     ];
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Row(
-        children: tabs.map((t) {
-          final isActive = _activeTab == t;
-          final isNavtara = t == 'Navtara';
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 8.h),
+        child: Row(
+          children: tabs.map((t) {
+            final isActive = _activeTab == t;
+            final isNavtara = t == 'Navtara';
 
-          return Padding(
-            padding: EdgeInsets.only(right: 8.w),
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                ChoiceChip(
-                  label: AutoTranslateText(
-                    t,
-                    style: MyTextTheme.smallBCB
-                        .copyWith(
-                          color: isActive ? Colors.white : "#6F221E".toColor(),
-                        )
-                        .merge(AppTypography.body2),
-                  ),
-                  selected: isActive,
-                  onSelected: (_) => _onTabSelected(t),
-                  selectedColor: "#6F221E".toColor(),
-                  backgroundColor: const Color(0xFFFDF3E6),
-                  shape: StadiumBorder(
-                    side: BorderSide(
-                      color: "#6F221E".toColor().withValues(alpha: 0.3),
-                      width: 0.8,
+            return Padding(
+              padding: EdgeInsets.only(right: 8.w),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  ChoiceChip(
+                    label: AutoTranslateText(
+                      t,
+                      style: MyTextTheme.smallBCB
+                          .copyWith(
+                            color: isActive
+                                ? Colors.white
+                                : "#6F221E".toColor(),
+                          )
+                          .merge(AppTypography.body2),
+                    ),
+                    selected: isActive,
+                    onSelected: (_) => _onTabSelected(t),
+                    selectedColor: "#6F221E".toColor(),
+                    backgroundColor: const Color(0xFFFDF3E6),
+                    shape: StadiumBorder(
+                      side: BorderSide(
+                        color: "#6F221E".toColor().withValues(alpha: 0.3),
+                        width: 0.8,
+                      ),
                     ),
                   ),
-                ),
-                if (isNavtara && Get.isRegistered<AiPricingController>())
-                  Obx(() {
-                    final pricingCtrl = Get.find<AiPricingController>();
-                    final price = pricingCtrl.getDisplayPrice('navtara');
-                    if (price.isEmpty) return const SizedBox.shrink();
+                  if (isNavtara && Get.isRegistered<AiPricingController>())
+                    Obx(() {
+                      final pricingCtrl = Get.find<AiPricingController>();
+                      final price = pricingCtrl.getDisplayPrice('navtara');
+                      if (price.isEmpty) return const SizedBox.shrink();
 
-                    return Positioned(
-                      top: -8.h,
-                      right: 0,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 4.w,
-                          vertical: 2.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFF6B35),
-                          borderRadius: BorderRadius.circular(4.r),
-                        ),
-                        child: Text(
-                          price,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 8.sp,
-                            fontWeight: FontWeight.bold,
+                      return Positioned(
+                        top: -8.h,
+                        right: 0,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 4.w,
+                            vertical: 2.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFF6B35),
+                            borderRadius: BorderRadius.circular(4.r),
+                          ),
+                          child: Text(
+                            price,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 8.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  }),
-              ],
-            ),
-          );
-        }).toList(),
+                      );
+                    }),
+                ],
+              ),
+            );
+          }).toList(),
+        ),
       ),
     );
   }
@@ -424,24 +435,25 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
               _currentResponse?['boy_astro_details'] as Map<String, dynamic>?;
           final girlAstro =
               _currentResponse?['girl_astro_details'] as Map<String, dynamic>?;
+
           if (boyAstro != null && girlAstro != null) {
-            String boyNak = boyAstro['nakshatra'] ?? '';
-            String girlNak = girlAstro['nakshatra'] ?? '';
+            // Use nakshatra_no if available (as it's more reliable for Navtara API)
+            // Fallback to name-based extraction
+            dynamic boyNak =
+                boyAstro['nakshatra_no'] ?? boyAstro['nakshatra'] ?? '';
+            dynamic girlNak =
+                girlAstro['nakshatra_no'] ?? girlAstro['nakshatra'] ?? '';
 
-            // Normalize Nakshatra names to fix API 400 error
-            if (boyNak.toLowerCase().contains('ashvini')) boyNak = 'Ashwini';
-            if (girlNak.toLowerCase().contains('ashvini')) girlNak = 'Ashwini';
-
-            final navtaraCtl = Get.find<NavtaraController>();
-            navtaraCtl.initFromMatching(
-              boyName: form['boyName'] ?? 'Boy',
-              boyNakshatra: boyNak,
-              girlName: form['girlName'] ?? 'Girl',
-              girlNakshatra: girlNak,
-            );
+            if (Get.isRegistered<NavtaraController>()) {
+              final navtaraCtl = Get.find<NavtaraController>();
+              navtaraCtl.initFromMatching(
+                boyName: form['boyName'] ?? 'Boy',
+                boyNakshatra: boyNak.toString(),
+                girlName: form['girlName'] ?? 'Girl',
+                girlNakshatra: girlNak.toString(),
+              );
+            }
           }
-          // Do not set res = _currentResponse here, or it duplicates.
-          // Just break, as we don't need to fetch anything for this view (NavtaraController handles it)
           res = _currentResponse;
           break;
       }
@@ -466,6 +478,10 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
             );
           } else if (responseValue is Map<String, dynamic>) {
             // Success case - response is a map
+            // Normalize keys (e.g., total_score -> score)
+            if (responseValue.containsKey('total_score')) {
+              responseValue['score'] = responseValue['total_score'];
+            }
             _currentResponse = responseValue;
           } else if (responseValue is String) {
             // Error case - response is a string
@@ -506,7 +522,7 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
       case 'Aggregate Match':
         return 100;
       case 'Papasamaya Match':
-        return 10;
+        return 100;
       case 'Nakshatra Match':
         return 10;
       case 'Western Match':

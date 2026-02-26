@@ -110,6 +110,14 @@ class ForgotPasswordOtpView extends GetView<ForgotPasswordController> {
                         focusedPinTheme: focusedPinTheme,
                         validator: controller.validateOtp,
                         onCompleted: (pin) => controller.verifyOtp(),
+                        cursor: Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            width: 2.w,
+                            height: 24.sp,
+                            color: AppColors.saffron,
+                          ),
+                        ),
                       ),
                       Spacing.h(32),
                       Obx(

@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class AiGuiderView extends StatefulWidget {
   /// When true, header (back, sound, language) is hidden — e.g. when embedded below dashboard slider.
@@ -323,7 +324,7 @@ class _AiGuiderViewState extends State<AiGuiderView>
               return GestureDetector(
                 onTap: () {
                   if (isCurrentPage) return;
-                  Get.toNamed(route);
+                  UserMainController.pushInCurrentTab(route);
                 },
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 8.h),
@@ -418,7 +419,7 @@ class _AiGuiderViewState extends State<AiGuiderView>
           final label = item['label']!;
           final route = item['route']!;
           return GestureDetector(
-            onTap: () => Get.toNamed(route),
+            onTap: () => UserMainController.pushInCurrentTab(route),
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
               decoration: BoxDecoration(

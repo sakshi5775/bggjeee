@@ -87,9 +87,8 @@ class _CommonTabSliderState extends State<CommonTabSlider> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 56.h,
       color: Colors.transparent,
-      // padding: EdgeInsets.symmetric(vertical: 2.h),
+      padding: EdgeInsets.symmetric(vertical: 4.h),
       child: SingleChildScrollView(
         controller: _scrollController,
         scrollDirection: Axis.horizontal,
@@ -117,7 +116,7 @@ class _CommonTabSliderState extends State<CommonTabSlider> {
                     curve: Curves.easeOut,
                     padding: EdgeInsets.symmetric(
                       horizontal: 16.w,
-                      vertical: Get.width > 600 ? 10.h : 5.h,
+                      vertical: Get.width > 600 ? 12.h : 8.h,
                     ),
                     decoration: BoxDecoration(
                       // color: isSelected ? orange : Colors.transparent,

@@ -7,6 +7,9 @@ import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_c
 import 'package:astrobharataiuser/utils/error_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/service/user_profile_service.dart';
+import 'package:astrobharataiuser/app_manager/user_data.dart';
 
 class HandwritingAstrologyController extends GetxController {
   final HandwritingAstrologyService _handwritingService =
@@ -22,6 +25,44 @@ class HandwritingAstrologyController extends GetxController {
   final RxBool isAnalyzing = false.obs;
   final RxString errorMessage = RxString('');
   final Rx<HandwritingData?> analysisResult = Rx<HandwritingData?>(null);
+
+  final UserProfileService _userProfileService = UserProfileService();
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadUserProfileData();
+  }
+
+  Future<void> _loadUserProfileData() async {
+    try {
+      final userId = UserData().getLoginData.user?.userId;
+      if (userId == null) return;
+      final profile = await _userProfileService.getProfile(userId);
+      if (profile == null) return;
+
+      if (profile.personalInfo != null) {
+        final fullName = profile.personalInfo!.fullName;
+        if (fullName != null && fullName.isNotEmpty && name.value.isEmpty) {
+          name.value = fullName;
+        }
+        final gender = profile.personalInfo!.gender;
+        if (gender != null &&
+            gender.isNotEmpty &&
+            (selectedGender.value == 'male' || selectedGender.value.isEmpty)) {
+          if (gender.toUpperCase() == 'MALE') {
+            selectedGender.value = 'male';
+          } else if (gender.toUpperCase() == 'FEMALE') {
+            selectedGender.value = 'female';
+          } else {
+            selectedGender.value = gender.toLowerCase();
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading profile: $e');
+    }
+  }
 
   /// Add image to selected images
   void addImage(File image) {
@@ -131,7 +172,7 @@ class HandwritingAstrologyController extends GetxController {
       analysisResult.value = result;
 
       // Navigate to results screen
-      Get.toNamed(
+      UserMainController.pushInCurrentTab(
         AppRoutes.handwritingAstrologyResults,
         arguments: {'result': result},
       );

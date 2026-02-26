@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:astrobharataiuser/app_manager/user_data.dart';
@@ -834,7 +835,7 @@ class ProfileController extends BaseController {
   }
 
   void onCouponsTap() {
-    Get.toNamed(AppRoutes.coupons);
+    UserMainController.pushInCurrentTab(AppRoutes.coupons);
   }
 
   void onHelpCenterTap() {
@@ -846,11 +847,11 @@ class ProfileController extends BaseController {
   }
 
   void onAddressesTap() {
-    Get.toNamed(AppRoutes.addresses, id: 1);
+    UserMainController.pushInCurrentTab(AppRoutes.addresses);
   }
 
   void onFollowingTap() {
-    Get.toNamed(AppRoutes.followingAstrologers, id: 1);
+    UserMainController.pushInCurrentTab(AppRoutes.followingAstrologers);
   }
 
   Future<void> onLogoutTap({bool allDevices = false}) async {

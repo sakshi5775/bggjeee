@@ -3,8 +3,10 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/numerology/service/numerology_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:intl/intl.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/service/user_profile_service.dart';
+import 'package:astrobharataiuser/app_manager/user_data.dart';
 
 class LoShuGridFormController extends BaseController {
   final NumerologyService _numerologyService = NumerologyService();
@@ -31,6 +33,40 @@ class LoShuGridFormController extends BaseController {
 
   // Gender options
   final List<String> genders = ['male', 'female'];
+
+  final UserProfileService _userProfileService = UserProfileService();
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadUserProfileData();
+  }
+
+  Future<void> _loadUserProfileData() async {
+    try {
+      final userId = UserData().getLoginData.user?.userId;
+      if (userId == null) return;
+      final profile = await _userProfileService.getProfile(userId);
+      if (profile == null) return;
+
+      if (profile.personalInfo != null) {
+        final gender = profile.personalInfo!.gender;
+        if (gender != null &&
+            gender.isNotEmpty &&
+            selectedGender.value.isEmpty) {
+          if (gender.toUpperCase() == 'MALE') {
+            selectedGender.value = 'male';
+          } else if (gender.toUpperCase() == 'FEMALE') {
+            selectedGender.value = 'female';
+          } else {
+            selectedGender.value = gender.toLowerCase();
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading profile: $e');
+    }
+  }
 
   void selectDate(DateTime date) {
     selectedDate.value = date;
@@ -89,7 +125,7 @@ class LoShuGridFormController extends BaseController {
 
       if (response != null && response['response'] != null) {
         // Navigate to result page with data and form inputs
-        Get.toNamed(
+        UserMainController.pushInCurrentTab(
           AppRoutes.loshuGridResult,
           arguments: {
             ...response['response'],

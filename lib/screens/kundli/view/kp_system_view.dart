@@ -59,7 +59,6 @@ class KpSystemView extends BasePage<KpSystemController> {
 
   Widget _buildTabs(Color orange, Color orangeLight, Color maroon) {
     return Container(
-      height: 48.h,
       color: Colors.transparent,
       padding: EdgeInsets.symmetric(vertical: 6.h),
       child: Obx(() {

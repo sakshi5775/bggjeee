@@ -12,6 +12,7 @@ import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 import '../../../../data_model/e_mandir_dataModels/e_mandir_home_model.dart';
 
@@ -712,6 +713,6 @@ class VirtualDarshanController extends BaseController
   }
 
   void navigateToDevotionalLibrary() {
-    Get.toNamed('/devotional-library');
+    UserMainController.pushInCurrentTab('/devotional-library');
   }
 }

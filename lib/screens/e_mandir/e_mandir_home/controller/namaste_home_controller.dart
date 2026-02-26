@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/data_model/festival_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/service/e_mandir_home_service.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -228,17 +229,17 @@ class NamasteHomeController extends BaseController
 
   void navigateToVirtualDarshan() {
     stopShankh();
-    Get.toNamed(AppRoutes.virtualDarshan);
+    UserMainController.pushInCurrentTab(AppRoutes.virtualDarshan);
   }
 
   void navigateToDevotionalLibrary() {
     stopShankh();
-    Get.toNamed(AppRoutes.devotionalLibrary);
+    UserMainController.pushInCurrentTab(AppRoutes.devotionalLibrary);
   }
 
   void navigateToPunyaMudra() {
     stopShankh();
-    Get.toNamed(
+    UserMainController.pushInCurrentTab(
       AppRoutes.punyaMudra,
       arguments: {'punyaWallet': punyaWallet.value},
     );
@@ -248,19 +249,19 @@ class NamasteHomeController extends BaseController
     stopShankh();
     switch (index) {
       case 0:
-        Get.toNamed(AppRoutes.comingSoon);
+        UserMainController.pushInCurrentTab(AppRoutes.comingSoon);
         break;
       case 1:
-        Get.toNamed(AppRoutes.bookPuja);
+        UserMainController.pushInCurrentTab(AppRoutes.bookPuja);
         break;
       case 2:
-        Get.toNamed(AppRoutes.comingSoon);
+        UserMainController.pushInCurrentTab(AppRoutes.comingSoon);
         break;
       case 3:
-        Get.toNamed(AppRoutes.comingSoon);
+        UserMainController.pushInCurrentTab(AppRoutes.comingSoon);
         break;
       case 4:
-        Get.toNamed(AppRoutes.myBookings);
+        UserMainController.pushInCurrentTab(AppRoutes.myBookings);
         break;
       default:
     }

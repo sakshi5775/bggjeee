@@ -16,6 +16,7 @@ import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboa
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class CarrotAstrologyResultsView extends StatelessWidget {
   const CarrotAstrologyResultsView({Key? key}) : super(key: key);
@@ -86,7 +87,7 @@ class CarrotAstrologyResultsView extends StatelessWidget {
                     size: 24.w,
                   ),
                   onPressed: () =>
-                      Get.toNamed(AppRoutes.carrotAstrologyHistory),
+                      UserMainController.pushInCurrentTab(AppRoutes.carrotAstrologyHistory),
                 ),
               ],
             ),
@@ -240,7 +241,7 @@ class CarrotAstrologyResultsView extends StatelessWidget {
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  onTap: () => Get.toNamed(AppRoutes.astrologyServices),
+                  onTap: () => UserMainController.pushInCurrentTab(AppRoutes.astrologyServices),
                   borderRadius: BorderRadius.circular(14.r),
                   child: Padding(
                     padding: EdgeInsets.symmetric(

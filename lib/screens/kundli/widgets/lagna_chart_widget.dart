@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class LagnaChartWidget extends StatelessWidget {
   const LagnaChartWidget({super.key});
@@ -303,7 +304,7 @@ class LagnaChartWidget extends StatelessWidget {
           return;
         }
         if (isYogaButton) {
-          Get.toNamed(
+          UserMainController.pushInCurrentTab(
             AppRoutes.yog,
             arguments: {'formData': controller.formData.value},
           );
@@ -323,7 +324,7 @@ class LagnaChartWidget extends StatelessWidget {
         }
         final route = routeMap[titleLower];
         if (route != null) {
-          Get.toNamed(
+          UserMainController.pushInCurrentTab(
             route,
             arguments: {'formData': controller.formData.value},
           );
@@ -349,7 +350,7 @@ class LagnaChartWidget extends StatelessWidget {
           controller.onFeatureTap(title);
           return;
         }
-        Get.toNamed(AppRoutes.comingSoon);
+        UserMainController.pushInCurrentTab(AppRoutes.comingSoon);
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),

@@ -49,6 +49,7 @@ class LiveStreamService {
       EndPoints.liveStreams,
       query: query,
       useAuthHeader: false,
+      useCache: false, // Force no network-level caching here
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {

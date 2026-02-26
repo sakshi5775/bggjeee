@@ -7,12 +7,13 @@ import 'package:astrobharataiuser/binding/courses_binding/courses_binding.dart';
 import 'package:astrobharataiuser/screens/courses/views/spiritual_pillar_courses.dart';
 import 'package:astrobharataiuser/binding/courses_binding/live_webinars_binding.dart'; // Added
 import 'package:astrobharataiuser/binding/courses_binding/my_learning_binding.dart';
-import 'package:astrobharataiuser/binding/dashboard_binding/user_main_binding.dart';
-// E-Mandir bindings removed - files don't exist
+// Digital Mandir bindings removed - files don't exist
 import 'package:astrobharataiuser/binding/waiting_screen_binding/waiting_screen_binding.dart';
 import 'package:astrobharataiuser/binding/onboarding_binding/onboarding_binding.dart';
 import 'package:astrobharataiuser/binding/ai_chat_binding/ai_chat_binding.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/view/user_main_view.dart';
+import 'package:astrobharataiuser/binding/dashboard_binding/user_main_binding.dart';
 // import 'package:astrobharataiuser/screens/navtara/view/navtara_dashboard_view.dart';
 import 'package:astrobharataiuser/screens/astrologer_registration/binding/astrologer_registration_binding.dart';
 import 'package:astrobharataiuser/screens/astrologer_registration/view/astrologer_registration_intro_view.dart';
@@ -93,9 +94,8 @@ import 'package:astrobharataiuser/screens/courses/views/my_learning_view.dart';
 
 import 'package:astrobharataiuser/screens/otp/view/otp_view.dart';
 import 'package:astrobharataiuser/screens/sign_up/view/signup_view.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/view/user_main_view.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/consultation_history_view.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/view/all_reports_view.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/all_videos_view.dart';
 import 'package:astrobharataiuser/binding/dashboard_binding/all_videos_binding.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/ComingSoonPage.dart';
@@ -487,12 +487,7 @@ class PageRoutes {
       transitionDuration: Duration(milliseconds: 300),
       binding: NavtaraBinding(),
     ),
-    GetPage(
-      name: AppRoutes.allReports,
-      page: () => const AllReportsView(),
-      transition: Transition.rightToLeft,
-      transitionDuration: Duration(milliseconds: 300),
-    ),
+
     GetPage(
       name: AppRoutes.allVideos,
       page: () => const AllVideosView(),
@@ -1566,7 +1561,7 @@ class PageRoutes {
       transitionDuration: Duration(milliseconds: 300),
       binding: RamalShastraBinding(),
     ),
-    // E-Mandir Routes
+    // Digital Mandir Routes
     GetPage(
       name: AppRoutes.namasteHome,
       page: () => const NamasteHomeView(),

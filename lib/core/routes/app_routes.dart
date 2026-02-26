@@ -19,7 +19,7 @@ class AppRoutes {
   static const String astrologerChat = '/astrologer-chat';
   static const String astrologerChatHistory = '/astrologer-chat-history';
   static const String consultationHistory = '/consultation-history';
-  static const String allReports = '/all-reports';
+
   static const String allVideos = '/all-videos';
   static const String astrologerVoiceCall = '/astrologer-voice-call';
   static const String astrologerVideoCall = '/astrologer-video-call';
@@ -232,7 +232,7 @@ class AppRoutes {
   static const String ramalShastraStats = '/ramal-shastra-stats';
   static const String ramalShastraDetail = '/ramal-shastra-detail';
 
-  // E-Mandir Routes
+  // Digital Mandir Routes
   static const String namasteHome = '/e-mandir-home';
   static const String punyaMudra = '/punya-mudra';
   static const String virtualDarshan = '/virtual-darshan';
@@ -250,7 +250,7 @@ class AppRoutes {
   static const String myBookings = '/my-bookings';
   static const String myBookingDetail = '/my-booking-detail';
 
-  // E-Mandir Festival Routes
+  // Digital Mandir Festival Routes
   static const String eMandirFestivalDetail = '/e-mandir-festival-detail';
   static const String allFestivals = '/all-festivals';
   static const String aboutUs = '/about-us';

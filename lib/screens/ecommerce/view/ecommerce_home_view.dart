@@ -1,4 +1,4 @@
-﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
@@ -45,7 +45,9 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
       Get.lazyPut(() => WishlistController(), fenix: true);
     }
     return Container(
-      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      decoration: hideHeader
+          ? null
+          : BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Obx(
@@ -61,7 +63,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                     customActions: [
                       // Wishlist Icon
                       GestureDetector(
-                        onTap: () => Get.toNamed(AppRoutes.wishlist),
+                        onTap: () => UserMainController.pushInCurrentTab(AppRoutes.wishlist),
                         child: Obx(() {
                           final wishlistController =
                               Get.isRegistered<WishlistController>()
@@ -204,7 +206,9 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
               WhyShopWithUsWidget(),
 
               // Bottom padding
-              SliverToBoxAdapter(child: SizedBox(height: 20.h)),
+              SliverToBoxAdapter(
+                child: SizedBox(height: hideHeader ? 80.h : 20.h),
+              ),
             ],
           ),
         ),
@@ -354,12 +358,12 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                     final category = controller.selectedCategory.value;
                     if (category != null) {
                       if (category.id != null) {
-                        Get.toNamed(
+                        UserMainController.pushInCurrentTab(
                           '/product-list',
                           arguments: {'category': category},
                         );
                       } else if (category.slug != null) {
-                        Get.toNamed(
+                        UserMainController.pushInCurrentTab(
                           '/product-list',
                           arguments: {'categorySlug': category.slug},
                         );
@@ -475,7 +479,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                     title.toLowerCase().contains('recently'))
                   TextButton(
                     onPressed: () {
-                      Get.toNamed(
+                      UserMainController.pushInCurrentTab(
                         AppRoutes.productList,
                         arguments: {
                           'title': title,
@@ -603,7 +607,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
             );
           } catch (e) {
             // If controller not found, try to navigate directly
-            Get.toNamed(
+            UserMainController.pushInCurrentTab(
               '/product-detail',
               arguments: {'product': product, 'heroTag': heroIdentifier},
             );
@@ -1094,7 +1098,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
               heroTag: heroIdentifier,
             );
           } catch (e) {
-            Get.toNamed(
+            UserMainController.pushInCurrentTab(
               '/product-detail',
               arguments: {'product': product, 'heroTag': heroIdentifier},
             );

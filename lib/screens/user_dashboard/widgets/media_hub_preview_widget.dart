@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MediaHubPreviewWidget extends StatelessWidget {
@@ -126,7 +127,7 @@ class MediaHubPreviewWidget extends StatelessWidget {
   void _navigateToTab(int index) {
     // Navigate to AllVideosView and tell it which tab to select
     // Assuming AllVideosView is part of a PageView or we can just go to the route
-    Get.toNamed(AppRoutes.allVideos, arguments: {'tab': index});
+    UserMainController.pushInCurrentTab(AppRoutes.allVideos, arguments: {'tab': index});
   }
 
   Future<void> _launchUrl(String url) async {

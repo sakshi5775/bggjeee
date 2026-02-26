@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
@@ -15,6 +15,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 import '../../../utils/app_colors.dart';
 
@@ -479,19 +480,19 @@ class AstrologyServicesView extends StatelessWidget {
   ) {
     switch (categoryName.toLowerCase()) {
       case 'daily horoscope':
-        Get.toNamed(AppRoutes.horoscopeForm);
+        UserMainController.pushInCurrentTab(AppRoutes.horoscopeForm);
         break;
       case 'kundli analysis':
-        Get.toNamed(AppRoutes.kundliForm);
+        UserMainController.pushInCurrentTab(AppRoutes.kundliForm);
         break;
       case 'compatibility':
-        Get.toNamed(AppRoutes.matchMakingGif);
+        UserMainController.pushInCurrentTab(AppRoutes.matchMakingGif);
         break;
       case 'tarot reading':
-        Get.toNamed(AppRoutes.tarotReading);
+        UserMainController.pushInCurrentTab(AppRoutes.tarotReading);
         break;
       case 'numerology':
-        Get.toNamed(AppRoutes.numerologyForm);
+        UserMainController.pushInCurrentTab(AppRoutes.numerologyForm);
         break;
       case 'remedies':
         // Show remedies bottom sheet with ecommerce categories
@@ -584,7 +585,7 @@ class AstrologyServicesView extends StatelessWidget {
                   ],
                 ),
                 GestureDetector(
-                  onTap: () => Get.toNamed('/all-astrologers'),
+                  onTap: () => UserMainController.pushInCurrentTab('/all-astrologers'),
                   child: AutoTranslateText(
                     'View All →',
                     style: MyTextTheme.mediumBCN.copyWith(
@@ -672,7 +673,7 @@ class AstrologyServicesView extends StatelessWidget {
                   ],
                 ),
                 GestureDetector(
-                  onTap: () => Get.toNamed('/all-astrologers', arguments: null),
+                  onTap: () => UserMainController.pushInCurrentTab('/all-astrologers', arguments: null),
                   child: AutoTranslateText(
                     'View All →',
                     style: MyTextTheme.mediumBCN.copyWith(
@@ -784,7 +785,7 @@ class AstrologyServicesView extends StatelessWidget {
                   ],
                 ),
                 GestureDetector(
-                  onTap: () => Get.toNamed(AppRoutes.liveAstrologers),
+                  onTap: () => UserMainController.pushInCurrentTab(AppRoutes.liveAstrologers),
                   child: AutoTranslateText(
                     'View All →',
                     style: MyTextTheme.mediumBCN.copyWith(
@@ -862,7 +863,7 @@ class AstrologyServicesView extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () =>
-                      Get.toNamed('/all-astrologers', arguments: 'Vedic'),
+                      UserMainController.pushInCurrentTab('/all-astrologers', arguments: 'Vedic'),
                   child: AutoTranslateText(
                     'View All →',
                     style: MyTextTheme.mediumBCN.copyWith(
@@ -913,7 +914,7 @@ class AstrologyServicesView extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (astrologerModel != null) {
-          Get.toNamed('/astrologer-detail', arguments: astrologerModel);
+          UserMainController.pushInCurrentTab('/astrologer-detail', arguments: astrologerModel);
         }
       },
       child: Container(

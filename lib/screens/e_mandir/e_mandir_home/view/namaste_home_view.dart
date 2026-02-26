@@ -52,7 +52,9 @@ class _NamasteHomeViewState extends State<NamasteHomeView>
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      decoration: widget.hideHeader
+          ? null
+          : BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
@@ -64,7 +66,10 @@ class _NamasteHomeViewState extends State<NamasteHomeView>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (!widget.hideHeader) ...[
-                    const CommonHeader(title: 'E-Mandir', showDrawer: false),
+                    const CommonHeader(
+                      title: 'Digital Mandir',
+                      showDrawer: false,
+                    ),
                     SizedBox(height: 10.h),
                   ],
                   const MainBannerWidget(),
@@ -86,6 +91,7 @@ class _NamasteHomeViewState extends State<NamasteHomeView>
                   // SizedBox(height: 24.h),
                   // const TempleHighlightsWidget(),
                   // SizedBox(height: 20.h),
+                  SizedBox(height: widget.hideHeader ? 80.h : 20.h),
                 ],
               ),
             ),

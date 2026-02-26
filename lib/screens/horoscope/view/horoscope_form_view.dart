@@ -12,13 +12,26 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class HoroscopeFormView extends BasePage<HoroscopeFormController> {
   final bool hideHeader;
-  const HoroscopeFormView({super.key, this.hideHeader = false});
+  final bool isEmbedded;
+  const HoroscopeFormView({
+    super.key,
+    this.hideHeader = false,
+    this.isEmbedded = false,
+  });
 
   @override
   Widget build(BuildContext context) {
+    if (isEmbedded) {
+      return SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        child: _buildFormSection(),
+      );
+    }
+
     return Container(
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
@@ -214,7 +227,7 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
           ),
           child: TextButton(
             onPressed: () {
-              Get.toNamed(
+              UserMainController.pushInCurrentTab(
                 AppRoutes.horoscopeSignSelection,
                 arguments: {
                   'formData': {

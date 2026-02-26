@@ -14,6 +14,7 @@ import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 import '../../../core/services/share_service.dart';
@@ -724,11 +725,10 @@ class _BlogDetailViewState extends State<BlogDetailView> {
   }
 
   void _navigateToBlogDetail(Blog blog) {
-    Get.toNamed(
+    UserMainController.pushInCurrentTab(
       AppRoutes.blogDetail,
       arguments: blog,
-      preventDuplicates: false,
-    )?.then((_) => _loadBlogReactions());
+    ).then((_) => _loadBlogReactions());
   }
 
   void _openCommentsSheet(String blogId) async {

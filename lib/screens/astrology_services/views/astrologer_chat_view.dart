@@ -9,6 +9,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class AstrologerChatView extends StatefulWidget {
   const AstrologerChatView({super.key});
@@ -56,7 +57,7 @@ class _AstrologerChatViewState extends State<AstrologerChatView> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (scrollController.hasClients) {
           scrollController.animateTo(
-            scrollController.position.maxScrollExtent,
+            0.0,
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeOut,
           );
@@ -162,6 +163,13 @@ class _AstrologerChatViewState extends State<AstrologerChatView> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          AutoTranslateText(
+                            'Available Time',
+                            style: MyTextTheme.smallBCN.copyWith(
+                              color: Colors.black,
+                              fontSize: 10.sp,
+                            ),
+                          ),
                           Obx(
                             () => AutoTranslateText(
                               controller.formattedTimer,
@@ -251,7 +259,7 @@ class _AstrologerChatViewState extends State<AstrologerChatView> {
                           SizedBox(width: 8.w),
                           ElevatedButton(
                             onPressed: () {
-                              Get.toNamed('/wallet');
+                              UserMainController.pushInCurrentTab('/wallet');
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red[700],

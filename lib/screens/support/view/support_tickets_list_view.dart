@@ -8,6 +8,7 @@ import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:intl/intl.dart';
 
 class SupportTicketsListView extends GetView<SupportTicketController> {
@@ -33,7 +34,7 @@ class SupportTicketsListView extends GetView<SupportTicketController> {
             ],
           ),
           child: FloatingActionButton.extended(
-            onPressed: () => Get.toNamed(AppRoutes.createSupportTicket),
+            onPressed: () => UserMainController.pushInCurrentTab(AppRoutes.createSupportTicket),
             backgroundColor: Colors.transparent,
             elevation: 0,
             icon: const Icon(Icons.add, color: Colors.white),
@@ -219,7 +220,7 @@ class _TicketCard extends StatelessWidget {
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
       child: InkWell(
-        onTap: () => Get.toNamed(
+        onTap: () => UserMainController.pushInCurrentTab(
           AppRoutes.supportTicketDetail,
           arguments: ticket.ticketId,
         ),

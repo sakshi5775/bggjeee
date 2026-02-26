@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
@@ -481,7 +482,7 @@ class CarrotAstrologyController extends GetxController {
       analysisResult.value = result;
 
       // Navigate to results page
-      Get.toNamed(
+      UserMainController.pushInCurrentTab(
         AppRoutes.carrotAstrologyResults,
         arguments: {'result': result},
       );

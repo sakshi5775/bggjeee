@@ -8,6 +8,9 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
+import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/theme/app_typography.dart';
 
 class ShopByPurposeWidget extends StatelessWidget {
   final EcommerceHomeController controller;
@@ -69,12 +72,9 @@ class ShopByPurposeWidget extends StatelessWidget {
                       children: [
                         AutoTranslateText(
                           'Shop By Purpose',
-                          style: TextStyle(
-                            fontFamily: 'Baloo 2',
-                            fontWeight: FontWeight.w700,
-                            fontSize: 22,
-                            color: "#68171E".toColor(),
-                          ),
+                          style: MyTextTheme.largeBCB
+                              .merge(AppTypography.h2)
+                              .copyWith(color: "#68171E".toColor()),
                         ),
                         Spacing.h(4),
                         AutoTranslateText(
@@ -162,7 +162,7 @@ class ShopByPurposeWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         // Navigate to product list with purpose filter
-        Get.toNamed(
+        UserMainController.pushInCurrentTab(
           AppRoutes.productList,
           arguments: {'purpose': purpose['title']},
         );

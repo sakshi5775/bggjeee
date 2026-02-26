@@ -32,7 +32,7 @@ class EarnPunyaTabWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AutoTranslateText(
-                  "Thank You For Visiting AstroBharat E-Mandir",
+                  "Thank You For Visiting AstroBharat Digital Mandir",
                   style: AppTypography.h3.copyWith(fontSize: 14),
                 ),
                 const SizedBox(height: 4),

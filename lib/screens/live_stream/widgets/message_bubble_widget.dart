@@ -150,12 +150,16 @@ class MessageBubbleWidget extends StatelessWidget {
                             shape: BoxShape.circle,
                           ),
                         ),
-                        AutoTranslateText(
-                          message.senderName,
-                          style: MyTextTheme.smallBCB.copyWith(
-                            color: senderColor,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.3,
+                        Flexible(
+                          child: AutoTranslateText(
+                            message.senderName,
+                            style: MyTextTheme.smallBCB.copyWith(
+                              color: senderColor,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.3,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
@@ -171,8 +175,6 @@ class MessageBubbleWidget extends StatelessWidget {
                             letterSpacing: 0.2,
                           )
                           .merge(AppTypography.body1),
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
                     ),
                     Spacing.h(4),
                     // Timestamp
@@ -192,208 +194,218 @@ class MessageBubbleWidget extends StatelessWidget {
     } else if (message.messageType == 'REACTION') {
       return Container(
         margin: EdgeInsets.only(bottom: 6.h),
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                const Color(0xFFF38B3B).withValues(alpha: 0.95),
-                const Color(0xFFDD2914).withValues(alpha: 0.95),
-                const Color(0xFFF38B3B).withValues(alpha: 0.9),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(20.r),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.3),
-              width: 1.5,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFFF38B3B).withValues(alpha: 0.5),
-                blurRadius: 15,
-                spreadRadius: 2,
-                offset: const Offset(0, 4),
-              ),
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.3),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Reaction icon with background
-              Container(
-                padding: EdgeInsets.all(6.w),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: AutoTranslateText(
-                  message.reactionType ?? '✨',
-                  style: AppTypography.h1,
-                ),
-              ),
-              Spacing.w(12),
-              // Sender name and timestamp
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  AutoTranslateText(
-                    message.senderName,
-                    style: MyTextTheme.smallBCB
-                        .copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          shadows: [
-                            Shadow(
-                              color: Colors.black.withValues(alpha: 0.3),
-                              blurRadius: 4,
-                            ),
-                          ],
-                        )
-                        .merge(AppTypography.body1),
-                  ),
-                  Spacing.h(2),
-                  AutoTranslateText(
-                    _formatTime(message.sentAt),
-                    style: MyTextTheme.smallBCN
-                        .copyWith(color: Colors.white.withValues(alpha: 0.7))
-                        .merge(AppTypography.label),
-                  ),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  const Color(0xFFF38B3B).withValues(alpha: 0.95),
+                  const Color(0xFFDD2914).withValues(alpha: 0.95),
+                  const Color(0xFFF38B3B).withValues(alpha: 0.9),
                 ],
               ),
-            ],
+              borderRadius: BorderRadius.circular(20.r),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.3),
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFF38B3B).withValues(alpha: 0.5),
+                  blurRadius: 15,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 4),
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Reaction icon with background
+                Container(
+                  padding: EdgeInsets.all(6.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: AutoTranslateText(
+                    message.reactionType ?? '✨',
+                    style: AppTypography.h1,
+                  ),
+                ),
+                Spacing.w(12),
+                // Sender name and timestamp
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AutoTranslateText(
+                        message.senderName,
+                        style: MyTextTheme.smallBCB
+                            .copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              shadows: [
+                                Shadow(
+                                  color: Colors.black.withValues(alpha: 0.3),
+                                  blurRadius: 4,
+                                ),
+                              ],
+                            )
+                            .merge(AppTypography.body1),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Spacing.h(2),
+                      AutoTranslateText(
+                        _formatTime(message.sentAt),
+                        style: MyTextTheme.smallBCN
+                            .copyWith(
+                              color: Colors.white.withValues(alpha: 0.7),
+                            )
+                            .merge(AppTypography.label),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );
     } else if (message.messageType == 'GIFT') {
       return Container(
         margin: EdgeInsets.only(bottom: 6.h),
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                const Color(0xFFFFD700).withValues(alpha: 0.95),
-                const Color(0xFFFFA500).withValues(alpha: 0.95),
-                const Color(0xFFFFD700).withValues(alpha: 0.9),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(20.r),
-            border: Border.all(
-              color: const Color(0xFFFFD700).withValues(alpha: 0.8),
-              width: 2,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFFFFD700).withValues(alpha: 0.6),
-                blurRadius: 20,
-                spreadRadius: 3,
-                offset: const Offset(0, 4),
-              ),
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.3),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Gift icon with sparkle effect
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(8.w),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.25),
-                      borderRadius: BorderRadius.circular(14.r),
-                    ),
-                    child: AutoTranslateText(
-                      message.reactionType ?? '🎁',
-                      style: AppTypography.h1,
-                    ),
-                  ),
-                  // Sparkle effect
-                  Positioned(
-                    top: -2,
-                    right: -2,
-                    child: Transform.rotate(
-                      angle: math.pi / 4,
-                      child: Icon(
-                        Icons.star,
-                        size: 12.w,
-                        color: Colors.white.withValues(alpha: 0.8),
-                      ),
-                    ),
-                  ),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  const Color(0xFFFFD700).withValues(alpha: 0.95),
+                  const Color(0xFFFFA500).withValues(alpha: 0.95),
+                  const Color(0xFFFFD700).withValues(alpha: 0.9),
                 ],
               ),
-              Spacing.w(12),
-              // Gift info
-              Flexible(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+              borderRadius: BorderRadius.circular(20.r),
+              border: Border.all(
+                color: const Color(0xFFFFD700).withValues(alpha: 0.8),
+                width: 2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFFFD700).withValues(alpha: 0.6),
+                  blurRadius: 20,
+                  spreadRadius: 3,
+                  offset: const Offset(0, 4),
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Gift icon with sparkle effect
+                Stack(
+                  alignment: Alignment.center,
                   children: [
-                    RichText(
-                      text: TextSpan(
-                        style: MyTextTheme.smallBCN
-                            .copyWith(color: const Color(0xFF3E2723))
-                            .merge(AppTypography.body1),
-                        children: [
-                          TextSpan(
-                            text: message.senderName,
-                            style: MyTextTheme.smallBCB.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFF3E2723),
-                            ),
-                          ),
-                          TextSpan(
-                            text: ' sent ',
-                            style: MyTextTheme.smallBCN.copyWith(
-                              color: const Color(
-                                0xFF3E2723,
-                              ).withValues(alpha: 0.8),
-                            ),
-                          ),
-                          TextSpan(
-                            text: message.content ?? 'a gift',
-                            style: MyTextTheme.smallBCB.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFF3E2723),
-                            ),
-                          ),
-                        ],
+                    Container(
+                      padding: EdgeInsets.all(8.w),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.25),
+                        borderRadius: BorderRadius.circular(14.r),
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                      child: AutoTranslateText(
+                        message.reactionType ?? '🎁',
+                        style: AppTypography.h1,
+                      ),
                     ),
-                    Spacing.h(4),
-                    AutoTranslateText(
-                      _formatTime(message.sentAt),
-                      style: MyTextTheme.smallBCN
-                          .copyWith(
-                            color: const Color(
-                              0xFF3E2723,
-                            ).withValues(alpha: 0.6),
-                          )
-                          .merge(AppTypography.label),
+                    // Sparkle effect
+                    Positioned(
+                      top: -2,
+                      right: -2,
+                      child: Transform.rotate(
+                        angle: math.pi / 4,
+                        child: Icon(
+                          Icons.star,
+                          size: 12.w,
+                          color: Colors.white.withValues(alpha: 0.8),
+                        ),
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ],
+                Spacing.w(12),
+                // Gift info
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          style: MyTextTheme.smallBCN
+                              .copyWith(color: const Color(0xFF3E2723))
+                              .merge(AppTypography.body1),
+                          children: [
+                            TextSpan(
+                              text: message.senderName,
+                              style: MyTextTheme.smallBCB.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF3E2723),
+                              ),
+                            ),
+                            TextSpan(
+                              text: ' sent ',
+                              style: MyTextTheme.smallBCN.copyWith(
+                                color: const Color(
+                                  0xFF3E2723,
+                                ).withValues(alpha: 0.8),
+                              ),
+                            ),
+                            TextSpan(
+                              text: message.content ?? 'a gift',
+                              style: MyTextTheme.smallBCB.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF3E2723),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Spacing.h(4),
+                      AutoTranslateText(
+                        _formatTime(message.sentAt),
+                        style: MyTextTheme.smallBCN
+                            .copyWith(
+                              color: const Color(
+                                0xFF3E2723,
+                              ).withValues(alpha: 0.6),
+                            )
+                            .merge(AppTypography.label),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );

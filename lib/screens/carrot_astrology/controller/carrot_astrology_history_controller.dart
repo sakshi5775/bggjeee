@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/screens/carrot_astrology/service/carrot_astrol
 import 'package:astrobharataiuser/utils/error_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class CarrotAstrologyHistoryController extends GetxController {
   final CarrotAstrologyService _carrotAstrologyService = CarrotAstrologyService();
@@ -145,7 +146,7 @@ class CarrotAstrologyHistoryController extends GetxController {
       
       Get.back(); // Close loading dialog
       
-      Get.toNamed(
+      UserMainController.pushInCurrentTab(
         AppRoutes.carrotAstrologyResults,
         arguments: {'result': reading},
       );

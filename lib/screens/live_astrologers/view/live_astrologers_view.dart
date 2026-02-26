@@ -13,6 +13,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/widgets/common_tab_slider.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:intl/intl.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 
@@ -41,7 +42,7 @@ class LiveAstrologersView extends StatelessWidget {
               customActions: [
                 GestureDetector(
                   onTap: () {
-                    Get.toNamed(AppRoutes.streamReports);
+                    UserMainController.pushInCurrentTab(AppRoutes.streamReports);
                   },
                   child: Padding(
                     padding: EdgeInsets.only(right: 8.w),
@@ -90,14 +91,17 @@ class LiveAstrologersView extends StatelessWidget {
       }
 
       if (controller.liveStreams.isEmpty) {
-        return Center(
-          child: AutoTranslateText(
-            'No live astrologers at the moment',
-            style: MyTextTheme.mediumBCN.copyWith(
-              color: const Color(0xFF5F2221),
+        if (controller.allAstrologers.isEmpty) {
+          return Center(
+            child: AutoTranslateText(
+              'No astrologers at the moment',
+              style: MyTextTheme.mediumBCN.copyWith(
+                color: const Color(0xFF5F2221),
+              ),
             ),
-          ),
-        );
+          );
+        }
+        return _buildOfflineAstrologersGrid(controller);
       }
 
       return RefreshIndicator(
@@ -109,7 +113,7 @@ class LiveAstrologersView extends StatelessWidget {
             crossAxisCount: 3,
             crossAxisSpacing: 12.w,
             mainAxisSpacing: 16.h,
-            childAspectRatio: 0.75,
+            childAspectRatio: 0.68,
           ),
           itemCount: controller.liveStreams.length,
           itemBuilder: (context, index) {
@@ -248,6 +252,121 @@ class LiveAstrologersView extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildOfflineAstrologersGrid(LiveAstrologersController controller) {
+    return RefreshIndicator(
+      onRefresh: controller.refresh,
+      color: const Color(0xFF5F2221),
+      child: GridView.builder(
+        padding: EdgeInsets.all(16.w),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          crossAxisSpacing: 12.w,
+          mainAxisSpacing: 16.h,
+          childAspectRatio: 0.68,
+        ),
+        itemCount: controller.allAstrologers.length,
+        itemBuilder: (context, index) {
+          final astrologer = controller.allAstrologers[index];
+          return GestureDetector(
+            onTap: () {
+              UserMainController.pushInCurrentTab('/astrologer-detail', arguments: astrologer);
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12.r),
+                        child: astrologer.profilePicture != null
+                            ? NetworkImageWithLoader(
+                                url: astrologer.profilePicture!,
+                                width: 80.w,
+                                height: 80.w,
+                                isCircular: false,
+                              )
+                            : Container(
+                                width: 80.w,
+                                height: 80.w,
+                                color: Colors.grey[300],
+                                child: Icon(
+                                  Icons.person,
+                                  size: 40.w,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 6.w,
+                            vertical: 2.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(4.r),
+                              bottomLeft: Radius.circular(12.r),
+                            ),
+                          ),
+                          child: AutoTranslateText(
+                            'OFFLINE',
+                            style: MyTextTheme.smallBCB
+                                .copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 8.sp,
+                                )
+                                .merge(AppTypography.label),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Spacing.h(8),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4.w),
+                    child: AutoTranslateText(
+                      astrologer.displayName.isNotEmpty
+                          ? astrologer.displayName
+                          : astrologer.name,
+                      translate: false,
+                      style: MyTextTheme.smallBCB
+                          .copyWith(
+                            color: const Color(0xFF68171E),
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12.sp,
+                          )
+                          .merge(AppTypography.h3),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }

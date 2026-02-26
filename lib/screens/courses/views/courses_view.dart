@@ -40,7 +40,7 @@ class CoursesView extends GetView<CoursesController> {
         if (didPop) {
           try {
             final mainController = Get.find<UserMainController>();
-            mainController.selectedIndex.value = 0;
+            mainController.currentIndex.value = 0;
           } catch (e) {
             // Controller not found, ignore
           }
@@ -68,7 +68,7 @@ class CoursesView extends GetView<CoursesController> {
                   customActions: [
                     IconButton(
                       onPressed: () {
-                        Get.toNamed(AppRoutes.myLearning);
+                        UserMainController.pushInCurrentTab(AppRoutes.myLearning);
                       },
                       icon: Icon(
                         Icons.school,
@@ -82,7 +82,7 @@ class CoursesView extends GetView<CoursesController> {
                     SizedBox(width: 8.w),
                     IconButton(
                       onPressed: () {
-                        Get.toNamed(AppRoutes.liveWebinars);
+                        UserMainController.pushInCurrentTab(AppRoutes.liveWebinars);
                       },
                       icon: Icon(
                         Icons.video_library,
@@ -110,7 +110,7 @@ class CoursesView extends GetView<CoursesController> {
                             selectedIndex: controller.selectedCategory.value,
                             onTabSelected: (index) {
                               if (index == 1) {
-                                Get.toNamed(AppRoutes.liveWebinars);
+                                UserMainController.pushInCurrentTab(AppRoutes.liveWebinars);
                               } else {
                                 controller.selectedCategory.value = index;
                               }
@@ -164,7 +164,7 @@ class CoursesView extends GetView<CoursesController> {
 
       return GestureDetector(
         onTap: () {
-          Get.toNamed(AppRoutes.liveWebinars);
+          UserMainController.pushInCurrentTab(AppRoutes.liveWebinars);
         },
         child: Container(
           margin: EdgeInsets.all(16.w),
@@ -403,7 +403,7 @@ class CoursesView extends GetView<CoursesController> {
                 return PremiumCourseCard(
                   course: course,
                   onTap: () {
-                    Get.toNamed(AppRoutes.courseDetail, arguments: course.id);
+                    UserMainController.pushInCurrentTab(AppRoutes.courseDetail, arguments: course.id);
                   },
                 );
               },
@@ -413,7 +413,7 @@ class CoursesView extends GetView<CoursesController> {
           // 7. Trusted Education Section
           const TrustedEducationSection(),
           const QuickConnectSection(),
-          SizedBox(height: 20.h),
+          SizedBox(height: hideHeader ? 80.h : 20.h),
         ],
       ),
     );

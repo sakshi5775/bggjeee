@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class CompatibilityReportWidget extends StatelessWidget {
   final Map<String, dynamic> data;
@@ -26,6 +27,7 @@ class CompatibilityReportWidget extends StatelessWidget {
   final bool showNavtaraOnly;
   final bool showNavtaraSection;
   final Widget? navtaraWidget;
+  final String matchLabel;
 
   const CompatibilityReportWidget({
     super.key,
@@ -41,6 +43,7 @@ class CompatibilityReportWidget extends StatelessWidget {
     this.showNavtaraOnly = false,
     this.showNavtaraSection = true,
     this.navtaraWidget,
+    this.matchLabel = 'Gun Milan',
   });
 
   @override
@@ -117,6 +120,7 @@ class CompatibilityReportWidget extends StatelessWidget {
               matchStatus,
               showSeparateTotal,
               rawTotal,
+              matchLabel,
             ),
           ),
           Spacing.h(20),
@@ -294,7 +298,7 @@ class CompatibilityReportWidget extends StatelessWidget {
                 TextButton(
                   onPressed: () {
                     // Navigate to Girl Full Kundli
-                    Get.toNamed(
+                    UserMainController.pushInCurrentTab(
                       AppRoutes.matchMakingFullKundli,
                       arguments: {
                         'isBoy': false,
@@ -406,7 +410,7 @@ class CompatibilityReportWidget extends StatelessWidget {
                 TextButton(
                   onPressed: () {
                     // Navigate to Boy Full Kundli
-                    Get.toNamed(
+                    UserMainController.pushInCurrentTab(
                       AppRoutes.matchMakingFullKundli,
                       arguments: {
                         'isBoy': true,
@@ -475,6 +479,7 @@ class CompatibilityReportWidget extends StatelessWidget {
     String matchStatus,
     bool showSeparateTotal,
     num? rawTotal,
+    String matchLabel,
   ) {
     final displayScore = score.toStringAsFixed(0);
     final displayTotal = rawTotal?.toString() ?? totalScore.toStringAsFixed(0);
@@ -521,7 +526,7 @@ class CompatibilityReportWidget extends StatelessWidget {
                   ),
                   Spacing.h(4),
                   AutoTranslateText(
-                    'Gun Milan',
+                    matchLabel,
                     style: MyTextTheme.smallBCN.copyWith(
                       color: "#6F221E".toColor().withValues(alpha: 0.7),
                     ),
@@ -1145,7 +1150,7 @@ class CompatibilityReportWidget extends StatelessWidget {
             child: OutlinedButton(
               onPressed: () {
                 // Navigate to remedies page
-                Get.toNamed(
+                UserMainController.pushInCurrentTab(
                   AppRoutes.dosh,
                   arguments: {
                     'source': 'matchMakingRemedies',
@@ -1228,7 +1233,7 @@ class CompatibilityReportWidget extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () {
                 // Navigate to astrologers list for marriage expert chat
-                Get.toNamed(
+                UserMainController.pushInCurrentTab(
                   AppRoutes.allAstrologers,
                   arguments: {'source': 'matchMakingChat'},
                 );

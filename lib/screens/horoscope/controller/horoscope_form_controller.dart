@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/screens/horoscope/controller/horoscope_main_controller.dart';
 import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/user_profile_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
@@ -9,6 +10,7 @@ import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -43,12 +45,21 @@ class HoroscopeFormController extends BaseController {
   final selectedTime = TimeOfDay.now().obs;
   final selectedLocation = 'Fetching Location...'.obs;
 
+  // Category originating from HoroscopeTabWidget
+  String? originatingCategory;
+
   // Flag to track if controller is disposed
   bool _isDisposed = false;
 
   @override
   void onInit() {
     super.onInit();
+    final args = Get.arguments as Map<String, dynamic>?;
+    if (args != null && args.containsKey('category')) {
+      originatingCategory = args['category'] as String?;
+    } else {
+      originatingCategory = Get.parameters['category'];
+    }
     _initializeForm();
     _loadUserProfileData();
   }
@@ -570,9 +581,9 @@ class HoroscopeFormController extends BaseController {
       final time24 =
           TimePickerHelper.parseTime12To24(timeController.text) ??
           timeController.text;
-      final latitude = double.parse(latitudeController.text);
-      final longitude = double.parse(longitudeController.text);
-      final timezone = double.parse(timezoneController.text);
+      final latitude = double.tryParse(latitudeController.text) ?? 0.0;
+      final longitude = double.tryParse(longitudeController.text) ?? 0.0;
+      final timezone = double.tryParse(timezoneController.text) ?? 5.5;
 
       final formData = {
         'date': dateController.text,
@@ -608,37 +619,117 @@ class HoroscopeFormController extends BaseController {
       }
 
       if (detectedSign != null) {
-        // Navigate directly to result
-        Get.toNamed(
-          AppRoutes.horoscopeMain,
-          arguments: {'selectedSign': detectedSign, 'formData': formData},
-        );
+        if (originatingCategory != null) {
+          // If launched from tab widget, find the main controller and set state directly
+          try {
+            final mainController = Get.find<HoroscopeMainController>(
+              tag: 'horoscope_tab',
+            );
+            mainController.selectedCategory.value = originatingCategory;
+            mainController.selectedZodiac.value = detectedSign;
+            mainController.selectedSign.value = detectedSign;
+            mainController.showEmbeddedForm.value = false;
+            mainController.isManualSignSelection.value = false;
+
+            mainController.dateController.text = dateController.text;
+            mainController.timeController.text = time24;
+            mainController.latitude = latitude;
+            mainController.longitude = longitude;
+            mainController.timezone = timezone;
+            mainController.placeController.text = selectedLocation.value;
+
+            switch (originatingCategory) {
+              case 'Daily':
+                mainController.fetchDailyPrediction();
+                break;
+              case 'Weekly':
+              case 'Weekly Love':
+                mainController.fetchWeeklyPrediction();
+                break;
+              case 'Monthly':
+                mainController.fetchMonthlyPrediction();
+                break;
+              case 'Yearly':
+                mainController.fetchYearlyPrediction();
+                break;
+            }
+          } catch (e) {
+            debugPrint('Could not find HoroscopeMainController: $e');
+          }
+        } else {
+          // Navigate directly to result
+          UserMainController.pushInCurrentTab(
+            AppRoutes.horoscopeMain,
+            arguments: {'selectedSign': detectedSign, 'formData': formData},
+          );
+        }
       } else {
-        // Fallback to manual selection
-        Get.toNamed(
-          AppRoutes.horoscopeSignSelection,
-          arguments: {'formData': formData},
-        );
+        if (originatingCategory != null) {
+          try {
+            final mainController = Get.find<HoroscopeMainController>(
+              tag: 'horoscope_tab',
+            );
+            mainController.selectedCategory.value = originatingCategory;
+            mainController.showEmbeddedForm.value = false;
+
+            mainController.dateController.text = dateController.text;
+            mainController.timeController.text = time24;
+            mainController.latitude = latitude;
+            mainController.longitude = longitude;
+            mainController.timezone = timezone;
+            mainController.placeController.text = selectedLocation.value;
+
+            // Since sign wasn't detected, Zodiac grid will be shown natively as step 3
+          } catch (e) {}
+        } else {
+          // Fallback to manual selection
+          UserMainController.pushInCurrentTab(
+            AppRoutes.horoscopeSignSelection,
+            arguments: {'formData': formData},
+          );
+        }
       }
     } catch (e) {
       debugPrint('Error in horoscope submit: $e');
-      // Fallback to manual selection on error
-      Get.toNamed(
-        AppRoutes.horoscopeSignSelection,
-        arguments: {
-          'formData': {
-            'date': dateController.text,
-            'time':
-                TimePickerHelper.parseTime12To24(timeController.text) ??
-                timeController.text,
-            'latitude': double.parse(latitudeController.text),
-            'longitude': double.parse(longitudeController.text),
-            'timezone': double.parse(timezoneController.text),
-            'place': selectedLocation.value,
-            'language': selectedLanguage.value,
+      if (originatingCategory != null) {
+        try {
+          final mainController = Get.find<HoroscopeMainController>(
+            tag: 'horoscope_tab',
+          );
+          mainController.selectedCategory.value = originatingCategory;
+          mainController.showEmbeddedForm.value = false;
+
+          mainController.dateController.text = dateController.text;
+          mainController.timeController.text =
+              TimePickerHelper.parseTime12To24(timeController.text) ??
+              timeController.text;
+          mainController.latitude =
+              double.tryParse(latitudeController.text) ?? 0.0;
+          mainController.longitude =
+              double.tryParse(longitudeController.text) ?? 0.0;
+          mainController.timezone =
+              double.tryParse(timezoneController.text) ?? 5.5;
+          mainController.placeController.text = selectedLocation.value;
+        } catch (err) {}
+      } else {
+        // Fallback to manual selection on error
+        UserMainController.pushInCurrentTab(
+          AppRoutes.horoscopeSignSelection,
+          arguments: {
+            'formData': {
+              'date': dateController.text,
+              'time':
+                  TimePickerHelper.parseTime12To24(timeController.text) ??
+                  timeController.text,
+              'latitude': double.tryParse(latitudeController.text) ?? 0.0,
+              'longitude': double.tryParse(longitudeController.text) ?? 0.0,
+              'timezone': double.tryParse(timezoneController.text) ?? 5.5,
+              'place': selectedLocation.value,
+              'language': selectedLanguage.value,
+            },
           },
-        },
-      );
+        );
+      }
     } finally {
       isLoading.value = false;
     }

@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 
@@ -12,11 +13,11 @@ class PunyaMudraController extends BaseController {
   }
 
   void navigateToBhaktiChakra() {
-    Get.toNamed(AppRoutes.bhaktiChakra);
+    UserMainController.pushInCurrentTab(AppRoutes.bhaktiChakra);
   }
 
   void navigateToPassbook() {
-    Get.toNamed(AppRoutes.passbook);
+    UserMainController.pushInCurrentTab(AppRoutes.passbook);
   }
 
   Rxn<EMandirHomeDataModel> punyaWallet = Rxn<EMandirHomeDataModel>();

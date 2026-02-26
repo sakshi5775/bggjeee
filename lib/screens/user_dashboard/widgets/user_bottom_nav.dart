@@ -5,17 +5,16 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
+import 'package:astrobharataiuser/core/controllers/global_nav_controller.dart';
 
 class UserBottomNav extends StatelessWidget {
-  final Function(int) onTap;
-  const UserBottomNav({super.key, required this.onTap});
+  const UserBottomNav({super.key});
 
   static final LinearGradient _inactiveGradient = AppColors.orangeGradient;
 
   @override
   Widget build(BuildContext context) {
-    final c = Get.find<UserMainController>();
+    final c = Get.find<GlobalNavController>();
     return Obx(() {
       final items = c.navItems;
       return Container(
@@ -29,21 +28,19 @@ class UserBottomNav extends StatelessWidget {
             ),
           ],
         ),
-        child: SafeArea(
-          child: Container(
-            height: 70.h,
-            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(
-                items.length,
-                (index) => _buildNavItem(
-                  icon: items[index].icon,
-                  label: items[index].label,
-                  index: index,
-                  selectedIndex: c.selectedIndex.value,
-                  onTap: () => onTap(index),
-                ),
+        child: Container(
+          height: 70.h,
+          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: List.generate(
+              items.length,
+              (index) => _buildNavItem(
+                icon: items[index].icon,
+                label: items[index].label,
+                index: index,
+                selectedIndex: c.selectedIndexRx.value,
+                onTap: () => c.onTabClick(index),
               ),
             ),
           ),

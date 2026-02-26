@@ -43,7 +43,7 @@ class InviteLovedOnesCardWidget extends StatelessWidget {
 
           /// TITLE
           AutoTranslateText(
-            "Connect Your Loved Ones With Astro E-Mandir",
+            "Connect Your Loved Ones With Astro Digital Mandir",
             style: AppTypography.h2.copyWith(
               fontSize: 18,
               color: Color(0xFF3E2723),

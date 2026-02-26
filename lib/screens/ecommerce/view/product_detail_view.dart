@@ -1,4 +1,4 @@
-﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/product_details_widgets/product_main_details.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/product_details_widgets/product_description_widget.dart';
@@ -16,6 +16,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:intl/intl.dart';
 
 import '../widgets/product_details_widgets/image_carousel.dart';
@@ -491,7 +492,7 @@ class ProductDetailView extends StatelessWidget {
               arguments: args,
             );
           } else {
-            Get.toNamed(AppRoutes.productDetail, arguments: args);
+            UserMainController.pushInCurrentTab(AppRoutes.productDetail, arguments: args);
           }
         } else if (product.slug != null && product.slug!.isNotEmpty) {
           final args = {
@@ -511,7 +512,7 @@ class ProductDetailView extends StatelessWidget {
               arguments: args,
             );
           } else {
-            Get.toNamed(AppRoutes.productDetail, arguments: args);
+            UserMainController.pushInCurrentTab(AppRoutes.productDetail, arguments: args);
           }
         }
       },

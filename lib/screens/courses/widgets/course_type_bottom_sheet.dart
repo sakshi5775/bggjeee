@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 // ══════════════════════════════════════════════════
 // Entry point — triggers fetch then opens sheet
@@ -484,7 +485,7 @@ class _CourseCard extends StatelessWidget {
                       onTap: () {
                         Get.back();
                         // TODO: replace with navigation when courseDetail route is ready
-                        // Get.toNamed(AppRoutes.courseDetail, arguments: course.id);
+                        // UserMainController.pushInCurrentTab(AppRoutes.courseDetail, arguments: course.id);
                         Get.snackbar(
                           'Coming Soon',
                           'Enrollment for "${course.title}" will be available shortly.',

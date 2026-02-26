@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 class UserMainBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<UserMainController>(() => UserMainController());
+    Get.put<UserMainController>(UserMainController(), permanent: true);
     if (!Get.isRegistered<UserDashboardController>()) {
       Get.lazyPut<UserDashboardController>(
         () => UserDashboardController(),

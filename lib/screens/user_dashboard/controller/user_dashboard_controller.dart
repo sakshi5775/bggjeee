@@ -30,6 +30,7 @@ import 'package:astrobharataiuser/screens/user_dashboard/service/youtube_service
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:video_player/video_player.dart';
@@ -566,7 +567,11 @@ class UserDashboardController extends BaseController
         );
         if (response != null) {
           liveStreams.value = response.streams
-              .where((stream) => stream.status == 'LIVE')
+              .where(
+                (stream) =>
+                    stream.status.toUpperCase() != 'COMPLETED' &&
+                    stream.status.toUpperCase() != 'ENDED',
+              )
               .toList();
           await _loadAstrologerDetails(liveStreams, useCache: useCache);
         }
@@ -603,7 +608,7 @@ class UserDashboardController extends BaseController
 
   void _startLiveStreamPolling() {
     _liveStreamPollTimer?.cancel();
-    _liveStreamPollTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+    _liveStreamPollTimer = Timer.periodic(const Duration(seconds: 10), (_) {
       // Poll without disrupting the UI with loading dialogs, only update data in background
       _pollLiveStreams();
     });
@@ -617,7 +622,11 @@ class UserDashboardController extends BaseController
       );
       if (response != null) {
         liveStreams.value = response.streams
-            .where((stream) => stream.status == 'LIVE')
+            .where(
+              (stream) =>
+                  stream.status.toUpperCase() != 'COMPLETED' &&
+                  stream.status.toUpperCase() != 'ENDED',
+            )
             .toList();
         await _loadAstrologerDetails(liveStreams, useCache: false);
       }
@@ -1247,7 +1256,7 @@ class UserDashboardController extends BaseController
 
     if (route != null) {
       debugPrint('Dashboard Search: Navigating to: $route');
-      Get.toNamed(route);
+      UserMainController.pushInCurrentTab(route);
       if (fromHeaderSearch) {
         headerSearchController.clear();
         isHeaderSearchOpen.value = false;

@@ -1,4 +1,4 @@
-﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
@@ -15,6 +15,7 @@ import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 
 import '../../../core/routes/app_routes.dart';
@@ -110,7 +111,7 @@ class _ConsultationHistoryViewState extends State<ConsultationHistoryView>
 
               customActions: [
                 GestureDetector(
-                  onTap: () => Get.toNamed(AppRoutes.wallet),
+                  onTap: () => UserMainController.pushInCurrentTab(AppRoutes.wallet),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

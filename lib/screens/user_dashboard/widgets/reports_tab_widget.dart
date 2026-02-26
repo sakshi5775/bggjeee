@@ -1,4 +1,4 @@
-﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/banner_model.dart';
 import 'package:astrobharataiuser/data_model/report_model.dart';
@@ -12,6 +12,7 @@ import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 /// Reports tab: grid of report types with live pricing.
 class ReportsTabWidget extends StatefulWidget {
@@ -286,13 +287,13 @@ class _ReportsTabWidgetState extends State<ReportsTabWidget> {
 
     if (report.reportType == 'matching_pdf') {
       // Navigate to Match-making form with a special flag
-      Get.toNamed(
+      UserMainController.pushInCurrentTab(
         AppRoutes.matchMakingForm,
         arguments: {'generatePdf': true, 'reportKey': report.key},
       );
     } else {
       // Navigate to Kundli form with a special flag
-      Get.toNamed(
+      UserMainController.pushInCurrentTab(
         AppRoutes.kundliForm,
         arguments: {
           'generatePdf': true,

@@ -1,5 +1,6 @@
 ﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/services/share_service.dart';
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
@@ -17,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class PersonaDetailView extends StatelessWidget {
   final String personaId;
@@ -166,7 +168,7 @@ class PersonaDetailView extends StatelessWidget {
         // History icon
         GestureDetector(
           onTap: () {
-            Get.toNamed(
+            UserMainController.pushInCurrentTab(
               AppRoutes.personaVoiceHistory,
               arguments: {'personaId': persona.id, 'persona': persona},
             );
@@ -192,7 +194,7 @@ class PersonaDetailView extends StatelessWidget {
         // Wallet
         GestureDetector(
           onTap: () {
-            Get.toNamed(AppRoutes.wallet);
+            UserMainController.pushInCurrentTab(AppRoutes.wallet);
           },
           child: Container(
             width: 40.w,
@@ -1508,7 +1510,7 @@ class PersonaDetailView extends StatelessWidget {
                           estimatedMinutes: 15,
                         );
                     if (canProceed) {
-                      final result = await Get.toNamed(
+                      final result = await UserMainController.pushInCurrentTab(
                         AppRoutes.personaVoiceCall,
                         arguments: persona,
                       );
@@ -1619,7 +1621,7 @@ class PersonaDetailView extends StatelessWidget {
     );
     if (profileResult == null) return;
 
-    final result = await Get.toNamed(
+    final result = await UserMainController.pushInCurrentTab(
       AppRoutes.personaChat,
       arguments: {
         'persona': persona,

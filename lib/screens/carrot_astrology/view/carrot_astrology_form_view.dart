@@ -12,6 +12,7 @@ import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class CarrotAstrologyFormView extends StatefulWidget {
   const CarrotAstrologyFormView({super.key});
@@ -233,7 +234,7 @@ class _CarrotAstrologyFormViewState extends State<CarrotAstrologyFormView> {
           ),
           child: TextButton(
             onPressed: () {
-              Get.toNamed(AppRoutes.carrotAstrologySignSelection);
+              UserMainController.pushInCurrentTab(AppRoutes.carrotAstrologySignSelection);
             },
             style: TextButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 16.h),

@@ -71,9 +71,8 @@ class KundliResultView extends BasePage<KundliResultController> {
     const orangeLight = Color(0xFFFF8A3D);
 
     return Container(
-      height: 56.h,
       color: Colors.transparent,
-      padding: EdgeInsets.symmetric(vertical: 2.h),
+      padding: EdgeInsets.symmetric(vertical: 8.h),
       child: Obx(() {
         return Row(
           children: [

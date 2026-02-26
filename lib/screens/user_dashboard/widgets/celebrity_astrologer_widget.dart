@@ -1,4 +1,4 @@
-﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
@@ -13,6 +13,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 import '../../../app_manager/svg_assets.dart' show SvgAssets;
 
@@ -87,7 +88,7 @@ class CelebrityAstrologerWidget extends BasePage<UserDashboardController> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Get.toNamed(
+                    UserMainController.pushInCurrentTab(
                       AppRoutes.allAstrologers,
                       arguments: {'category': 'CELEBRITY_ASTROLOGER'},
                     );
@@ -161,7 +162,7 @@ class CelebrityAstrologerWidget extends BasePage<UserDashboardController> {
 
     return GestureDetector(
       onTap: () {
-        Get.toNamed(
+        UserMainController.pushInCurrentTab(
           AppRoutes.astrologerDetail,
           arguments: {'astrologer': astrologer},
         );

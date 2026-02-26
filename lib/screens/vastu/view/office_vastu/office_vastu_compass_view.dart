@@ -19,6 +19,7 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class OfficeVastuCompassView extends StatefulWidget {
   const OfficeVastuCompassView({Key? key}) : super(key: key);
@@ -137,7 +138,7 @@ class _OfficeVastuCompassViewState extends State<OfficeVastuCompassView>
                     IconButton(
                       onPressed: () {
                         final args = {'roomConfig': roomConfig};
-                        Get.toNamed(AppRoutes.arVastu, arguments: args);
+                        UserMainController.pushInCurrentTab(AppRoutes.arVastu, arguments: args);
                       },
                       icon: Icon(
                         Icons.camera_alt,
@@ -317,7 +318,7 @@ class _OfficeVastuCompassViewState extends State<OfficeVastuCompassView>
           // SizedBox(
           //   width: double.infinity,
           //   child: ElevatedButton.icon(
-          //     onPressed: () => Get.toNamed(
+          //     onPressed: () => UserMainController.pushInCurrentTab(
           //       AppRoutes.arVastu,
           //       arguments: {'roomConfig': roomConfig},
           //     ),

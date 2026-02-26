@@ -23,6 +23,7 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class TarotReadingView extends BasePage<TarotController> {
   const TarotReadingView({super.key});
@@ -138,7 +139,7 @@ class TarotReadingView extends BasePage<TarotController> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: GestureDetector(
-        onTap: () => Get.toNamed(AppRoutes.astrologyServices),
+        onTap: () => UserMainController.pushInCurrentTab(AppRoutes.astrologyServices),
         child: Container(
           padding: EdgeInsets.all(20.w),
           decoration: BoxDecoration(

@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 
@@ -31,6 +32,6 @@ class DevotionalLibraryController extends BaseController {
   }
 
   void navigateToPlayer() {
-    Get.toNamed(AppRoutes.devotionalPlayer);
+    UserMainController.pushInCurrentTab(AppRoutes.devotionalPlayer);
   }
 }

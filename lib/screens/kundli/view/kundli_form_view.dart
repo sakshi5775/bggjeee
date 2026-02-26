@@ -11,6 +11,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class KundliFormView extends BasePage<KundliFormController> {
   const KundliFormView({super.key});
@@ -24,18 +25,524 @@ class KundliFormView extends BasePage<KundliFormController> {
         drawer: UserDashboardView.buildDrawer(context),
         body: Column(
           children: [
-            const CommonHeader(title: 'Generate Kundli'),
+            const CommonHeader(title: 'Kundli'),
+            // Tab Bar
+            _buildTabBar(),
+            // Tab Content
             Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 0.h),
-                child: _buildFormSection(),
-              ),
+              child: Obx(() {
+                if (controller.selectedTabIndex.value == 0) {
+                  return _buildSavedKundliTab();
+                } else {
+                  return SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 0.h,
+                    ),
+                    child: _buildFormSection(),
+                  );
+                }
+              }),
             ),
           ],
         ),
       ),
     );
   }
+
+  // ===== Tab Bar =====
+  Widget _buildTabBar() {
+    return Obx(
+      () => Container(
+        margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(
+            color: AppColors.deepOrange.withValues(alpha: 0.3),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.deepOrange.withValues(alpha: 0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            _buildTabItem('Saved Kundli', 0),
+            _buildTabItem('New Kundli', 1),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTabItem(String title, int index) {
+    final isSelected = controller.selectedTabIndex.value == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => controller.selectedTabIndex.value = index,
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 12.h),
+          decoration: BoxDecoration(
+            gradient: isSelected ? AppColors.orangeGradient : null,
+            borderRadius: BorderRadius.circular(10.r),
+          ),
+          child: Center(
+            child: AutoTranslateText(
+              title,
+              style: MyTextTheme.mediumBCB.copyWith(
+                color: isSelected ? Colors.white : AppColors.textColorMaroon,
+                fontSize: 14.sp,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ===== Saved Kundli Tab =====
+  Widget _buildSavedKundliTab() {
+    return Column(
+      children: [
+        // Search Bar
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(
+                color: AppColors.deepOrange.withValues(alpha: 0.2),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.deepOrange.withValues(alpha: 0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: TextField(
+              onChanged: (v) => controller.searchQuery.value = v,
+              style: MyTextTheme.mediumBCN.copyWith(
+                color: AppColors.textColorMaroon,
+              ),
+              decoration: InputDecoration(
+                isDense: true,
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: 12.h,
+                  horizontal: 14.w,
+                ),
+                hintText: 'Search kundli by name',
+                hintStyle: MyTextTheme.smallBCN.copyWith(
+                  color: AppColors.textSecondary.withValues(alpha: 0.6),
+                  fontSize: 13.sp,
+                ),
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: AppColors.deepOrange,
+                  size: 22.w,
+                ),
+                border: InputBorder.none,
+              ),
+            ),
+          ),
+        ),
+        // List
+        Expanded(
+          child: Obx(() {
+            if (controller.isLoadingSavedKundli.value) {
+              return Center(
+                child: CircularProgressIndicator(color: AppColors.deepOrange),
+              );
+            }
+            final list = controller.filteredKundliList;
+            if (list.isEmpty) {
+              return _buildEmptyState();
+            }
+            return Stack(
+              children: [
+                RefreshIndicator(
+                  color: AppColors.deepOrange,
+                  onRefresh: () => controller.fetchSavedKundliProfiles(),
+                  child: ListView.builder(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 4.h,
+                    ),
+                    itemCount: list.length,
+                    itemBuilder: (context, index) {
+                      return _buildSavedKundliCard(list[index]);
+                    },
+                  ),
+                ),
+                // Loading overlay when opening a saved kundli
+                Obx(() {
+                  if (controller.isOpeningSavedKundli.value) {
+                    return Container(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      child: Center(
+                        child: Container(
+                          padding: EdgeInsets.all(24.w),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.deepOrange.withValues(
+                                  alpha: 0.2,
+                                ),
+                                blurRadius: 20,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CircularProgressIndicator(
+                                color: AppColors.deepOrange,
+                              ),
+                              SizedBox(height: 16.h),
+                              AutoTranslateText(
+                                'Generating Kundli...',
+                                style: MyTextTheme.mediumBCB.copyWith(
+                                  color: AppColors.textColorMaroon,
+                                  fontSize: 14.sp,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                }),
+              ],
+            );
+          }),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.auto_awesome,
+            color: AppColors.deepOrange.withValues(alpha: 0.4),
+            size: 64.w,
+          ),
+          SizedBox(height: 16.h),
+          AutoTranslateText(
+            'No saved kundli found',
+            style: MyTextTheme.mediumBCB.copyWith(
+              color: AppColors.textSecondary,
+              fontSize: 16.sp,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          AutoTranslateText(
+            'Create a new kundli to get started',
+            style: MyTextTheme.smallBCN.copyWith(
+              color: AppColors.textSecondary.withValues(alpha: 0.7),
+              fontSize: 13.sp,
+            ),
+          ),
+          SizedBox(height: 24.h),
+          GestureDetector(
+            onTap: () => controller.selectedTabIndex.value = 1,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+              decoration: BoxDecoration(
+                gradient: AppColors.orangeGradient,
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: AutoTranslateText(
+                'Create New Kundli',
+                style: MyTextTheme.mediumBCB.copyWith(
+                  color: Colors.white,
+                  fontSize: 14.sp,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSavedKundliCard(Map<String, dynamic> profile) {
+    final name = profile['name'] ?? 'Unknown';
+    final dob = profile['dateOfBirth'] ?? '';
+    final birthTime = profile['birthTime'] ?? '';
+    final birthPlace = profile['birthPlace'] ?? '';
+    final firstLetter = name.isNotEmpty ? name[0].toUpperCase() : '?';
+
+    // Format date for display
+    String displayDate = dob;
+    try {
+      if (dob.isNotEmpty) {
+        final parts = dob.split('/');
+        if (parts.length == 3) {
+          final month = int.parse(parts[0]);
+          final day = int.parse(parts[1]);
+          final year = int.parse(parts[2]);
+          displayDate = DateFormat(
+            'dd-MMM-yyyy',
+          ).format(DateTime(year, month, day));
+        }
+      }
+    } catch (e) {
+      // Use raw format
+    }
+
+    return GestureDetector(
+      onTap: () => controller.openSavedKundli(profile),
+      child: Container(
+        margin: EdgeInsets.only(bottom: 10.h),
+        padding: EdgeInsets.all(14.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14.r),
+          border: Border.all(
+            color: AppColors.deepOrange.withValues(alpha: 0.15),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.deepOrange.withValues(alpha: 0.06),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // Avatar
+            Container(
+              width: 48.w,
+              height: 48.w,
+              decoration: BoxDecoration(
+                gradient: AppColors.orangeGradient,
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(
+                  firstLetter,
+                  style: MyTextTheme.largeBCB.copyWith(
+                    color: Colors.white,
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: 12.w),
+            // Details
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
+                    style: MyTextTheme.mediumBCB.copyWith(
+                      color: AppColors.textColorMaroon,
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    '$displayDate, $birthTime',
+                    style: MyTextTheme.smallBCN.copyWith(
+                      color: AppColors.textSecondary,
+                      fontSize: 12.sp,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (birthPlace.isNotEmpty) ...[
+                    SizedBox(height: 2.h),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_on,
+                          color: AppColors.deepOrange,
+                          size: 13.w,
+                        ),
+                        SizedBox(width: 3.w),
+                        Expanded(
+                          child: Text(
+                            birthPlace,
+                            style: MyTextTheme.smallBCN.copyWith(
+                              color: AppColors.textSecondary.withValues(
+                                alpha: 0.7,
+                              ),
+                              fontSize: 11.sp,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            // Three-dot menu
+            PopupMenuButton<String>(
+              icon: Icon(
+                Icons.more_vert,
+                color: AppColors.deepOrange,
+                size: 22.w,
+              ),
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              onSelected: (value) {
+                switch (value) {
+                  case 'view':
+                    controller.openSavedKundli(profile);
+                    break;
+                  case 'edit':
+                    controller.editSavedKundli(profile);
+                    break;
+                  case 'delete':
+                    _showDeleteConfirmation(profile);
+                    break;
+                }
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 'view',
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.visibility,
+                        color: AppColors.deepOrange,
+                        size: 20.w,
+                      ),
+                      SizedBox(width: 10.w),
+                      AutoTranslateText(
+                        'View Kundli',
+                        style: MyTextTheme.mediumBCN.copyWith(
+                          color: AppColors.textColorMaroon,
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 'edit',
+                  child: Row(
+                    children: [
+                      Icon(Icons.edit, color: AppColors.deepOrange, size: 20.w),
+                      SizedBox(width: 10.w),
+                      AutoTranslateText(
+                        'Edit Kundli',
+                        style: MyTextTheme.mediumBCN.copyWith(
+                          color: AppColors.textColorMaroon,
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 'delete',
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete, color: AppColors.error, size: 20.w),
+                      SizedBox(width: 10.w),
+                      AutoTranslateText(
+                        'Delete Kundli',
+                        style: MyTextTheme.mediumBCN.copyWith(
+                          color: AppColors.error,
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showDeleteConfirmation(Map<String, dynamic> profile) {
+    final name = profile['name'] ?? 'this kundli';
+    final id = profile['_id']?.toString();
+    if (id == null) return;
+
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        title: AutoTranslateText(
+          'Delete Kundli',
+          style: MyTextTheme.largeBCB.copyWith(
+            color: AppColors.textColorMaroon,
+            fontSize: 18.sp,
+          ),
+        ),
+        content: AutoTranslateText(
+          'Are you sure you want to delete "$name"? This action cannot be undone.',
+          style: MyTextTheme.mediumBCN.copyWith(
+            color: AppColors.textSecondary,
+            fontSize: 14.sp,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: AutoTranslateText(
+              'Cancel',
+              style: MyTextTheme.mediumBCN.copyWith(
+                color: AppColors.textSecondary,
+                fontSize: 14.sp,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Get.back();
+              controller.deleteSavedKundliProfile(id);
+            },
+            child: AutoTranslateText(
+              'Delete',
+              style: MyTextTheme.mediumBCB.copyWith(
+                color: AppColors.error,
+                fontSize: 14.sp,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ===== Form Section (New Kundli Tab) =====
 
   BoxDecoration _formCardDecoration() {
     return BoxDecoration(
@@ -125,7 +632,6 @@ class KundliFormView extends BasePage<KundliFormController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                //  flex: 2,
                 child: SizedBox(
                   height: 50.h,
                   child: _buildCompactField(
@@ -178,9 +684,78 @@ class KundliFormView extends BasePage<KundliFormController> {
               Expanded(child: _buildStyleDropdown()),
             ],
           ),
-          Spacing.h(20),
+          Spacing.h(16),
+          // Save Your Kundli checkbox
+          _buildSaveCheckbox(),
+          Spacing.h(16),
           _buildSubmitButton(),
         ],
+      ),
+    );
+  }
+
+  // ===== Save Kundli Checkbox =====
+  Widget _buildSaveCheckbox() {
+    return Obx(
+      () => GestureDetector(
+        onTap: () => controller.saveKundliChecked.toggle(),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+          decoration: BoxDecoration(
+            color: controller.saveKundliChecked.value
+                ? AppColors.deepOrange.withValues(alpha: 0.08)
+                : Colors.white,
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(
+              color: controller.saveKundliChecked.value
+                  ? AppColors.deepOrange.withValues(alpha: 0.4)
+                  : AppColors.deepOrange.withValues(alpha: 0.2),
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 22.w,
+                height: 22.w,
+                decoration: BoxDecoration(
+                  color: controller.saveKundliChecked.value
+                      ? AppColors.deepOrange
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(6.r),
+                  border: Border.all(
+                    color: controller.saveKundliChecked.value
+                        ? AppColors.deepOrange
+                        : AppColors.textSecondary.withValues(alpha: 0.4),
+                    width: 1.5,
+                  ),
+                ),
+                child: controller.saveKundliChecked.value
+                    ? Icon(Icons.check, color: Colors.white, size: 16.w)
+                    : null,
+              ),
+              SizedBox(width: 10.w),
+              Expanded(
+                child: AutoTranslateText(
+                  'Save Your Kundli',
+                  style: MyTextTheme.mediumBCN.copyWith(
+                    color: AppColors.textColorMaroon,
+                    fontSize: 14.sp,
+                    fontWeight: controller.saveKundliChecked.value
+                        ? FontWeight.w600
+                        : FontWeight.normal,
+                  ),
+                ),
+              ),
+              Icon(
+                Icons.bookmark_border,
+                color: controller.saveKundliChecked.value
+                    ? AppColors.deepOrange
+                    : AppColors.textSecondary.withValues(alpha: 0.5),
+                size: 20.w,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -568,357 +1143,3 @@ class KundliFormView extends BasePage<KundliFormController> {
     );
   }
 }
-
-// Widget _buildTextField({
-  //   required TextEditingController controller,
-  //   required String label,
-  //   required IconData icon,
-  //   bool readOnly = false,
-  //   VoidCallback? onTap,
-  // }) {
-  //   return Container(
-  //     height: 56.h,
-  //     decoration: BoxDecoration(
-  //       color: Colors.white,
-  //       borderRadius: BorderRadius.circular(12.r),
-  //       boxShadow: [
-  //         BoxShadow(
-  //           color: Colors.black.withValues(alpha: 0.05),
-  //           blurRadius: 8,
-  //           offset: const Offset(0, 2),
-  //         ),
-  //       ],
-  //     ),
-  //     child: TextFormField(
-  //       controller: controller,
-  //       readOnly: readOnly,
-  //       onTap: onTap,
-  //       style: MyTextTheme.mediumBCN.copyWith(color: '#3E2723'.toColor()),
-  //       decoration: InputDecoration(
-  //         labelText: label,
-  //         labelStyle: MyTextTheme.smallBCN.copyWith(
-  //           color: '#3E2723'.toColor().withValues(alpha: 0.6),
-  //         ),
-  //         prefixIcon: Container(
-  //           padding: EdgeInsets.all(12.w),
-  //           child: Icon(icon, color: '#FF6B35'.toColor(), size: 20.w),
-  //         ),
-  //         border: OutlineInputBorder(
-  //           borderRadius: BorderRadius.circular(12.r),
-  //           borderSide: BorderSide(color: '#F5D7B8'.toColor(), width: 1),
-  //         ),
-  //         enabledBorder: OutlineInputBorder(
-  //           borderRadius: BorderRadius.circular(12.r),
-  //           borderSide: BorderSide(
-  //             color: '#F5D7B8'.toColor().withValues(alpha: 0.5),
-  //             width: 1,
-  //           ),
-  //         ),
-  //         focusedBorder: OutlineInputBorder(
-  //           borderRadius: BorderRadius.circular(12.r),
-  //           borderSide: BorderSide(color: '#FF6B35'.toColor(), width: 2),
-  //         ),
-  //         filled: true,
-  //         fillColor: Colors.white,
-  //       ),
-  //     ),
-  //   );
-  // }
-
- // Widget _buildGenderField() {
-  //   return Container(
-  //     decoration: BoxDecoration(
-  //       color: Colors.white,
-  //       borderRadius: BorderRadius.circular(12.r),
-  //       boxShadow: [
-  //         BoxShadow(
-  //           color: Colors.black.withValues(alpha: 0.05),
-  //           blurRadius: 8,
-  //           offset: const Offset(0, 2),
-  //         ),
-  //       ],
-  //     ),
-  //     child: Obx(
-  //       () => DropdownButtonFormField<String>(
-  //         value: controller.selectedGender.value,
-  //         decoration: InputDecoration(
-  //           labelText: 'Gender',
-  //           labelStyle: MyTextTheme.smallBCN.copyWith(
-  //             color: '#3E2723'.toColor().withValues(alpha: 0.6),
-  //           ),
-  //           prefixIcon: Icon(
-  //             Icons.person_outline,
-  //             color: '#FF6B35'.toColor(),
-  //             size: 20.w,
-  //           ),
-  //           border: OutlineInputBorder(
-  //             borderRadius: BorderRadius.circular(12.r),
-  //             borderSide: BorderSide(color: '#F5D7B8'.toColor(), width: 1),
-  //           ),
-  //           enabledBorder: OutlineInputBorder(
-  //             borderRadius: BorderRadius.circular(12.r),
-  //             borderSide: BorderSide(
-  //               color: '#F5D7B8'.toColor().withValues(alpha: 0.5),
-  //               width: 1,
-  //             ),
-  //           ),
-  //           focusedBorder: OutlineInputBorder(
-  //             borderRadius: BorderRadius.circular(12.r),
-  //             borderSide: BorderSide(color: '#FF6B35'.toColor(), width: 2),
-  //           ),
-  //           filled: true,
-  //           fillColor: Colors.white,
-  //         ),
-  //         items: controller.genderOptions.map((gender) {
-  //           return DropdownMenuItem<String>(
-  //             value: gender,
-  //             child: AutoTranslateText(
-  //               gender,
-  //               style: MyTextTheme.mediumBCN.copyWith(
-  //                 color: '#3E2723'.toColor(),
-  //               ),
-  //             ),
-  //           );
-  //         }).toList(),
-  //         onChanged: (value) {
-  //           if (value != null) {
-  //             controller.selectedGender.value = value;
-  //           }
-  //         },
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildStyleField() {
-  //   return Container(
-  //     decoration: BoxDecoration(
-  //       color: Colors.white,
-  //       borderRadius: BorderRadius.circular(12.r),
-  //       boxShadow: [
-  //         BoxShadow(
-  //           color: Colors.black.withValues(alpha: 0.05),
-  //           blurRadius: 8,
-  //           offset: const Offset(0, 2),
-  //         ),
-  //       ],
-  //     ),
-  //     child: Obx(
-  //       () => DropdownButtonFormField<String>(
-  //         value: controller.selectedStyle.value,
-  //         decoration: InputDecoration(
-  //           labelText: 'Chart style (north, south, east)',
-  //           labelStyle: MyTextTheme.smallBCN.copyWith(
-  //             color: '#3E2723'.toColor().withValues(alpha: 0.6),
-  //           ),
-  //           prefixIcon: Icon(
-  //             Icons.style,
-  //             color: '#FF6B35'.toColor(),
-  //             size: 20.w,
-  //           ),
-  //           border: OutlineInputBorder(
-  //             borderRadius: BorderRadius.circular(12.r),
-  //             borderSide: BorderSide(color: '#F5D7B8'.toColor(), width: 1),
-  //           ),
-  //           enabledBorder: OutlineInputBorder(
-  //             borderRadius: BorderRadius.circular(12.r),
-  //             borderSide: BorderSide(
-  //               color: '#F5D7B8'.toColor().withValues(alpha: 0.5),
-  //               width: 1,
-  //             ),
-  //           ),
-  //           focusedBorder: OutlineInputBorder(
-  //             borderRadius: BorderRadius.circular(12.r),
-  //             borderSide: BorderSide(color: '#FF6B35'.toColor(), width: 2),
-  //           ),
-  //           filled: true,
-  //           fillColor: Colors.white,
-  //         ),
-  //         items: controller.styles.map((style) {
-  //           return DropdownMenuItem<String>(
-  //             value: style,
-  //             child: AutoTranslateText(
-  //               style.toUpperCase(),
-  //               style: MyTextTheme.mediumBCN.copyWith(
-  //                 color: '#3E2723'.toColor(),
-  //               ),
-  //             ),
-  //           );
-  //         }).toList(),
-  //         onChanged: (value) {
-  //           if (value != null) {
-  //             controller.selectedStyle.value = value;
-  //           }
-  //         },
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildColoredPlanetsField() {
-  //   return Container(
-  //     decoration: BoxDecoration(
-  //       color: Colors.white,
-  //       borderRadius: BorderRadius.circular(12.r),
-  //       boxShadow: [
-  //         BoxShadow(
-  //           color: Colors.black.withValues(alpha: 0.05),
-  //           blurRadius: 8,
-  //           offset: const Offset(0, 2),
-  //         ),
-  //       ],
-  //     ),
-  //     child: Obx(
-  //       () => DropdownButtonFormField<bool>(
-  //         value: controller.coloredPlanets.value,
-  //         decoration: InputDecoration(
-  //           labelText: 'Send true for colored font',
-  //           labelStyle: MyTextTheme.smallBCN.copyWith(
-  //             color: '#3E2723'.toColor().withValues(alpha: 0.6),
-  //           ),
-  //           prefixIcon: Icon(
-  //             Icons.palette,
-  //             color: '#FF6B35'.toColor(),
-  //             size: 20.w,
-  //           ),
-  //           border: OutlineInputBorder(
-  //             borderRadius: BorderRadius.circular(12.r),
-  //             borderSide: BorderSide(color: '#F5D7B8'.toColor(), width: 1),
-  //           ),
-  //           enabledBorder: OutlineInputBorder(
-  //             borderRadius: BorderRadius.circular(12.r),
-  //             borderSide: BorderSide(
-  //               color: '#F5D7B8'.toColor().withValues(alpha: 0.5),
-  //               width: 1,
-  //             ),
-  //           ),
-  //           focusedBorder: OutlineInputBorder(
-  //             borderRadius: BorderRadius.circular(12.r),
-  //             borderSide: BorderSide(color: '#FF6B35'.toColor(), width: 2),
-  //           ),
-  //           filled: true,
-  //           fillColor: Colors.white,
-  //         ),
-  //         items: const [
-  //           DropdownMenuItem<bool>(
-  //             value: true,
-  //             child: AutoTranslateText('True'),
-  //           ),
-  //           DropdownMenuItem<bool>(
-  //             value: false,
-  //             child: AutoTranslateText('False'),
-  //           ),
-  //         ],
-  //         onChanged: (value) {
-  //           if (value != null) {
-  //             controller.coloredPlanets.value = value;
-  //           }
-  //         },
-  //       ),
-  //     ),
-  //   );
-  // }
-
- // Widget _buildSubmitButton() {
-  //   return Obx(
-  //     () => SizedBox(
-  //       width: double.infinity,
-  //       child: ElevatedButton(
-  //         onPressed: controller.isLoading.value
-  //             ? null
-  //             : controller.generateKundli,
-  //         style: ElevatedButton.styleFrom(
-  //           backgroundColor: '#FF6B35'.toColor(),
-  //           foregroundColor: Colors.white,
-  //           padding: EdgeInsets.symmetric(vertical: 16.h),
-  //           shape: RoundedRectangleBorder(
-  //             borderRadius: BorderRadius.circular(12.r),
-  //           ),
-  //           elevation: 4,
-  //         ),
-  //         child: controller.isLoading.value
-  //             ? SizedBox(
-  //                 height: 20.h,
-  //                 width: 20.w,
-  //                 child: CircularProgressIndicator(
-  //                   strokeWidth: 2,
-  //                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-  //                 ),
-  //               )
-  //             : AutoTranslateText(
-  //                 'Generate Kundli',
-  //                 style: MyTextTheme.largeBCB.copyWith(
-  //                   color: Colors.white,
-  //                   fontWeight: FontWeight.bold,
-  //                 ),
-  //               ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildLanguageField() {
-  //   return Container(
-  //     decoration: BoxDecoration(
-  //       color: Colors.white,
-  //       borderRadius: BorderRadius.circular(12.r),
-  //       boxShadow: [
-  //         BoxShadow(
-  //           color: Colors.black.withValues(alpha: 0.05),
-  //           blurRadius: 8,
-  //           offset: const Offset(0, 2),
-  //         ),
-  //       ],
-  //     ),
-  //     child: Obx(
-  //       () => DropdownButtonFormField<String>(
-  //         value: controller.selectedLanguage.value,
-  //         decoration: InputDecoration(
-  //           labelText: 'Language code',
-  //           labelStyle: MyTextTheme.smallBCN.copyWith(
-  //             color: '#3E2723'.toColor().withValues(alpha: 0.6),
-  //           ),
-  //           prefixIcon: Icon(
-  //             Icons.language,
-  //             color: '#FF6B35'.toColor(),
-  //             size: 20.w,
-  //           ),
-  //           border: OutlineInputBorder(
-  //             borderRadius: BorderRadius.circular(12.r),
-  //             borderSide: BorderSide(color: '#F5D7B8'.toColor(), width: 1),
-  //           ),
-  //           enabledBorder: OutlineInputBorder(
-  //             borderRadius: BorderRadius.circular(12.r),
-  //             borderSide: BorderSide(
-  //               color: '#F5D7B8'.toColor().withValues(alpha: 0.5),
-  //               width: 1,
-  //             ),
-  //           ),
-  //           focusedBorder: OutlineInputBorder(
-  //             borderRadius: BorderRadius.circular(12.r),
-  //             borderSide: BorderSide(color: '#FF6B35'.toColor(), width: 2),
-  //           ),
-  //           filled: true,
-  //           fillColor: Colors.white,
-  //         ),
-  //         items: controller.languages.entries.map((entry) {
-  //           return DropdownMenuItem<String>(
-  //             value: entry.key,
-  //             child: AutoTranslateText(
-  //               entry.value,
-  //               style: MyTextTheme.mediumBCN.copyWith(
-  //                 color: '#3E2723'.toColor(),
-  //               ),
-  //             ),
-  //           );
-  //         }).toList(),
-  //         onChanged: (value) {
-  //           if (value != null) {
-  //             controller.selectedLanguage.value = value;
-  //           }
-  //         },
-  //       ),
-  //     ),
-  //   );
-  // }
-

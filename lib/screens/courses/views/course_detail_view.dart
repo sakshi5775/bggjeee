@@ -10,6 +10,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class CourseDetailView extends StatelessWidget {
   final String courseId;
@@ -623,7 +624,7 @@ class CourseDetailView extends StatelessWidget {
               }
 
               controller.selectContent(lecture, content);
-              Get.toNamed(
+              UserMainController.pushInCurrentTab(
                 AppRoutes.contentPlayer,
                 arguments: {
                   'contentId': content.id,
@@ -714,7 +715,7 @@ class CourseDetailView extends StatelessWidget {
             onPressed: isEnrolled
                 ? () {
                     // Continue Learning - Open Course Player (Udemy behavior)
-                    Get.toNamed(
+                    UserMainController.pushInCurrentTab(
                       AppRoutes.coursePlayer,
                       arguments: controller.courseId,
                     );

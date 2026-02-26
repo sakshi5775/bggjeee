@@ -1,6 +1,6 @@
-import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
-import 'package:flutter/Material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
@@ -15,27 +15,11 @@ class AppBarBackButton extends StatelessWidget {
       padding: EdgeInsets.only(left: 8.w),
       child: GestureDetector(
         onTap: () {
-          // Try to pop from nested navigator first
-          final navigator = Get.nestedKey(1)?.currentState;
-          if (navigator != null && navigator.canPop()) {
-            navigator.pop();
+          if (Get.currentRoute == AppRoutes.userDashboard) return;
+          if (Navigator.of(context).canPop()) {
+            Get.back();
           } else {
-            // If at root of nested navigator, navigate to home tab directly
-            try {
-              final mainController = Get.find<UserMainController>();
-              mainController.selectedIndex.value = 0;
-              // Use offNamed to replace current route with home
-              Get.offNamed('/user-home', id: 1);
-            } catch (e) {
-              // Controller not found, fallback - should not happen in normal flow
-              // But just in case, try to navigate using Get
-              if (Navigator.of(context).canPop()) {
-                Navigator.of(context).pop();
-              } else {
-                // Last resort - navigate to dashboard
-                Get.offAllNamed('/user-dashboard');
-              }
-            }
+            Get.offAllNamed(AppRoutes.userDashboard);
           }
         },
         child: SizedBox(

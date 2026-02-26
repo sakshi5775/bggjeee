@@ -10,6 +10,7 @@ import 'package:astrobharataiuser/screens/ramal_shastra/controller/ramal_shastra
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class RamalShastraMethodView extends StatelessWidget {
   const RamalShastraMethodView({Key? key}) : super(key: key);
@@ -65,7 +66,7 @@ class RamalShastraMethodView extends StatelessWidget {
                                 'Roll 4 dice × 4 rounds to generate 16 values',
                             onTap: () {
                               controller.setCastingMethod('dice');
-                              Get.toNamed(AppRoutes.ramalShastraCastingDice);
+                              UserMainController.pushInCurrentTab(AppRoutes.ramalShastraCastingDice);
                             },
                           ),
                           Spacing.h(16),
@@ -76,7 +77,7 @@ class RamalShastraMethodView extends StatelessWidget {
                             description: 'Draw 16 cards - Red = 1, Black = 0',
                             onTap: () {
                               controller.setCastingMethod('cards');
-                              Get.toNamed(AppRoutes.ramalShastraCastingCards);
+                              UserMainController.pushInCurrentTab(AppRoutes.ramalShastraCastingCards);
                             },
                           ),
                           Spacing.h(16),
@@ -88,7 +89,7 @@ class RamalShastraMethodView extends StatelessWidget {
                                 'Tap randomly on screen 16 times - Odd taps = 1, Even taps = 0',
                             onTap: () {
                               controller.setCastingMethod('dots');
-                              Get.toNamed(AppRoutes.ramalShastraCastingDots);
+                              UserMainController.pushInCurrentTab(AppRoutes.ramalShastraCastingDots);
                             },
                           ),
                         ],

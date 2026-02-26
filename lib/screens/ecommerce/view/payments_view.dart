@@ -1,4 +1,4 @@
-﻿import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/data_model/payment_model.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/payments_controller.dart';
@@ -8,6 +8,7 @@ import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class PaymentsView extends GetView<PaymentsController> {
   const PaymentsView({super.key});
@@ -133,7 +134,7 @@ class _PaymentTile extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        Get.toNamed(
+        UserMainController.pushInCurrentTab(
           AppRoutes.paymentDetail,
           arguments: {'paymentId': payment.id, 'payment': payment},
         );

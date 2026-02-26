@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class NumerologyController extends BaseController {
@@ -81,6 +82,6 @@ class NumerologyController extends BaseController {
 
   void onFeatureTap(Map<String, dynamic> feature) {
     // Navigate to form view for all features
-    Get.toNamed('/numerology-form');
+    UserMainController.pushInCurrentTab('/numerology-form');
   }
 }

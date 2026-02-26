@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/data_model/product_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/banner_service.dart';
 import 'package:astrobharataiuser/data_model/banner_model.dart';
 
@@ -68,7 +69,7 @@ class EcommerceHomeController extends BaseController {
   void selectSubcategory(CategoryModel? subcategory) {
     selectedSubcategory.value = subcategory;
     if (subcategory != null && selectedCategory.value != null) {
-      Get.toNamed(
+      UserMainController.pushInCurrentTab(
         '/product-list',
         arguments: {
           'category': selectedCategory.value,
@@ -452,9 +453,9 @@ class EcommerceHomeController extends BaseController {
       final subs = subcategories;
       if (subs.isEmpty) {
         if (category.id != null) {
-          Get.toNamed('/product-list', arguments: {'category': category});
+          UserMainController.pushInCurrentTab('/product-list', arguments: {'category': category});
         } else if (category.slug != null) {
-          Get.toNamed(
+          UserMainController.pushInCurrentTab(
             '/product-list',
             arguments: {'categorySlug': category.slug},
           );
@@ -469,7 +470,7 @@ class EcommerceHomeController extends BaseController {
       final category = await _ecommerceService.getCategoryBySlug(slug);
       if (category != null) {
         selectedCategory.value = category;
-        Get.toNamed('/product-list', arguments: {'category': category});
+        UserMainController.pushInCurrentTab('/product-list', arguments: {'category': category});
       }
     } catch (e) {
       print('Error loading category by slug: $e');
@@ -481,7 +482,7 @@ class EcommerceHomeController extends BaseController {
       final category = await _ecommerceService.getCategoryById(id);
       if (category != null) {
         selectedCategory.value = category;
-        Get.toNamed('/product-list', arguments: {'category': category});
+        UserMainController.pushInCurrentTab('/product-list', arguments: {'category': category});
       }
     } catch (e) {
       print('Error loading category by ID: $e');
@@ -489,18 +490,18 @@ class EcommerceHomeController extends BaseController {
   }
 
   void navigateToProductDetail(ProductModel product, {String? heroTag}) {
-    Get.toNamed(
+    UserMainController.pushInCurrentTab(
       '/product-detail',
       arguments: {'product': product, if (heroTag != null) 'heroTag': heroTag},
     );
   }
 
   void navigateToProductList({String? searchQuery}) {
-    Get.toNamed('/product-list', arguments: {'search': searchQuery});
+    UserMainController.pushInCurrentTab('/product-list', arguments: {'search': searchQuery});
   }
 
   void navigateToSearch({String? initialQuery}) {
-    Get.toNamed(
+    UserMainController.pushInCurrentTab(
       AppRoutes.search,
       arguments: {
         if (initialQuery != null && initialQuery.isNotEmpty)

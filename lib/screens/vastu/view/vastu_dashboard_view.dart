@@ -11,6 +11,7 @@ import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_vie
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class VastuDashboardView extends StatefulWidget {
   const VastuDashboardView({Key? key}) : super(key: key);
@@ -237,7 +238,7 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
                     subtitle: category['subtitle'],
                     icon: category['icon'],
                     color: category['color'],
-                    onTap: () => Get.toNamed(category['route']),
+                    onTap: () => UserMainController.pushInCurrentTab(category['route']),
                   ),
                 ),
               );

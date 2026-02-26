@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 import '../../../../core/routes/app_routes.dart';
 import '../controller/book_puja_controller.dart';
@@ -24,7 +25,7 @@ class BookPujaView extends BasePage<BookPujaController> {
           backgroundColor: Colors.transparent,
           elevation: 4,
           onPressed: () {
-            Get.toNamed(AppRoutes.myBookings);
+            UserMainController.pushInCurrentTab(AppRoutes.myBookings);
           },
           child: Ink(
             decoration: BoxDecoration(

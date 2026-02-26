@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/screens/e_mandir/my_bookings/service/my_bookin
 import 'package:astrobharataiuser/screens/e_mandir/puja_booking_form/service/puja_payment_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class MyBookingsController extends BaseController {
@@ -104,7 +105,7 @@ class MyBookingsController extends BaseController {
 
   void onBookingTap(MyBookingItemModel booking) {
     if (booking.id == null) return;
-    Get.toNamed(
+    UserMainController.pushInCurrentTab(
       AppRoutes.myBookingDetail,
       arguments: {'bookingId': booking.id},
     );

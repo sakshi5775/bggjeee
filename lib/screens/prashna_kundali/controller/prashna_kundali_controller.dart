@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/utils/address_helper.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class PrashnaKundaliController extends BaseController {
   final PrashnaKundaliService _service = PrashnaKundaliService();
@@ -128,7 +129,7 @@ class PrashnaKundaliController extends BaseController {
         timeout: const Duration(minutes: 5),
       );
       analysisResult.value = result;
-      Get.toNamed(
+      UserMainController.pushInCurrentTab(
         AppRoutes.prashnaKundaliResults,
         arguments: {'result': result},
       );

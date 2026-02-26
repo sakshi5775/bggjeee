@@ -1,6 +1,8 @@
 import 'package:astrobharataiuser/binding/ai_chat_binding/ai_chat_binding.dart';
 import 'package:astrobharataiuser/binding/dashboard_binding/user_dashboard_binding.dart';
+import 'package:astrobharataiuser/core/controllers/global_nav_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/core/routes/get_pages.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/screens/ai_chat/views/ai_chat_view.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/all_astrologers_view.dart';
@@ -8,38 +10,26 @@ import 'package:astrobharataiuser/screens/ecommerce/binding/profile_binding.dart
 import 'package:astrobharataiuser/screens/ecommerce/view/profile_view.dart';
 import 'package:astrobharataiuser/screens/live_astrologers/view/live_astrologers_view.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
-import 'package:astrobharataiuser/utils/app_constant.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-/// Model for a single bottom nav item (dynamic labels/icons).
-class BottomNavItem {
-  final String label;
-  final String icon;
-
-  const BottomNavItem({required this.label, required this.icon});
-}
-
 class UserMainController extends GetxController {
-  final selectedIndex = 0.obs;
+  // ─── Tab State ───────────────────────────────────────────
+  final currentIndex = 0.obs;
 
-  /// Bottom nav items: Home, Chat, Call, AI, Profile. Update this list to change nav dynamically.
-  final RxList<BottomNavItem> navItems = <BottomNavItem>[
-    const BottomNavItem(label: 'Home', icon: AppConstant.bottomHomeIcon),
-    const BottomNavItem(
-      label: 'Consult',
-      icon: AppConstant.bottomConsultationIcon,
-    ),
-    const BottomNavItem(
-      label: 'AstroStream',
-      icon: AppConstant.bottomLiveStreamIcon,
-    ),
-    const BottomNavItem(label: 'AI Guru', icon: ''),
-    const BottomNavItem(label: 'Profile', icon: ''),
-  ].obs;
+  /// History of visited tab indices (for cross-tab back navigation).
+  /// Tracks the user's exact journey across tabs.
+  final List<int> _tabHistory = [0]; // starts on Home
 
-  final pages = [
+  /// A navigator key for every tab – IndexedStack keeps all alive.
+  final List<GlobalKey<NavigatorState>> navigatorKeys = List.generate(
+    5,
+    (_) => GlobalKey<NavigatorState>(),
+  );
+
+  /// The initial / root route of each tab.
+  final List<String> tabInitialRoutes = const [
     '/user-home',
     AppRoutes.allAstrologers,
     AppRoutes.liveAstrologers,
@@ -47,89 +37,164 @@ class UserMainController extends GetxController {
     AppRoutes.profile,
   ];
 
-  String get initialRoute => pages.first;
+  // ─── Tab Switch ──────────────────────────────────────────
+  void changeTab(int index) {
+    print('UserMain: changeTab → $index (current=${currentIndex.value})');
 
-  // ---------------- ROUTING ----------------
-  Route? onGenerateRoute(RouteSettings settings) {
-    final args = settings.arguments as Map<String, dynamic>?;
-    final showBackButton = args?['showBackButton'] as bool? ?? false;
-
-    switch (settings.name) {
-      case '/user-home':
-        return GetPageRoute(
-          page: () => const UserDashboardView(),
-          binding: UserDashboardBinding(),
-        );
-
-      case AppRoutes.allAstrologers:
-        return GetPageRoute(
-          page: () => AllAstrologersView(
-            hideHeader: false,
-            showBackButton: showBackButton,
-          ),
-        );
-
-      case AppRoutes.liveAstrologers:
-        return GetPageRoute(
-          page: () => LiveAstrologersView(showBackButton: showBackButton),
-        );
-
-      case AppRoutes.aichat:
-        return GetPageRoute(
-          page: () => AiChatView(showBackButton: showBackButton),
-          binding: AiChatBinding(),
-        );
-
-      case AppRoutes.profile:
-        return GetPageRoute(
-          page: () => ProfileView(showBackButton: showBackButton),
-          binding: ProfileBinding(),
-        );
-
-      default:
-        return GetPageRoute(
-          page: () => const UserDashboardView(),
-          binding: UserDashboardBinding(),
-        );
+    if (index == currentIndex.value) {
+      // same tab → pop to root
+      navigatorKeys[index].currentState?.popUntil((r) => r.isFirst);
+      return;
     }
-  }
 
-  // ---------------- TAB CHANGE ----------------
-  void changePage(int index) {
-    if (index == selectedIndex.value) return;
-
-    // Protect Chat, Call, AI, Profile (require login)
-    final requiresLogin = index >= 1 && index <= 4;
-    if (requiresLogin && LoginGuard.isGuest) {
+    // Protect non-Home tabs that require login
+    if (index >= 1 && index <= 4 && LoginGuard.isGuest) {
       final messages = [
         '',
-        'Please login to view chat.',
         'Please login to consult astrologers.',
-        'Please login to access AI chat.',
+        'Please login to view AstroStream.',
+        'Please login to access AI Guru.',
         'Please login to view profile.',
       ];
       LoginGuard.showLoginRequiredModal(message: messages[index]);
       return;
     }
 
-    _navigate(index);
-  }
+    // Push current tab to history before switching
+    _tabHistory.add(index);
+    currentIndex.value = index;
 
-  void _navigate(int index) {
-    selectedIndex.value = index;
-    // All tabs use nested navigator (id: 1) so bottom nav stays visible.
-    // Chat, Call, AI, Profile: no back button when opened from bottom nav.
-    final noBack = index != 0;
-    final args = noBack ? {'showBackButton': false} : null;
-    Get.offNamed(pages[index], id: 1, arguments: args);
-  }
-
-  // ---------------- BACK HANDLER ----------------
-  void handleBackNavigation() {
-    final nav = Get.nestedKey(1)?.currentState;
-    if (nav != null && nav.canPop()) {
-      nav.pop();
+    // Sync highlight in the global bottom bar
+    if (Get.isRegistered<GlobalNavController>()) {
+      Get.find<GlobalNavController>().syncFromTab(index);
     }
-    // At tab root: bottom nav visible, no back — do nothing.
+  }
+
+  // ─── Back Navigation (history-based cross-tab aware) ──────
+  /// Returns true if the back action was consumed.
+  bool handleBackNavigation() {
+    final currentNav = navigatorKeys[currentIndex.value].currentState;
+
+    // Priority 1: Pop inside current tab if there are inner pages
+    if (currentNav != null && currentNav.canPop()) {
+      print('UserMain: back → pop inside tab ${currentIndex.value}');
+      currentNav.pop();
+      return true;
+    }
+
+    // Priority 2: Go back to previous tab in history
+    // Remove current tab from history
+    while (_tabHistory.isNotEmpty && _tabHistory.last == currentIndex.value) {
+      _tabHistory.removeLast();
+    }
+
+    if (_tabHistory.isNotEmpty) {
+      final previousTab = _tabHistory.last;
+      print(
+        'UserMain: back → returning to previous tab $previousTab from ${currentIndex.value}',
+      );
+      currentIndex.value = previousTab;
+      if (Get.isRegistered<GlobalNavController>()) {
+        Get.find<GlobalNavController>().syncFromTab(previousTab);
+      }
+      return true;
+    }
+
+    // Priority 3: If somehow no history but not on Home, go Home
+    if (currentIndex.value != 0) {
+      print('UserMain: back → fallback to Home from ${currentIndex.value}');
+      currentIndex.value = 0;
+      _tabHistory.add(0);
+      if (Get.isRegistered<GlobalNavController>()) {
+        Get.find<GlobalNavController>().syncFromTab(0);
+      }
+      return true;
+    }
+
+    // Priority 4: On Home root with no history → exit app
+    print('UserMain: back → Home root, allowing exit');
+    return false;
+  }
+
+  // ─── Static helper for controllers without context ───────
+  /// Push a named route onto the CURRENT tab's navigator.
+  static Future<T?> pushInCurrentTab<T>(
+    String route, {
+    Object? arguments,
+  }) async {
+    // Bridge: sync arguments so GetX controllers (Get.arguments) work
+    // inside nested tab navigators (they normally only track root nav).
+    Get.routing.args = arguments;
+    final ctrl = Get.find<UserMainController>();
+    final navKey = ctrl.navigatorKeys[ctrl.currentIndex.value];
+    return navKey.currentState?.pushNamed<T>(route, arguments: arguments);
+  }
+
+  // ─── Route Resolution ────────────────────────────────────
+  /// Shared across all five tab navigators.
+  /// Tries the tab-root routes first, falls back to PageRoutes.routes.
+  Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+    print('UserMain: onGenerateRoute → ${settings.name}');
+
+    // Bridge: keep Get.arguments in sync for nested navigators
+    if (settings.arguments != null) {
+      Get.routing.args = settings.arguments;
+    }
+
+    // -- Tab root screens (handled explicitly) --
+    // Non-Home tabs ALWAYS show a back button at their root.
+    switch (settings.name) {
+      case '/user-home':
+        return GetPageRoute(
+          settings: settings,
+          page: () => const UserDashboardView(),
+          binding: UserDashboardBinding(),
+        );
+      case AppRoutes.allAstrologers:
+        return GetPageRoute(
+          settings: settings,
+          page: () =>
+              const AllAstrologersView(hideHeader: false, showBackButton: true),
+        );
+      case AppRoutes.liveAstrologers:
+        return GetPageRoute(
+          settings: settings,
+          page: () => const LiveAstrologersView(showBackButton: true),
+        );
+      case AppRoutes.aichat:
+        return GetPageRoute(
+          settings: settings,
+          page: () => const AiChatView(showBackButton: true),
+          binding: AiChatBinding(),
+        );
+      case AppRoutes.profile:
+        return GetPageRoute(
+          settings: settings,
+          page: () => const ProfileView(showBackButton: true),
+          binding: ProfileBinding(),
+        );
+    }
+
+    // -- Any other route: look it up in the global route table --
+    final match = PageRoutes.routes.cast<GetPage>().firstWhereOrNull(
+      (r) => r.name == settings.name,
+    );
+    if (match != null) {
+      return GetPageRoute(
+        settings: settings,
+        page: match.page,
+        binding: match.binding,
+        transition: match.transition ?? Transition.rightToLeft,
+        transitionDuration:
+            match.transitionDuration ?? const Duration(milliseconds: 300),
+      );
+    }
+
+    // -- Fallback: show dashboard --
+    return GetPageRoute(
+      settings: settings,
+      page: () => const UserDashboardView(),
+      binding: UserDashboardBinding(),
+    );
   }
 }

@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 import 'package:astrobharataiuser/widgets/zodiac_sign_selection_grid.dart';
 
@@ -37,7 +38,7 @@ class HoroscopeSignSelectionView extends StatelessWidget {
                         arguments?['formData'] as Map<String, dynamic>?;
 
                     // Navigate to main horoscope page with selected sign and form data
-                    Get.toNamed(
+                    UserMainController.pushInCurrentTab(
                       AppRoutes.horoscopeMain,
                       arguments: {
                         'selectedSign': name,

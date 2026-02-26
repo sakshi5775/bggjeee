@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'dart:async';
 
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
@@ -32,13 +33,13 @@ class _DigitalServicesAnimatedWidgetState
           dashboardController.selectedSliderIndex.value = 6;
           dashboardController.scrollController.jumpTo(0);
         } catch (e) {
-          Get.toNamed(AppRoutes.courses);
+          UserMainController.pushInCurrentTab(AppRoutes.courses);
         }
       },
     },
     {
       'path': 'assets/app/ASTROLOGYSERVICE.png',
-      'route': () => Get.toNamed(AppRoutes.astrologyServices),
+      'route': () => UserMainController.pushInCurrentTab(AppRoutes.astrologyServices),
     },
     {
       'path': 'assets/app/DIGITALMART.png',

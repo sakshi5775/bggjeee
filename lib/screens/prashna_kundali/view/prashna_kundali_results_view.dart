@@ -14,6 +14,7 @@ import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboa
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/services/share_service.dart';
@@ -942,7 +943,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
               ],
             ),
             child: ElevatedButton(
-              onPressed: () => Get.toNamed(AppRoutes.astrologyServices),
+              onPressed: () => UserMainController.pushInCurrentTab(AppRoutes.astrologyServices),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.transparent,
                 foregroundColor: '#ffffff'.toColor(),

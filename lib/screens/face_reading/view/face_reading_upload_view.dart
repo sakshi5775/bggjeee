@@ -14,6 +14,7 @@ import 'package:astrobharataiuser/app_manager/common/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class FaceReadingUploadView extends StatefulWidget {
   const FaceReadingUploadView({Key? key}) : super(key: key);
@@ -466,7 +467,7 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
       // Navigate to scanning screen
       final controller = Get.put(FaceReadingController());
       controller.setImage(pickedFile);
-      Get.toNamed(AppRoutes.faceReadingScanning);
+      UserMainController.pushInCurrentTab(AppRoutes.faceReadingScanning);
     } catch (e, stackTrace) {
       debugPrint('Camera error: $e');
       debugPrint('Stack trace: $stackTrace');
@@ -505,7 +506,7 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
       // Navigate to scanning screen
       final controller = Get.put(FaceReadingController());
       controller.setImage(pickedFile);
-      Get.toNamed(AppRoutes.faceReadingScanning);
+      UserMainController.pushInCurrentTab(AppRoutes.faceReadingScanning);
     } catch (e, stackTrace) {
       debugPrint('Gallery error: $e');
       debugPrint('Stack trace: $stackTrace');

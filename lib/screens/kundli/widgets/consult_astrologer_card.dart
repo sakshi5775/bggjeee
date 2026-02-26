@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 import '../../../utils/app_colors.dart';
 
@@ -84,7 +85,7 @@ class ConsultAstrologerCard extends StatelessWidget {
           Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap: () => Get.toNamed(AppRoutes.astrologyServices),
+              onTap: () => UserMainController.pushInCurrentTab(AppRoutes.astrologyServices),
               borderRadius: BorderRadius.circular(12.r),
               child: Container(
                 width: double.infinity,

@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/screens/panchang/service/panchang_service.dart
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/screens/navtara/controller/navtara_controller.dart';
 import 'package:intl/intl.dart';
@@ -2017,7 +2018,7 @@ class KundliResultController extends BaseController {
 
     // Handle Varshphal - open standalone Varshphal page (like Dasha, Dosh)
     if (featureLower == 'varshphal') {
-      Get.toNamed(AppRoutes.varshphal, arguments: {'formData': formData.value});
+      UserMainController.pushInCurrentTab(AppRoutes.varshphal, arguments: {'formData': formData.value});
       return;
     }
 
@@ -2076,7 +2077,7 @@ class KundliResultController extends BaseController {
         .replaceAll(RegExp(r'\s'), '')
         .toLowerCase();
     if (featureNormalized == 'shodashvarga') {
-      Get.toNamed(
+      UserMainController.pushInCurrentTab(
         AppRoutes.shodashvarga,
         arguments: {'formData': formData.value},
       );
@@ -2086,21 +2087,21 @@ class KundliResultController extends BaseController {
     // Handle Dasha navigation
     if (feature.toLowerCase() == 'dasha') {
       // Pass form data to Dasha view
-      Get.toNamed(AppRoutes.dasha, arguments: {'formData': formData.value});
+      UserMainController.pushInCurrentTab(AppRoutes.dasha, arguments: {'formData': formData.value});
       return;
     }
 
     // Handle Yog navigation
     if (feature.toLowerCase() == 'yog') {
       // Pass form data to Yog view
-      Get.toNamed(AppRoutes.yog, arguments: {'formData': formData.value});
+      UserMainController.pushInCurrentTab(AppRoutes.yog, arguments: {'formData': formData.value});
       return;
     }
 
     // Handle Dosh navigation
     if (feature.toLowerCase() == 'dosh') {
       // Pass form data to Dosh view
-      Get.toNamed(AppRoutes.dosh, arguments: {'formData': formData.value});
+      UserMainController.pushInCurrentTab(AppRoutes.dosh, arguments: {'formData': formData.value});
       return;
     }
 
@@ -2108,7 +2109,7 @@ class KundliResultController extends BaseController {
     if (feature.toLowerCase() == 'kp system' ||
         feature.toLowerCase().contains('kp')) {
       // Pass form data to KP System view
-      Get.toNamed(AppRoutes.kpSystem, arguments: {'formData': formData.value});
+      UserMainController.pushInCurrentTab(AppRoutes.kpSystem, arguments: {'formData': formData.value});
       return;
     }
 
@@ -2116,7 +2117,7 @@ class KundliResultController extends BaseController {
     if (feature.toLowerCase().contains('lal kitab') ||
         feature.toLowerCase().contains('lal')) {
       // Pass form data to Lal Kitab view
-      Get.toNamed(AppRoutes.lalKitab, arguments: {'formData': formData.value});
+      UserMainController.pushInCurrentTab(AppRoutes.lalKitab, arguments: {'formData': formData.value});
       return;
     }
 
@@ -2124,7 +2125,7 @@ class KundliResultController extends BaseController {
     if (feature.toLowerCase().contains('prediction') ||
         feature.toLowerCase().contains('predictions')) {
       // Pass form data to Predictions view
-      Get.toNamed(
+      UserMainController.pushInCurrentTab(
         AppRoutes.predictions,
         arguments: {'formData': formData.value},
       );
@@ -2203,7 +2204,7 @@ class KundliResultController extends BaseController {
           debugPrint(
             'Navigating to Navtara Dashboard with Nakshatra: $nakshatra',
           );
-          Get.toNamed(
+          UserMainController.pushInCurrentTab(
             AppRoutes.navtaraDashboard,
             arguments: {
               'nakshatra': nakshatra,

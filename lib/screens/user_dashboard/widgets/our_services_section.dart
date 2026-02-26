@@ -16,6 +16,7 @@ import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class OurServicesSection extends BasePage<UserDashboardController> {
   // final String title;
@@ -115,7 +116,8 @@ class OurServicesSection extends BasePage<UserDashboardController> {
         switch (normalizedLabel) {
           case 'face reading':
             _requireLogin(
-              () async => Get.toNamed(AppRoutes.faceReading),
+              () async =>
+                  UserMainController.pushInCurrentTab(AppRoutes.faceReading),
               message: 'Login to start face reading.',
             );
             break;
@@ -128,7 +130,8 @@ class OurServicesSection extends BasePage<UserDashboardController> {
           case 'tarot reading':
           case 'tarot card reading':
             _requireLogin(
-              () async => Get.toNamed(AppRoutes.tarotReading),
+              () async =>
+                  UserMainController.pushInCurrentTab(AppRoutes.tarotReading),
               message: 'Login to explore tarot reading.',
             );
             break;
@@ -141,69 +144,81 @@ class OurServicesSection extends BasePage<UserDashboardController> {
             break;
           case 'panchang':
             _requireLogin(
-              () async => Get.toNamed(AppRoutes.panchang),
+              () async =>
+                  UserMainController.pushInCurrentTab(AppRoutes.panchang),
               message: 'Login to view Panchang.',
             );
             break;
           case 'horoscope':
           case 'check horoscope':
             _requireLogin(
-              () async => Get.toNamed(AppRoutes.horoscopeForm),
+              () async =>
+                  UserMainController.pushInCurrentTab(AppRoutes.horoscopeForm),
               message: 'Login to check your horoscope.',
             );
             break;
           case 'numerology':
             _requireLogin(
-              () async => Get.toNamed(AppRoutes.numerologyForm),
+              () async =>
+                  UserMainController.pushInCurrentTab(AppRoutes.numerologyForm),
               message: 'Login to try numerology.',
             );
             break;
           case 'generate kundli':
             _requireLogin(
-              () async => Get.toNamed(AppRoutes.kundliForm),
+              () async =>
+                  UserMainController.pushInCurrentTab(AppRoutes.kundliForm),
               message: 'Login to generate your Kundli.',
             );
             break;
           case 'match making':
             _requireLogin(
-              () async => Get.toNamed(AppRoutes.matchMakingGif),
+              () async =>
+                  UserMainController.pushInCurrentTab(AppRoutes.matchMakingGif),
               message: 'Login to start match making.',
             );
             break;
           case 'writing astrology':
             _requireLogin(
-              () async => Get.toNamed(AppRoutes.handwritingAstrology),
+              () async => UserMainController.pushInCurrentTab(
+                AppRoutes.handwritingAstrology,
+              ),
               message: 'Login to use handwriting astrology.',
             );
             break;
           case 'carrot astrology':
             _requireLogin(
-              () async => Get.toNamed(AppRoutes.carrotAstrology),
+              () async => UserMainController.pushInCurrentTab(
+                AppRoutes.carrotAstrology,
+              ),
               message: 'Login to explore carrot astrology.',
             );
             break;
           case 'vastu reading':
             _requireLogin(
-              () async => Get.toNamed(AppRoutes.vastuDashboard),
+              () async =>
+                  UserMainController.pushInCurrentTab(AppRoutes.vastuDashboard),
               message: 'Login to explore Vastu services.',
             );
             break;
           case 'prashna kundli':
             _requireLogin(
-              () async => Get.toNamed(AppRoutes.prashnaKundali),
+              () async =>
+                  UserMainController.pushInCurrentTab(AppRoutes.prashnaKundali),
               message: 'Login to use Prashna Kundli.',
             );
             break;
           case 'ramal shastra':
             _requireLogin(
-              () async => Get.toNamed(AppRoutes.ramalShastra),
+              () async =>
+                  UserMainController.pushInCurrentTab(AppRoutes.ramalShastra),
               message: 'Login to explore Ramal Shastra.',
             );
             break;
           case 'life predictions':
             _requireLogin(() async {
               // Navigate to kundli form with target route for predictions
-              Get.toNamed(
+              UserMainController.pushInCurrentTab(
                 AppRoutes.kundliForm,
                 arguments: {'targetRoute': AppRoutes.predictions},
               );
@@ -212,7 +227,7 @@ class OurServicesSection extends BasePage<UserDashboardController> {
           case 'dosh':
             _requireLogin(() async {
               // Navigate to kundli form with target route for dosh
-              Get.toNamed(
+              UserMainController.pushInCurrentTab(
                 AppRoutes.kundliForm,
                 arguments: {'targetRoute': AppRoutes.dosh},
               );
@@ -221,7 +236,7 @@ class OurServicesSection extends BasePage<UserDashboardController> {
           case 'dasha':
             _requireLogin(() async {
               // Navigate to kundli form with target route for dasha
-              Get.toNamed(
+              UserMainController.pushInCurrentTab(
                 AppRoutes.kundliForm,
                 arguments: {'targetRoute': AppRoutes.dasha},
               );
@@ -230,7 +245,7 @@ class OurServicesSection extends BasePage<UserDashboardController> {
           case 'kp astrology':
             _requireLogin(() async {
               // Navigate to kundli form with target route for kp system
-              Get.toNamed(
+              UserMainController.pushInCurrentTab(
                 AppRoutes.kundliForm,
                 arguments: {'targetRoute': AppRoutes.kpSystem},
               );
@@ -239,7 +254,7 @@ class OurServicesSection extends BasePage<UserDashboardController> {
           case 'lal kitab':
             _requireLogin(() async {
               // Navigate to kundli form with target route for lal kitab
-              Get.toNamed(
+              UserMainController.pushInCurrentTab(
                 AppRoutes.kundliForm,
                 arguments: {'targetRoute': AppRoutes.lalKitab},
               );
@@ -249,7 +264,8 @@ class OurServicesSection extends BasePage<UserDashboardController> {
             // Check if label contains "kundli" (case insensitive)
             if (normalizedLabel.contains('kundli')) {
               _requireLogin(
-                () async => Get.toNamed(AppRoutes.kundliForm),
+                () async =>
+                    UserMainController.pushInCurrentTab(AppRoutes.kundliForm),
                 message: 'Login to generate your Kundli.',
               );
             } else {

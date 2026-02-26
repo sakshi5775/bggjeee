@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/data_model/search_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class EcommerceSearchController extends BaseController {
   final EcommerceService _service = EcommerceService();
@@ -139,7 +140,7 @@ class EcommerceSearchController extends BaseController {
 
   void onPopularTermSelected(SearchPopularTerm term) {
     if (term.type == 'category' && term.slug != null) {
-      Get.toNamed(
+      UserMainController.pushInCurrentTab(
         AppRoutes.productList,
         arguments: {'categorySlug': term.slug},
       );
@@ -156,7 +157,7 @@ class EcommerceSearchController extends BaseController {
   }
 
   void onSuggestionCategorySelected(SearchSuggestionCategory category) {
-    Get.toNamed(
+    UserMainController.pushInCurrentTab(
       AppRoutes.productList,
       arguments: {
         if (category.slug != null) 'categorySlug': category.slug,
@@ -166,7 +167,7 @@ class EcommerceSearchController extends BaseController {
   }
 
   void onSuggestionProductSelected(ProductModel product) {
-    Get.toNamed(AppRoutes.productDetail, arguments: {'product': product});
+    UserMainController.pushInCurrentTab(AppRoutes.productDetail, arguments: {'product': product});
   }
 
   String buildResultSummary() {

@@ -12,6 +12,7 @@ import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class MatchMakingFormView extends BasePage<MatchMakingFormController> {
   const MatchMakingFormView({super.key});
@@ -24,106 +25,709 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
         backgroundColor: Colors.transparent,
         body: Column(
           children: [
-            // Header using CommonHeader
             const CommonHeader(title: 'Match Making'),
-
-            // Form Content
+            // Tab Bar
+            _buildTabBar(),
+            // Tab Content
             Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Title
-                    AutoTranslateText(
-                      'Enter Details',
-                      style: MyTextTheme.largeBCB
-                          .copyWith(
-                            color: '#68171E'.toColor(),
-                            fontWeight: FontWeight.bold,
-                          )
-                          .merge(AppTypography.h2),
+              child: Obx(() {
+                if (controller.selectedTabIndex.value == 0) {
+                  return _buildSavedMatchmakingTab();
+                } else {
+                  return SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 20.h,
                     ),
-                    Spacing.h(20),
+                    child: _buildFormContent(),
+                  );
+                }
+              }),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-                    // Person 1 Section
-                    _buildPersonSection(
-                      label: 'Person 1',
-                      subLabel: 'Groom Details',
-                      nameController: controller.person1NameController,
-                      dateController: controller.person1DateController,
-                      timeController: controller.person1TimeController,
-                      placeController: controller.person1PlaceController,
-                      onDateTap: () => _showDatePicker(context, true),
-                      onTimeTap: () => _showTimePicker(context, true),
-                      onPlaceSelected: (place) =>
-                          controller.setPerson1LocationFromAutocomplete(place),
-                      isPerson1: true,
+  // ===== Tab Bar =====
+  Widget _buildTabBar() {
+    return Obx(
+      () => Container(
+        margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(
+            color: AppColors.deepOrange.withValues(alpha: 0.3),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.deepOrange.withValues(alpha: 0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            _buildTabItem('Saved Match', 0),
+            _buildTabItem('New Match', 1),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTabItem(String title, int index) {
+    final isSelected = controller.selectedTabIndex.value == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => controller.selectedTabIndex.value = index,
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 12.h),
+          decoration: BoxDecoration(
+            gradient: isSelected ? AppColors.orangeGradient : null,
+            borderRadius: BorderRadius.circular(10.r),
+          ),
+          child: Center(
+            child: AutoTranslateText(
+              title,
+              style: MyTextTheme.mediumBCB.copyWith(
+                color: isSelected ? Colors.white : AppColors.textColorMaroon,
+                fontSize: 14.sp,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ===== Saved Matchmaking Tab =====
+  Widget _buildSavedMatchmakingTab() {
+    return Column(
+      children: [
+        // Search Bar
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(
+                color: AppColors.deepOrange.withValues(alpha: 0.2),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.deepOrange.withValues(alpha: 0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: TextField(
+              onChanged: (v) => controller.searchQuery.value = v,
+              style: MyTextTheme.mediumBCN.copyWith(
+                color: AppColors.textColorMaroon,
+              ),
+              decoration: InputDecoration(
+                isDense: true,
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: 12.h,
+                  horizontal: 14.w,
+                ),
+                hintText: 'Search by name',
+                hintStyle: MyTextTheme.smallBCN.copyWith(
+                  color: AppColors.textSecondary.withValues(alpha: 0.6),
+                  fontSize: 13.sp,
+                ),
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: AppColors.deepOrange,
+                  size: 22.w,
+                ),
+                border: InputBorder.none,
+              ),
+            ),
+          ),
+        ),
+        // List
+        Expanded(
+          child: Obx(() {
+            if (controller.isLoadingSavedMatchmaking.value) {
+              return Center(
+                child: CircularProgressIndicator(color: AppColors.deepOrange),
+              );
+            }
+            final list = controller.filteredMatchmakingList;
+            if (list.isEmpty) {
+              return _buildEmptyState();
+            }
+            return Stack(
+              children: [
+                RefreshIndicator(
+                  color: AppColors.deepOrange,
+                  onRefresh: () => controller.fetchSavedMatchmakingProfiles(),
+                  child: ListView.builder(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 4.h,
                     ),
-
-                    Spacing.h(16),
-
-                    // Swap Icon
-                    Center(
-                      child: GestureDetector(
-                        onTap: () => controller.swapPersons(),
+                    itemCount: list.length,
+                    itemBuilder: (context, index) {
+                      return _buildSavedMatchmakingCard(list[index]);
+                    },
+                  ),
+                ),
+                // Loading overlay when opening a saved matchmaking
+                Obx(() {
+                  if (controller.isOpeningSavedMatchmaking.value) {
+                    return Container(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      child: Center(
                         child: Container(
-                          padding: EdgeInsets.all(8.w),
+                          padding: EdgeInsets.all(24.w),
                           decoration: BoxDecoration(
-                            gradient: AppColors.orangeGradient,
-                            shape: BoxShape.circle,
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16.r),
                             boxShadow: [
                               BoxShadow(
-                                color: '#F38B3B'.toColor().withValues(
-                                  alpha: 0.3,
+                                color: AppColors.deepOrange.withValues(
+                                  alpha: 0.2,
                                 ),
-                                blurRadius: 8,
+                                blurRadius: 20,
                                 offset: const Offset(0, 4),
                               ),
                             ],
                           ),
-                          child: Icon(
-                            Icons.swap_vert,
-                            color: Colors.white,
-                            size: 24.w,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CircularProgressIndicator(
+                                color: AppColors.deepOrange,
+                              ),
+                              SizedBox(height: 16.h),
+                              AutoTranslateText(
+                                'Generating Match...',
+                                style: MyTextTheme.mediumBCB.copyWith(
+                                  color: AppColors.textColorMaroon,
+                                  fontSize: 14.sp,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                }),
+              ],
+            );
+          }),
+        ),
+      ],
+    );
+  }
 
-                    Spacing.h(16),
-
-                    // Person 2 Section
-                    _buildPersonSection(
-                      label: 'Person 2',
-                      subLabel: 'Bride',
-                      nameController: controller.person2NameController,
-                      dateController: controller.person2DateController,
-                      timeController: controller.person2TimeController,
-                      placeController: controller.person2PlaceController,
-                      onDateTap: () => _showDatePicker(context, false),
-                      onTimeTap: () => _showTimePicker(context, false),
-                      onPlaceSelected: (place) =>
-                          controller.setPerson2LocationFromAutocomplete(place),
-                      isPerson1: false,
-                    ),
-
-                    Spacing.h(20),
-
-                    // Language Dropdown
-                    _buildLanguageDropdown(),
-
-                    Spacing.h(30),
-
-                    // Compare Kundlis Button
-                    _buildCompareButton(),
-
-                    Spacing.h(20),
-                  ],
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.favorite_border,
+            color: AppColors.deepOrange.withValues(alpha: 0.4),
+            size: 64.w,
+          ),
+          SizedBox(height: 16.h),
+          AutoTranslateText(
+            'No saved matches found',
+            style: MyTextTheme.mediumBCB.copyWith(
+              color: AppColors.textSecondary,
+              fontSize: 16.sp,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          AutoTranslateText(
+            'Create a new match to get started',
+            style: MyTextTheme.smallBCN.copyWith(
+              color: AppColors.textSecondary.withValues(alpha: 0.7),
+              fontSize: 13.sp,
+            ),
+          ),
+          SizedBox(height: 24.h),
+          GestureDetector(
+            onTap: () => controller.selectedTabIndex.value = 1,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+              decoration: BoxDecoration(
+                gradient: AppColors.orangeGradient,
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: AutoTranslateText(
+                'Create New Match',
+                style: MyTextTheme.mediumBCB.copyWith(
+                  color: Colors.white,
+                  fontSize: 14.sp,
                 ),
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSavedMatchmakingCard(Map<String, dynamic> profile) {
+    final boy = profile['boy'] as Map<String, dynamic>?;
+    final girl = profile['girl'] as Map<String, dynamic>?;
+    final boyName = boy?['name'] ?? 'Unknown';
+    final girlName = girl?['name'] ?? 'Unknown';
+    final boyPlace = boy?['birthPlace'] ?? '';
+    final girlPlace = girl?['birthPlace'] ?? '';
+    final boyDob = boy?['dateOfBirth'] ?? '';
+    final girlDob = girl?['dateOfBirth'] ?? '';
+
+    // Format dates
+    String boyDisplayDate = boyDob;
+    String girlDisplayDate = girlDob;
+    try {
+      if (boyDob.isNotEmpty) {
+        final parts = boyDob.split('/');
+        if (parts.length == 3) {
+          boyDisplayDate = DateFormat('dd-MMM-yyyy').format(
+            DateTime(
+              int.parse(parts[2]),
+              int.parse(parts[0]),
+              int.parse(parts[1]),
+            ),
+          );
+        }
+      }
+      if (girlDob.isNotEmpty) {
+        final parts = girlDob.split('/');
+        if (parts.length == 3) {
+          girlDisplayDate = DateFormat('dd-MMM-yyyy').format(
+            DateTime(
+              int.parse(parts[2]),
+              int.parse(parts[0]),
+              int.parse(parts[1]),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      // Use raw format
+    }
+
+    return GestureDetector(
+      onTap: () => controller.openSavedMatchmaking(profile),
+      child: Container(
+        margin: EdgeInsets.only(bottom: 10.h),
+        padding: EdgeInsets.all(14.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14.r),
+          border: Border.all(
+            color: AppColors.deepOrange.withValues(alpha: 0.15),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.deepOrange.withValues(alpha: 0.06),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
           ],
+        ),
+        child: Row(
+          children: [
+            // Avatars Column
+            Column(
+              children: [
+                // Boy avatar
+                Container(
+                  width: 38.w,
+                  height: 38.w,
+                  decoration: BoxDecoration(
+                    gradient: AppColors.orangeGradient,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Icon(Icons.male, color: Colors.white, size: 20.w),
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                Icon(Icons.favorite, color: AppColors.deepOrange, size: 14.w),
+                SizedBox(height: 4.h),
+                // Girl avatar
+                Container(
+                  width: 38.w,
+                  height: 38.w,
+                  decoration: BoxDecoration(
+                    color: AppColors.deepOrange.withValues(alpha: 0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.female,
+                      color: AppColors.deepOrange,
+                      size: 20.w,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(width: 12.w),
+            // Details
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Boy info
+                  Text(
+                    boyName,
+                    style: MyTextTheme.mediumBCB.copyWith(
+                      color: AppColors.textColorMaroon,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    '$boyDisplayDate • $boyPlace',
+                    style: MyTextTheme.smallBCN.copyWith(
+                      color: AppColors.textSecondary,
+                      fontSize: 11.sp,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 8.h),
+                  // Divider
+                  Container(
+                    height: 1,
+                    color: AppColors.deepOrange.withValues(alpha: 0.1),
+                  ),
+                  SizedBox(height: 8.h),
+                  // Girl info
+                  Text(
+                    girlName,
+                    style: MyTextTheme.mediumBCB.copyWith(
+                      color: AppColors.textColorMaroon,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    '$girlDisplayDate • $girlPlace',
+                    style: MyTextTheme.smallBCN.copyWith(
+                      color: AppColors.textSecondary,
+                      fontSize: 11.sp,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            // Three-dot menu
+            PopupMenuButton<String>(
+              icon: Icon(
+                Icons.more_vert,
+                color: AppColors.deepOrange,
+                size: 22.w,
+              ),
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              onSelected: (value) {
+                switch (value) {
+                  case 'view':
+                    controller.openSavedMatchmaking(profile);
+                    break;
+                  case 'edit':
+                    controller.editSavedMatchmaking(profile);
+                    break;
+                  case 'delete':
+                    _showDeleteConfirmation(profile);
+                    break;
+                }
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 'view',
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.visibility,
+                        color: AppColors.deepOrange,
+                        size: 20.w,
+                      ),
+                      SizedBox(width: 10.w),
+                      AutoTranslateText(
+                        'View Match',
+                        style: MyTextTheme.mediumBCN.copyWith(
+                          color: AppColors.textColorMaroon,
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 'edit',
+                  child: Row(
+                    children: [
+                      Icon(Icons.edit, color: AppColors.deepOrange, size: 20.w),
+                      SizedBox(width: 10.w),
+                      AutoTranslateText(
+                        'Edit Match',
+                        style: MyTextTheme.mediumBCN.copyWith(
+                          color: AppColors.textColorMaroon,
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 'delete',
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete, color: AppColors.error, size: 20.w),
+                      SizedBox(width: 10.w),
+                      AutoTranslateText(
+                        'Delete Match',
+                        style: MyTextTheme.mediumBCN.copyWith(
+                          color: AppColors.error,
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showDeleteConfirmation(Map<String, dynamic> profile) {
+    final boyName = profile['boy']?['name'] ?? '';
+    final girlName = profile['girl']?['name'] ?? '';
+    final id = profile['_id']?.toString();
+    if (id == null) return;
+
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        title: AutoTranslateText(
+          'Delete Match',
+          style: MyTextTheme.largeBCB.copyWith(
+            color: AppColors.textColorMaroon,
+            fontSize: 18.sp,
+          ),
+        ),
+        content: AutoTranslateText(
+          'Are you sure you want to delete the match between "$boyName" and "$girlName"? This action cannot be undone.',
+          style: MyTextTheme.mediumBCN.copyWith(
+            color: AppColors.textSecondary,
+            fontSize: 14.sp,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: AutoTranslateText(
+              'Cancel',
+              style: MyTextTheme.mediumBCN.copyWith(
+                color: AppColors.textSecondary,
+                fontSize: 14.sp,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Get.back();
+              controller.deleteSavedMatchmakingProfile(id);
+            },
+            child: AutoTranslateText(
+              'Delete',
+              style: MyTextTheme.mediumBCB.copyWith(
+                color: AppColors.error,
+                fontSize: 14.sp,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ===== Form Content (New Match Tab) =====
+  Widget _buildFormContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AutoTranslateText(
+          'Enter Details',
+          style: MyTextTheme.largeBCB
+              .copyWith(color: '#68171E'.toColor(), fontWeight: FontWeight.bold)
+              .merge(AppTypography.h2),
+        ),
+        Spacing.h(20),
+
+        // Person 1 Section
+        _buildPersonSection(
+          label: 'Person 1',
+          subLabel: 'Groom Details',
+          nameController: controller.person1NameController,
+          dateController: controller.person1DateController,
+          timeController: controller.person1TimeController,
+          placeController: controller.person1PlaceController,
+          onDateTap: () => _showDatePicker(Get.context!, true),
+          onTimeTap: () => _showTimePicker(Get.context!, true),
+          onPlaceSelected: (place) =>
+              controller.setPerson1LocationFromAutocomplete(place),
+          isPerson1: true,
+        ),
+
+        Spacing.h(16),
+
+        // Swap Icon
+        Center(
+          child: GestureDetector(
+            onTap: () => controller.swapPersons(),
+            child: Container(
+              padding: EdgeInsets.all(8.w),
+              decoration: BoxDecoration(
+                gradient: AppColors.orangeGradient,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: '#F38B3B'.toColor().withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Icon(Icons.swap_vert, color: Colors.white, size: 24.w),
+            ),
+          ),
+        ),
+
+        Spacing.h(16),
+
+        // Person 2 Section
+        _buildPersonSection(
+          label: 'Person 2',
+          subLabel: 'Bride',
+          nameController: controller.person2NameController,
+          dateController: controller.person2DateController,
+          timeController: controller.person2TimeController,
+          placeController: controller.person2PlaceController,
+          onDateTap: () => _showDatePicker(Get.context!, false),
+          onTimeTap: () => _showTimePicker(Get.context!, false),
+          onPlaceSelected: (place) =>
+              controller.setPerson2LocationFromAutocomplete(place),
+          isPerson1: false,
+        ),
+
+        Spacing.h(20),
+
+        // Language Dropdown
+        _buildLanguageDropdown(),
+
+        Spacing.h(20),
+
+        // Save checkbox
+        _buildSaveCheckbox(),
+
+        Spacing.h(20),
+
+        // Compare Kundlis Button
+        _buildCompareButton(),
+
+        Spacing.h(20),
+      ],
+    );
+  }
+
+  // ===== Save Checkbox =====
+  Widget _buildSaveCheckbox() {
+    return Obx(
+      () => GestureDetector(
+        onTap: () => controller.saveMatchmakingChecked.toggle(),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+          decoration: BoxDecoration(
+            color: controller.saveMatchmakingChecked.value
+                ? AppColors.deepOrange.withValues(alpha: 0.08)
+                : Colors.white,
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(
+              color: controller.saveMatchmakingChecked.value
+                  ? AppColors.deepOrange.withValues(alpha: 0.4)
+                  : AppColors.deepOrange.withValues(alpha: 0.2),
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 22.w,
+                height: 22.w,
+                decoration: BoxDecoration(
+                  color: controller.saveMatchmakingChecked.value
+                      ? AppColors.deepOrange
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(6.r),
+                  border: Border.all(
+                    color: controller.saveMatchmakingChecked.value
+                        ? AppColors.deepOrange
+                        : AppColors.textSecondary.withValues(alpha: 0.4),
+                    width: 1.5,
+                  ),
+                ),
+                child: controller.saveMatchmakingChecked.value
+                    ? Icon(Icons.check, color: Colors.white, size: 16.w)
+                    : null,
+              ),
+              SizedBox(width: 10.w),
+              Expanded(
+                child: AutoTranslateText(
+                  'Save Your Kundli Matching',
+                  style: MyTextTheme.mediumBCN.copyWith(
+                    color: AppColors.textColorMaroon,
+                    fontSize: 14.sp,
+                    fontWeight: controller.saveMatchmakingChecked.value
+                        ? FontWeight.w600
+                        : FontWeight.normal,
+                  ),
+                ),
+              ),
+              Icon(
+                Icons.bookmark_border,
+                color: controller.saveMatchmakingChecked.value
+                    ? AppColors.deepOrange
+                    : AppColors.textSecondary.withValues(alpha: 0.5),
+                size: 20.w,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -161,7 +765,6 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section Header
           Row(
             children: [
               AutoTranslateText(
@@ -181,16 +784,12 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
             ],
           ),
           Spacing.h(16),
-
-          // Full Name
           _buildTextField(
             controller: nameController,
             label: 'Full Name',
             icon: Icons.person,
           ),
           Spacing.h(12),
-
-          // Birth Date
           _buildTextField(
             controller: dateController,
             label: 'Birth Date',
@@ -199,8 +798,6 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
             onTap: onDateTap,
           ),
           Spacing.h(12),
-
-          // Birth Time
           _buildTextField(
             controller: timeController,
             label: 'Birth Time',
@@ -209,12 +806,10 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
             onTap: onTimeTap,
           ),
           Spacing.h(12),
-
-          // Birth Place with Google Maps Autocomplete
           AddressAutocompleteField(
             controller: placeController,
             onPlaceSelected: onPlaceSelected,
-            country: 'in', // Restrict to India as per controller logic
+            country: 'in',
             decoration: InputDecoration(
               labelText: 'Birth Place',
               hintText: 'Enter birth place',
@@ -245,8 +840,6 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
             ),
           ),
           Spacing.h(8),
-
-          // Info AutoTranslateText
           AutoTranslateText(
             'Exact time improves accuracy',
             style: MyTextTheme.smallBCN

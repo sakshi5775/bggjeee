@@ -8,8 +8,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:intl/intl.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/service/user_profile_service.dart';
+import 'package:astrobharataiuser/app_manager/user_data.dart';
 
 import '../../../app_manager/my_text_theme.dart';
 import '../../../utils/app_colors.dart';
@@ -137,6 +140,46 @@ class NumerologyFormController extends BaseController {
     },
   ];
 
+  final UserProfileService _userProfileService = UserProfileService();
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadUserProfileData();
+  }
+
+  Future<void> _loadUserProfileData() async {
+    try {
+      final userId = UserData().getLoginData.user?.userId;
+      if (userId == null) return;
+      final profile = await _userProfileService.getProfile(userId);
+      if (profile == null) return;
+
+      if (profile.personalInfo != null) {
+        final fullName = profile.personalInfo!.fullName;
+        if (fullName != null &&
+            fullName.isNotEmpty &&
+            nameController.text.isEmpty) {
+          nameController.text = fullName;
+        }
+        final gender = profile.personalInfo!.gender;
+        if (gender != null &&
+            gender.isNotEmpty &&
+            selectedGender.value.isEmpty) {
+          if (gender.toUpperCase() == 'MALE') {
+            selectedGender.value = 'male';
+          } else if (gender.toUpperCase() == 'FEMALE') {
+            selectedGender.value = 'female';
+          } else {
+            selectedGender.value = gender.toLowerCase();
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading profile: $e');
+    }
+  }
+
   void selectDate(DateTime date) {
     selectedDate.value = date;
   }
@@ -238,7 +281,7 @@ class NumerologyFormController extends BaseController {
     }
 
     // Navigate to features selection page
-    Get.toNamed('/numerology-features');
+    UserMainController.pushInCurrentTab('/numerology-features');
   }
 
   // Handle tab selection
@@ -539,7 +582,7 @@ class NumerologyFormController extends BaseController {
             lang: lang,
           );
           if (response != null) {
-            Get.toNamed(
+            UserMainController.pushInCurrentTab(
               '/numerology-result',
               arguments: {
                 'type': 'number_analysis',
@@ -556,7 +599,7 @@ class NumerologyFormController extends BaseController {
             lang: lang,
           );
           if (response != null) {
-            Get.toNamed(
+            UserMainController.pushInCurrentTab(
               '/numerology-result',
               arguments: {
                 'type': 'missing_numbers',
@@ -573,7 +616,7 @@ class NumerologyFormController extends BaseController {
             lang: lang,
           );
           if (response != null) {
-            Get.toNamed(
+            UserMainController.pushInCurrentTab(
               '/numerology-result',
               arguments: {
                 'type': 'available_numbers',
@@ -589,7 +632,7 @@ class NumerologyFormController extends BaseController {
             lang: lang,
           );
           if (response != null) {
-            Get.toNamed(
+            UserMainController.pushInCurrentTab(
               '/numerology-result',
               arguments: {
                 'type': 'mobile_analysis',
@@ -605,7 +648,7 @@ class NumerologyFormController extends BaseController {
             lang: lang,
           );
           if (response != null) {
-            Get.toNamed(
+            UserMainController.pushInCurrentTab(
               '/numerology-result',
               arguments: {
                 'type': 'numerology_suggestion',
@@ -623,7 +666,7 @@ class NumerologyFormController extends BaseController {
             lang: lang,
           );
           if (response != null) {
-            Get.toNamed(
+            UserMainController.pushInCurrentTab(
               '/numerology-result',
               arguments: {
                 'type': 'name_analysis',
@@ -640,7 +683,7 @@ class NumerologyFormController extends BaseController {
             lang: lang,
           );
           if (response != null) {
-            Get.toNamed(
+            UserMainController.pushInCurrentTab(
               '/numerology-result',
               arguments: {'type': 'lucky_things', 'data': response['response']},
             );
@@ -654,7 +697,7 @@ class NumerologyFormController extends BaseController {
             lang: lang,
           );
           if (response != null) {
-            Get.toNamed(
+            UserMainController.pushInCurrentTab(
               '/numerology-result',
               arguments: {
                 'type': 'personal_year',
@@ -670,7 +713,7 @@ class NumerologyFormController extends BaseController {
             lang: lang,
           );
           if (response != null) {
-            Get.toNamed(
+            UserMainController.pushInCurrentTab(
               '/numerology-result',
               arguments: {
                 'type': 'karmic_number',
@@ -686,7 +729,7 @@ class NumerologyFormController extends BaseController {
             lang: lang,
           );
           if (response != null) {
-            Get.toNamed(
+            UserMainController.pushInCurrentTab(
               '/numerology-result',
               arguments: {
                 'type': 'master_numbers',
@@ -703,7 +746,7 @@ class NumerologyFormController extends BaseController {
             lang: lang,
           );
           if (response != null) {
-            Get.toNamed(
+            UserMainController.pushInCurrentTab(
               '/loshu-grid-result',
               arguments: {
                 ...response['response'],
@@ -840,7 +883,7 @@ class NumerologyFormController extends BaseController {
       );
 
       if (response != null) {
-        Get.toNamed(
+        UserMainController.pushInCurrentTab(
           '/numerology-result',
           arguments: {'type': 'vehicle_analysis', 'data': response['response']},
         );
@@ -867,7 +910,7 @@ class NumerologyFormController extends BaseController {
   }
 
   void _navigateToReports() {
-    Get.toNamed('/numerology-reports');
+    UserMainController.pushInCurrentTab('/numerology-reports');
   }
 
   void _showKeyPoints() async {
@@ -1034,7 +1077,7 @@ class NumerologyFormController extends BaseController {
       };
 
       // Navigate to result view with combined data
-      Get.toNamed(
+      UserMainController.pushInCurrentTab(
         '/numerology-result',
         arguments: {'type': 'key_points', 'data': combinedData},
       );

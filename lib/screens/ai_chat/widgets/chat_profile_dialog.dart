@@ -575,69 +575,81 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
     bool readOnly = false,
     VoidCallback? onTap,
   }) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 4.h),
-      decoration: BoxDecoration(
-        color: fillColor,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: TextFormField(
-        controller: controller,
-        keyboardType: keyboardType,
-        inputFormatters: inputFormatters,
-        readOnly: readOnly,
-        onTap: onTap,
-        style: MyTextTheme.smallBCN.copyWith(
-          color: AppColors.textColorMaroon,
-          fontWeight: FontWeight.w500,
-        ),
-        decoration: InputDecoration(
-          labelText: label,
-          hintText: hint,
-          hintStyle: MyTextTheme.smallBCN.copyWith(
-            color: AppColors.textColorMaroon.withValues(alpha: 0.4),
-          ),
-          labelStyle: MyTextTheme.smallBCN.copyWith(
-            color: AppColors.deepOrange.withValues(alpha: 0.8),
-          ),
-          filled: true,
-          fillColor: Colors.transparent, // Controlled by container
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide(
-              color: AppColors.deepOrange.withValues(alpha: 0.1),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(left: 4.w, bottom: 6.h),
+          child: AutoTranslateText(
+            label,
+            style: MyTextTheme.smallBCB.copyWith(
+              color: AppColors.textColorMaroon,
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          enabledBorder: OutlineInputBorder(
+        ),
+        Container(
+          margin: EdgeInsets.only(bottom: 4.h),
+          decoration: BoxDecoration(
+            color: fillColor,
             borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide(
-              color: AppColors.deepOrange.withValues(alpha: 0.1),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: TextFormField(
+            controller: controller,
+            keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
+            readOnly: readOnly,
+            onTap: onTap,
+            style: MyTextTheme.smallBCN.copyWith(
+              color: AppColors.textColorMaroon,
+              fontWeight: FontWeight.w500,
             ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide(color: AppColors.deepOrange, width: 1.5),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: const BorderSide(color: Colors.red),
-          ),
-          prefixIcon: prefixIcon,
-          suffixIcon: suffixIcon,
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 16.w,
-            vertical: 16.h,
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: MyTextTheme.smallBCN.copyWith(
+                color: AppColors.textColorMaroon.withValues(alpha: 0.4),
+              ),
+              filled: true,
+              fillColor: Colors.transparent, // Controlled by container
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide(
+                  color: AppColors.deepOrange.withValues(alpha: 0.1),
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide(
+                  color: AppColors.deepOrange.withValues(alpha: 0.1),
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide(color: AppColors.deepOrange, width: 1.5),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: const BorderSide(color: Colors.red),
+              ),
+              prefixIcon: prefixIcon,
+              suffixIcon: suffixIcon,
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 16.w,
+                vertical: 16.h,
+              ),
+            ),
+            validator: validator,
           ),
         ),
-        validator: validator,
-      ),
+      ],
     );
   }
 
@@ -649,136 +661,166 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
     Color fillColor = Colors.white,
     Widget? prefixIcon,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: fillColor,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: InputDecorator(
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: MyTextTheme.smallBCN.copyWith(
-            color: AppColors.deepOrange.withValues(alpha: 0.8),
-          ),
-          filled: true,
-          fillColor: Colors.transparent, // Controlled by container
-          prefixIcon: prefixIcon,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide(
-              color: AppColors.deepOrange.withValues(alpha: 0.1),
-            ),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide(
-              color: AppColors.deepOrange.withValues(alpha: 0.1),
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide(color: AppColors.deepOrange),
-          ),
-          contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
-        ),
-        child: DropdownButtonHideUnderline(
-          child: DropdownButton<String>(
-            value: value,
-            isExpanded: true,
-            dropdownColor: Colors.white,
-            style: MyTextTheme.smallBCN.copyWith(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(left: 4.w, bottom: 6.h),
+          child: AutoTranslateText(
+            label,
+            style: MyTextTheme.smallBCB.copyWith(
               color: AppColors.textColorMaroon,
-              fontWeight: FontWeight.w500,
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w600,
             ),
-            iconEnabledColor: AppColors.deepOrange,
-            items: options
-                .map(
-                  (option) => DropdownMenuItem<String>(
-                    value: option,
-                    child: AutoTranslateText(option),
-                  ),
-                )
-                .toList(),
-            onChanged: onChanged,
           ),
         ),
-      ),
+        Container(
+          decoration: BoxDecoration(
+            color: fillColor,
+            borderRadius: BorderRadius.circular(12.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: InputDecorator(
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.transparent, // Controlled by container
+              prefixIcon: prefixIcon,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide(
+                  color: AppColors.deepOrange.withValues(alpha: 0.1),
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide(
+                  color: AppColors.deepOrange.withValues(alpha: 0.1),
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide(color: AppColors.deepOrange),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 16.w,
+                vertical: 4.h,
+              ),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: value,
+                isExpanded: true,
+                dropdownColor: Colors.white,
+                style: MyTextTheme.smallBCN.copyWith(
+                  color: AppColors.textColorMaroon,
+                  fontWeight: FontWeight.w500,
+                ),
+                iconEnabledColor: AppColors.deepOrange,
+                items: options
+                    .map(
+                      (option) => DropdownMenuItem<String>(
+                        value: option,
+                        child: AutoTranslateText(option),
+                      ),
+                    )
+                    .toList(),
+                onChanged: onChanged,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildLanguageDropdown() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: InputDecorator(
-        decoration: InputDecoration(
-          labelText: 'Language',
-          labelStyle: MyTextTheme.smallBCN.copyWith(
-            color: AppColors.deepOrange.withValues(alpha: 0.8),
-          ),
-          filled: true,
-          fillColor: Colors.transparent, // Controlled by container
-          prefixIcon: Icon(Icons.language, color: AppColors.deepOrange),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide(
-              color: AppColors.deepOrange.withValues(alpha: 0.1),
-            ),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide(
-              color: AppColors.deepOrange.withValues(alpha: 0.1),
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide(color: AppColors.deepOrange),
-          ),
-          contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
-        ),
-        child: DropdownButtonHideUnderline(
-          child: DropdownButton<String>(
-            value: _selectedLanguageCode,
-            isExpanded: true,
-            dropdownColor: Colors.white,
-            style: MyTextTheme.smallBCN.copyWith(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(left: 4.w, bottom: 6.h),
+          child: AutoTranslateText(
+            'Language',
+            style: MyTextTheme.smallBCB.copyWith(
               color: AppColors.textColorMaroon,
-              fontWeight: FontWeight.w500,
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w600,
             ),
-            iconEnabledColor: AppColors.deepOrange,
-            items: _languageOptions.entries
-                .map(
-                  (entry) => DropdownMenuItem<String>(
-                    value: entry.key,
-                    child: AutoTranslateText(entry.value),
-                  ),
-                )
-                .toList(),
-            onChanged: (value) {
-              if (value != null) {
-                setState(() => _selectedLanguageCode = value);
-              }
-            },
           ),
         ),
-      ),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: InputDecorator(
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.transparent, // Controlled by container
+              prefixIcon: Icon(Icons.language, color: AppColors.deepOrange),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide(
+                  color: AppColors.deepOrange.withValues(alpha: 0.1),
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide(
+                  color: AppColors.deepOrange.withValues(alpha: 0.1),
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide(color: AppColors.deepOrange),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 16.w,
+                vertical: 4.h,
+              ),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: _selectedLanguageCode,
+                isExpanded: true,
+                dropdownColor: Colors.white,
+                style: MyTextTheme.smallBCN.copyWith(
+                  color: AppColors.textColorMaroon,
+                  fontWeight: FontWeight.w500,
+                ),
+                iconEnabledColor: AppColors.deepOrange,
+                items: _languageOptions.entries
+                    .map(
+                      (entry) => DropdownMenuItem<String>(
+                        value: entry.key,
+                        child: AutoTranslateText(entry.value),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() => _selectedLanguageCode = value);
+                  }
+                },
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

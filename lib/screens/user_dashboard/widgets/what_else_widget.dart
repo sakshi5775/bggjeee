@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/core/services/share_service.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class WhatElseWidget extends StatelessWidget {
@@ -153,9 +155,12 @@ class WhatElseWidget extends StatelessWidget {
           Get.to(() => const ComingSoonPage());
         } else {
           if (route == AppRoutes.ecommerceHome) {
-            Get.toNamed(route, arguments: {'showBackButton': true});
+            UserMainController.pushInCurrentTab(
+              route,
+              arguments: {'showBackButton': true},
+            );
           } else {
-            Get.toNamed(route);
+            UserMainController.pushInCurrentTab(route);
           }
         }
       },
