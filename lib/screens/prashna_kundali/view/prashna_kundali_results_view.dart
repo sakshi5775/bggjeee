@@ -17,6 +17,8 @@ import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/services/share_service.dart';
+
 class PrashnaKundaliResultsView extends StatelessWidget {
   const PrashnaKundaliResultsView({Key? key}) : super(key: key);
 
@@ -61,7 +63,10 @@ class PrashnaKundaliResultsView extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: () {
-                    // Share functionality
+                    // ShareService.shareKundli(
+                    //   kundliId: result.answerToQuestion,
+                    //   userName: result.,
+                    // );
                   },
                   icon: Icon(
                     Icons.share,

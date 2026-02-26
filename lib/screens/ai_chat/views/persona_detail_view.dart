@@ -1,3 +1,5 @@
+﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/core/services/share_service.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
@@ -234,7 +236,12 @@ class PersonaDetailView extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.share, color: const Color(0xFF5F2221), size: 24.w),
             onPressed: () {
-              // TODO: Implement share
+              ShareService.shareAiAstrologer(
+                personaId: persona.id,
+                personaName: persona.name.isNotEmpty
+                    ? persona.name
+                    : persona.displayName,
+              );
             },
           ),
         ],

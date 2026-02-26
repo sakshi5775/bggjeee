@@ -8,6 +8,7 @@ import 'package:astrobharataiuser/utils/error_ui_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:open_file/open_file.dart';
@@ -171,14 +172,16 @@ class _ReportPdfViewState extends State<ReportPdfView> {
             icon: const Icon(Icons.share, color: Colors.white),
             onPressed: pdfBytes == null
                 ? null
-                : () {
-                    Share.shareXFiles([
-                      XFile.fromData(
-                        pdfBytes!,
-                        name: fileName,
-                        mimeType: 'application/pdf',
-                      ),
-                    ], text: title);
+                : () async {
+                    final directory = await getTemporaryDirectory();
+                    final filePath = '${directory.path}/$fileName';
+
+                    final file = File(filePath);
+                    await file.writeAsBytes(pdfBytes!);
+
+                    await SharePlus.instance.share(
+                      ShareParams(files: [XFile(filePath)], text: title),
+                    );
                   },
             tooltip: 'Share PDF',
           ),

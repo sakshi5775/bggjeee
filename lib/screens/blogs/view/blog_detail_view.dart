@@ -17,6 +17,8 @@ import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
+import '../../../core/services/share_service.dart';
+
 class BlogDetailView extends StatefulWidget {
   final Blog blog;
 
@@ -134,11 +136,10 @@ class _BlogDetailViewState extends State<BlogDetailView> {
                 IconButton(
                   onPressed: () {
                     // Share functionality
-                    Get.snackbar(
-                      'Share',
-                      'Share functionality coming soon',
-                      backgroundColor: '#FF6B35'.toColor(),
-                      colorText: Colors.white,
+                    ShareService.shareBlog(
+                      blogId: widget.blog.id!,
+
+                      blogTitle: widget.blog.title ?? '',
                     );
                   },
                   icon: Icon(
@@ -554,11 +555,10 @@ class _BlogDetailViewState extends State<BlogDetailView> {
                                 Spacing.w(16),
                                 InkWell(
                                   onTap: () {
-                                    Get.snackbar(
-                                      'Share',
-                                      'Share functionality coming soon',
-                                      backgroundColor: '#FF6B35'.toColor(),
-                                      colorText: Colors.white,
+                                    ShareService.shareBlog(
+                                      blogId: widget.blog.id!,
+
+                                      blogTitle: widget.blog.title ?? '',
                                     );
                                   },
                                   child: Container(

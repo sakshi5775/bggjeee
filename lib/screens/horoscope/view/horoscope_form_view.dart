@@ -15,9 +15,13 @@ import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class HoroscopeFormView extends BasePage<HoroscopeFormController> {
+  final bool hideHeader;
   final bool isEmbedded;
-
-  const HoroscopeFormView({super.key, this.isEmbedded = false});
+  const HoroscopeFormView({
+    super.key,
+    this.hideHeader = false,
+    this.isEmbedded = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +39,7 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
         drawer: UserDashboardView.buildDrawer(context),
         body: Column(
           children: [
-            const CommonHeader(title: 'Horoscope'),
+            if (!hideHeader) const CommonHeader(title: 'Horoscope'),
             Expanded(
               child: SingleChildScrollView(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 0.h),

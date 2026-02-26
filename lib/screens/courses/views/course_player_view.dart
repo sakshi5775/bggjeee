@@ -11,6 +11,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
+import '../../../core/services/share_service.dart';
+
 class CoursePlayerView extends StatelessWidget {
   final String courseId;
 
@@ -219,7 +221,11 @@ class CoursePlayerView extends StatelessWidget {
             // Share button
             IconButton(
               onPressed: () {
-                // TODO: Implement share functionality
+                ShareService.shareCourse(
+                  courseId: controller.courseDetail.value?.course.id ?? '',
+                  courseTitle:
+                      controller.courseDetail.value?.course.title ?? '',
+                );
               },
               icon: Icon(Icons.share_outlined, color: Colors.white, size: 20.w),
               padding: EdgeInsets.zero,

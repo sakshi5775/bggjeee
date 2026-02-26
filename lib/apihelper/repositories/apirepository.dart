@@ -26,9 +26,9 @@ class ApiRepository {
       contentType: contentType,
       decoder: decoder,
       useAuthHeader: useAuthHeader,
-      timeout: timeout,
-      useCache: useCache,
-      maxCacheAge: maxCacheAge,
+      // timeout: timeout,
+      // useCache: useCache,
+      // maxCacheAge: maxCacheAge,
     );
   }
 
@@ -43,7 +43,7 @@ class ApiRepository {
       endPoint,
       body,
       useAuthHeader: useAuthHeader,
-      timeout: timeout,
+      // timeout: timeout,
     );
   }
 
@@ -116,7 +116,7 @@ class ApiRepository {
       fields: fields,
       files: files,
       query: query,
-      timeout: timeout,
+      // timeout: timeout,
     );
   }
 

@@ -1,11 +1,40 @@
 import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
 import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
 import 'package:astrobharataiuser/data_model/course_model.dart';
+import 'package:astrobharataiuser/data_model/course_type_model.dart';
+import 'package:astrobharataiuser/data_model/pillar_model.dart';
 import 'package:astrobharataiuser/data_model/payment_process_model.dart';
 import 'package:get/get.dart';
 
 class CoursesService {
   final ApiRepository _apiRepository = Get.find();
+
+  // Get course types (learning journey steps)
+  Future<CourseTypeResponse?> getCourseTypes() async {
+    final response = await _apiRepository.getApi(EndPoints.courseTypes);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.body['success'] == true) {
+        return CourseTypeResponse.fromJson(response.body);
+      }
+    }
+
+    throw response.body?['message']?.toString() ??
+        'Failed to fetch course types';
+  }
+
+  // Get pillars (spiritual pillars grid)
+  Future<PillarResponse?> getPillars() async {
+    final response = await _apiRepository.getApi(EndPoints.pillars);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.body['success'] == true) {
+        return PillarResponse.fromJson(response.body);
+      }
+    }
+
+    throw response.body?['message']?.toString() ?? 'Failed to fetch pillars';
+  }
 
   // Get courses with pagination and filters
   Future<CourseResponse?> getCourses({
@@ -15,6 +44,7 @@ class CoursesService {
     String? search,
     String? instructor,
     String? courseType,
+    String? pillar,
   }) async {
     final query = <String, dynamic>{
       'page': page.toString(),
@@ -35,6 +65,10 @@ class CoursesService {
 
     if (courseType != null && courseType.isNotEmpty) {
       query['courseType'] = courseType;
+    }
+
+    if (pillar != null && pillar.isNotEmpty) {
+      query['pillar'] = pillar;
     }
 
     final response = await _apiRepository.getApi(

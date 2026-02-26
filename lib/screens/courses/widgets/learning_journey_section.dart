@@ -1,4 +1,5 @@
-﻿import 'package:astrobharataiuser/screens/courses/controllers/courses_controller.dart';
+﻿import 'package:astrobharataiuser/data_model/course_type_model.dart';
+import 'package:astrobharataiuser/screens/courses/controllers/courses_controller.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/course_type_bottom_sheet.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -7,72 +8,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-/// Static metadata for each course level (labels / API key / display info).
-class _CourseStep {
-  final String label;
-  final String courseType;
-  final String duration;
-  final String price;
-  final IconData icon;
-  final bool isDark;
-
-  const _CourseStep({
-    required this.label,
-    required this.courseType,
-    required this.duration,
-    required this.price,
-    required this.icon,
-    this.isDark = false,
-  });
+/// Map a course-type slug to a Material icon.
+/// Falls back to [Icons.school_outlined] for unknown slugs.
+IconData _iconForSlug(String slug) {
+  switch (slug) {
+    case 'intro-course':
+      return Icons.school_outlined;
+    case 'diploma-program':
+      return Icons.emoji_events_outlined;
+    case 'bachelor':
+      return Icons.workspace_premium_outlined;
+    case 'master':
+      return Icons.history_edu_outlined;
+    case 'grand-master':
+      return Icons.stars_outlined;
+    default:
+      return Icons.school_outlined;
+  }
 }
 
-const _steps = <_CourseStep>[
-  _CourseStep(
-    label: 'Intro Course',
-    courseType: 'introcourse',
-    duration: '4 WEEKS',
-    price: '₹1,200+',
-    icon: Icons.school_outlined,
-  ),
-  _CourseStep(
-    label: 'Diploma Program',
-    courseType: 'diplomacourse',
-    duration: '8 WEEKS',
-    price: '₹4,999+',
-    icon: Icons.emoji_events_outlined,
-  ),
-  _CourseStep(
-    label: 'Bachelor Program',
-    courseType: 'bachelorcourse',
-    duration: '12 WEEKS',
-    price: '₹9,999+',
-    icon: Icons.workspace_premium_outlined,
-  ),
-  _CourseStep(
-    label: 'Master Program',
-    courseType: 'mastercourse',
-    duration: '16 WEEKS',
-    price: '₹19,999+',
-    icon: Icons.history_edu_outlined,
-  ),
-  _CourseStep(
-    label: 'Grand Master',
-    courseType: 'grandmaster',
-    duration: '24 WEEKS',
-    price: '₹39,999+',
-    icon: Icons.stars_outlined,
-    isDark: true,
-  ),
-];
+/// Whether the card should use the dark (maroon/gold) style.
+bool _isDarkCard(String slug) => slug == 'grand-master';
 
 // ══════════════════════════════════════════════════
-// Section widget — fully stateless
+// Section widget — fully stateless, reads API data
 // ══════════════════════════════════════════════════
 class LearningJourneySection extends StatelessWidget {
   const LearningJourneySection({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final ctrl = Get.find<CoursesController>();
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
       child: Column(
@@ -102,20 +69,56 @@ class LearningJourneySection extends StatelessWidget {
           ),
           SizedBox(height: 20.h),
 
-          // ── Horizontal scrollable steps ──
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            clipBehavior: Clip.none,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                for (int i = 0; i < _steps.length; i++) ...[
-                  _JourneyCard(step: _steps[i]),
-                  if (i < _steps.length - 1) _buildArrow(),
+          // ── Horizontal scrollable steps (driven by API) ──
+          Obx(() {
+            if (ctrl.isCourseTypesLoading.value) {
+              return Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 40.h),
+                  child: SizedBox(
+                    width: 32.w,
+                    height: 32.w,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        AppColors.deepOrange,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            if (ctrl.courseTypesList.isEmpty) {
+              return Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 40.h),
+                  child: AutoTranslateText(
+                    'No course levels available',
+                    style: AppTypography.body2.copyWith(
+                      color: Colors.grey.shade500,
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            final types = ctrl.courseTypesList;
+
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              clipBehavior: Clip.none,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  for (int i = 0; i < types.length; i++) ...[
+                    _JourneyCard(courseType: types[i]),
+                    if (i < types.length - 1) _buildArrow(),
+                  ],
                 ],
-              ],
-            ),
-          ),
+              ),
+            );
+          }),
         ],
       ),
     );
@@ -135,28 +138,30 @@ class LearningJourneySection extends StatelessWidget {
 
 // ══════════════════════════════════════════════════
 // Journey step card — fully stateless
-// Bounce scale is driven by CoursesController.bounceScaleMap via Obx.
+// Bounce scale driven by CoursesController.bounceScaleMap via Obx.
 // ══════════════════════════════════════════════════
 class _JourneyCard extends StatelessWidget {
-  final _CourseStep step;
-  const _JourneyCard({required this.step});
+  final CourseTypeModel courseType;
+  const _JourneyCard({required this.courseType});
 
   Future<void> _onTap(CoursesController ctrl) async {
-    await ctrl.triggerBounce(step.courseType);
+    await ctrl.triggerBounce(courseType.id);
     await showCourseTypeSheet(
-      courseType: step.courseType,
-      courseLabel: step.label,
-      icon: step.icon,
-      isDark: step.isDark,
+      courseType: courseType.id,
+      courseLabel: courseType.name,
+      icon: _iconForSlug(courseType.slug),
+      isDark: _isDarkCard(courseType.slug),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final ctrl = Get.find<CoursesController>();
+    final icon = _iconForSlug(courseType.slug);
+    final isDark = _isDarkCard(courseType.slug);
 
     return Obx(() {
-      final scale = ctrl.bounceScaleMap[step.courseType] ?? 1.0;
+      final scale = ctrl.bounceScaleMap[courseType.id] ?? 1.0;
 
       return Transform.scale(
         scale: scale,
@@ -166,23 +171,23 @@ class _JourneyCard extends StatelessWidget {
             width: 148.w,
             padding: EdgeInsets.all(14.w),
             decoration: BoxDecoration(
-              gradient: step.isDark
+              gradient: isDark
                   ? const LinearGradient(
                       colors: [Color(0xFF4A1515), Color(0xFF2E0D0D)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     )
                   : null,
-              color: step.isDark ? null : Colors.white,
+              color: isDark ? null : Colors.white,
               borderRadius: BorderRadius.circular(18.r),
               border: Border.all(
-                color: step.isDark
+                color: isDark
                     ? const Color(0xFFD68D3C).withValues(alpha: 0.5)
                     : const Color(0xFFD68D3C).withValues(alpha: 0.25),
-                width: step.isDark ? 1.5 : 1.0,
+                width: isDark ? 1.5 : 1.0,
               ),
               boxShadow: [
-                if (step.isDark)
+                if (isDark)
                   BoxShadow(
                     color: const Color(0xFF3E1212).withValues(alpha: 0.35),
                     blurRadius: 16,
@@ -204,7 +209,7 @@ class _JourneyCard extends StatelessWidget {
                   padding: EdgeInsets.all(10.w),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: step.isDark
+                    gradient: isDark
                         ? const LinearGradient(
                             colors: [Color(0xFFD68D3C), Color(0xFFFFCC80)],
                           )
@@ -216,7 +221,7 @@ class _JourneyCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Icon(step.icon, color: Colors.white, size: 22.w),
+                  child: Icon(icon, color: Colors.white, size: 22.w),
                 ),
                 SizedBox(height: 10.h),
 
@@ -225,14 +230,12 @@ class _JourneyCard extends StatelessWidget {
                   height: 38.h,
                   child: Center(
                     child: AutoTranslateText(
-                      step.label,
+                      courseType.name,
                       textAlign: TextAlign.center,
                       style: AppTypography.body1.copyWith(
                         fontWeight: FontWeight.bold,
                         fontSize: 13,
-                        color: step.isDark
-                            ? Colors.white
-                            : AppColors.textPrimary,
+                        color: isDark ? Colors.white : AppColors.textPrimary,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -245,17 +248,17 @@ class _JourneyCard extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                   decoration: BoxDecoration(
-                    color: step.isDark
+                    color: isDark
                         ? const Color(0xFFFFCC80).withValues(alpha: 0.2)
                         : const Color(0xFFEEEEEE),
                     borderRadius: BorderRadius.circular(6.r),
                   ),
                   child: AutoTranslateText(
-                    step.duration,
+                    courseType.duration.toUpperCase(),
                     style: AppTypography.label.copyWith(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
-                      color: step.isDark
+                      color: isDark
                           ? const Color(0xFFFFCC80)
                           : const Color(0xFF666666),
                     ),
@@ -263,13 +266,13 @@ class _JourneyCard extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
 
-                // ── Price ──
+                // ── Investment / Price ──
                 AutoTranslateText(
-                  step.price,
+                  '₹${courseType.investment}',
                   style: AppTypography.body2.copyWith(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
-                    color: step.isDark
+                    color: isDark
                         ? const Color(0xFFFFCC80)
                         : const Color(0xFFD68D3C),
                   ),
@@ -281,7 +284,7 @@ class _JourneyCard extends StatelessWidget {
                   width: double.infinity,
                   padding: EdgeInsets.symmetric(vertical: 7.h),
                   decoration: BoxDecoration(
-                    gradient: step.isDark
+                    gradient: isDark
                         ? const LinearGradient(
                             colors: [Color(0xFFFFCC80), Color(0xFFFFEEDD)],
                             begin: Alignment.topCenter,
@@ -306,7 +309,7 @@ class _JourneyCard extends StatelessWidget {
                         style: AppTypography.body2.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 11.sp,
-                          color: step.isDark
+                          color: isDark
                               ? const Color(0xFF3E1212)
                               : Colors.white,
                         ),
@@ -315,9 +318,7 @@ class _JourneyCard extends StatelessWidget {
                       Icon(
                         Icons.arrow_forward_rounded,
                         size: 12.w,
-                        color: step.isDark
-                            ? const Color(0xFF3E1212)
-                            : Colors.white,
+                        color: isDark ? const Color(0xFF3E1212) : Colors.white,
                       ),
                     ],
                   ),

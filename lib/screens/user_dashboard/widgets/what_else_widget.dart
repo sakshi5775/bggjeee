@@ -10,6 +10,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/core/services/share_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -154,7 +155,10 @@ class WhatElseWidget extends StatelessWidget {
           Get.to(() => const ComingSoonPage());
         } else {
           if (route == AppRoutes.ecommerceHome) {
-            UserMainController.pushInCurrentTab(route, arguments: {'showBackButton': true});
+            UserMainController.pushInCurrentTab(
+              route,
+              arguments: {'showBackButton': true},
+            );
           } else {
             UserMainController.pushInCurrentTab(route);
           }
@@ -260,17 +264,7 @@ class WhatElseWidget extends StatelessWidget {
 
   Future<void> _shareApp() async {
     try {
-      const message = '''
-Discover astrology, Kundli, and more with AstroBharatAI!
-
-📱 Download the app: https://astrobharatai.com
-
-Explore daily panchang, chat with astrologers, courses, and much more.
-''';
-      await Share.share(
-        message,
-        subject: 'AstroBharatAI - Astrology & Kundli App',
-      );
+      await ShareService.shareApp();
     } catch (e) {
       Get.snackbar(
         'Error',

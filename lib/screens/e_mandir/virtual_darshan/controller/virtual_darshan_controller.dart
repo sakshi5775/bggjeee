@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/god_category_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/god_data.dart';
+import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/god_image_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/puja_item_category_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/service/god_category_service.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/service/puja_item_category_service.dart';
@@ -79,46 +80,49 @@ class VirtualDarshanController extends BaseController
   final RxBool isLoadingCategories = true.obs;
   final RxString errorMessage = ''.obs;
 
-  // Getter for current god name
+  // Per-category images (shown in the vertical reel)
+  final RxList<GodImageModel> categoryImages = <GodImageModel>[].obs;
+  final RxBool isLoadingCategoryImages = false.obs;
+  final RxInt currentCategoryIndex = 0.obs;
+
+  // Getter for current category name
   String get currentGodName {
     if (godCategories.isEmpty) {
       if (fallbackGodsList.isNotEmpty &&
-          currentGodIndex.value < fallbackGodsList.length) {
-        return fallbackGodsList[currentGodIndex.value].name;
+          currentCategoryIndex.value < fallbackGodsList.length) {
+        return fallbackGodsList[currentCategoryIndex.value].name;
       }
       return 'Unknown';
     }
-    if (currentGodIndex.value < godCategories.length) {
-      return godCategories[currentGodIndex.value].godName;
+    if (currentCategoryIndex.value < godCategories.length) {
+      return godCategories[currentCategoryIndex.value].godName;
     }
     return 'Unknown';
   }
 
-  // Getter for current god image
+  // Getter for current category thumbnail
   String get currentGodImage {
     if (godCategories.isEmpty) {
       if (fallbackGodsList.isNotEmpty &&
-          currentGodIndex.value < fallbackGodsList.length) {
-        return fallbackGodsList[currentGodIndex.value].profileImage;
+          currentCategoryIndex.value < fallbackGodsList.length) {
+        return fallbackGodsList[currentCategoryIndex.value].profileImage;
       }
       return '';
     }
-    if (currentGodIndex.value < godCategories.length) {
-      return godCategories[currentGodIndex.value].godImage;
+    if (currentCategoryIndex.value < godCategories.length) {
+      return godCategories[currentCategoryIndex.value].godImage;
     }
     return '';
   }
 
-  // Get god image at index
+  /// Get image URL at [index] within the current category's images.
   String getGodImageAt(int index) {
-    if (godCategories.isEmpty) {
-      if (index < fallbackGodsList.length) {
-        return fallbackGodsList[index].profileImage;
-      }
-      return '';
+    if (categoryImages.isNotEmpty && index < categoryImages.length) {
+      return categoryImages[index].imageUrl;
     }
-    if (index < godCategories.length) {
-      return godCategories[index].godImage;
+    // Fallback
+    if (godCategories.isEmpty && index < fallbackGodsList.length) {
+      return fallbackGodsList[index].profileImage;
     }
     return '';
   }
@@ -133,19 +137,24 @@ class VirtualDarshanController extends BaseController
         lower.endsWith('.mkv');
   }
 
-  // Get total count of gods
+  /// Total count of images for the current category (vertical reel items).
   int get godsCount {
-    if (godCategories.isEmpty) {
-      return fallbackGodsList.length;
-    }
-    return godCategories.length;
+    if (categoryImages.isNotEmpty) return categoryImages.length;
+    if (godCategories.isEmpty) return fallbackGodsList.length;
+    return 0;
   }
+
+  /// Total number of categories (for horizontal swipe).
+  int get categoriesCount =>
+      godCategories.isEmpty ? fallbackGodsList.length : godCategories.length;
 
   final currentGodIndex = 0.obs;
   final ScrollController scrollController = ScrollController();
   final PageController horizontalPageController = PageController();
   final PageController verticalPageController = PageController();
   late AnimationController aartiController;
+  late AnimationController thaliTransitionController;
+  late Animation<double> thaliTransitionAnimation;
   final AudioPlayer audioPlayer = AudioPlayer();
   final AudioPlayer shankhPlayer = AudioPlayer();
   Timer? flowerTimer;
@@ -155,6 +164,7 @@ class VirtualDarshanController extends BaseController
     AppConstant.eMandirFlower3,
   ];
   final List<FallingFlowerState> activeFlowers = [];
+  final RxBool isAartiActive = false.obs;
 
   // Selection State
   final selectedOfferingIcon = AppConstant.eMandirLadduIcon.obs;
@@ -171,6 +181,9 @@ class VirtualDarshanController extends BaseController
   final RxBool isLoadingCategoryItems = false.obs;
   final RxInt selectedCategoryIndex = 0.obs;
 
+  // Specific image for the Thali icon on the main screen (from thali's first item)
+  final RxString thaliItemImage = ''.obs;
+
   // Offering Bottom Sheet Tab Controller
   TabController? offeringTabController;
 
@@ -184,6 +197,14 @@ class VirtualDarshanController extends BaseController
     aartiController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 6),
+    );
+    thaliTransitionController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+    thaliTransitionAnimation = CurvedAnimation(
+      parent: thaliTransitionController,
+      curve: Curves.easeInOut,
     );
     audioPlayer.setReleaseMode(ReleaseMode.loop);
     shankhPlayer.setReleaseMode(ReleaseMode.stop);
@@ -206,6 +227,35 @@ class VirtualDarshanController extends BaseController
           vsync: this,
         );
         offeringTabController!.addListener(_onTabChanged);
+
+        // Pre-fetch the Thali category specifically to get its first item's image
+        try {
+          final thaliIndex = response.items.indexWhere(
+            (c) =>
+                c.slug.toLowerCase().contains('thali') ||
+                c.name.toLowerCase().contains('thali'),
+          );
+          if (thaliIndex != -1) {
+            final thaliRes = await _pujaItemCategoryService.getCategoryById(
+              response.items[thaliIndex].id,
+            );
+            if (thaliRes != null &&
+                thaliRes.success &&
+                thaliRes.category != null) {
+              if (thaliRes.category!.items.isNotEmpty) {
+                thaliItemImage.value =
+                    thaliRes.category!.items.first.image ?? '';
+              } else {
+                thaliItemImage.value =
+                    response.items[thaliIndex].image ??
+                    ''; // fallback to category image
+              }
+            }
+          }
+        } catch (e) {
+          print('Error fetching explicit thali category item: $e');
+        }
+
         // Load first category items by default
         if (pujaItemCategories.isNotEmpty) {
           await loadCategoryItems(pujaItemCategories.first.id);
@@ -255,8 +305,10 @@ class VirtualDarshanController extends BaseController
       final response = await _godCategoryService.getGodCategories();
       if (response != null && response.success && response.items.isNotEmpty) {
         godCategories.value = response.items;
+        // Auto-select first category and load its images
+        currentCategoryIndex.value = 0;
+        await loadGodCategoryImages(godCategories.first.id);
       } else {
-        // Keep empty list - will use fallback
         errorMessage.value =
             response?.message ?? 'Failed to load god categories';
       }
@@ -264,6 +316,54 @@ class VirtualDarshanController extends BaseController
       errorMessage.value = 'Error loading god categories: $e';
     } finally {
       isLoadingCategories.value = false;
+    }
+  }
+
+  /// Fetch images for a specific god category and update the vertical reel.
+  Future<void> loadGodCategoryImages(String categoryId) async {
+    isLoadingCategoryImages.value = true;
+    try {
+      final response = await _godCategoryService.getGodCategoryImages(
+        categoryId,
+      );
+      if (response != null && response.success && response.items.isNotEmpty) {
+        categoryImages.value = response.items;
+      } else {
+        categoryImages.clear();
+      }
+    } catch (e) {
+      print('Error loading god category images: $e');
+      categoryImages.clear();
+    } finally {
+      isLoadingCategoryImages.value = false;
+    }
+  }
+
+  /// Called when user swipes horizontally to change category.
+  void swipeToCategory(int newIndex) {
+    if (newIndex < 0 || newIndex >= categoriesCount) return;
+    if (newIndex == currentCategoryIndex.value) return;
+
+    currentCategoryIndex.value = newIndex;
+    currentGodIndex.value = 0;
+
+    // Reset vertical page to first image
+    if (verticalPageController.hasClients) {
+      verticalPageController.jumpToPage(0);
+    }
+
+    // Scroll the thumbnail list to the new category
+    if (scrollController.hasClients) {
+      scrollController.animateTo(
+        newIndex * 60.0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+
+    // Load images for the new category
+    if (godCategories.isNotEmpty && newIndex < godCategories.length) {
+      loadGodCategoryImages(godCategories[newIndex].id);
     }
   }
 
@@ -335,6 +435,7 @@ class VirtualDarshanController extends BaseController
     }
     activeFlowers.clear();
     aartiController.dispose();
+    thaliTransitionController.dispose();
     offeringTabController?.dispose();
     scrollController.dispose();
     horizontalPageController.dispose();
@@ -345,18 +446,28 @@ class VirtualDarshanController extends BaseController
   }
 
   void toggleAarti(BuildContext context) {
-    if (aartiController.isAnimating) {
+    if (aartiController.isAnimating || thaliTransitionController.value > 0.0) {
+      // Stop Aarti and move thali down
       aartiController.reset();
+      thaliTransitionController.reverse();
       audioPlayer.stop();
       stopFlowerRain();
+      isAartiActive.value = false;
     } else {
-      aartiController.repeat();
+      // Move thali up
+      thaliTransitionController.forward().then((_) {
+        // Start Aarti rotation once thali is in the center
+        if (isAartiActive.value) {
+          aartiController.repeat();
+        }
+      });
       audioPlayer.stop();
       audioPlayer.setReleaseMode(ReleaseMode.loop);
       audioPlayer.play(UrlSource(AppConstant.aartiMp3)).catchError((e) {
         print("AUDIO ERROR: $e");
       });
       startFlowerRain(context);
+      isAartiActive.value = true;
     }
   }
 
@@ -592,32 +703,13 @@ class VirtualDarshanController extends BaseController
   String get currentCategorySlug => selectedCategoryDetail.value?.slug ?? '';
 
   void onHorizontalPageChanged(int index) {
-    if (godsCount == 0) return;
-    currentGodIndex.value = index % godsCount;
-    if (scrollController.hasClients) {
-      scrollController.animateTo(
-        currentGodIndex.value * 60.0,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
-    // Reset vertical page to first image when god changes
-    if (verticalPageController.hasClients) {
-      verticalPageController.jumpToPage(0);
-    }
+    // Now used for category changes via swipe
+    swipeToCategory(index);
   }
 
+  /// Navigate to a specific category by tapping its thumbnail.
   void navigateToGod(int index) {
-    if (godsCount == 0) return;
-    currentGodIndex.value = index;
-    // Animate the vertical PageView to the selected god index
-    if (verticalPageController.hasClients) {
-      verticalPageController.animateToPage(
-        index,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
+    swipeToCategory(index);
   }
 
   void navigateToDevotionalLibrary() {

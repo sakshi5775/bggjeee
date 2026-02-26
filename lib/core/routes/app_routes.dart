@@ -25,6 +25,9 @@ class AppRoutes {
   static const String astrologerVideoCall = '/astrologer-video-call';
   static const String aichat = '/ai-chat';
 
+  // Divya Darshan
+  static const String divyaDarshan = '/divya-darshan';
+
   // Blog Routes
 
   static const String blogDetail = '/blog-detail';
@@ -66,6 +69,7 @@ class AppRoutes {
   static const String liveWebinars = '/live-webinars';
   static const String liveWebinarSession = '/live-webinar-session';
   static const String myLearning = '/my-learning';
+  static const String spiritualPillarCourses = '/spiritual-pillar-courses';
 
   // Chat Routes
   static const String personaChat = '/persona-chat';
@@ -138,7 +142,15 @@ class AppRoutes {
   static const String arVastu = '/ar-vastu';
   static const String arOnboarding = '/ar-onboarding';
   static const String vastuCorrection = '/vastu-correction';
+
+  // E-Mandir Wallpaper
+  static const String eMandirWallpaper = '/e-mandir-wallpaper';
+  static const String eMandirWallpaperStory = '/e-mandir-wallpaper-story';
   static const String expertMode = '/expert-mode';
+
+  // Chalisa Routes
+  static const String chalisa = '/chalisa';
+  static const String chalisaDetail = '/chalisa-detail';
 
   // Live Stream Reports Routes
   static const String streamReports = '/stream-reports';

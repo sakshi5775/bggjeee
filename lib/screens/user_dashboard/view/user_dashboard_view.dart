@@ -953,7 +953,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                         padding: EdgeInsets.only(right: 6.w),
                         child: GestureDetector(
                           onTap: () {
-                            UserMainController.pushInCurrentTab(AppRoutes.liveAstrologers);
+                            UserMainController.pushInCurrentTab(
+                              AppRoutes.liveAstrologers,
+                            );
                           },
                           child: AutoTranslateText(
                             'View All',
@@ -2289,7 +2291,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 ),
               ),
               GestureDetector(
-                onTap: () => UserMainController.pushInCurrentTab(AppRoutes.allBlogs),
+                onTap: () =>
+                    UserMainController.pushInCurrentTab(AppRoutes.allBlogs),
                 child: Padding(
                   padding: EdgeInsets.only(right: 6.w),
                   child: AutoTranslateText(
@@ -2443,7 +2446,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     final useImage = img.isNotEmpty && !_isVideoUrl(img);
 
     return GestureDetector(
-      onTap: () => UserMainController.pushInCurrentTab(AppRoutes.blogDetail, arguments: blog),
+      onTap: () => UserMainController.pushInCurrentTab(
+        AppRoutes.blogDetail,
+        arguments: blog,
+      ),
       child: SizedBox(
         width: cardWidth.w,
         child: Column(
@@ -2540,7 +2546,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     return GestureDetector(
       onTap: () {
         if (category.id != null) {
-          UserMainController.pushInCurrentTab('/product-list', arguments: {'category': category});
+          UserMainController.pushInCurrentTab(
+            '/product-list',
+            arguments: {'category': category},
+          );
         } else if (category.slug != null) {
           UserMainController.pushInCurrentTab(
             '/product-list',
@@ -4455,7 +4464,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   ],
                 ),
                 InkWell(
-                  onTap: () => UserMainController.pushInCurrentTab(AppRoutes.allBlogs),
+                  onTap: () =>
+                      UserMainController.pushInCurrentTab(AppRoutes.allBlogs),
                   child: AutoTranslateText(
                     'View All',
                     style: MyTextTheme.mediumBCN
@@ -4493,7 +4503,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
 
   Widget _buildVideoCardFromBlog(Blog blog, double width) {
     return GestureDetector(
-      onTap: () => UserMainController.pushInCurrentTab(AppRoutes.blogDetail, arguments: blog),
+      onTap: () => UserMainController.pushInCurrentTab(
+        AppRoutes.blogDetail,
+        arguments: blog,
+      ),
       child: Container(
         width: width,
         decoration: BoxDecoration(
@@ -4981,7 +4994,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Digital Mart',
                     onTap: () {
                       Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(AppRoutes.ecommerceHome);
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.ecommerceHome,
+                      );
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -4990,7 +5005,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Digital Mandir',
                     onTap: () {
                       Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(AppRoutes.namasteHome);
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.namasteHome,
+                      );
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -5069,7 +5086,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Predictions',
                     onTap: () {
                       Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(AppRoutes.predictions);
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.predictions,
+                      );
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -5078,7 +5097,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Kundli Matching',
                     onTap: () {
                       Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(AppRoutes.matchMakingForm);
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.matchMakingForm,
+                      );
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -5132,7 +5153,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Numerology',
                     onTap: () {
                       Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(AppRoutes.numerologyForm);
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.numerologyForm,
+                      );
                     },
                   ),
                 ],
@@ -5154,7 +5177,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Face Reading',
                     onTap: () {
                       Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(AppRoutes.faceReading);
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.faceReading,
+                      );
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -5163,7 +5188,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Palm Reading',
                     onTap: () {
                       Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(AppRoutes.palmReading);
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.palmReading,
+                      );
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -5172,7 +5199,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Vastu',
                     onTap: () {
                       Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(AppRoutes.vastuDashboard);
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.vastuDashboard,
+                      );
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -5181,7 +5210,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Ramal',
                     onTap: () {
                       Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(AppRoutes.ramalShastra);
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.ramalShastra,
+                      );
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -5190,7 +5221,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Writing',
                     onTap: () {
                       Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(AppRoutes.handwritingAstrology);
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.handwritingAstrology,
+                      );
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -5199,7 +5232,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Prashna',
                     onTap: () {
                       Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(AppRoutes.prashnaKundali);
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.prashnaKundali,
+                      );
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -5208,7 +5243,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Tarot',
                     onTap: () {
                       Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(AppRoutes.tarotReading);
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.tarotReading,
+                      );
                     },
                   ),
                 ],
@@ -5230,7 +5267,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Vedic',
                     onTap: () {
                       Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(AppRoutes.allAstrologers, arguments: 'Vedic');
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.allAstrologers,
+                        arguments: 'Vedic',
+                      );
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -5251,7 +5291,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Vastu',
                     onTap: () {
                       Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(AppRoutes.allAstrologers, arguments: 'Vastu');
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.allAstrologers,
+                        arguments: 'Vastu',
+                      );
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -5284,7 +5327,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Kids',
                     onTap: () {
                       Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(AppRoutes.allAstrologers, arguments: 'Kids');
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.allAstrologers,
+                        arguments: 'Kids',
+                      );
                     },
                   ),
                 ],
@@ -5332,7 +5378,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     isSelected: true,
                     onTap: () {
                       Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(AppRoutes.astrologerRegistrationIntro);
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.astrologerRegistrationIntro,
+                      );
                     },
                   ),
                 ],

@@ -57,6 +57,18 @@ class EndPoints {
   static String pujaItemCategoryById(String categoryId) =>
       'sri-mandir/api/puja-item-categories/$categoryId';
 
+  static const String divyaDarshan = 'sri-mandir/api/divya-darshan';
+
+  /// daily thoughts
+  static const String dailyThoughts = 'sri-mandir/api/daily-thoughts';
+
+  /// chalisas
+  static const String chalisas = 'sri-mandir/api/chalisas';
+  static String chalisaById(String id) => 'sri-mandir/api/chalisas/$id';
+
+  /// daily wallpapers
+  static const String dailyWallpapers = 'sri-mandir/api/daily-wallpapers';
+
   /// sri mandir punya api
   static const String sriMandirPunya = 'sri-mandir/api/wallet';
 
@@ -237,6 +249,13 @@ class EndPoints {
   static String voiceCancel(String callId) =>
       'users/api/users/voice/$callId/cancel';
   static String voiceDelete(String callId) => 'users/api/users/voice/$callId';
+
+  /// Learning Portal Course Types
+  static const String courseTypes =
+      'learning-portal/api/learning-portal/course-types';
+
+  /// Learning Portal Pillars
+  static const String pillars = 'learning-portal/api/learning-portal/pillars';
 
   /// Learning Portal Courses
   static const String courses = 'learning-portal/api/learning-portal/courses';

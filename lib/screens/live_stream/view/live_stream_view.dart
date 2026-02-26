@@ -14,6 +14,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../core/services/share_service.dart';
+
 class LiveStreamView extends StatelessWidget {
   final LiveStreamModel stream;
   final String? astrologerName;
@@ -717,7 +719,10 @@ class LiveStreamView extends StatelessWidget {
             // Share button (wrap-friendly)
             GestureDetector(
               onTap: () {
-                // TODO: Implement share
+                ShareService.shareAstrologer(
+                  astrologerId: stream.astrologerId,
+                  astrologerName: astrologerName,
+                );
               },
               child: Container(
                 width: 36.w,

@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/binding/auth_binding/signup_binding.dart';
 import 'package:astrobharataiuser/binding/blog_binding/all_blogs_binding.dart';
 import 'package:astrobharataiuser/binding/chat_binding/chat_binding.dart';
 import 'package:astrobharataiuser/binding/courses_binding/courses_binding.dart';
+import 'package:astrobharataiuser/screens/courses/views/spiritual_pillar_courses.dart';
 import 'package:astrobharataiuser/binding/courses_binding/live_webinars_binding.dart'; // Added
 import 'package:astrobharataiuser/binding/courses_binding/my_learning_binding.dart';
 // Digital Mandir bindings removed - files don't exist
@@ -38,6 +39,8 @@ import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/screens/ai_chat/voice_call/views/persona_voice_call_view.dart';
 import 'package:astrobharataiuser/screens/ai_chat/voice_call/views/persona_voice_history_view.dart';
 import 'package:astrobharataiuser/screens/e_mandir/bhakti_chakra/view/bhakti_chakra_view.dart';
+import 'package:astrobharataiuser/screens/e_mandir/e_mandir_collection/divya_darshan/view/divya_darshan_story_view.dart';
+import 'package:astrobharataiuser/screens/e_mandir/e_mandir_collection/divya_darshan/binding/divya_darshan_binding.dart';
 import 'package:astrobharataiuser/binding/e_mandir_binding/bhakti_chakra_binding.dart';
 import 'package:astrobharataiuser/screens/e_mandir/devotional_library/view/devotional_library_view.dart';
 import 'package:astrobharataiuser/binding/e_mandir_binding/devotional_library_binding.dart';
@@ -293,11 +296,43 @@ import '../../screens/e_mandir/address_form/view/address_form_view.dart';
 import '../../screens/e_mandir/puja_booking_form/view/puja_booking_form_view.dart';
 import '../../screens/e_mandir/my_bookings/view/my_bookings_view.dart';
 import '../../screens/e_mandir/my_bookings/view/my_booking_detail_view.dart';
+import '../../screens/e_mandir/e_mandir_collection/e_mandir_wallpaper/view/e_mandir_wallpaper_view.dart';
+import '../../binding/e_mandir_binding/e_mandir_wallpaper_binding.dart';
+import '../../screens/e_mandir/e_mandir_collection/e_mandir_wallpaper/view/e_mandir_wallpaper_story_view.dart';
+import '../../binding/e_mandir_binding/e_mandir_wallpaper_story_binding.dart';
+import '../../screens/e_mandir/e_mandir_collection/chalisa/view/chalisa_view.dart';
+import '../../binding/e_mandir_binding/chalisa_binding.dart';
+import '../../screens/e_mandir/e_mandir_collection/chalisa/view/chalisa_detail_view.dart';
+import '../../binding/e_mandir_binding/chalisa_detail_binding.dart';
 
 class PageRoutes {
   static const INITIAL = AppRoutes.root;
   static const leftToRight = Transition.leftToRight;
   static final routes = [
+    GetPage(
+      name: AppRoutes.chalisa,
+      page: () => const ChalisaView(),
+      transition: Transition.rightToLeft,
+      binding: ChalisaBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.chalisaDetail,
+      page: () => const ChalisaDetailView(),
+      transition: Transition.rightToLeft,
+      binding: ChalisaDetailBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.eMandirWallpaper,
+      page: () => const EMandirWallpaperView(),
+      transition: Transition.rightToLeft,
+      binding: EMandirWallpaperBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.eMandirWallpaperStory,
+      page: () => const EMandirWallpaperStoryView(),
+      transition: Transition.fadeIn,
+      binding: EMandirWallpaperStoryBinding(),
+    ),
     GetPage(
       name: AppRoutes.root,
       page: () => const WaitingScreenView(),
@@ -827,7 +862,7 @@ class PageRoutes {
     ),
     GetPage(
       name: AppRoutes.horoscopeForm,
-      page: () => const HoroscopeFormView(),
+      page: () => const HoroscopeFormView(hideHeader: false),
       binding: HoroscopeFormBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
@@ -1626,6 +1661,13 @@ class PageRoutes {
       transitionDuration: Duration(milliseconds: 300),
     ),
     GetPage(
+      name: AppRoutes.divyaDarshan,
+      page: () => const DivyaDarshanStoryView(),
+      binding: DivyaDarshanBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
       name: AppRoutes.myBookings,
       page: () => const MyBookingsView(),
       binding: MyBookingsBinding(),
@@ -1666,6 +1708,13 @@ class PageRoutes {
     GetPage(
       name: AppRoutes.aboutUs,
       page: () => const AboutUsView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.spiritualPillarCourses,
+      page: () => const SpiritualPillarCoursesView(),
+      binding: CoursesBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),
