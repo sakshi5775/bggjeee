@@ -1,58 +1,56 @@
 import 'dart:async';
-import 'dart:io';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:get/get.dart';
 
 class NetworkService extends GetxService {
   static NetworkService get instance => Get.find();
 
   final RxBool isConnected = true.obs;
-  Timer? _timer;
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
 
   @override
   void onInit() {
     super.onInit();
-    checkConnectivity();
-    _startPolling();
+    _initConnectivity();
+    _connectivitySubscription = Connectivity().onConnectivityChanged.listen(
+      _updateConnectionStatus,
+    );
   }
 
-  void _startPolling() {
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
-      checkConnectivity();
-    });
+  Future<void> _initConnectivity() async {
+    late List<ConnectivityResult> result;
+    try {
+      result = await Connectivity().checkConnectivity();
+    } catch (e) {
+      print('Couldn\'t check connectivity status: $e');
+      return;
+    }
+    _updateConnectionStatus(result);
   }
 
-  int _failedAttempts = 0;
-  static const int _maxFailedAttempts =
-      3; // Tolerate 2-3 drops before showing offline screen
+  void _updateConnectionStatus(List<ConnectivityResult> result) {
+    if (result.contains(ConnectivityResult.none) && result.length == 1) {
+      isConnected.value = false;
+    } else {
+      isConnected.value = true;
+    }
+  }
 
   Future<bool> checkConnectivity() async {
-    try {
-      final result = await InternetAddress.lookup(
-        'dns.google', // Use a highly reliable DNS
-      ).timeout(const Duration(seconds: 4));
-
-      final connected = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
-
-      if (connected) {
-        _failedAttempts = 0; // Reset on success
-        if (!isConnected.value) {
-          isConnected.value = true;
-        }
-      }
-      return connected;
-    } catch (_) {
-      _failedAttempts++;
-      if (_failedAttempts >= _maxFailedAttempts) {
-        isConnected.value = false;
-      }
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult.contains(ConnectivityResult.none) &&
+        connectivityResult.length == 1) {
+      isConnected.value = false;
       return false;
+    } else {
+      isConnected.value = true;
+      return true;
     }
   }
 
   @override
   void onClose() {
-    _timer?.cancel();
+    _connectivitySubscription.cancel();
     super.onClose();
   }
 

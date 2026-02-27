@@ -32,6 +32,7 @@ class ProfileView extends GetView<ProfileController> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               // Header using CommonHeader

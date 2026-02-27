@@ -47,9 +47,7 @@ class CoursesView extends GetView<CoursesController> {
         }
       },
       child: Container(
-        decoration: hideHeader
-            ? null
-            : BoxDecoration(gradient: AppColors.gradientBackground),
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Scaffold(
           backgroundColor: Colors.transparent,
           body: Column(
@@ -57,6 +55,7 @@ class CoursesView extends GetView<CoursesController> {
               if (!hideHeader)
                 CommonHeader(
                   title: 'Digital Learning',
+                  showBackButton: showBackButton,
 
                   onMenuTap: showBackButton
                       ? null
@@ -68,7 +67,9 @@ class CoursesView extends GetView<CoursesController> {
                   customActions: [
                     IconButton(
                       onPressed: () {
-                        UserMainController.pushInCurrentTab(AppRoutes.myLearning);
+                        UserMainController.pushInCurrentTab(
+                          AppRoutes.myLearning,
+                        );
                       },
                       icon: Icon(
                         Icons.school,
@@ -82,7 +83,9 @@ class CoursesView extends GetView<CoursesController> {
                     SizedBox(width: 8.w),
                     IconButton(
                       onPressed: () {
-                        UserMainController.pushInCurrentTab(AppRoutes.liveWebinars);
+                        UserMainController.pushInCurrentTab(
+                          AppRoutes.liveWebinars,
+                        );
                       },
                       icon: Icon(
                         Icons.video_library,
@@ -110,7 +113,9 @@ class CoursesView extends GetView<CoursesController> {
                             selectedIndex: controller.selectedCategory.value,
                             onTabSelected: (index) {
                               if (index == 1) {
-                                UserMainController.pushInCurrentTab(AppRoutes.liveWebinars);
+                                UserMainController.pushInCurrentTab(
+                                  AppRoutes.liveWebinars,
+                                );
                               } else {
                                 controller.selectedCategory.value = index;
                               }
@@ -403,7 +408,10 @@ class CoursesView extends GetView<CoursesController> {
                 return PremiumCourseCard(
                   course: course,
                   onTap: () {
-                    UserMainController.pushInCurrentTab(AppRoutes.courseDetail, arguments: course.id);
+                    UserMainController.pushInCurrentTab(
+                      AppRoutes.courseDetail,
+                      arguments: course.id,
+                    );
                   },
                 );
               },

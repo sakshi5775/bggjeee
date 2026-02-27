@@ -275,9 +275,6 @@ class UserDashboardController extends BaseController
     'Astrologers',
     'AI Astrologers',
 
-    'Digital Mart',
-    'Digital Mandir',
-    'Digital Learning',
     'Media Hub',
     'Panchang',
     'Horoscope',

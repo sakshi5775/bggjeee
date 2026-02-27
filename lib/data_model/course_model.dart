@@ -30,8 +30,21 @@ class CourseModel {
   });
 
   factory CourseModel.fromJson(Map<String, dynamic> json) {
+    // Safely extract ID from different possible backend formats
+    String id = '';
+    if (json['_id'] != null) {
+      id = json['_id'].toString();
+    } else if (json['id'] != null) {
+      id = json['id'].toString();
+    } else if (json['courseId'] != null) {
+      id = json['courseId'].toString();
+    } else {
+      id = DateTime.now().millisecondsSinceEpoch
+          .toString(); // Fallback to prevent crash
+    }
+
     return CourseModel(
-      id: json['_id'] as String,
+      id: id,
       title: json['title'] as String? ?? '',
       description: json['description'] as String? ?? '',
       instructor: json['instructor'] as String? ?? '',

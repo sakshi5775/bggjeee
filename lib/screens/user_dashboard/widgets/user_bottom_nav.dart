@@ -16,7 +16,9 @@ class UserBottomNav extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = Get.find<GlobalNavController>();
     return Obx(() {
-      final items = c.navItems;
+      final activeSubIndex = c.activeSubMenuIndex.value;
+      final showSubMenu = activeSubIndex != null;
+
       return Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -28,25 +30,163 @@ class UserBottomNav extends StatelessWidget {
             ),
           ],
         ),
-        child: Container(
-          height: 70.h,
-          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(
-              items.length,
-              (index) => _buildNavItem(
-                icon: items[index].icon,
-                label: items[index].label,
-                index: index,
-                selectedIndex: c.selectedIndexRx.value,
-                onTap: () => c.onTabClick(index),
-              ),
-            ),
-          ),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          transitionBuilder: (Widget child, Animation<double> animation) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+          child: showSubMenu
+              ? _buildSubMenu(context, c, activeSubIndex)
+              : _buildMainMenu(c),
         ),
       );
     });
+  }
+
+  Widget _buildMainMenu(GlobalNavController c) {
+    final items = c.navItems;
+    return Container(
+      key: const ValueKey('main_menu'),
+      height: 70.h,
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: List.generate(
+          items.length,
+          (index) => _buildNavItem(
+            icon: items[index].icon,
+            label: items[index].label,
+            index: index,
+            selectedIndex: c.selectedIndexRx.value,
+            onTap: () => c.onTabClick(index),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSubMenu(
+    BuildContext context,
+    GlobalNavController c,
+    int parentIndex,
+  ) {
+    final subs = c.subMenuItems[parentIndex] ?? [];
+    return Container(
+      key: ValueKey('sub_menu_$parentIndex'),
+      height: 70.h,
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+      child: Row(
+        children: [
+          // Home button always stays
+          _buildNavItem(
+            icon: c.navItems[0].icon,
+            label: 'Home',
+            index: 0,
+            selectedIndex: c.selectedIndexRx.value,
+            onTap: () => c.onTabClick(0),
+            isSmall: true,
+          ),
+          const VerticalDivider(width: 1, indent: 10, endIndent: 10),
+          Expanded(
+            child: Obx(() {
+              // Ensure observable is read to prevent GetX "improper use" exception
+              final activeIndex = c.activeSubItemIndex.value;
+
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minWidth:
+                        MediaQuery.of(context).size.width -
+                        90.w, // Accounts for Home button and divider space
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: List.generate(subs.length, (index) {
+                      final sub = subs[index];
+                      final isSelected = activeIndex == index;
+                      return _buildSubItem(
+                        icon: sub['icon'] as IconData,
+                        label: sub['label'] as String,
+                        isSelected: isSelected,
+                        onTap: () => c.onSubItemClick(index),
+                      );
+                    }),
+                  ),
+                ),
+              );
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSubItem({
+    required IconData icon,
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      width: 75.w,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 6.h),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? const Color.fromARGB(255, 247, 219, 187)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(8.r),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              isSelected
+                  ? Icon(icon, size: 20.h, color: AppColors.deepOrange)
+                  : ShaderMask(
+                      shaderCallback: (bounds) =>
+                          _inactiveGradient.createShader(bounds),
+                      blendMode: BlendMode.srcIn,
+                      child: Icon(icon, size: 20.h, color: Colors.white),
+                    ),
+              SizedBox(height: 2.h),
+              Flexible(
+                child: isSelected
+                    ? AutoTranslateText(
+                        label,
+                        style: AppTypography.label.copyWith(
+                          color: AppColors.deepOrange,
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                      )
+                    : ShaderMask(
+                        shaderCallback: (bounds) =>
+                            _inactiveGradient.createShader(bounds),
+                        blendMode: BlendMode.srcIn,
+                        child: AutoTranslateText(
+                          label,
+                          style: AppTypography.label.copyWith(
+                            color: Colors.white,
+                            fontSize: 10.sp,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildNavItem({
@@ -55,19 +195,20 @@ class UserBottomNav extends StatelessWidget {
     required int index,
     required int selectedIndex,
     required VoidCallback onTap,
+    bool isSmall = false,
   }) {
     final isSelected = index == selectedIndex;
-    return Expanded(
+    return Container(
+      width: isSmall ? 65.w : null,
+      constraints: BoxConstraints(minWidth: isSmall ? 65.w : 70.w),
       child: InkWell(
         onTap: onTap,
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
+          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 6.h),
           decoration: BoxDecoration(
-            // gradient: isSelected ? AppColors.orangeGradient : null,
             color: isSelected
                 ? const Color.fromARGB(255, 247, 219, 187)
                 : Colors.transparent,
-
             borderRadius: BorderRadius.circular(8.r),
           ),
           child: Column(
@@ -88,32 +229,21 @@ class UserBottomNav extends StatelessWidget {
                     ),
               SizedBox(height: 2.h),
               Flexible(
-                child:
-                    // isSelected
-                    //     ? AutoTranslateText(
-                    //         label,
-                    //         style: AppTypography.label.copyWith(
-                    //           color: Colors.white,
-                    //           fontSize: 10.sp,
-                    //         ),
-                    //         maxLines: 1,
-                    //         overflow: TextOverflow.ellipsis,
-                    //       )
-                    //     :
-                    ShaderMask(
-                      shaderCallback: (bounds) =>
-                          _inactiveGradient.createShader(bounds),
-                      blendMode: BlendMode.srcIn,
-                      child: AutoTranslateText(
-                        label,
-                        style: AppTypography.label.copyWith(
-                          color: Colors.white,
-                          fontSize: 10.sp,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                child: ShaderMask(
+                  shaderCallback: (bounds) =>
+                      _inactiveGradient.createShader(bounds),
+                  blendMode: BlendMode.srcIn,
+                  child: AutoTranslateText(
+                    label,
+                    style: AppTypography.label.copyWith(
+                      color: Colors.white,
+                      fontSize: 10.sp,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ),
             ],
           ),

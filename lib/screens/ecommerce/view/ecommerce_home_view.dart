@@ -45,9 +45,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
       Get.lazyPut(() => WishlistController(), fenix: true);
     }
     return Container(
-      decoration: hideHeader
-          ? null
-          : BoxDecoration(gradient: AppColors.gradientBackground),
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Obx(
@@ -59,11 +57,14 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                 SliverToBoxAdapter(
                   child: CommonHeader(
                     title: 'Digital Mart',
+                    showBackButton: showBackButton,
 
                     customActions: [
                       // Wishlist Icon
                       GestureDetector(
-                        onTap: () => UserMainController.pushInCurrentTab(AppRoutes.wishlist),
+                        onTap: () => UserMainController.pushInCurrentTab(
+                          AppRoutes.wishlist,
+                        ),
                         child: Obx(() {
                           final wishlistController =
                               Get.isRegistered<WishlistController>()

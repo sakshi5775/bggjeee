@@ -43,15 +43,35 @@ class AllAstrologersController extends GetxController {
 
   // Initial filter (can be passed from previous screen)
   String? initialFilter;
+  String? initialAvailability;
 
-  AllAstrologersController({this.initialFilter});
+  AllAstrologersController({this.initialFilter, this.initialAvailability});
+
+  final RxnString selectedAvailability = RxnString();
 
   @override
   void onInit() {
     super.onInit();
+
+    // Check constructor params
     if (initialFilter != null) {
       selectedFilter.value = initialFilter!;
     }
+    if (initialAvailability != null) {
+      selectedAvailability.value = initialAvailability;
+    }
+
+    // Check Get.arguments (from navigation)
+    if (Get.arguments is Map) {
+      final args = Get.arguments as Map;
+      if (args.containsKey('availability')) {
+        selectedAvailability.value = args['availability'] as String?;
+      }
+      if (args.containsKey('filter')) {
+        selectedFilter.value = args['filter'] as String;
+      }
+    }
+
     loadAstrologers();
     loadBanners();
   }
@@ -99,13 +119,37 @@ class AllAstrologersController extends GetxController {
         limit: limit.value,
         specialization: specialization,
         astrologerCategory: astrologerCategory,
+        // We still pass availability to API if it supports ONLINE status filtering
+        availability:
+            (selectedAvailability.value == 'CHAT' ||
+                selectedAvailability.value == 'VOICE_CALL' ||
+                selectedAvailability.value == 'VIDEO_CALL')
+            ? 'ONLINE'
+            : selectedAvailability.value,
       );
 
       if (response != null) {
+        List<AstrologerModel> filteredList = response.astrologers;
+
+        // CLIENT-SIDE FILTERING for specific services
+        if (selectedAvailability.value == 'CHAT') {
+          filteredList = filteredList
+              .where((a) => a.services.chat.enabled)
+              .toList();
+        } else if (selectedAvailability.value == 'VOICE_CALL') {
+          filteredList = filteredList
+              .where((a) => a.services.voice.enabled)
+              .toList();
+        } else if (selectedAvailability.value == 'VIDEO_CALL') {
+          filteredList = filteredList
+              .where((a) => a.services.video.enabled)
+              .toList();
+        }
+
         if (refresh) {
-          astrologers.value = response.astrologers;
+          astrologers.value = filteredList;
         } else {
-          astrologers.addAll(response.astrologers);
+          astrologers.addAll(filteredList);
         }
         // Initialize follow status for new astrologers
         _initializeFollowStatus();

@@ -53,16 +53,12 @@ import '../widgets/reports_tab_widget.dart';
 import '../widgets/horoscope_tab_widget.dart';
 // import '../widgets/quote_of_the_day_widget.dart';
 import '../widgets/history_section_widget.dart';
-import '../../e_mandir/e_mandir_home/view/namaste_home_view.dart';
-import '../../e_mandir/e_mandir_home/controller/namaste_home_controller.dart';
-import '../../courses/views/courses_view.dart';
-import '../../courses/controllers/courses_controller.dart';
+
 import 'all_videos_view.dart';
 import '../controller/all_videos_controller.dart';
 import '../../panchang/view/panchang_view.dart';
 import '../../panchang/controller/panchang_controller.dart';
-import 'package:astrobharataiuser/screens/ecommerce/view/ecommerce_home_view.dart';
-import 'package:astrobharataiuser/screens/ecommerce/controller/ecommerce_home_controller.dart';
+
 import 'package:astrobharataiuser/screens/ai_chat/views/ai_chat_view.dart';
 import 'package:astrobharataiuser/screens/ai_chat/controllers/ai_chat_controller.dart';
 import 'package:astrobharataiuser/screens/courses/services/webinar_service.dart';
@@ -336,43 +332,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         );
       }
 
-      if (i == 4 && controller.sliderTabs[i] == 'Digital Mart') {
-        if (!Get.isRegistered<EcommerceHomeController>()) {
-          Get.put(EcommerceHomeController(), permanent: false);
-        }
-        final h = MediaQuery.sizeOf(context).height;
-        return SizedBox(
-          height: (h - 240).clamp(400.0, h * 0.85),
-          child: const EcommerceHomeView(hideHeader: true),
-        );
-      }
-
-      if (i == 5 && controller.sliderTabs[i] == 'Digital Mandir') {
-        if (!Get.isRegistered<NamasteHomeController>()) {
-          Get.put(NamasteHomeController(), permanent: false);
-        }
-        final h = MediaQuery.sizeOf(context).height;
-        return Padding(
-          padding: EdgeInsets.only(top: 12.h),
-          child: SizedBox(
-            height: (h - 252).clamp(388.0, h * 0.85),
-            child: const NamasteHomeView(hideHeader: true),
-          ),
-        );
-      }
-
-      if (i == 6 && controller.sliderTabs[i] == 'Digital Learning') {
-        if (!Get.isRegistered<CoursesController>()) {
-          Get.put(CoursesController(), permanent: false);
-        }
-        final h = MediaQuery.sizeOf(context).height;
-        return SizedBox(
-          height: (h - 240).clamp(400.0, h * 0.85),
-          child: CoursesView(hideHeader: true),
-        );
-      }
-
-      if (i == 7 && controller.sliderTabs[i] == 'Media Hub') {
+      if (i == 4 && controller.sliderTabs[i] == 'Media Hub') {
         if (!Get.isRegistered<AllVideosController>()) {
           Get.put(AllVideosController(), permanent: false);
         }
@@ -383,7 +343,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         );
       }
 
-      if (i == 8 && controller.sliderTabs[i] == 'Panchang') {
+      if (i == 5 && controller.sliderTabs[i] == 'Panchang') {
         if (!Get.isRegistered<PanchangController>()) {
           Get.put(PanchangController(), permanent: false);
         }
@@ -394,7 +354,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         );
       }
 
-      if (i == 9 && controller.sliderTabs[i] == 'Horoscope') {
+      if (i == 6 && controller.sliderTabs[i] == 'Horoscope') {
         final h = MediaQuery.sizeOf(context).height;
         return SizedBox(
           height: (h - 240).clamp(400.0, h * 0.85),
@@ -5006,7 +4966,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     onTap: () {
                       Navigator.of(context).pop();
                       UserMainController.pushInCurrentTab(
-                        AppRoutes.namasteHome,
+                        AppRoutes.virtualDarshan,
                       );
                     },
                   ),
@@ -5381,6 +5341,15 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                       UserMainController.pushInCurrentTab(
                         AppRoutes.astrologerRegistrationIntro,
                       );
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.info_outline,
+                    label: 'About Us',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      UserMainController.pushInCurrentTab(AppRoutes.aboutUs);
                     },
                   ),
                 ],

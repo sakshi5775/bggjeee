@@ -101,24 +101,26 @@ void main() {
             child: Container(
               color: Colors.white,
               child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.error_outline,
-                      color: Colors.red,
-                      size: 48,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      "Something went wrong",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: "#6F221E".toColor(),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.error_outline,
+                        color: Colors.red,
+                        size: 48,
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      Text(
+                        "Something went wrong",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: "#6F221E".toColor(),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -349,10 +351,14 @@ class MyApp extends StatelessWidget {
                 routingCallback: (routing) {
                   if (routing == null) return;
                   final route = routing.current.split('?').first;
-                  print('GlobalNav: routingCallback route=$route');
+                  final args = routing.args;
+                  print('GlobalNav: routingCallback route=$route args=$args');
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     if (Get.isRegistered<GlobalNavController>()) {
-                      Get.find<GlobalNavController>().updateRoute(route);
+                      Get.find<GlobalNavController>().updateRoute(
+                        route,
+                        args: args,
+                      );
                     }
                   });
                 },
@@ -366,7 +372,27 @@ class MyApp extends StatelessWidget {
                       children: [
                         Column(
                           children: [
-                            Expanded(child: child ?? const SizedBox()),
+                            Expanded(
+                              child: Stack(
+                                children: [
+                                  // The actual app content (Navigator, etc.)
+                                  child ?? const SizedBox.shrink(),
+
+                                  // Offline overlay - preserved state behind it
+                                  Obx(() {
+                                    final isOnline = NetworkService
+                                        .instance
+                                        .isConnected
+                                        .value;
+                                    if (!isOnline) {
+                                      return const GlobalOfflineScreen();
+                                    }
+                                    return const SizedBox.shrink();
+                                  }),
+                                ],
+                              ),
+                            ),
+                            // Bottom Nav - always visible and interactive
                             Obx(() {
                               if (!Get.isRegistered<GlobalNavController>()) {
                                 return const SizedBox.shrink();
@@ -378,11 +404,12 @@ class MyApp extends StatelessWidget {
                                   MediaQuery.of(context).viewInsets.bottom > 0;
 
                               if (showNav && !isKeyboardOpen) {
-                                return const SafeArea(
-                                  top: false,
-                                  child: Material(
-                                    elevation: 8.0,
-                                    child: UserBottomNav(),
+                                return Material(
+                                  color: Colors.white,
+                                  elevation: 8.0,
+                                  child: SafeArea(
+                                    top: false,
+                                    child: const UserBottomNav(),
                                   ),
                                 );
                               }
@@ -390,12 +417,6 @@ class MyApp extends StatelessWidget {
                             }),
                           ],
                         ),
-                        Obx(() {
-                          final isOnline =
-                              NetworkService.instance.isConnected.value;
-                          if (!isOnline) return const GlobalOfflineScreen();
-                          return const SizedBox.shrink();
-                        }),
                       ],
                     ),
                   );

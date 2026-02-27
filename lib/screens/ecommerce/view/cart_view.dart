@@ -38,157 +38,197 @@ class CartView extends GetView<CartController> {
 
           final cart = controller.cart.value;
           final items = cart?.items ?? [];
-
-          if (items.isEmpty) {
-            return _EmptyCartWidget(
-              onShopNow: () => Get.offNamedUntil(
-                AppRoutes.ecommerceHome,
-                (route) => route.settings.name == AppRoutes.userDashboard,
-              ),
-            );
-          }
-
           final totalAmount = currencyFormat.format(controller.total);
-          final firstItemName = items.isNotEmpty
-              ? (items.first.product?.name ??
-                    items.first.productSnapshot?.name ??
-                    'Cart Payment')
-              : 'Cart Payment';
 
           return Column(
             children: [
               CommonHeader(
-                title: 'Shopping Cart',
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AutoTranslateText(
-                      firstItemName,
-                      style: AppTypography.body2.copyWith(
-                        color: '#6F221E'.toColor().withValues(alpha: 0.7),
-                      ),
-                    ),
-                    SizedBox(height: 12.h),
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.all(16.w),
-                      decoration: BoxDecoration(
-                        color: '#6F221E'.toColor().withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(12.r),
-                        border: Border.all(
-                          color: '#6F221E'.toColor().withValues(alpha: 0.1),
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AutoTranslateText(
-                            'Total Amount',
-                            style: AppTypography.label.copyWith(
-                              color: '#6F221E'.toColor().withValues(alpha: 0.6),
-                            ),
-                          ),
-                          SizedBox(height: 4.h),
-                          AutoTranslateText(
-                            totalAmount,
-                            style: AppTypography.h1.copyWith(
-                              color: '#6F221E'.toColor(),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                title: 'My Cart',
+                subtitle: AutoTranslateText(
+                  items.isNotEmpty
+                      ? '${items.length} ${items.length == 1 ? 'item' : 'items'} in your cart'
+                      : 'Your cart is empty',
+                  style: TextStyle(
+                    color: '#6F221E'.toColor().withValues(alpha: 0.7),
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ),
               // Content
               Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 26.h),
-                      // Address Section
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 18.w),
-                        child: _AddressSection(controller: controller),
-                      ),
-                      SizedBox(height: 20.h),
-                      // Cart Items
-                      CartItemsListWidget(
-                        items: items,
-                        controller: controller,
-                        currencyFormat: currencyFormat,
-                      ),
-                      if (controller.savedItems.isNotEmpty) ...[
-                        SizedBox(height: 12.h),
-                        Container(
-                          margin: EdgeInsets.symmetric(horizontal: 18.w),
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                          child: TextButton(
-                            onPressed: () => UserMainController.pushInCurrentTab(AppRoutes.savedItems),
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16.w,
-                                vertical: 12.h,
-                              ),
-                              alignment: Alignment.centerLeft,
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.bookmark_outline,
-                                  color: AppColors.saffron,
-                                ),
-                                SizedBox(width: 12.w),
-                                Expanded(
-                                  child: AutoTranslateText(
-                                    'Saved for later (${controller.savedItems.length})',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.textPrimary,
+                child: items.isEmpty
+                    ? _EmptyCartWidget(
+                        onShopNow: () => Get.offNamedUntil(
+                          AppRoutes.ecommerceHome,
+                          (route) =>
+                              route.settings.name == AppRoutes.userDashboard,
+                        ),
+                      )
+                    : SingleChildScrollView(
+                        padding: EdgeInsets.fromLTRB(18.w, 16.h, 18.w, 24.h),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(18.w, 16.h, 18.w, 0),
+                              child: Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.all(16.w),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: ['#FEF6C3'.toColor(), Colors.white],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  border: Border.all(
+                                    color: '#68171E'.toColor().withValues(
+                                      alpha: 0.1,
                                     ),
+                                    width: 1.5,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: '#68171E'.toColor().withValues(
+                                        alpha: 0.05,
+                                      ),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        AutoTranslateText(
+                                          'Total Amount',
+                                          style: AppTypography.label.copyWith(
+                                            color: '#6F221E'
+                                                .toColor()
+                                                .withValues(alpha: 0.6),
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        SizedBox(height: 4.h),
+                                        AutoTranslateText(
+                                          totalAmount,
+                                          style: AppTypography.h1.copyWith(
+                                            color: '#68171E'.toColor(),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 24.sp,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.all(10.w),
+                                      decoration: BoxDecoration(
+                                        color: '#68171E'.toColor().withValues(
+                                          alpha: 0.1,
+                                        ),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        Icons.shopping_bag_outlined,
+                                        color: '#68171E'.toColor(),
+                                        size: 24.sp,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 20.h),
+                            // Address Section
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 18.w),
+                              child: _AddressSection(controller: controller),
+                            ),
+                            SizedBox(height: 20.h),
+                            // Cart Items
+                            CartItemsListWidget(
+                              items: items,
+                              controller: controller,
+                              currencyFormat: currencyFormat,
+                            ),
+                            if (controller.savedItems.isNotEmpty) ...[
+                              SizedBox(height: 12.h),
+                              Container(
+                                margin: EdgeInsets.symmetric(horizontal: 18.w),
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                                child: TextButton(
+                                  onPressed: () =>
+                                      UserMainController.pushInCurrentTab(
+                                        AppRoutes.savedItems,
+                                      ),
+                                  style: TextButton.styleFrom(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16.w,
+                                      vertical: 12.h,
+                                    ),
+                                    alignment: Alignment.centerLeft,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.bookmark_outline,
+                                        color: AppColors.saffron,
+                                      ),
+                                      SizedBox(width: 12.w),
+                                      Expanded(
+                                        child: AutoTranslateText(
+                                          'Saved for later (${controller.savedItems.length})',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.textPrimary,
+                                          ),
+                                        ),
+                                      ),
+                                      Icon(
+                                        Icons.chevron_right,
+                                        color: AppColors.textSecondary,
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                Icon(
-                                  Icons.chevron_right,
-                                  color: AppColors.textSecondary,
-                                ),
-                              ],
+                              ),
+                            ],
+                            SizedBox(height: 16.h),
+                            // Coupon Section
+                            _CouponSection(controller: controller),
+                            SizedBox(height: 16.h),
+                            // Price Summary
+                            CartPriceSummaryWidget(
+                              currencyFormat: currencyFormat,
+                              subtotal: controller.subtotal,
+                              discount: controller.discount,
+                              delivery: controller.deliveryFee,
+                              tax: controller.tax,
+                              total: controller.total,
                             ),
-                          ),
+                            SizedBox(height: 16.h),
+                            // Checkout Button
+                            CartCheckoutButtonWidget(
+                              onPressed: () =>
+                                  _showAddressSelectionDialog(context),
+                              isProcessing: controller.isPlacingOrder.value,
+                              totalAmount: totalAmount,
+                              currencyFormat: currencyFormat,
+                            ),
+                            SizedBox(height: 40.h),
+                          ],
                         ),
-                      ],
-                      SizedBox(height: 16.h),
-                      // Coupon Section
-                      _CouponSection(controller: controller),
-                      SizedBox(height: 16.h),
-                      // Price Summary
-                      CartPriceSummaryWidget(
-                        currencyFormat: currencyFormat,
-                        subtotal: controller.subtotal,
-                        discount: controller.discount,
-                        delivery: controller.deliveryFee,
-                        tax: controller.tax,
-                        total: controller.total,
                       ),
-                      SizedBox(height: 16.h),
-                      // Checkout Button
-                      CartCheckoutButtonWidget(
-                        onPressed: () => _showAddressSelectionDialog(context),
-                        isProcessing: controller.isPlacingOrder.value,
-                        totalAmount: totalAmount,
-                        currencyFormat: currencyFormat,
-                      ),
-                      SizedBox(height: 40.h),
-                    ],
-                  ),
-                ),
               ),
             ],
           );
@@ -411,7 +451,8 @@ class _CouponSection extends StatelessWidget {
                   ),
                 ),
                 TextButton(
-                  onPressed: () => UserMainController.pushInCurrentTab(AppRoutes.coupons),
+                  onPressed: () =>
+                      UserMainController.pushInCurrentTab(AppRoutes.coupons),
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.symmetric(horizontal: 8.w),
                     minimumSize: Size.zero,
@@ -985,62 +1026,104 @@ class _EmptyCartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24.w),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            height: 140.h,
-            width: 140.h,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(70.r),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-            child: Icon(
-              Icons.shopping_cart_outlined,
-              color: AppColors.saffron,
-              size: 60.sp,
-            ),
-          ),
-          SizedBox(height: 24.h),
-          AutoTranslateText(
-            'Your cart is empty',
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
-              color: '#68171E'.toColor(),
-            ),
-          ),
-          SizedBox(height: 8.h),
-          AutoTranslateText(
-            'Looks like you haven’t added anything yet.\nStart exploring our products.',
-            textAlign: TextAlign.center,
-            style: AppTypography.body1.copyWith(color: AppColors.textSecondary),
-          ),
-          SizedBox(height: 24.h),
-          ElevatedButton(
-            onPressed: onShopNow,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.saffron,
-              foregroundColor: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 12.h),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24.r),
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 48.h),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: EdgeInsets.all(24.w),
+              decoration: BoxDecoration(
+                gradient: AppColors.primaryGradient,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: '#68171E'.toColor().withValues(alpha: 0.2),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Icon(
+                Icons.shopping_cart_outlined,
+                size: 64.sp,
+                color: Colors.white,
               ),
             ),
-            child: AutoTranslateText(
-              'Shop Now',
-              style: AppTypography.h3.copyWith(fontWeight: FontWeight.w600),
+            SizedBox(height: 24.h),
+            AutoTranslateText(
+              'Your cart is empty',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Baloo 2',
+                fontWeight: FontWeight.w700,
+                fontSize: 22.sp,
+                color: '#68171E'.toColor(),
+              ),
             ),
-          ),
-        ],
+            SizedBox(height: 12.h),
+            AutoTranslateText(
+              'Looks like you haven’t added anything yet.\nStart exploring our products.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w400,
+                fontSize: 14.sp,
+                color: AppColors.textSecondary,
+                height: 1.5,
+              ),
+            ),
+            SizedBox(height: 32.h),
+            Container(
+              decoration: BoxDecoration(
+                gradient: AppColors.orangeGradient,
+                borderRadius: BorderRadius.circular(20.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: '#F38B3B'.toColor().withValues(alpha: 0.4),
+                    blurRadius: 16,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onShopNow,
+                  borderRadius: BorderRadius.circular(20.r),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 24.w,
+                      vertical: 14.h,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.shopping_bag_rounded,
+                          color: Colors.white,
+                          size: 20.sp,
+                        ),
+                        SizedBox(width: 8.w),
+                        AutoTranslateText(
+                          'Continue Shopping',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16.sp,
+                            color: Colors.white,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
