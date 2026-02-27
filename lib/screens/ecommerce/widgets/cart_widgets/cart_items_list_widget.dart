@@ -31,30 +31,6 @@ class CartItemsListWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: ['#68171E'.toColor(), '#820B17'.toColor()],
-                  ),
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                child: AutoTranslateText(
-                  'Items (${items.length})',
-                  style: TextStyle(
-                    fontFamily: 'Baloo 2',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                    color: Colors.white,
-                    height: 1.5,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 16.h),
           ...items.map(
             (item) => Padding(
               padding: EdgeInsets.only(bottom: 16.h),
@@ -120,17 +96,29 @@ class _CartItemCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white,
+            Colors.white,
+            '#FEF6C3'.toColor().withValues(alpha: 0.2),
+          ],
+        ),
         borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(
+          color: '#68171E'.toColor().withValues(alpha: 0.15),
+          width: 1.5,
+        ),
         boxShadow: [
           BoxShadow(
-            color: '#68171E'.toColor().withValues(alpha: 0.08),
+            color: '#68171E'.toColor().withValues(alpha: 0.1),
             blurRadius: 12,
             offset: const Offset(0, 4),
             spreadRadius: 0,
           ),
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 6,
             offset: const Offset(0, 2),
             spreadRadius: 0,
@@ -152,9 +140,9 @@ class _CartItemCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16.r),
                         boxShadow: [
                           BoxShadow(
-                            color: '#68171E'.toColor().withValues(alpha: 0.1),
+                            color: Colors.black.withValues(alpha: 0.1),
                             blurRadius: 8,
-                            offset: const Offset(0, 2),
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),

@@ -10,8 +10,13 @@ import 'package:get/get.dart';
 
 class NamasteHomeView extends StatefulWidget {
   final bool hideHeader;
+  final bool showBackButton;
 
-  const NamasteHomeView({super.key, this.hideHeader = false});
+  const NamasteHomeView({
+    super.key,
+    this.hideHeader = false,
+    this.showBackButton = true,
+  });
 
   @override
   State<NamasteHomeView> createState() => _NamasteHomeViewState();
@@ -52,13 +57,12 @@ class _NamasteHomeViewState extends State<NamasteHomeView>
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: widget.hideHeader
-          ? null
-          : BoxDecoration(gradient: AppColors.gradientBackground),
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
           top: !widget.hideHeader,
+          bottom: false,
           child: SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -66,9 +70,10 @@ class _NamasteHomeViewState extends State<NamasteHomeView>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (!widget.hideHeader) ...[
-                    const CommonHeader(
+                    CommonHeader(
                       title: 'Digital Mandir',
                       showDrawer: false,
+                      showBackButton: widget.showBackButton,
                     ),
                     SizedBox(height: 10.h),
                   ],

@@ -28,11 +28,22 @@ class AllAstrologersView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Use a separate controller for embedded tab (hideHeader) vs full-screen
-    // to avoid "ScrollController attached to multiple scroll views".
-    final tag = hideHeader ? 'consult_tab' : null;
+    // Determine a tag for the controller.
+    // If it's the embedded tab, use 'consult_tab'.
+    // If it's a pushed page, use a tag based on the availability filter
+    // to allow multiple instances in the stack with different filters.
+    String? availability;
+    if (Get.arguments is Map) {
+      availability = Get.arguments['availability'] as String?;
+    }
+
+    final tag = hideHeader ? 'consult_tab' : (availability ?? 'default');
+
     final controller = Get.put<AllAstrologersController>(
-      AllAstrologersController(initialFilter: initialFilter),
+      AllAstrologersController(
+        initialFilter: initialFilter,
+        initialAvailability: availability,
+      ),
       tag: tag,
     );
 
@@ -50,13 +61,24 @@ class AllAstrologersView extends StatelessWidget {
               if (hideHeader)
                 _buildFiltersOnly(context, controller)
               else ...[
-                CommonHeader(
-                  title: 'Chat with Astrologer',
-                  showBackButton: showBackButton,
-                  showWallet: true,
-                  showCart: true,
-                  showSearch: true,
-                ),
+                Obx(() {
+                  String title = 'Astrologers';
+                  final avail = controller.selectedAvailability.value;
+                  if (avail == 'CHAT')
+                    title = 'Chat with Astrologer';
+                  else if (avail == 'VOICE_CALL')
+                    title = 'Call with Astrologer';
+                  else if (avail == 'VIDEO_CALL')
+                    title = 'Video Call with Astrologer';
+
+                  return CommonHeader(
+                    title: title,
+                    showBackButton: showBackButton,
+                    showWallet: true,
+                    showCart: true,
+                    showSearch: true,
+                  );
+                }),
                 _buildFiltersOnly(context, controller),
               ],
 
@@ -297,7 +319,10 @@ class AllAstrologersView extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        UserMainController.pushInCurrentTab('/astrologer-detail', arguments: astrologer);
+        UserMainController.pushInCurrentTab(
+          '/astrologer-detail',
+          arguments: astrologer,
+        );
       },
       child: Container(
         margin: EdgeInsets.only(bottom: 12.h),
@@ -582,103 +607,114 @@ class AllAstrologersView extends StatelessWidget {
                   SizedBox(height: 4.h),
                   SizedBox(height: 12.h),
                   // Action Buttons
-                  Row(
-                    children: [
-                      // Chat Button
-                      Expanded(
-                        flex: 2,
-                        child: Container(
-                          height: 36.h,
-                          decoration: BoxDecoration(
-                            gradient: AppColors.orangeGradient,
-                            borderRadius: BorderRadius.circular(6.r),
-                          ),
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              onTap: () {
-                                controller.initiateChat(astrologer);
-                              },
-                              borderRadius: BorderRadius.circular(6.r),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.chat_bubble_outline,
-                                    color: Colors.white,
-                                    size: 16.h,
-                                  ),
-                                  SizedBox(width: 6.w),
-                                  AutoTranslateText(
-                                    'Chat',
-                                    style: AppTypography.h2.copyWith(
-                                      color: Colors.white,
+                  Obx(() {
+                    final availability = controller.selectedAvailability.value;
+
+                    Widget buildButton({
+                      required String label,
+                      required IconData icon,
+                      required VoidCallback onTap,
+                      bool isExpanded = false,
+                    }) {
+                      return isExpanded
+                          ? Expanded(
+                              flex: 3,
+                              child: Container(
+                                height: 36.h,
+                                decoration: BoxDecoration(
+                                  gradient: AppColors.orangeGradient,
+                                  borderRadius: BorderRadius.circular(6.r),
+                                ),
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: onTap,
+                                    borderRadius: BorderRadius.circular(6.r),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          icon,
+                                          color: Colors.white,
+                                          size: 16.h,
+                                        ),
+                                        SizedBox(width: 6.w),
+                                        AutoTranslateText(
+                                          label,
+                                          style: AppTypography.h3.copyWith(
+                                            color: Colors.white,
+                                            fontSize: 12.sp,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
+                            )
+                          : Container(
+                              width: 36.w,
+                              height: 36.h,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(6.r),
+                                border: Border.all(
+                                  color: AppColors.deepOrange,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  onTap: onTap,
+                                  borderRadius: BorderRadius.circular(6.r),
+                                  child: Icon(
+                                    icon,
+                                    color: '#68171E'.toColor(),
+                                    size: 16.w,
+                                  ),
+                                ),
+                              ),
+                            );
+                    }
+
+                    return Row(
+                      children: [
+                        if (availability == 'CHAT' || availability == null) ...[
+                          buildButton(
+                            label: 'Chat',
+                            icon: Icons.chat_bubble_outline,
+                            onTap: () => controller.initiateChat(astrologer),
+                            isExpanded:
+                                availability == 'CHAT' || availability == null,
                           ),
-                        ),
-                      ),
-                      SizedBox(width: 8.w),
-                      // Call Button
-                      Container(
-                        width: 36.w,
-                        height: 36.h,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(6.r),
-                          border: Border.all(
-                            color: AppColors.deepOrange,
-                            width: 1,
+                          if (availability == null) SizedBox(width: 8.w),
+                        ],
+                        if (availability == 'VOICE_CALL' ||
+                            availability == null) ...[
+                          buildButton(
+                            label: 'Call',
+                            icon: Icons.phone_outlined,
+                            onTap: () =>
+                                controller.initiateVoiceCall(astrologer),
+                            isExpanded: availability == 'VOICE_CALL',
                           ),
-                        ),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () {
-                              controller.initiateVoiceCall(astrologer);
-                            },
-                            borderRadius: BorderRadius.circular(6.r),
-                            child: Icon(
-                              Icons.phone,
-                              color: '#68171E'.toColor(),
-                              size: 16.w,
-                            ),
+                          if (availability == null) SizedBox(width: 8.w),
+                        ],
+                        if (availability == 'VIDEO_CALL' ||
+                            availability == null) ...[
+                          buildButton(
+                            label: 'Video',
+                            icon: Icons.videocam_outlined,
+                            onTap: () =>
+                                controller.initiateVideoCall(astrologer),
+                            isExpanded: availability == 'VIDEO_CALL',
                           ),
-                        ),
-                      ),
-                      SizedBox(width: 8.w),
-                      // Video Call Button
-                      Container(
-                        width: 36.w,
-                        height: 36.h,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(6.r),
-                          border: Border.all(
-                            color: AppColors.deepOrange,
-                            width: 1,
-                          ),
-                        ),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () {
-                              controller.initiateVideoCall(astrologer);
-                            },
-                            borderRadius: BorderRadius.circular(6.r),
-                            child: Icon(
-                              Icons.videocam,
-                              color: '#68171E'.toColor(),
-                              size: 16.w,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                        ],
+                      ],
+                    );
+                  }),
                 ],
               ),
             ),

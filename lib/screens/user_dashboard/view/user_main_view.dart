@@ -19,20 +19,25 @@ class UserMainView extends StatefulWidget {
 class _UserMainViewState extends State<UserMainView> {
   late final UserMainController controller;
   late final List<Widget> _children;
+  late final List<TabNavigatorObserver> _observers;
 
   @override
   void initState() {
     super.initState();
     controller = Get.find<UserMainController>();
 
+    // Build observers to track each tab's navigation
+    _observers = List.generate(
+      controller.navigatorKeys.length,
+      (i) => TabNavigatorObserver(tabIndex: i),
+    );
+
     // Build navigators exactly ONCE.
-    // Using onGenerateInitialRoutes to avoid the default behaviour
-    // that splits initialRoute into segments (/ then /user-home),
-    // which adds a phantom UserDashboardView at the bottom of every tab.
     _children = List.generate(
       controller.navigatorKeys.length,
       (i) => Navigator(
         key: controller.navigatorKeys[i],
+        observers: [_observers[i]],
         onGenerateInitialRoutes: (navigator, initialRoute) {
           return [
             controller.onGenerateRoute(

@@ -37,6 +37,7 @@ class AiChatView extends BasePage<AiChatController> {
         backgroundColor: Colors.transparent,
         body: SafeArea(
           top: !hideHeader,
+          bottom: false,
           child: Column(
             children: [
               if (!hideHeader)
