@@ -366,30 +366,7 @@ class MyApp extends StatelessWidget {
                       children: [
                         Column(
                           children: [
-                            Expanded(
-                              child: PopScope(
-                                canPop: false,
-                                onPopInvoked: (didPop) async {
-                                  if (didPop) return;
-                                  print('GlobalNav: Root PopScope triggered');
-                                  if (Get.isRegistered<GlobalNavController>()) {
-                                    final navController =
-                                        Get.find<GlobalNavController>();
-                                    final handled = navController
-                                        .handleBackNavigation();
-                                    if (!handled) {
-                                      print(
-                                        'GlobalNav: Back not handled, exiting app',
-                                      );
-                                      SystemNavigator.pop();
-                                    }
-                                  } else {
-                                    SystemNavigator.pop();
-                                  }
-                                },
-                                child: child ?? const SizedBox(),
-                              ),
-                            ),
+                            Expanded(child: child ?? const SizedBox()),
                             Obx(() {
                               if (!Get.isRegistered<GlobalNavController>()) {
                                 return const SizedBox.shrink();

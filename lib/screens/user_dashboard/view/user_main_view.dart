@@ -1,4 +1,5 @@
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -46,12 +47,24 @@ class _UserMainViewState extends State<UserMainView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Obx(() {
-        final idx = controller.currentIndex.value;
-        print('UserMainView: Obx rebuild, showing tab index=$idx');
-        return IndexedStack(index: idx, children: _children);
-      }),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+        final handled = controller.handleBackNavigation();
+        if (!handled) {
+          // If not handled by our custom logic, it means we are at the root of the Home tab.
+          // We can now allow the app to exit.
+          SystemNavigator.pop();
+        }
+      },
+      child: Scaffold(
+        body: Obx(() {
+          final idx = controller.currentIndex.value;
+          print('UserMainView: Obx rebuild, showing tab index=$idx');
+          return IndexedStack(index: idx, children: _children);
+        }),
+      ),
     );
   }
 }
