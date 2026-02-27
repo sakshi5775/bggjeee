@@ -1,49 +1,58 @@
 import 'package:flutter/material.dart';
-import 'package:astrobharataiuser/utils/app_constant.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:astrobharataiuser/screens/e_mandir/devotional_player/controller/devotional_player_controller.dart';
 
-class DevotionalPlayerImageWidget extends StatelessWidget {
+class DevotionalPlayerImageWidget extends GetView<DevotionalPlayerController> {
   const DevotionalPlayerImageWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final imageUrl = AppConstant.eMandirGanesha;
-    final isNetworkImage =
-        imageUrl.startsWith('http://') || imageUrl.startsWith('https://');
+    return Obx(() {
+      final track = controller.audioService.currentTrack;
+      return Container(
+        height: 280.h,
+        width: 280.w,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.2),
+              blurRadius: 24,
+              offset: const Offset(0, 12),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24.r),
+          child: track != null && track.thumbnailUrl.isNotEmpty
+              ? CachedNetworkImage(
+                  imageUrl: track.thumbnailUrl,
+                  fit: BoxFit.cover,
+                  width: 280.w,
+                  height: 280.h,
+                  placeholder: (_, __) => _placeholder(),
+                  errorWidget: (_, __, ___) => _placeholder(),
+                )
+              : _placeholder(),
+        ),
+      );
+    });
+  }
 
+  Widget _placeholder() {
     return Container(
-      height: 480,
-      width: double.infinity,
+      width: 280.w,
+      height: 280.h,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(26),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        gradient: LinearGradient(
+          colors: [Colors.orange.shade200, Colors.deepOrange.shade300],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(26),
-        child: isNetworkImage
-            ? CachedNetworkImage(
-                imageUrl: imageUrl,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: 480,
-                placeholder: (context, url) =>
-                    const Center(child: CircularProgressIndicator()),
-                errorWidget: (context, url, error) =>
-                    const Center(child: Icon(Icons.error)),
-              )
-            : Image.asset(
-                imageUrl,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: 480,
-              ),
-      ),
+      child: Icon(Icons.music_note, size: 80.r, color: Colors.white54),
     );
   }
 }

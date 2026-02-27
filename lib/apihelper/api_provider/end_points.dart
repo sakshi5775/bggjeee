@@ -75,6 +75,10 @@ class EndPoints {
   /// sri mandir festivals api
   static const String sriMandirFestivals = 'sri-mandir/api/festivals';
 
+  /// devotional music
+  static String devotionalMusic(String godId, String category) =>
+      'sri-mandir/api/devotional-music/god/$godId/category/$category';
+
   /// daily checkin api
   static const String sriMandirDailyCheckIn =
       'sri-mandir/api/wallet/daily-checkin';

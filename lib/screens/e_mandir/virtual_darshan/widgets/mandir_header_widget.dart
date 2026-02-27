@@ -33,11 +33,21 @@ class MandirHeaderWidget extends StatelessWidget {
             decoration: BoxDecoration(gradient: AppColors.goldenGradient),
             child: Center(
               child: Obx(
-                () => AutoTranslateText(
-                  controller.currentGodName,
-                  style: AppTypography.h2.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                () => Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 6.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: AutoTranslateText(
+                    controller.currentGodName,
+                    style: AppTypography.h2.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),

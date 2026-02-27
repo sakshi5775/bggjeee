@@ -110,7 +110,7 @@ class EMandirWallpaperStoryController extends BaseController {
     try {
       await ShareService.share(
         title: 'Divine Wallpaper – AstroBharatAI',
-        message: 'Check out this beautiful wallpaper from Sri Mandir! 📱',
+        message: 'Check out this beautiful wallpaper from Digital Mandir! 📱',
         path: 'wallpaper',
         queryParams: {
           'url': imageUrl,

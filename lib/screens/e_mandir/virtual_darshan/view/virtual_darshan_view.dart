@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/controller/vi
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/mandir_header_widget.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/offering_bottom_sheet_widget.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/collection_bottom_sheet.dart';
+import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/dhup_animation_widget.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -73,7 +74,9 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
             ),
             // Unified Thali: animates from bottom center to circular Aarti path
             Obx(() {
-              final thaliImage = controller.thaliItemImage.value;
+              final thaliImage = controller.selectedThaliImage.value.isNotEmpty
+                  ? controller.selectedThaliImage.value
+                  : controller.thaliItemImage.value;
               final thaliIndex = controller.pujaItemCategories.indexWhere(
                 (c) =>
                     c.slug.toLowerCase().contains('thali') ||
@@ -95,8 +98,8 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                   // The dock is at bottom: 16.h, visually centered.
                   final dockedY =
                       size.height -
-                      16.h -
-                      60.h; // roughly the vertical center of the dock
+                      5.h -
+                      130.h; // roughly the vertical center of the dock
                   final dockedX = centerX;
 
                   // 2. Aarti Circular Path
@@ -166,6 +169,8 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                 },
               );
             }),
+            // Animated Dhup: one circle with yellow star glow
+            const DhupAnimationWidget(),
             // Mandir decorative header
             const Positioned(
               top: 0,
@@ -225,24 +230,70 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
               () => Positioned(
                 bottom: 90.h,
                 left: 18.w,
-                child: InkWell(
+                child: GestureDetector(
                   onTap: () => _openOfferingBottomSheet(context),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(50.r),
-                    child: SizedBox(
-                      width: 50.w,
-                      height: 50.h,
-                      child:
-                          controller.selectedOfferingIcon.value.startsWith(
-                            'http',
-                          )
-                          ? Image.network(
-                              controller.selectedOfferingIcon.value,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) =>
-                                  Image.asset(AppConstant.eMandirLadduIcon),
-                            )
-                          : Image.asset(controller.selectedOfferingIcon.value),
+                  child: Container(
+                    width: 58.w,
+                    height: 58.h,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Colors.white.withValues(alpha: 0.35),
+                          Colors.orange.withValues(alpha: 0.15),
+                        ],
+                      ),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.5),
+                        width: 1.5,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.orange.withValues(alpha: 0.25),
+                          blurRadius: 16,
+                          spreadRadius: 2,
+                        ),
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.08),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ClipOval(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                        child: Container(
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.1),
+                          ),
+                          padding: EdgeInsets.all(6.r),
+                          child:
+                              controller.selectedOfferingIcon.value.startsWith(
+                                'http',
+                              )
+                              ? Image.network(
+                                  controller.selectedOfferingIcon.value,
+                                  fit: BoxFit.cover,
+                                  width: 40.w,
+                                  height: 40.h,
+                                  errorBuilder: (_, __, ___) => Image.asset(
+                                    AppConstant.eMandirLadduIcon,
+                                    width: 40.w,
+                                    height: 40.h,
+                                  ),
+                                )
+                              : Image.asset(
+                                  controller.selectedOfferingIcon.value,
+                                  width: 40.w,
+                                  height: 40.h,
+                                ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -254,7 +305,7 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
               child: InkWell(
                 onTap: () => controller.toggleAarti(context),
                 child: Image.network(
-                  AppConstant.eMandirThaliIcon,
+                  AppConstant.eMandirAartiIcon,
                   fit: BoxFit.cover,
                   errorBuilder: (_, __, ___) =>
                       Image.asset(AppConstant.eMandirAartiIcon),
@@ -270,6 +321,7 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                 child: Image.asset(AppConstant.eMandirSankhIcon),
               ),
             ),
+
             Positioned(
               bottom: 22.h,
               right: 18.w,
@@ -340,7 +392,7 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
       ),
       builder: (sheetContext) => OfferingBottomSheetWidget(
         onSelect: (item) {
-          Get.back();
+          Navigator.pop(sheetContext);
           controller.useCoinItem(item, context);
         },
       ),

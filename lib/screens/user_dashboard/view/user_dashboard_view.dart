@@ -1,3 +1,5 @@
+import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/controller/virtual_darshan_controller.dart';
+import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/view/virtual_darshan_view.dart';
 import 'package:astrobharataiuser/widgets/common_tab_slider.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
@@ -348,15 +350,15 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       }
 
       if (i == 5 && controller.sliderTabs[i] == 'Digital Mandir') {
-        if (!Get.isRegistered<NamasteHomeController>()) {
-          Get.put(NamasteHomeController(), permanent: false);
+        if (!Get.isRegistered<VirtualDarshanController>()) {
+          Get.put(VirtualDarshanController(), permanent: false);
         }
         final h = MediaQuery.sizeOf(context).height;
         return Padding(
           padding: EdgeInsets.only(top: 12.h),
           child: SizedBox(
             height: (h - 252).clamp(388.0, h * 0.85),
-            child: const NamasteHomeView(hideHeader: true),
+            child: const VirtualDarshanView(),
           ),
         );
       }
@@ -5006,7 +5008,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     onTap: () {
                       Navigator.of(context).pop();
                       UserMainController.pushInCurrentTab(
-                        AppRoutes.namasteHome,
+                        AppRoutes.virtualDarshan,
                       );
                     },
                   ),

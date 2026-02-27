@@ -155,6 +155,14 @@ class VirtualDarshanController extends BaseController
   late AnimationController aartiController;
   late AnimationController thaliTransitionController;
   late Animation<double> thaliTransitionAnimation;
+
+  // Dhup animation controllers
+  late AnimationController dhupTransitionController;
+  late Animation<double> dhupTransitionAnimation;
+  late AnimationController dhupCircleController;
+  final RxBool isDhupActive = false.obs;
+  final RxString selectedDhupImage = ''.obs;
+
   final AudioPlayer audioPlayer = AudioPlayer();
   final AudioPlayer shankhPlayer = AudioPlayer();
   Timer? flowerTimer;
@@ -206,6 +214,19 @@ class VirtualDarshanController extends BaseController
       parent: thaliTransitionController,
       curve: Curves.easeInOut,
     );
+    // Dhup animation
+    dhupTransitionController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    dhupTransitionAnimation = CurvedAnimation(
+      parent: dhupTransitionController,
+      curve: Curves.easeInOut,
+    );
+    dhupCircleController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 4),
+    );
     audioPlayer.setReleaseMode(ReleaseMode.loop);
     shankhPlayer.setReleaseMode(ReleaseMode.stop);
     dailyCheckIn();
@@ -243,17 +264,67 @@ class VirtualDarshanController extends BaseController
                 thaliRes.success &&
                 thaliRes.category != null) {
               if (thaliRes.category!.items.isNotEmpty) {
-                thaliItemImage.value =
-                    thaliRes.category!.items.first.image ?? '';
+                final firstImage = thaliRes.category!.items.first.image ?? '';
+                thaliItemImage.value = firstImage;
+                selectedThaliImage.value = firstImage;
               } else {
-                thaliItemImage.value =
-                    response.items[thaliIndex].image ??
-                    ''; // fallback to category image
+                thaliItemImage.value = response.items[thaliIndex].image ?? '';
+                selectedThaliImage.value = thaliItemImage.value;
               }
             }
           }
         } catch (e) {
           print('Error fetching explicit thali category item: $e');
+        }
+
+        // Pre-fetch flowers category to select first flower by default
+        try {
+          final flowersIndex = response.items.indexWhere(
+            (c) =>
+                c.slug.toLowerCase().contains('flowers') ||
+                c.name.toLowerCase().contains('flowers'),
+          );
+          if (flowersIndex != -1) {
+            final flowersRes = await _pujaItemCategoryService.getCategoryById(
+              response.items[flowersIndex].id,
+            );
+            if (flowersRes != null &&
+                flowersRes.success &&
+                flowersRes.category != null &&
+                flowersRes.category!.items.isNotEmpty) {
+              final firstFlower = flowersRes.category!.items.first.image ?? '';
+              if (firstFlower.isNotEmpty) {
+                selectedFlowerAsset.value = firstFlower;
+                flowerAssets.clear();
+                flowerAssets.add(firstFlower);
+              }
+            }
+          }
+        } catch (e) {
+          print('Error pre-fetching flowers category: $e');
+        }
+
+        // Pre-fetch dhup category to select first dhup item by default
+        try {
+          final dhupIndex = response.items.indexWhere(
+            (c) =>
+                c.slug.toLowerCase().contains('dhup') ||
+                c.name.toLowerCase().contains('dhup'),
+          );
+          if (dhupIndex != -1) {
+            final dhupRes = await _pujaItemCategoryService.getCategoryById(
+              response.items[dhupIndex].id,
+            );
+            if (dhupRes != null &&
+                dhupRes.success &&
+                dhupRes.category != null &&
+                dhupRes.category!.items.isNotEmpty) {
+              selectedDhupImage.value =
+                  dhupRes.category!.items.first.image ?? '';
+            }
+          }
+        } catch (e) {
+          print('Error pre-fetching dhup category: $e');
         }
 
         // Load first category items by default
@@ -436,6 +507,8 @@ class VirtualDarshanController extends BaseController
     activeFlowers.clear();
     aartiController.dispose();
     thaliTransitionController.dispose();
+    dhupTransitionController.dispose();
+    dhupCircleController.dispose();
     offeringTabController?.dispose();
     scrollController.dispose();
     horizontalPageController.dispose();
@@ -673,30 +746,62 @@ class VirtualDarshanController extends BaseController
     }
   }
 
-  void handleOfferingSelection(PujaItem item) {
-    // Use item image if available, otherwise keep current icon
-    if (item.image != null && item.image!.isNotEmpty) {
-      selectedOfferingIcon.value = item.image!;
-    }
+  /// Perform dhup animation: transition up → one full circle → transition back down.
+  void performDhupAnimation() {
+    if (isDhupActive.value) return;
+    isDhupActive.value = true;
 
+    // Step 1: Move dhup from dock to circle position
+    dhupTransitionController.forward().then((_) {
+      // Step 2: Do one full circle
+      dhupCircleController.reset();
+      dhupCircleController.forward().then((_) {
+        // Step 3: Move dhup back to dock
+        dhupTransitionController.reverse().then((_) {
+          isDhupActive.value = false;
+          dhupCircleController.reset();
+        });
+      });
+    });
+  }
+
+  RxString selectedThaliImage = ''.obs;
+
+  void handleOfferingSelection(PujaItem item) {
     // Determine the type based on selected category
     final categoryDetail = selectedCategoryDetail.value;
     final categorySlug = categoryDetail?.slug ?? '';
 
     if (categorySlug == 'flowers' || categorySlug == 'garland') {
       if (item.image != null && item.image!.isNotEmpty) {
+        selectedOfferingIcon.value = item.image!;
         selectedFlowerAsset.value = item.image!;
         flowerAssets.clear();
         flowerAssets.add(item.image!);
       }
       // startFlowerRain will be called from view with context after selection
     } else if (categorySlug == 'sound') {
+      // Play sound but do NOT update offering icon
       playShankh();
       if (item.image != null && item.image!.isNotEmpty) {
         selectedInstrumentAsset.value = item.image!;
       }
+    } else if (categorySlug == 'thali') {
+      // Thali: do NOT update offering icon
+      selectedThaliImage.value = item.image ?? '';
+    } else if (categorySlug == 'dhup') {
+      // Dhup: update icon and trigger one-circle animation
+      if (item.image != null && item.image!.isNotEmpty) {
+        selectedDhupImage.value = item.image!;
+        selectedOfferingIcon.value = item.image!;
+      }
+      performDhupAnimation();
+    } else {
+      // Other categories: update the offering icon
+      if (item.image != null && item.image!.isNotEmpty) {
+        selectedOfferingIcon.value = item.image!;
+      }
     }
-    // For thali and other categories, just update the icon
   }
 
   /// Get current category slug for view logic

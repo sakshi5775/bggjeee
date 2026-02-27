@@ -171,19 +171,20 @@ class OfferingBottomSheetWidget extends GetView<VirtualDarshanController> {
                 ),
               ),
               Spacing.h(3),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(AppConstant.coin, height: 12.h, width: 12.w),
-                  AutoTranslateText(
-                    (item.coin ?? 0).toString(),
-                    style: AppTypography.label.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF5D4037),
+              if (item.coin != null && item.coin! > 0)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(AppConstant.coin, height: 12.h, width: 12.w),
+                    AutoTranslateText(
+                      (item.coin ?? 0).toString(),
+                      style: AppTypography.label.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF5D4037),
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
             ],
           ),
         ],

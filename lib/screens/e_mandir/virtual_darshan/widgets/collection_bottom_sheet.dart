@@ -98,7 +98,7 @@ void showCollectionBottomSheet(BuildContext context) {
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
     ),
-    builder: (context) {
+    builder: (bottomSheetContext) {
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
         decoration: BoxDecoration(
@@ -117,7 +117,7 @@ void showCollectionBottomSheet(BuildContext context) {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Sri Mandir Collection',
+                      'Digital Mandir Collection',
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
@@ -137,7 +137,7 @@ void showCollectionBottomSheet(BuildContext context) {
                 ),
                 IconButton(
                   icon: Icon(Icons.close, color: Colors.grey.shade600),
-                  onPressed: () => Get.back(),
+                  onPressed: () => Navigator.pop(bottomSheetContext),
                 ),
               ],
             ),
