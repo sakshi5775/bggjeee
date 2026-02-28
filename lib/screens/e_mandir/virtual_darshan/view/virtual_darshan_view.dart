@@ -1,10 +1,12 @@
 import 'dart:math';
 import 'dart:ui';
+import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/controller/virtual_darshan_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/mandir_header_widget.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/offering_bottom_sheet_widget.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/collection_bottom_sheet.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/dhup_animation_widget.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -233,68 +235,35 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                 child: GestureDetector(
                   onTap: () => _openOfferingBottomSheet(context),
                   child: Container(
-                    width: 58.w,
-                    height: 58.h,
+                    width: 55.w,
+                    height: 55.h,
+                    padding: AppPaddings.all(5),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Colors.white.withValues(alpha: 0.35),
-                          Colors.orange.withValues(alpha: 0.15),
-                        ],
-                      ),
+                      gradient: AppColors.gradientBackground,
                       border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.5),
-                        width: 1.5,
+                        color: AppColors.deepOrangemix,
+                        width: 2,
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.orange.withValues(alpha: 0.25),
-                          blurRadius: 16,
-                          spreadRadius: 2,
-                        ),
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.08),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
                     ),
-                    child: ClipOval(
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                        child: Container(
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white.withValues(alpha: 0.1),
+                    child:
+                        controller.selectedOfferingIcon.value.startsWith('http')
+                        ? Image.network(
+                            controller.selectedOfferingIcon.value,
+                            fit: BoxFit.cover,
+                            width: 40.w,
+                            height: 40.h,
+                            errorBuilder: (_, __, ___) => Image.asset(
+                              AppConstant.eMandirLadduIcon,
+                              width: 40.w,
+                              height: 40.h,
+                            ),
+                          )
+                        : Image.asset(
+                            controller.selectedOfferingIcon.value,
+                            width: 40.w,
+                            height: 40.h,
                           ),
-                          padding: EdgeInsets.all(6.r),
-                          child:
-                              controller.selectedOfferingIcon.value.startsWith(
-                                'http',
-                              )
-                              ? Image.network(
-                                  controller.selectedOfferingIcon.value,
-                                  fit: BoxFit.cover,
-                                  width: 40.w,
-                                  height: 40.h,
-                                  errorBuilder: (_, __, ___) => Image.asset(
-                                    AppConstant.eMandirLadduIcon,
-                                    width: 40.w,
-                                    height: 40.h,
-                                  ),
-                                )
-                              : Image.asset(
-                                  controller.selectedOfferingIcon.value,
-                                  width: 40.w,
-                                  height: 40.h,
-                                ),
-                        ),
-                      ),
-                    ),
                   ),
                 ),
               ),
@@ -304,11 +273,26 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
               right: 18.w,
               child: InkWell(
                 onTap: () => controller.toggleAarti(context),
-                child: Image.network(
-                  AppConstant.eMandirAartiIcon,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) =>
-                      Image.asset(AppConstant.eMandirAartiIcon),
+                child: Container(
+                  width: 55.w,
+                  height: 55.h,
+                  padding: AppPaddings.all(5),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: AppColors.gradientBackground,
+                    border: Border.all(
+                      color: AppColors.deepOrangemix,
+                      width: 2,
+                    ),
+                  ),
+                  child: Image.network(
+                    AppConstant.sriMandirDiyaAArti,
+                    width: 40.w,
+                    height: 40.h,
+                    fit: BoxFit.fill,
+                    errorBuilder: (_, __, ___) =>
+                        Image.asset(AppConstant.eMandirAartiIcon),
+                  ),
                 ),
               ),
             ),
@@ -327,7 +311,26 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
               right: 18.w,
               child: InkWell(
                 onTap: () => showCollectionBottomSheet(context),
-                child: Image.asset(AppConstant.eMandirLibraryAarti),
+                child: Container(
+                  width: 55.w,
+                  height: 55.h,
+                  padding: AppPaddings.all(5),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: AppColors.deepOrangemix,
+                      width: 2,
+                    ),
+                    gradient: AppColors.gradientBackground,
+                  ),
+                  child: Image.network(
+                    AppConstant.collectionSangrahIcon,
+
+                    fit: BoxFit.fill,
+                    errorBuilder: (_, __, ___) =>
+                        Image.asset(AppConstant.eMandirLibraryAarti),
+                  ),
+                ),
               ),
             ),
           ],

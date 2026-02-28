@@ -11,17 +11,27 @@ class ChalisaDetailController extends BaseController {
 
   late String chalisaId;
 
+  /// Content type: 'chalisa' or 'aarti'
+  late final String contentType;
+
+  String get errorMessage => contentType == 'aarti'
+      ? 'Unable to load aarti'
+      : 'Unable to load chalisa';
+
   @override
   void onInit() {
     super.onInit();
     chalisaId = Get.arguments['chalisaId'] as String;
-    fetchChalisaDetail();
+    contentType = (Get.arguments['contentType'] as String?) ?? 'chalisa';
+    fetchDetail();
   }
 
-  Future<void> fetchChalisaDetail() async {
+  Future<void> fetchDetail() async {
     try {
       isLoading.value = true;
-      final response = await _chalisaService.getChalisaById(chalisaId);
+      final response = contentType == 'aarti'
+          ? await _chalisaService.getAartiById(chalisaId)
+          : await _chalisaService.getChalisaById(chalisaId);
       if (response != null && response.data?.chalisa != null) {
         chalisa.value = response.data!.chalisa;
       }

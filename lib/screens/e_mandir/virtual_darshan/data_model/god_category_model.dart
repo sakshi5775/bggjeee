@@ -4,8 +4,10 @@ class GodCategoryModel {
   final String godName;
   final String slug;
   final String godImage;
+  final String? thumbnailImage;
   final String? description;
   final int displayOrder;
+  final bool? isToday;
 
   GodCategoryModel({
     required this.id,
@@ -14,6 +16,8 @@ class GodCategoryModel {
     required this.godImage,
     this.description,
     this.displayOrder = 0,
+    this.thumbnailImage,
+    this.isToday,
   });
 
   factory GodCategoryModel.fromJson(Map<String, dynamic> json) {
@@ -24,6 +28,8 @@ class GodCategoryModel {
       godImage: json['godImage']?.toString() ?? '',
       description: json['description']?.toString(),
       displayOrder: json['displayOrder'] as int? ?? 0,
+      thumbnailImage: json['godThumbnail']?.toString(),
+      isToday: json['isTodayGod'] as bool? ?? false,
     );
   }
 }

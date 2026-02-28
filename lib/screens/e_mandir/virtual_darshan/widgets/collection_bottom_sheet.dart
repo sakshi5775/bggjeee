@@ -1,3 +1,5 @@
+import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -11,7 +13,7 @@ void showCollectionBottomSheet(BuildContext context) {
       title: 'Panchang',
       subtitle: 'देखें शुभ मुहूर्त', // Used Hindi from screenshot
       gradientColors: [Colors.orange.shade300, Colors.deepOrange],
-      imageAsset: AppConstant.servicePanchang, // Assuming valid asset
+      imageAsset: AppConstant.collectionPanchangIcon, // Assuming valid asset
       onTap: () {
         Get.back();
         Get.toNamed(
@@ -23,7 +25,7 @@ void showCollectionBottomSheet(BuildContext context) {
     CollectionItemModel(
       title: 'Rashifal',
       gradientColors: [Colors.purpleAccent.shade100, Colors.deepPurple],
-      icon: Icons.star_border, // Using standard icon as fallback
+      imageAsset: AppConstant.collectionRashifalIcon,
       onTap: () {
         Get.back();
         Get.toNamed(
@@ -35,7 +37,8 @@ void showCollectionBottomSheet(BuildContext context) {
     CollectionItemModel(
       title: 'Divya Darshan',
       gradientColors: [Colors.orangeAccent, Colors.redAccent],
-      icon: Icons.temple_hindu,
+      imageAsset: AppConstant
+          .collectionDivyaDarshanIcon, // Using standard icon as fallback
       onTap: () {
         Get.back();
         Get.toNamed(AppRoutes.divyaDarshan);
@@ -44,7 +47,8 @@ void showCollectionBottomSheet(BuildContext context) {
     CollectionItemModel(
       title: 'Wallpaper',
       gradientColors: [Colors.purpleAccent, Colors.purple],
-      icon: Icons.image,
+      imageAsset: AppConstant
+          .collectionWallpaperIcon, // Using standard icon as fallback
       onTap: () {
         Get.back(); // Close bottom sheet
         Get.toNamed(AppRoutes.eMandirWallpaper); // Navigate to wallpaper
@@ -53,7 +57,8 @@ void showCollectionBottomSheet(BuildContext context) {
     CollectionItemModel(
       title: 'Greetings',
       gradientColors: [Colors.lightGreen.shade400, Colors.green.shade700],
-      icon: Icons.mail_outline,
+      imageAsset: AppConstant
+          .collectionGreetingsIcon, // Using standard icon as fallback
       onTap: () {
         Get.back();
         Get.toNamed(
@@ -65,7 +70,8 @@ void showCollectionBottomSheet(BuildContext context) {
     CollectionItemModel(
       title: 'Festivals',
       gradientColors: [Colors.blue.shade400, Colors.indigo],
-      icon: Icons.lightbulb_outline,
+      imageAsset:
+          AppConstant.collectionFestivalIcon, // Using standard icon as fallback
       onTap: () {
         Get.back();
         Get.toNamed(
@@ -77,13 +83,18 @@ void showCollectionBottomSheet(BuildContext context) {
     CollectionItemModel(
       title: 'Aarti',
       gradientColors: [Colors.orange.shade300, Colors.orange.shade700],
-      icon: Icons.menu_book,
-      onTap: () {},
+      imageAsset:
+          AppConstant.collectionArtiIcon, // Using standard icon as fallback
+      onTap: () {
+        Get.back();
+        Get.toNamed(AppRoutes.chalisa, arguments: {'contentType': 'aarti'});
+      },
     ),
     CollectionItemModel(
       title: 'Chalisa',
       gradientColors: [Colors.pinkAccent, Colors.pink.shade700],
-      icon: Icons.music_note,
+      imageAsset:
+          AppConstant.collectionChalisaIcon, // Using standard icon as fallback
       onTap: () {
         Get.back();
         Get.toNamed(AppRoutes.chalisa);
@@ -113,27 +124,29 @@ void showCollectionBottomSheet(BuildContext context) {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Digital Mandir Collection',
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AutoTranslateText(
+                        'Digital Mandir Collection',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 4.h),
-                    Text(
-                      'One-Stop for All Dharmic Information',
-                      style: TextStyle(
-                        fontSize: 13.sp,
-                        color: Colors.grey.shade600,
-                        fontWeight: FontWeight.w500,
+                      SizedBox(height: 4.h),
+                      AutoTranslateText(
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        'Discover all things Dharmic in one trusted place.',
+                        style: AppTypography.body1.copyWith(
+                          color: Colors.grey.shade600,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 IconButton(
                   icon: Icon(Icons.close, color: Colors.grey.shade600),
@@ -188,12 +201,12 @@ void showCollectionBottomSheet(BuildContext context) {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
+                              AutoTranslateText(
                                 item.title,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 14.sp,
+                                  fontSize: 14,
                                 ),
                               ),
                               if (item.subtitle != null) ...[
@@ -207,11 +220,11 @@ void showCollectionBottomSheet(BuildContext context) {
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(4.r),
                                   ),
-                                  child: Text(
+                                  child: AutoTranslateText(
                                     item.subtitle!,
                                     style: TextStyle(
                                       color: item.gradientColors.last,
-                                      fontSize: 9.sp,
+                                      fontSize: 9,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),

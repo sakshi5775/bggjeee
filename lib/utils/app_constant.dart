@@ -392,6 +392,28 @@ class AppConstant {
 
   static const String bellSound = '$s3BaseUrl/Astro+Service/BellSound.mp3';
 
+  static const String collectionArtiIcon = '$s3BaseUrl/Astro+Service/Arti.png';
+  static const String collectionChalisaIcon =
+      '$s3BaseUrl/Astro+Service/chalisa.png';
+  static const String collectionGreetingsIcon =
+      '$s3BaseUrl/Astro+Service/greetings.png';
+  static const String collectionPanchangIcon =
+      '$s3BaseUrl/Astro+Service/panchang.png';
+  static const String collectionRashifalIcon =
+      '$s3BaseUrl/Astro+Service/rashifhal.png';
+  static const String collectionFestivalIcon =
+      '$s3BaseUrl/Astro+Service/festival.png';
+  static const String collectionSangrahIcon =
+      '$s3BaseUrl/Astro+Service/sanghrah.png';
+  static const String collectionDivyaDarshanIcon =
+      '$s3BaseUrl/Astro+Service/mandir.png';
+
+  static const String collectionWallpaperIcon =
+      '$s3BaseUrl/Astro+Service/wallpaper.png';
+
+  static const String sriMandirDiyaAArti =
+      '$s3BaseUrl/Astro+Service/DiyaAArti__1_-removebg-preview.png';
+
   /// Digital Education images
   /// digital education Spiritual Pillars images
 

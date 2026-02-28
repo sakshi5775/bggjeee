@@ -3,7 +3,6 @@ import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
 import 'package:astrobharataiuser/core/base/api_helper_mixin.dart';
 import 'package:astrobharataiuser/data_model/login_model.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class LoginService with ApiHelperMixin {
   final ApiRepository _apiRepository = Get.find();

@@ -142,7 +142,7 @@ class AboutUsView extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Icon(Icons.auto_awesome, color: AppColors.templeGold, size: 36.sp),
+          Icon(Icons.auto_awesome, color: AppColors.templeGold, size: 36),
           SizedBox(height: 12.h),
           AutoTranslateText(
             'Bridging Ancient Wisdom\n& Modern Technology',
@@ -277,7 +277,7 @@ class AboutUsView extends StatelessWidget {
                   color: iconColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10.r),
                 ),
-                child: Icon(icon, color: iconColor, size: 22.sp),
+                child: Icon(icon, color: iconColor, size: 22.h),
               ),
               SizedBox(width: 10.w),
               AutoTranslateText(
@@ -467,7 +467,7 @@ class AboutUsView extends StatelessWidget {
                   Icon(
                     Icons.format_quote_rounded,
                     color: AppColors.templeGold,
-                    size: 22.sp,
+                    size: 22.h,
                   ),
                   SizedBox(width: 8.w),
                   Expanded(
@@ -752,7 +752,7 @@ class AboutUsView extends StatelessWidget {
                   child: Icon(
                     Icons.auto_awesome,
                     color: AppColors.deepOrange,
-                    size: 20.sp,
+                    size: 20.h,
                   ),
                 ),
               ),
@@ -1071,7 +1071,7 @@ class AboutUsView extends StatelessWidget {
               gradient: AppColors.orangeGradient,
               borderRadius: BorderRadius.circular(10.r),
             ),
-            child: Icon(item.icon, color: Colors.white, size: 22.sp),
+            child: Icon(item.icon, color: Colors.white, size: 22.h),
           ),
           SizedBox(height: 10.h),
           AutoTranslateText(

@@ -1,7 +1,9 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../controller/book_puja_controller.dart';
@@ -13,49 +15,19 @@ class BookPujaHeaderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<BookPujaController>();
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Back button
-          IconButton(
-            icon: const Icon(Icons.arrow_back, color: Color(0xFF3E2723)),
-            onPressed: () => Get.back(),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-          ),
-          const SizedBox(height: 8),
-          // Title
-          Center(
-            child: AutoTranslateText(
-              'Book Your Pooja',
-              style: MyTextTheme.veryLargeBCB.copyWith(
-                color: const Color(0xFF3E2723),
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          // Subtitle
-          Center(
-            child: AutoTranslateText(
-              'Choose from daily rituals, dosh nivaran, havan & special pujas.',
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: const Color(0xFF666666),
-                fontSize: 14,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          const SizedBox(height: 16),
-          // Search field
-          Obx(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Common Header
+        const CommonHeader(title: 'Book Your Pooja', showSearch: false),
+        // Search field
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: Obx(
             () => Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.05),
@@ -72,31 +44,31 @@ class BookPujaHeaderWidget extends StatelessWidget {
                   hintText: 'Search pujas...',
                   hintStyle: MyTextTheme.mediumBCN.copyWith(
                     color: const Color(0xFF999999),
-                    fontSize: 14,
+                    fontSize: 14.sp,
                   ),
                   prefixIcon: Icon(
                     Icons.search,
                     color: AppColors.orangeGradient.colors.first,
-                    size: 24,
+                    size: 24.r,
                   ),
                   suffixIcon: controller.searchQuery.value.isNotEmpty
                       ? IconButton(
-                          icon: const Icon(Icons.clear, size: 20),
+                          icon: Icon(Icons.clear, size: 20.r),
                           color: const Color(0xFF999999),
                           onPressed: () => controller.clearSearch(),
                         )
                       : null,
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 12.h,
                   ),
                 ),
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

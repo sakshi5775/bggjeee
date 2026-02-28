@@ -11,6 +11,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 /// Decorative mandir-style header with god name, category list, arch, and bells.
 class MandirHeaderWidget extends StatelessWidget {
@@ -33,20 +34,34 @@ class MandirHeaderWidget extends StatelessWidget {
             decoration: BoxDecoration(gradient: AppColors.goldenGradient),
             child: Center(
               child: Obx(
-                () => Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 6.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(20.r),
-                  ),
-                  child: AutoTranslateText(
-                    controller.currentGodName,
-                    style: AppTypography.h2.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                () => GestureDetector(
+                  onTap: () => _showGodCategoryPicker(context, controller),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 6.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AutoTranslateText(
+                          controller.currentGodName,
+                          style: AppTypography.h2.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(width: 6.w),
+                        Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          color: Colors.white,
+                          size: 20.r,
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -103,48 +118,51 @@ class MandirHeaderWidget extends StatelessWidget {
                       child: ListView.builder(
                         controller: controller.scrollController,
                         scrollDirection: Axis.horizontal,
-                        itemCount: count + 1,
+                        itemCount: count,
                         itemBuilder: (_, index) {
                           // Last item: circular + button
-                          if (index == count) {
-                            return Center(
-                              child: GestureDetector(
-                                onTap: () {
-                                  // TODO: handle + button tap
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 3.w),
-                                  width: 40.w,
-                                  height: 40.w,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white.withOpacity(0.3),
-                                    border: Border.all(
-                                      color: Colors.white,
-                                      width: 1.5,
-                                    ),
-                                  ),
-                                  child: Icon(
-                                    Icons.add,
-                                    color: Colors.white,
-                                    size: 14.r,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }
+                          // if (index == count) {
+                          //   return Center(
+                          //     child: GestureDetector(
+                          //       onTap: () {
+                          //         // TODO: handle + button tap
+                          //       },
+                          //       child: Container(
+                          //         margin: EdgeInsets.symmetric(horizontal: 3.w),
+                          //         width: 40.w,
+                          //         height: 40.w,
+                          //         decoration: BoxDecoration(
+                          //           shape: BoxShape.circle,
+                          //           color: Colors.white.withOpacity(0.3),
+                          //           border: Border.all(
+                          //             color: Colors.white,
+                          //             width: 1.5,
+                          //           ),
+                          //         ),
+                          //         child: Icon(
+                          //           Icons.add,
+                          //           color: Colors.white,
+                          //           size: 14.r,
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   );
+                          // }
 
                           // Category items
                           final isSelected = selectedIdx == index;
                           final catImage = controller.godCategories.isNotEmpty
-                              ? controller.godCategories[index].godImage
+                              ? controller.godCategories[index].thumbnailImage
                               : controller.fallbackGodsList[index].profileImage;
-                          final isVideo = VirtualDarshanController.isVideoUrl(
-                            catImage,
-                          );
+                          // final isVideo = VirtualDarshanController.isVideoUrl(
+                          //   controller.godCategories[index].godImage,
+                          // );
                           return Center(
                             child: GestureDetector(
-                              onTap: () => controller.navigateToGod(index),
+                              onTap: () => controller.navigateToGod(
+                                index,
+                                controller.godCategories[index].id.toString(),
+                              ),
                               child: Container(
                                 margin: EdgeInsets.symmetric(horizontal: 3.w),
                                 width: 40.w,
@@ -163,16 +181,14 @@ class MandirHeaderWidget extends StatelessWidget {
                                   child: SizedBox(
                                     width: 36.w,
                                     height: 36.w,
-                                    child: isVideo
-                                        ? _buildVideoThumbnail(size: 36.w)
-                                        : Image.network(
-                                            catImage,
-                                            fit: BoxFit.cover,
-                                            width: 36.w,
-                                            height: 36.w,
-                                            errorBuilder: (_, __, ___) =>
-                                                Icon(Icons.person, size: 14.r),
-                                          ),
+                                    child: Image.network(
+                                      catImage ?? '',
+                                      fit: BoxFit.cover,
+                                      width: 36.w,
+                                      height: 36.w,
+                                      errorBuilder: (_, __, ___) =>
+                                          Icon(Icons.person, size: 14.r),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -234,16 +250,139 @@ class MandirHeaderWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildVideoThumbnail({required double size}) {
-    return Container(
-      width: size,
-      height: size,
-      color: Colors.grey.shade800,
-      child: Center(
-        child: Icon(
-          Icons.play_circle_fill_rounded,
-          color: Colors.orange,
-          size: size * 0.6,
+  void _showGodCategoryPicker(
+    BuildContext context,
+    VirtualDarshanController controller,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) => Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.6,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle bar
+            Container(
+              margin: EdgeInsets.only(top: 10.h),
+              width: 40.w,
+              height: 4.h,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2.r),
+              ),
+            ),
+            // Title
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 14.h),
+              child: AutoTranslateText(
+                'Select Deity',
+                style: AppTypography.h2.copyWith(
+                  color: const Color(0xFF8B1925),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Divider(height: 1, color: Colors.grey.shade200),
+            // Grid of gods
+            Flexible(
+              child: Obx(() {
+                final categories = controller.godCategories;
+                final selectedIdx = controller.currentCategoryIndex.value;
+
+                return GridView.builder(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.all(16.w),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                    crossAxisSpacing: 12.w,
+                    mainAxisSpacing: 16.h,
+                    childAspectRatio: 0.75,
+                  ),
+                  itemCount: categories.length,
+                  itemBuilder: (_, index) {
+                    final god = categories[index];
+                    final isSelected = selectedIdx == index;
+                    final imageUrl = god.thumbnailImage ?? god.godImage;
+
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                        controller.navigateToGod(index, god.id.toString());
+                      },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 56.w,
+                            height: 56.w,
+                            padding: EdgeInsets.all(2.w),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isSelected
+                                    ? const Color(0xFFE3B341)
+                                    : Colors.grey.shade300,
+                                width: isSelected ? 2.5 : 1.5,
+                              ),
+                              boxShadow: isSelected
+                                  ? [
+                                      BoxShadow(
+                                        color: const Color(
+                                          0xFFE3B341,
+                                        ).withValues(alpha: 0.3),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ]
+                                  : null,
+                            ),
+                            child: ClipOval(
+                              child: Image.network(
+                                imageUrl,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => Container(
+                                  color: Colors.grey.shade200,
+                                  child: Icon(
+                                    Icons.person,
+                                    size: 24.r,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 6.h),
+                          AutoTranslateText(
+                            god.godName,
+                            style: TextStyle(
+                              fontSize: 11.sp,
+                              fontWeight: isSelected
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
+                              color: isSelected
+                                  ? const Color(0xFF8B1925)
+                                  : Colors.grey.shade700,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              }),
+            ),
+          ],
         ),
       ),
     );
@@ -272,7 +411,15 @@ class _GhantaBellState extends State<_GhantaBell>
 
   final AudioPlayer _audioPlayer = AudioPlayer();
   Worker? _aartiWorker;
+  Worker? _tabWorker;
   bool _isAartiSwinging = false;
+  bool _hasPlayedInitialSwing = false;
+
+  /// Check if the VirtualDarshan tab (index 2) is currently active.
+  bool _isTabActive() {
+    if (!Get.isRegistered<UserMainController>()) return true;
+    return Get.find<UserMainController>().currentIndex.value == 2;
+  }
 
   @override
   void initState() {
@@ -343,11 +490,25 @@ class _GhantaBellState extends State<_GhantaBell>
       });
       if (controller.isAartiActive.value) {
         _startLoopingSwing();
-      } else {
+      } else if (_isTabActive()) {
+        // Only play initial bell swing if the tab is currently visible
+        _hasPlayedInitialSwing = true;
         _startSwing();
       }
-    } else {
+    } else if (_isTabActive()) {
+      _hasPlayedInitialSwing = true;
       _startSwing();
+    }
+
+    // Listen to tab changes — play bell when user navigates to Mandir tab
+    if (Get.isRegistered<UserMainController>()) {
+      final mainCtrl = Get.find<UserMainController>();
+      _tabWorker = ever(mainCtrl.currentIndex, (int tabIndex) {
+        if (tabIndex == 2 && !_hasPlayedInitialSwing && !_isAartiSwinging) {
+          _hasPlayedInitialSwing = true;
+          _startSwing();
+        }
+      });
     }
   }
 
@@ -365,6 +526,7 @@ class _GhantaBellState extends State<_GhantaBell>
   @override
   void dispose() {
     _aartiWorker?.dispose();
+    _tabWorker?.dispose();
     _swingController.dispose();
     _aartiSwingController.dispose();
     _audioPlayer.dispose();

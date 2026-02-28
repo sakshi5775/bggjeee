@@ -19,7 +19,7 @@ class ChalisaView extends BasePage<ChalisaController> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           title: AutoTranslateText(
-            '🙏 Sacred Chalisas',
+            controller.pageTitle,
             style: TextStyle(
               color: const Color(0xFF8B1925),
               fontWeight: FontWeight.bold,
@@ -50,7 +50,7 @@ class ChalisaView extends BasePage<ChalisaController> {
                   ),
                   SizedBox(height: 16.h),
                   AutoTranslateText(
-                    'No chalisas available',
+                    controller.emptyMessage,
                     style: TextStyle(color: Colors.grey, fontSize: 16.sp),
                   ),
                 ],
@@ -74,7 +74,10 @@ class ChalisaView extends BasePage<ChalisaController> {
                 onTap: () {
                   Get.toNamed(
                     AppRoutes.chalisaDetail,
-                    arguments: {'chalisaId': chalisa.id},
+                    arguments: {
+                      'chalisaId': chalisa.id,
+                      'contentType': controller.contentType,
+                    },
                   );
                 },
               );

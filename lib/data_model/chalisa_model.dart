@@ -58,13 +58,16 @@ class ChalisaItem {
   factory ChalisaItem.fromJson(Map<String, dynamic> json) {
     return ChalisaItem(
       id: json['_id'] ?? '',
-      title: json['title'] ?? '',
+      // Handles both chalisa ('title') and aarti ('mainTitle')
+      title: json['title'] ?? json['mainTitle'] ?? '',
       slug: json['slug'] ?? '',
       godCategory: json['godCategory'] != null
           ? ChalisaGodCategory.fromJson(json['godCategory'])
           : null,
-      coverImage: json['coverImage'] ?? '',
-      description: json['description'] ?? '',
+      // Handles both chalisa ('coverImage') and aarti ('thumbnailImage')
+      coverImage: json['coverImage'] ?? json['thumbnailImage'] ?? '',
+      // Handles both chalisa ('description') and aarti ('startingDoha')
+      description: json['description'] ?? json['startingDoha'] ?? '',
       displayOrder: json['displayOrder'] ?? 0,
     );
   }
