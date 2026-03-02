@@ -5,8 +5,8 @@ import 'package:astrobharataiuser/utils/address_helper.dart';
 import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/utils/location_prompt_helper.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -187,29 +187,12 @@ class RahukaalController extends BaseController {
   Future<void> _tryGetCurrentLocation() async {
     try {
       if (_isDisposed) return;
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        if (!_isDisposed) selectedLocation.value = 'Select Location';
+
+      final position = await LocationPromptHelper.checkAndGetLocation();
+      if (_isDisposed || position == null) {
+        selectedLocation.value = 'Select Location';
         return;
       }
-
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          if (!_isDisposed) selectedLocation.value = 'Select Location';
-          return;
-        }
-      }
-      if (permission == LocationPermission.deniedForever) {
-        if (!_isDisposed) selectedLocation.value = 'Select Location';
-        return;
-      }
-
-      final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.medium,
-      );
-      if (_isDisposed) return;
 
       latitudeController.text = position.latitude.toStringAsFixed(6);
       longitudeController.text = position.longitude.toStringAsFixed(6);
@@ -232,35 +215,10 @@ class RahukaalController extends BaseController {
   Future<void> getCurrentLocation() async {
     try {
       isFetchingLocation.value = true;
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        await Geolocator.openLocationSettings();
+      final position = await LocationPromptHelper.checkAndGetLocation();
+      if (_isDisposed || position == null) {
         return;
       }
-
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          showErrorMessage(
-            title: 'Permission Denied',
-            message: 'Location permissions are denied.',
-          );
-          return;
-        }
-      }
-      if (permission == LocationPermission.deniedForever) {
-        showErrorMessage(
-          title: 'Permission Denied',
-          message: 'Location permissions are permanently denied.',
-        );
-        return;
-      }
-
-      final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-      if (_isDisposed) return;
 
       latitudeController.text = position.latitude.toStringAsFixed(6);
       longitudeController.text = position.longitude.toStringAsFixed(6);

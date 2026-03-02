@@ -8,7 +8,7 @@ import 'package:astrobharataiuser/utils/error_formatter.dart';
 import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:astrobharataiuser/utils/location_prompt_helper.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:intl/intl.dart';
@@ -183,33 +183,11 @@ class CarrotAstrologyController extends GetxController {
     try {
       if (_isDisposed) return;
 
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
+      final position = await LocationPromptHelper.checkAndGetLocation();
+      if (_isDisposed || position == null) {
         if (!_isDisposed) selectedLocation.value = 'Select Location';
         return;
       }
-
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          if (!_isDisposed) selectedLocation.value = 'Select Location';
-          return;
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        if (!_isDisposed) selectedLocation.value = 'Select Location';
-        return;
-      }
-
-      Position position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.medium,
-        ),
-      );
-
-      if (_isDisposed) return;
 
       latitudeController.text = position.latitude.toStringAsFixed(6);
       longitudeController.text = position.longitude.toStringAsFixed(6);
@@ -385,13 +363,43 @@ class CarrotAstrologyController extends GetxController {
   }
 
   Future<void> useCurrentLocation() async {
-    // This would integrate with a location service
-    // For now, just show a placeholder
-    Get.snackbar(
-      'Info',
-      'Current location feature coming soon',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    try {
+      isFetchingLocation.value = true;
+      final position = await LocationPromptHelper.checkAndGetLocation();
+      if (_isDisposed || position == null) {
+        return;
+      }
+
+      latitudeController.text = position.latitude.toStringAsFixed(6);
+      longitudeController.text = position.longitude.toStringAsFixed(6);
+      latitude = position.latitude;
+      longitude = position.longitude;
+
+      await _updateLocationFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      final offset = await _getTimezoneOffsetFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (!_isDisposed) {
+        timezoneController.text = offset.toString();
+        timezone = offset.toString();
+      }
+
+      Get.snackbar(
+        'Success',
+        'Location updated successfully',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (e) {
+      debugPrint('Error using current location: $e');
+    } finally {
+      isFetchingLocation.value = false;
+    }
   }
 
   String _calculateZodiacSign(DateTime date) {

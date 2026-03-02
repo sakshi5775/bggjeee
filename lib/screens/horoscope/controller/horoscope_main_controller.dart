@@ -5,8 +5,8 @@ import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/utils/location_prompt_helper.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -167,9 +167,15 @@ class HoroscopeMainController extends BaseController {
 
   Future<void> _getCurrentLocation() async {
     try {
-      final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
+      final position = await LocationPromptHelper.checkAndGetLocation();
+      if (position == null) {
+        // Set defaults if location failed/denied
+        latitude = 28.6139;
+        longitude = 77.2090;
+        timezone = 5.5;
+        placeController.text = 'New Delhi, India';
+        return;
+      }
       latitude = position.latitude;
       longitude = position.longitude;
 

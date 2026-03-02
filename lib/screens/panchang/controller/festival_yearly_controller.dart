@@ -4,9 +4,8 @@ import 'package:astrobharataiuser/screens/panchang/service/panchang_service.dart
 import 'package:astrobharataiuser/utils/address_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/utils/location_prompt_helper.dart';
 import 'package:http/http.dart' as http;
 
 class FestivalYearlyController extends BaseController {
@@ -60,43 +59,13 @@ class FestivalYearlyController extends BaseController {
   /// Try to get current location on initialization
   Future<void> _tryGetCurrentLocation() async {
     try {
-      bool serviceEnabled = false;
-      try {
-        serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      } on MissingPluginException {
-        if (_isDisposed) return;
-        selectedLocation.value = 'Select Location';
-        return;
-      }
-
-      if (!serviceEnabled) {
-        if (_isDisposed) return;
-        selectedLocation.value = 'Select Location';
-        await Geolocator.openLocationSettings();
-        return;
-      }
-
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          if (_isDisposed) return;
-          selectedLocation.value = 'Select Location';
-          return;
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        if (_isDisposed) return;
-        selectedLocation.value = 'Select Location';
-        return;
-      }
-
-      final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-
       if (_isDisposed) return;
+
+      final position = await LocationPromptHelper.checkAndGetLocation();
+      if (_isDisposed || position == null) {
+        selectedLocation.value = 'Select Location';
+        return;
+      }
 
       try {
         final reverseGeocode = await _reverseGeocode(
@@ -313,43 +282,11 @@ class FestivalYearlyController extends BaseController {
   /// Get current location
   Future<void> getCurrentLocation() async {
     try {
-      bool serviceEnabled = false;
-      try {
-        serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      } on MissingPluginException {
-        if (_isDisposed) return;
+      final position = await LocationPromptHelper.checkAndGetLocation();
+      if (_isDisposed || position == null) {
         selectedLocation.value = 'Select Location';
         return;
       }
-
-      if (!serviceEnabled) {
-        if (_isDisposed) return;
-        selectedLocation.value = 'Select Location';
-        await Geolocator.openLocationSettings();
-        return;
-      }
-
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          if (_isDisposed) return;
-          selectedLocation.value = 'Select Location';
-          return;
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        if (_isDisposed) return;
-        selectedLocation.value = 'Select Location';
-        return;
-      }
-
-      final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-
-      if (_isDisposed) return;
 
       currentLatitude = position.latitude;
       currentLongitude = position.longitude;

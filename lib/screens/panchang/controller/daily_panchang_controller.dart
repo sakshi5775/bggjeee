@@ -5,9 +5,8 @@ import 'package:astrobharataiuser/utils/address_helper.dart';
 import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/utils/location_prompt_helper.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -106,46 +105,13 @@ class DailyPanchangController extends BaseController {
   /// Try to get current location silently on initialization
   Future<void> _tryGetCurrentLocation() async {
     try {
-      // Check if controller is disposed
       if (_isDisposed) return;
 
-      // Check if location services are enabled
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        if (!_isDisposed) {
-          selectedLocation.value = 'Select Location';
-        }
+      final position = await LocationPromptHelper.checkAndGetLocation();
+      if (_isDisposed || position == null) {
+        selectedLocation.value = 'Select Location';
         return;
       }
-
-      // Check permissions
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        // Request permission
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          if (!_isDisposed) {
-            selectedLocation.value = 'Select Location';
-          }
-          return;
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        if (!_isDisposed) {
-          selectedLocation.value = 'Select Location';
-        }
-        return;
-      }
-
-      // Get current position
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high, // Use high for better accuracy
-        timeLimit: const Duration(seconds: 5),
-      );
-
-      // Check again if controller is disposed before using it
-      if (_isDisposed) return;
 
       // Set coordinates
       latitudeController.text = position.latitude.toStringAsFixed(6);
@@ -169,7 +135,6 @@ class DailyPanchangController extends BaseController {
       }
     } catch (e) {
       debugPrint('Error getting initial location: $e');
-      // Only update if controller is not disposed
       if (!_isDisposed) {
         selectedLocation.value = 'Select Location';
       }
@@ -192,65 +157,10 @@ class DailyPanchangController extends BaseController {
     try {
       isFetchingLocation.value = true;
 
-      // Check if geolocator plugin is available
-      try {
-        // Test if plugin is available by checking a simple method
-        await Geolocator.isLocationServiceEnabled();
-      } on MissingPluginException catch (e) {
-        showErrorMessage(
-          title: 'Location Service Unavailable',
-          message:
-              'Location service plugin is not available. Please:\n\n1. Stop the app completely\n2. Run: flutter clean\n3. Run: flutter pub get\n4. Rebuild the app (not hot reload)\n\nYou can manually enter coordinates in the meantime.',
-        );
-        debugPrint('Geolocator plugin not found: $e');
+      final position = await LocationPromptHelper.checkAndGetLocation();
+      if (_isDisposed || position == null) {
         return;
       }
-
-      // Check location permissions
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        // Open location settings to enable location services
-        final opened = await Geolocator.openLocationSettings();
-        if (!opened) {
-          showErrorMessage(
-            title: 'Location Service',
-            message:
-                'Location services are disabled. Please enable them in your device settings.',
-          );
-        }
-        return;
-      }
-
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          showErrorMessage(
-            title: 'Permission Denied',
-            message:
-                'Location permissions are denied. Please enable them in settings.',
-          );
-          return;
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        showErrorMessage(
-          title: 'Permission Denied',
-          message:
-              'Location permissions are permanently denied. Please enable them in app settings.',
-        );
-        return;
-      }
-
-      // Get current position
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-        timeLimit: const Duration(seconds: 10),
-      );
-
-      // Check if controller is disposed before using it
-      if (_isDisposed) return;
 
       // Set latitude and longitude
       latitudeController.text = position.latitude.toStringAsFixed(6);
@@ -291,14 +201,6 @@ class DailyPanchangController extends BaseController {
         title: 'Success',
         message: 'Location fetched successfully',
       );
-    } on MissingPluginException catch (e) {
-      // Handle missing plugin exception
-      showErrorMessage(
-        title: 'Location Service Unavailable',
-        message:
-            'Location service is not available. Please rebuild the app after running "flutter pub get".\n\nYou can manually enter your coordinates instead.',
-      );
-      debugPrint('Geolocator plugin not found: $e');
     } catch (e) {
       showErrorMessage(
         title: 'Error',

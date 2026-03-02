@@ -8,8 +8,8 @@ import 'package:astrobharataiuser/screens/user_dashboard/service/user_profile_se
 import 'package:astrobharataiuser/utils/address_helper.dart';
 import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/utils/location_prompt_helper.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -168,47 +168,13 @@ class HoroscopeFormController extends BaseController {
   /// Try to get current location silently on initialization
   Future<void> _tryGetCurrentLocation() async {
     try {
-      // Check if controller is disposed
       if (_isDisposed) return;
 
-      // Check if location services are enabled
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        if (!_isDisposed) {
-          selectedLocation.value = 'Select Location';
-        }
+      final position = await LocationPromptHelper.checkAndGetLocation();
+      if (_isDisposed || position == null) {
+        selectedLocation.value = 'Select Location';
         return;
       }
-
-      // Check permissions
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        // Request permission
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          if (!_isDisposed) {
-            selectedLocation.value = 'Select Location';
-          }
-          return;
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        if (!_isDisposed) {
-          selectedLocation.value = 'Select Location';
-        }
-        return;
-      }
-
-      // Get current position
-      Position position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.medium,
-        ),
-      );
-
-      // Check again if controller is disposed before using it
-      if (_isDisposed) return;
 
       // Set coordinates
       latitudeController.text = position.latitude.toStringAsFixed(6);
@@ -413,51 +379,11 @@ class HoroscopeFormController extends BaseController {
     try {
       isFetchingLocation.value = true;
 
-      // Check if location services are enabled
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        showErrorMessage(
-          title: 'Error',
-          message:
-              'Location services are disabled. Please enable them in settings.',
-        );
+      final position = await LocationPromptHelper.checkAndGetLocation();
+      if (_isDisposed || position == null) {
         isFetchingLocation.value = false;
         return;
       }
-
-      // Check permissions
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          showErrorMessage(
-            title: 'Error',
-            message:
-                'Location permission is required. Please grant permission in settings.',
-          );
-          isFetchingLocation.value = false;
-          return;
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        showErrorMessage(
-          title: 'Error',
-          message:
-              'Location permission is permanently denied. Please enable it in app settings.',
-        );
-        isFetchingLocation.value = false;
-        return;
-      }
-
-      // Get current position
-      Position position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-        ),
-      );
-
-      if (_isDisposed) return;
 
       // Set coordinates
       latitudeController.text = position.latitude.toStringAsFixed(6);

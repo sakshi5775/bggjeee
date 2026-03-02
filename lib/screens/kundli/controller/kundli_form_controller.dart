@@ -8,9 +8,9 @@ import 'package:astrobharataiuser/utils/address_helper.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/report_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
+import 'package:astrobharataiuser/utils/location_prompt_helper.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:astrobharataiuser/widgets/report_insufficient_balance_dialog.dart';
@@ -392,45 +392,13 @@ class KundliFormController extends BaseController {
   /// Try to get current location silently on initialization
   Future<void> _tryGetCurrentLocation() async {
     try {
-      // Check if controller is disposed
       if (_isDisposed) return;
 
-      // Check if location services are enabled
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        if (!_isDisposed) {
-          selectedLocation.value = 'Select Location';
-        }
+      final position = await LocationPromptHelper.checkAndGetLocation();
+      if (_isDisposed || position == null) {
+        selectedLocation.value = 'Select Location';
         return;
       }
-
-      // Check permissions
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        // Request permission
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          if (!_isDisposed) {
-            selectedLocation.value = 'Select Location';
-          }
-          return;
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        if (!_isDisposed) {
-          selectedLocation.value = 'Select Location';
-        }
-        return;
-      }
-
-      // Get current position
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.medium,
-      );
-
-      // Check again if controller is disposed before using it
-      if (_isDisposed) return;
 
       // Set coordinates
       latitudeController.text = position.latitude.toStringAsFixed(6);
@@ -448,7 +416,6 @@ class KundliFormController extends BaseController {
         position.longitude,
       );
 
-      // Final check before setting timezone
       if (!_isDisposed) {
         timezoneController.text = offset.toString();
       }
@@ -581,43 +548,10 @@ class KundliFormController extends BaseController {
     try {
       isFetchingLocation.value = true;
 
-      // Check if location services are enabled
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        await Geolocator.openLocationSettings();
+      final position = await LocationPromptHelper.checkAndGetLocation();
+      if (_isDisposed || position == null) {
         return;
       }
-
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          showErrorMessage(
-            title: 'Permission Denied',
-            message:
-                'Location permissions are denied. Please enable them in settings.',
-          );
-          return;
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        showErrorMessage(
-          title: 'Permission Denied',
-          message:
-              'Location permissions are permanently denied. Please enable them in app settings.',
-        );
-        return;
-      }
-
-      // Get current position
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-        timeLimit: const Duration(seconds: 10),
-      );
-
-      // Check if controller is disposed before using it
-      if (_isDisposed) return;
 
       // Set latitude and longitude
       latitudeController.text = position.latitude.toStringAsFixed(6);
