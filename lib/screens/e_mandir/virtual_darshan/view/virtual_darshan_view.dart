@@ -22,6 +22,7 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        bottom: false,
         child: Stack(
           children: [
             // Vertical Image/Video Reel wrapped with horizontal swipe

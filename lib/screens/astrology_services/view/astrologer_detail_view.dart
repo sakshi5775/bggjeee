@@ -27,6 +27,7 @@ class AstrologerDetailView extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
+          bottom: false,
           child: Stack(
             children: [
               // Header with Profile title - positioned at top
@@ -48,6 +49,12 @@ class AstrologerDetailView extends StatelessWidget {
                       right: 0,
                       bottom: 0,
                       child: SingleChildScrollView(
+                        padding: EdgeInsets.only(
+                          left: 0,
+                          right: 0,
+                          top: 0,
+                          bottom: 16.h,
+                        ),
                         child: Column(
                           children: [
                             // Profile Card - positioned after header

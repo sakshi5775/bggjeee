@@ -35,9 +35,11 @@ class KundliFormView extends BasePage<KundliFormController> {
                   return _buildSavedKundliTab();
                 } else {
                   return SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 0.h,
+                    padding: EdgeInsets.only(
+                      left: 16.w,
+                      right: 16.w,
+                      top: 0.h,
+                      bottom: 16.h + 70.h + MediaQuery.of(context).padding.bottom,
                     ),
                     child: _buildFormSection(),
                   );
@@ -156,32 +158,35 @@ class KundliFormView extends BasePage<KundliFormController> {
         ),
         // List
         Expanded(
-          child: Obx(() {
-            if (controller.isLoadingSavedKundli.value) {
-              return Center(
-                child: CircularProgressIndicator(color: AppColors.deepOrange),
-              );
-            }
-            final list = controller.filteredKundliList;
-            if (list.isEmpty) {
-              return _buildEmptyState();
-            }
-            return Stack(
-              children: [
-                RefreshIndicator(
-                  color: AppColors.deepOrange,
-                  onRefresh: () => controller.fetchSavedKundliProfiles(),
-                  child: ListView.builder(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 4.h,
+          child: Builder(
+            builder: (context) => Obx(() {
+              if (controller.isLoadingSavedKundli.value) {
+                return Center(
+                  child: CircularProgressIndicator(color: AppColors.deepOrange),
+                );
+              }
+              final list = controller.filteredKundliList;
+              if (list.isEmpty) {
+                return _buildEmptyState();
+              }
+              return Stack(
+                children: [
+                  RefreshIndicator(
+                    color: AppColors.deepOrange,
+                    onRefresh: () => controller.fetchSavedKundliProfiles(),
+                    child: ListView.builder(
+                      padding: EdgeInsets.only(
+                        left: 16.w,
+                        right: 16.w,
+                        top: 4.h,
+                        bottom: 4.h + 70.h + MediaQuery.of(context).padding.bottom,
+                      ),
+                      itemCount: list.length,
+                      itemBuilder: (context, index) {
+                        return _buildSavedKundliCard(list[index]);
+                      },
                     ),
-                    itemCount: list.length,
-                    itemBuilder: (context, index) {
-                      return _buildSavedKundliCard(list[index]);
-                    },
                   ),
-                ),
                 // Loading overlay when opening a saved kundli
                 Obx(() {
                   if (controller.isOpeningSavedKundli.value) {
@@ -227,7 +232,8 @@ class KundliFormView extends BasePage<KundliFormController> {
                 }),
               ],
             );
-          }),
+            }),
+          ),
         ),
       ],
     );

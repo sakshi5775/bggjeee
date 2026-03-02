@@ -29,6 +29,7 @@ class WalletView extends StatelessWidget {
         backgroundColor: Colors.transparent,
         drawer: UserDashboardView.buildDrawer(context),
         body: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               // Header Section
@@ -43,9 +44,11 @@ class WalletView extends StatelessWidget {
                   },
                   color: AppColors.templeGold,
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 16.h,
+                    padding: EdgeInsets.only(
+                      left: 16.w,
+                      right: 16.w,
+                      top: 16.h,
+                      bottom: 16.h + 70.h + MediaQuery.of(context).padding.bottom,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

@@ -92,9 +92,11 @@ class ProfileView extends GetView<ProfileController> {
                     color: AppColors.deepOrange,
                     child: SingleChildScrollView(
                       physics: const AlwaysScrollableScrollPhysics(),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 20.h,
+                      padding: EdgeInsets.only(
+                        left: 16.w,
+                        right: 16.w,
+                        top: 20.h,
+                        bottom: 20.h + 70.h + MediaQuery.of(context).padding.bottom,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

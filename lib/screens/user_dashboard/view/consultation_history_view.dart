@@ -103,69 +103,72 @@ class _ConsultationHistoryViewState extends State<ConsultationHistoryView>
       child: Scaffold(
         backgroundColor: Colors.transparent,
         drawer: UserDashboardView.buildDrawer(context),
-        body: Column(
-          children: [
-            CommonHeader(
-              title: 'Consultation History',
-              showBackButton: widget.showBackButton,
+        body: SafeArea(
+          bottom: false,
+          child: Column(
+            children: [
+              CommonHeader(
+                title: 'Consultation History',
+                showBackButton: widget.showBackButton,
 
-              customActions: [
-                GestureDetector(
-                  onTap: () => UserMainController.pushInCurrentTab(AppRoutes.wallet),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.account_balance_wallet_outlined,
-                        color: '#3D0C11'.toColor(),
-                        size: 22.w,
-                      ),
-                      Spacing.w(6),
-                      Obx(
-                        () => AutoTranslateText(
-                          '₹${walletController.walletBalance.value.toStringAsFixed(0)}',
-                          style: AppTypography.body1.copyWith(
-                            color: '#3D0C11'.toColor(),
-                            fontWeight: FontWeight.w600,
+                customActions: [
+                  GestureDetector(
+                    onTap: () => UserMainController.pushInCurrentTab(AppRoutes.wallet),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.account_balance_wallet_outlined,
+                          color: '#3D0C11'.toColor(),
+                          size: 22.w,
+                        ),
+                        Spacing.w(6),
+                        Obx(
+                          () => AutoTranslateText(
+                            '₹${walletController.walletBalance.value.toStringAsFixed(0)}',
+                            style: AppTypography.body1.copyWith(
+                              color: '#3D0C11'.toColor(),
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(width: 16.w),
-              ],
-            ),
-            TabBar(
-              controller: _tabController,
-              indicatorColor: AppColors.deepOrange,
-              indicatorWeight: 3,
-              labelColor: '#3D0C11'.toColor(),
-              unselectedLabelColor: '#6F221E'.toColor().withValues(alpha: 0.6),
-              labelStyle: MyTextTheme.mediumBCB.copyWith(
-                fontWeight: FontWeight.w600,
-                color: '#3D0C11'.toColor(),
-              ),
-              unselectedLabelStyle: MyTextTheme.mediumBCN.copyWith(
-                color: '#6F221E'.toColor().withValues(alpha: 0.6),
-              ),
-              tabs: const [
-                Tab(text: 'Chat History'),
-                Tab(text: 'Call History'),
-                Tab(text: 'Video History'),
-              ],
-            ),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _ChatHistoryTab(),
-                  _CallHistoryTab(callType: 'VOICE'),
-                  _CallHistoryTab(callType: 'VIDEO'),
+                  SizedBox(width: 16.w),
                 ],
               ),
-            ),
-          ],
+              TabBar(
+                controller: _tabController,
+                indicatorColor: AppColors.deepOrange,
+                indicatorWeight: 3,
+                labelColor: '#3D0C11'.toColor(),
+                unselectedLabelColor: '#6F221E'.toColor().withValues(alpha: 0.6),
+                labelStyle: MyTextTheme.mediumBCB.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: '#3D0C11'.toColor(),
+                ),
+                unselectedLabelStyle: MyTextTheme.mediumBCN.copyWith(
+                  color: '#6F221E'.toColor().withValues(alpha: 0.6),
+                ),
+                tabs: const [
+                  Tab(text: 'Chat History'),
+                  Tab(text: 'Call History'),
+                  Tab(text: 'Video History'),
+                ],
+              ),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _ChatHistoryTab(),
+                    _CallHistoryTab(callType: 'VOICE'),
+                    _CallHistoryTab(callType: 'VIDEO'),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -194,7 +197,12 @@ class _ChatHistoryTab extends StatelessWidget {
         onRefresh: () => controller.loadHistory(reset: true),
         color: AppColors.deepOrange,
         child: ListView.builder(
-          padding: AppPaddings.all(16),
+          padding: EdgeInsets.only(
+            left: 16.w,
+            right: 16.w,
+            top: 16.h,
+            bottom: 16.h + 70.h + MediaQuery.of(context).padding.bottom,
+          ),
           itemCount:
               list.length +
               (controller.hasMore && controller.searchQuery.value.isEmpty
@@ -555,7 +563,12 @@ class _CallHistoryTab extends StatelessWidget {
         onRefresh: () => controller.loadHistory(reset: true),
         color: AppColors.deepOrange,
         child: ListView.builder(
-          padding: AppPaddings.all(16),
+          padding: EdgeInsets.only(
+            left: 16.w,
+            right: 16.w,
+            top: 16.h,
+            bottom: 16.h + 70.h + MediaQuery.of(context).padding.bottom,
+          ),
           itemCount: list.length + (controller.hasMore ? 1 : 0),
           itemBuilder: (context, index) {
             if (index == list.length) {

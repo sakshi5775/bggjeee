@@ -65,7 +65,12 @@ class _NamasteHomeViewState extends State<NamasteHomeView>
           bottom: false,
           child: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              padding: EdgeInsets.only(
+                left: 16.w,
+                right: 16.w,
+                top: widget.hideHeader ? 0 : 10.h,
+                bottom: 20.h + 70.h + MediaQuery.of(context).padding.bottom,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -96,7 +101,6 @@ class _NamasteHomeViewState extends State<NamasteHomeView>
                   // SizedBox(height: 24.h),
                   // const TempleHighlightsWidget(),
                   // SizedBox(height: 20.h),
-                  SizedBox(height: widget.hideHeader ? 80.h : 20.h),
                 ],
               ),
             ),

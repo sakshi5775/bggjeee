@@ -4737,7 +4737,14 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         0xFFFEF5DF,
       ), // Light beige/yellowish background
       child: SafeArea(
+        bottom: false,
         child: SingleChildScrollView(
+          padding: EdgeInsets.only(
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 16.h + 70.h + MediaQuery.of(context).padding.bottom,
+          ),
           child: Column(
             children: [
               // Header with logo and close button
