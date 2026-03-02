@@ -58,10 +58,28 @@ class NavtaraController extends BaseController
     // Initialize from arguments if provided
     _initFromArgs();
 
-    fetchStats();
+    // Only fetch stats if balance is sufficient
+    if (Get.isRegistered<AiPricingController>()) {
+      final pricingCtrl = Get.find<AiPricingController>();
+      if (pricingCtrl.hasSufficientBalance('navtara')) {
+        fetchStats();
+      }
+    } else {
+      fetchStats();
+    }
   }
 
   void _initFromArgs() {
+    // Check balance first - if insufficient, don't initialize anything
+    if (Get.isRegistered<AiPricingController>()) {
+      final pricingCtrl = Get.find<AiPricingController>();
+      if (!pricingCtrl.hasSufficientBalance('navtara')) {
+        // Don't set nakshatra, name, or any data if balance is insufficient
+        pricingCtrl.showInsufficientBalancePopup('navtara');
+        return;
+      }
+    }
+
     final args = Get.arguments as Map<String, dynamic>?;
     if (args != null) {
       final nakshatra = args['nakshatra'] as String?;
@@ -102,6 +120,23 @@ class NavtaraController extends BaseController
   }
 
   void _handleDataFetch(int index) {
+    // Check balance before any data fetch
+    if (Get.isRegistered<AiPricingController>()) {
+      final pricingCtrl = Get.find<AiPricingController>();
+      if (!pricingCtrl.hasSufficientBalance('navtara')) {
+        pricingCtrl.showInsufficientBalancePopup('navtara');
+        // Clear any existing data to prevent showing nakshatra name or data
+        if (index == 0) analysis.value = null;
+        if (index == 1) timing.value = null;
+        if (index == 2) history.clear();
+        if (index == 3) stats.value = null;
+        primaryNakshatra.value = null;
+        fullName.value = "";
+        dateOfBirth.value = "";
+        return;
+      }
+    }
+
     if (index == 0 && analysis.value == null) {
       analyzeGeneral();
     } else if (index == 1 && timing.value == null) {

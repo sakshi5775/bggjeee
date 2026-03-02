@@ -7,7 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/screens/navtara/controller/navtara_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
 import 'package:intl/intl.dart';
@@ -42,7 +41,7 @@ class KundliResultController extends BaseController {
     'Divisional Chart',
     'Shad Bala',
     'Planets',
-    'Summary(lagna) Report',
+    'Lagna Report',
     'Panchang',
     'Binnashtakvarga Chart',
     'Transit Chart',
@@ -130,7 +129,7 @@ class KundliResultController extends BaseController {
     'Birth Details',
     'Ashtakvarga Table',
     'Shad Bala',
-    'Summary(lagna) Report',
+    'Lagna Report',
   ];
 
   // Feature list items (right column)
@@ -759,14 +758,15 @@ class KundliResultController extends BaseController {
       fetchAshtakvargaChart();
     }
 
-    // Reset Divisional Chart when DIVISIONAL CHART tab is selected (user needs to select division)
+    // Fetch D1 chart by default when DIVISIONAL CHART tab is selected
     final divisionalChartIndex = tabs.indexWhere(
       (tab) => tab.toLowerCase() == 'divisional chart',
     );
     if (divisionalChartIndex != -1 && index == divisionalChartIndex) {
-      // Don't fetch automatically, user needs to select a division first
-      selectedDivisionForChart.value = null;
-      divisionalChartSvgData.value = null;
+      // Fetch D1 chart by default if no division is selected
+      if (selectedDivisionForChart.value == null) {
+        fetchDivisionalChartData('D1');
+      }
     }
 
     // Fetch Ascendant Report when ASCENDANT REPORT tab is selected
@@ -2050,7 +2050,7 @@ class KundliResultController extends BaseController {
       'ashtakvarga': 'Ashtakvarga Table',
       'divisional chart': 'Divisional Chart',
       'shad bala': 'Shad Bala',
-      'summary(lagna) report': 'Summary(lagna) Report',
+      'summary(lagna) report': 'Lagna Report',
       'chalit table': 'Chalit Table',
       'panchang': 'Panchang',
       'binnashtakvarga chart': 'Binnashtakvarga Chart',
