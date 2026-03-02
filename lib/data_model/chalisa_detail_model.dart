@@ -26,10 +26,10 @@ class ChalisaDetailData {
   ChalisaDetailData({this.chalisa});
 
   factory ChalisaDetailData.fromJson(Map<String, dynamic> json) {
+    // Handles both chalisa ('chalisa') and aarti ('aarti') response keys
+    final detailJson = json['chalisa'] ?? json['aarti'];
     return ChalisaDetailData(
-      chalisa: json['chalisa'] != null
-          ? ChalisaDetail.fromJson(json['chalisa'])
-          : null,
+      chalisa: detailJson != null ? ChalisaDetail.fromJson(detailJson) : null,
     );
   }
 }
@@ -56,13 +56,15 @@ class ChalisaDetail {
   factory ChalisaDetail.fromJson(Map<String, dynamic> json) {
     return ChalisaDetail(
       id: json['_id'] ?? '',
-      title: json['title'] ?? '',
+      // Handles both chalisa ('title') and aarti ('mainTitle')
+      title: json['title'] ?? json['mainTitle'] ?? '',
       slug: json['slug'] ?? '',
       godCategory: json['godCategory'] != null
           ? ChalisaDetailGodCategory.fromJson(json['godCategory'])
           : null,
-      coverImage: json['coverImage'] ?? '',
-      description: json['description'] ?? '',
+      // Handles both chalisa ('coverImage') and aarti ('thumbnailImage')
+      coverImage: json['coverImage'] ?? json['thumbnailImage'] ?? '',
+      description: json['description'] ?? json['startingDoha'] ?? '',
       sections:
           (json['sections'] as List<dynamic>?)
               ?.map((e) => ChalisaSection.fromJson(e as Map<String, dynamic>))

@@ -12,10 +12,10 @@ class WallpaperGridWidget extends StatelessWidget {
   final GodCategory? currentCategory;
 
   const WallpaperGridWidget({
-    Key? key,
+    super.key,
     required this.wallpapers,
     this.currentCategory,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -42,12 +42,16 @@ class WallpaperGridWidget extends StatelessWidget {
                   color: AppColors.deepOrange,
                 ),
                 SizedBox(width: 8.w),
-                AutoTranslateText(
-                  'Divine ${currentCategory!.godName} Wallpapers ✨',
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                Expanded(
+                  child: AutoTranslateText(
+                    'Divine ${currentCategory!.godName} Wallpapers ✨',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
                   ),
                 ),
               ],

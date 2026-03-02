@@ -28,7 +28,7 @@ class ChalisaDetailView extends BasePage<ChalisaDetailController> {
           if (chalisa == null) {
             return Center(
               child: AutoTranslateText(
-                'Unable to load chalisa',
+                controller.errorMessage,
                 style: TextStyle(color: Colors.grey, fontSize: 16.sp),
               ),
             );

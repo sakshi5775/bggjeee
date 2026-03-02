@@ -46,100 +46,91 @@ class BookPujaView extends BasePage<BookPujaController> {
           ),
         ),
 
-        body: SafeArea(
-          child: Column(
-            children: [
-              const BookPujaHeaderWidget(),
-              const SizedBox(height: 16),
-              const CategoryTabsWidget(),
-              const SizedBox(height: 16),
-              Expanded(
-                child: Obx(() {
-                  if (controller.isLoading.value && controller.pujas.isEmpty) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+        body: Column(
+          children: [
+            const BookPujaHeaderWidget(),
+            const SizedBox(height: 16),
+            const CategoryTabsWidget(),
+            const SizedBox(height: 16),
+            Expanded(
+              child: Obx(() {
+                if (controller.isLoading.value && controller.pujas.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-                  if (controller.errorMessage.value.isNotEmpty &&
-                      controller.pujas.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          AutoTranslateText(
-                            controller.errorMessage.value,
-                            style: const TextStyle(color: Colors.red),
-                          ),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () =>
-                                controller.loadPujas(refresh: true),
-                            child: const AutoTranslateText('Retry'),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  if (controller.pujas.isEmpty) {
-                    return Center(
-                      child: AutoTranslateText(
-                        'No pujas available',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey,
+                if (controller.errorMessage.value.isNotEmpty &&
+                    controller.pujas.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        AutoTranslateText(
+                          controller.errorMessage.value,
+                          style: const TextStyle(color: Colors.red),
                         ),
-                      ),
-                    );
-                  }
-
-                  return RefreshIndicator(
-                    onRefresh: () => controller.loadPujas(refresh: true),
-                    child: NotificationListener<ScrollNotification>(
-                      onNotification: (ScrollNotification scrollInfo) {
-                        if (scrollInfo.metrics.pixels ==
-                                scrollInfo.metrics.maxScrollExtent &&
-                            controller.hasMore.value &&
-                            !controller.isLoading.value) {
-                          controller.loadPujas();
-                        }
-                        return false;
-                      },
-                      child: ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        itemCount:
-                            controller.pujas.length +
-                            (controller.hasMore.value ? 1 : 0),
-                        itemBuilder: (context, index) {
-                          if (index == controller.pujas.length) {
-                            // Load more indicator
-                            if (controller.isLoading.value) {
-                              return const Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: Center(
-                                  child: CircularProgressIndicator(),
-                                ),
-                              );
-                            }
-                            return const SizedBox.shrink();
-                          }
-
-                          final puja = controller.pujas[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: PujaCardWidget(
-                              puja: puja,
-                              index: index,
-                              onBookNow: () => controller.onBookNow(puja),
-                            ),
-                          );
-                        },
-                      ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () => controller.loadPujas(refresh: true),
+                          child: const AutoTranslateText('Retry'),
+                        ),
+                      ],
                     ),
                   );
-                }),
-              ),
-            ],
-          ),
+                }
+
+                if (controller.pujas.isEmpty) {
+                  return Center(
+                    child: AutoTranslateText(
+                      'No pujas available',
+                      style: const TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  );
+                }
+
+                return RefreshIndicator(
+                  onRefresh: () => controller.loadPujas(refresh: true),
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: (ScrollNotification scrollInfo) {
+                      if (scrollInfo.metrics.pixels ==
+                              scrollInfo.metrics.maxScrollExtent &&
+                          controller.hasMore.value &&
+                          !controller.isLoading.value) {
+                        controller.loadPujas();
+                      }
+                      return false;
+                    },
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount:
+                          controller.pujas.length +
+                          (controller.hasMore.value ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index == controller.pujas.length) {
+                          if (controller.isLoading.value) {
+                            return const Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Center(child: CircularProgressIndicator()),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        }
+
+                        final puja = controller.pujas[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: PujaCardWidget(
+                            puja: puja,
+                            index: index,
+                            onBookNow: () => controller.onBookNow(puja),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ],
         ),
       ),
     );

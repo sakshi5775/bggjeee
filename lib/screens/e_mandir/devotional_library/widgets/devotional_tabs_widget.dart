@@ -55,7 +55,7 @@ class DevotionalTabsWidget extends GetView<DevotionalLibraryController> {
                         ),
                         child: ClipOval(
                           child: CachedNetworkImage(
-                            imageUrl: god.godImage,
+                            imageUrl: god.thumbnailImage ?? '',
                             fit: BoxFit.cover,
                             placeholder: (_, __) => Container(
                               color: Colors.orange.shade50,

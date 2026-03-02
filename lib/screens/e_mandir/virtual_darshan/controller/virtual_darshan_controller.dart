@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/go
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/puja_item_category_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/service/god_category_service.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/service/puja_item_category_service.dart';
+import 'package:astrobharataiuser/screens/e_mandir/devotional_library/service/devotional_music_service.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/falling_flower_widget.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -378,7 +379,10 @@ class VirtualDarshanController extends BaseController
         godCategories.value = response.items;
         // Auto-select first category and load its images
         currentCategoryIndex.value = 0;
+        selectedGodID.value = godCategories.first.id.toString();
         await loadGodCategoryImages(godCategories.first.id);
+        // Fetch aarti audio for the first god category
+        fetchAartiAudio();
       } else {
         errorMessage.value =
             response?.message ?? 'Failed to load god categories';
@@ -434,7 +438,10 @@ class VirtualDarshanController extends BaseController
 
     // Load images for the new category
     if (godCategories.isNotEmpty && newIndex < godCategories.length) {
+      selectedGodID.value = godCategories[newIndex].id.toString();
       loadGodCategoryImages(godCategories[newIndex].id);
+      // Re-fetch aarti audio for the new god category
+      fetchAartiAudio();
     }
   }
 
@@ -536,9 +543,10 @@ class VirtualDarshanController extends BaseController
       });
       audioPlayer.stop();
       audioPlayer.setReleaseMode(ReleaseMode.loop);
-      audioPlayer.play(UrlSource(AppConstant.aartiMp3)).catchError((e) {
-        print("AUDIO ERROR: $e");
-      });
+      final audioUrl = aartiAudioUrl.value.isNotEmpty
+          ? aartiAudioUrl.value
+          : AppConstant.aartiMp3;
+      audioPlayer.play(UrlSource(audioUrl)).catchError((e) {});
       startFlowerRain(context);
       isAartiActive.value = true;
     }
@@ -812,8 +820,37 @@ class VirtualDarshanController extends BaseController
     swipeToCategory(index);
   }
 
+  RxString selectedGodID = "".obs;
+
+  /// Dynamic aarti audio URL fetched from API
+  RxString aartiAudioUrl = "".obs;
+
+  /// Fetch aarti audio URL for the currently selected god category
+  Future<void> fetchAartiAudio() async {
+    if (selectedGodID.value.isEmpty) return;
+    try {
+      final service = DevotionalMusicService();
+      final response = await service.getTracks(
+        selectedGodID.value,
+        'aarti',
+        page: 1,
+        limit: 1,
+      );
+      if (response != null &&
+          response.data != null &&
+          response.data!.items.isNotEmpty) {
+        aartiAudioUrl.value = response.data!.items.first.audioUrl;
+      } else {
+        aartiAudioUrl.value = '';
+      }
+    } catch (e) {
+      aartiAudioUrl.value = '';
+    }
+  }
+
   /// Navigate to a specific category by tapping its thumbnail.
-  void navigateToGod(int index) {
+  void navigateToGod(int index, String id) {
+    selectedGodID.value = id;
     swipeToCategory(index);
   }
 

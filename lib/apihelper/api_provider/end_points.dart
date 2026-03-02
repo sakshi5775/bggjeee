@@ -66,6 +66,10 @@ class EndPoints {
   static const String chalisas = 'sri-mandir/api/chalisas';
   static String chalisaById(String id) => 'sri-mandir/api/chalisas/$id';
 
+  /// aartis
+  static const String aartis = 'sri-mandir/api/aartis';
+  static String aartiById(String id) => 'sri-mandir/api/aartis/$id';
+
   /// daily wallpapers
   static const String dailyWallpapers = 'sri-mandir/api/daily-wallpapers';
 

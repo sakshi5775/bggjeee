@@ -278,7 +278,7 @@ class AddressFormView extends BasePage<AddressFormController> {
                                       children: [
                                         Icon(
                                           _getTypeIcon(type),
-                                          size: 18.sp,
+                                          size: 18.h,
                                           color: isSelected
                                               ? Colors.white
                                               : const Color(0xFF757575),
@@ -363,7 +363,7 @@ class AddressFormView extends BasePage<AddressFormController> {
                                         ? Icon(
                                             Icons.check,
                                             color: Colors.white,
-                                            size: 16.sp,
+                                            size: 16.h,
                                           )
                                         : null,
                                   ),
@@ -428,7 +428,7 @@ class AddressFormView extends BasePage<AddressFormController> {
                                       ? Icons.edit
                                       : Icons.add_location_alt,
                                   color: Colors.white,
-                                  size: 20.sp,
+                                  size: 20.h,
                                 ),
                         ),
                       ),
