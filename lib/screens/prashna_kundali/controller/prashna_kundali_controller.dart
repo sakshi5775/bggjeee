@@ -4,7 +4,7 @@ import 'package:astrobharataiuser/data_model/prashna_kundali_model.dart';
 import 'package:astrobharataiuser/screens/prashna_kundali/service/prashna_kundali_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:astrobharataiuser/utils/location_prompt_helper.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
@@ -50,14 +50,8 @@ class PrashnaKundaliController extends BaseController {
 
   Future<void> _fetchCurrentLocation() async {
     try {
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-      }
-
-      if (permission == LocationPermission.whileInUse ||
-          permission == LocationPermission.always) {
-        final position = await Geolocator.getCurrentPosition();
+      final position = await LocationPromptHelper.checkAndGetLocation();
+      if (position != null) {
         latitude = position.latitude;
         longitude = position.longitude;
 
