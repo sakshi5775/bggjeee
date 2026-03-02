@@ -673,12 +673,25 @@ class KundliFormController extends BaseController {
   /// Generate Kundli
   Future<void> generateKundli() async {
     // Validate form
+    if (nameController.text.trim().isEmpty) {
+      showErrorMessage(title: 'Error', message: 'Please enter full name');
+      return;
+    }
+    if (selectedGender.value == null || selectedGender.value!.isEmpty) {
+      showErrorMessage(title: 'Error', message: 'Please select gender');
+      return;
+    }
     if (dateController.text.isEmpty) {
       showErrorMessage(title: 'Error', message: 'Please select date of birth');
       return;
     }
     if (timeController.text.isEmpty) {
       showErrorMessage(title: 'Error', message: 'Please select birth time');
+      return;
+    }
+    if (selectedLocation.value == 'Select Location' ||
+        selectedLocation.value == 'Fetching Location...') {
+      showErrorMessage(title: 'Error', message: 'Please select birth location');
       return;
     }
     if (latitudeController.text.isEmpty) {

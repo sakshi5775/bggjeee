@@ -1,8 +1,12 @@
+import 'dart:convert';
+import 'package:astrobharataiuser/apihelper/api_provider/api_provider.dart';
 import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
 import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
+import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:astrobharataiuser/data_model/astrologer_chat_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 /// Exception for concurrent session limit error
 class ConcurrentSessionException implements Exception {
@@ -14,7 +18,26 @@ class ConcurrentSessionException implements Exception {
 }
 
 class AstrologerChatService {
-  final ApiRepository _apiRepository = Get.find(tag: 'chat');
+  ApiRepository get _apiRepository {
+    try {
+      return Get.find(tag: 'chat');
+    } catch (e) {
+      if (kDebugMode) {
+        print('ERROR: Chat API repository not found: $e');
+        print('Attempting to find without tag...');
+      }
+      // Fallback: try to find without tag or create a new one
+      try {
+        final chatApiClient = Get.find<ApiClient>(tag: 'chat');
+        return ApiRepository(apiClient: chatApiClient);
+      } catch (e2) {
+        if (kDebugMode) {
+          print('ERROR: Chat API client not found: $e2');
+        }
+        rethrow;
+      }
+    }
+  }
 
   /// Start chat session - Replaces purchaseSession
   Future<AstrologerChatSession> startSession(String astrologerId) async {
@@ -183,11 +206,32 @@ class AstrologerChatService {
     int limit = 50,
   }) async {
     try {
-      final response = await _apiRepository.getApi(
-        EndPoints.chatSessionsHistory,
-        query: {'page': page, 'limit': limit},
-        useAuthHeader: true,
-      );
+      if (kDebugMode) {
+        print('=== Fetching chat history ===');
+        print('Page: $page, Limit: $limit');
+        print('Endpoint: ${EndPoints.chatSessionsHistory}');
+      }
+
+      // Try using the API repository first
+      Response? response;
+      try {
+        response = await _apiRepository.getApi(
+          EndPoints.chatSessionsHistory,
+          query: {'page': page, 'limit': limit},
+          useAuthHeader: true,
+        );
+      } catch (e) {
+        if (kDebugMode) {
+          print('API Repository failed, trying direct HTTP: $e');
+        }
+        // Fallback: Direct HTTP call
+        response = await _getSessionHistoryDirect(page: page, limit: limit);
+      }
+
+      if (kDebugMode) {
+        print('Response status: ${response.statusCode}');
+        print('Response body type: ${response.body.runtimeType}');
+      }
 
       if (response.statusCode != 200 && response.statusCode != 201) {
         throw Exception(
@@ -195,47 +239,127 @@ class AstrologerChatService {
         );
       }
 
-      final body = response.body;
+      // Handle response body - GetConnect may auto-parse JSON
+      dynamic body = response.body;
+      
+      // If body is a string, parse it
+      if (body is String) {
+        try {
+          body = jsonDecode(body);
+        } catch (e) {
+          if (kDebugMode) {
+            print('Failed to parse body as JSON: $e');
+          }
+          return _emptyHistoryResult();
+        }
+      }
+
       if (body == null) {
+        if (kDebugMode) {
+          print('ERROR: Response body is null');
+        }
         return _emptyHistoryResult();
       }
+
       if (body is! Map<String, dynamic>) {
         if (kDebugMode) {
-          print('Chat history API: body is not Map (${body.runtimeType})');
+          print('ERROR: Response body is not Map, type: ${body.runtimeType}');
+          print('Body content: $body');
         }
         return _emptyHistoryResult();
       }
 
       final data = body;
-      if (data['success'] != true) {
-        throw Exception(
-          data['message']?.toString() ?? 'Failed to get session history',
-        );
+      
+      if (kDebugMode) {
+        print('Response data keys: ${data.keys.toList()}');
+        print('Success: ${data['success']}');
       }
 
+      if (data['success'] != true) {
+        final errorMsg = data['message']?.toString() ?? 'Failed to get session history';
+        if (kDebugMode) {
+          print('ERROR: API returned success=false: $errorMsg');
+        }
+        throw Exception(errorMsg);
+      }
+
+      // Extract data array - API returns data as a direct list
       List<dynamic> rawList = [];
-      final payload = data['data'] ?? data['sessions'];
+      final payload = data['data'];
+
+      if (kDebugMode) {
+        print('Payload type: ${payload.runtimeType}');
+        print('Payload is List: ${payload is List}');
+      }
 
       if (payload is List) {
         rawList = payload;
-      } else if (payload is Map<String, dynamic>) {
-        final inner = payload['sessions'] ?? payload['data'] ?? payload['list'];
-        if (inner is List) {
-          rawList = inner;
+        if (kDebugMode) {
+          print('Found ${rawList.length} sessions in data array');
+        }
+      } else if (payload == null) {
+        if (kDebugMode) {
+          print('WARNING: data field is null, trying alternative fields');
+        }
+        // Try alternative field names
+        final altPayload = data['sessions'] ?? data['list'];
+        if (altPayload is List) {
+          rawList = altPayload;
+          if (kDebugMode) {
+            print('Found ${rawList.length} sessions in alternative field');
+          }
         }
       }
 
+      if (rawList.isEmpty) {
+        if (kDebugMode) {
+          print('INFO: No sessions found in response');
+        }
+        return {
+          'sessions': <AstrologerChatSession>[],
+          'pagination': data['pagination'],
+        };
+      }
+
+      // Parse sessions
       final List<AstrologerChatSession> sessions = [];
-      for (final s in rawList) {
+      for (int i = 0; i < rawList.length; i++) {
+        final s = rawList[i];
         try {
           if (s is Map<String, dynamic>) {
-            sessions.add(AstrologerChatSession.fromJson(s));
+            // Add default astrologerId if missing (API doesn't always include it)
+            final sessionData = Map<String, dynamic>.from(s);
+            if (!sessionData.containsKey('astrologerId') &&
+                !sessionData.containsKey('astrologer_id') &&
+                !sessionData.containsKey('astrologer')) {
+              sessionData['astrologerId'] = 'unknown';
+            }
+            
+            final session = AstrologerChatSession.fromJson(sessionData);
+            sessions.add(session);
+            
+            if (kDebugMode && i == 0) {
+              print('Sample session parsed: chatId=${session.chatId}, status=${session.status}');
+            }
+          } else {
+            if (kDebugMode) {
+              print('WARNING: Session item $i is not a Map, type: ${s.runtimeType}');
+            }
           }
-        } catch (e) {
+        } catch (e, stackTrace) {
           if (kDebugMode) {
-            print('Skip invalid session item: $e');
+            print('ERROR parsing session $i: $e');
+            print('Session data: $s');
+            print('Stack trace: $stackTrace');
           }
         }
+      }
+
+      if (kDebugMode) {
+        print('=== Parsing complete ===');
+        print('Raw items: ${rawList.length}');
+        print('Parsed sessions: ${sessions.length}');
       }
 
       final pagination = data['pagination'];
@@ -243,14 +367,16 @@ class AstrologerChatService {
         'sessions': sessions,
         'pagination': pagination is Map<String, dynamic> ? pagination : null,
       };
-    } on TypeError catch (e) {
+    } on TypeError catch (e, stackTrace) {
       if (kDebugMode) {
-        print('Chat history API type error (e.g. int vs Iterable): $e');
+        print('TypeError in chat history API: $e');
+        print('Stack trace: $stackTrace');
       }
       return _emptyHistoryResult();
-    } catch (e) {
+    } catch (e, stackTrace) {
       if (kDebugMode) {
-        print('Chat history API error: $e');
+        print('Exception in chat history API: $e');
+        print('Stack trace: $stackTrace');
       }
       rethrow;
     }
@@ -258,6 +384,57 @@ class AstrologerChatService {
 
   Map<String, dynamic> _emptyHistoryResult() {
     return {'sessions': <AstrologerChatSession>[], 'pagination': null};
+  }
+
+  /// Direct HTTP fallback for getting session history
+  Future<Response> _getSessionHistoryDirect({
+    int page = 1,
+    int limit = 50,
+  }) async {
+    try {
+      final token = UserData().accessToken;
+      if (token == null || token.isEmpty) {
+        throw Exception('No access token available');
+      }
+
+      final uri = Uri.parse('http://3.109.91.254:8009/api/chat/sessions/history')
+          .replace(queryParameters: {
+        'page': page.toString(),
+        'limit': limit.toString(),
+      });
+
+      if (kDebugMode) {
+        print('Direct HTTP call to: $uri');
+      }
+
+      final httpResponse = await http.get(
+        uri,
+        headers: {
+          'accept': 'application/json',
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      ).timeout(const Duration(seconds: 30));
+
+      if (kDebugMode) {
+        print('Direct HTTP response status: ${httpResponse.statusCode}');
+        print('Direct HTTP response body: ${httpResponse.body}');
+      }
+
+      // Convert http.Response to GetConnect Response
+      final body = jsonDecode(httpResponse.body);
+      return Response(
+        statusCode: httpResponse.statusCode,
+        statusText: httpResponse.reasonPhrase,
+        body: body,
+        bodyString: httpResponse.body,
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('Direct HTTP call failed: $e');
+      }
+      rethrow;
+    }
   }
 
   /// Get messages
@@ -376,22 +553,113 @@ class AstrologerChatService {
   /// Download chat history
   Future<Map<String, dynamic>> downloadChatHistory(String chatId) async {
     try {
-      final response = await _apiRepository.getApi(
-        EndPoints.chatSessionDownload(chatId),
-        useAuthHeader: true,
-      );
+      if (kDebugMode) {
+        print('=== Downloading chat history ===');
+        print('ChatId: $chatId');
+        print('Endpoint: ${EndPoints.chatSessionDownload(chatId)}');
+      }
+
+      Response response;
+      try {
+        response = await _apiRepository.getApi(
+          EndPoints.chatSessionDownload(chatId),
+          useAuthHeader: true,
+        );
+      } catch (e) {
+        if (kDebugMode) {
+          print('API Repository failed, trying direct HTTP: $e');
+        }
+        // Fallback: Direct HTTP call
+        response = await _downloadChatHistoryDirect(chatId);
+      }
+
+      if (kDebugMode) {
+        print('Download response status: ${response.statusCode}');
+        print('Download response body type: ${response.body.runtimeType}');
+      }
 
       if (response.statusCode == 200) {
-        final data = response.body;
-        if (data['success'] == true) {
-          return data['data'] as Map<String, dynamic>;
+        dynamic body = response.body;
+        
+        // If body is a string, parse it
+        if (body is String) {
+          try {
+            body = jsonDecode(body);
+          } catch (e) {
+            if (kDebugMode) {
+              print('Failed to parse download body as JSON: $e');
+            }
+            throw Exception('Invalid JSON response');
+          }
         }
-        throw Exception(data['message'] ?? 'Failed to download chat history');
+
+        if (body is Map<String, dynamic>) {
+          final data = body;
+          if (data['success'] == true) {
+            final result = data['data'] as Map<String, dynamic>?;
+            if (result != null) {
+              if (kDebugMode) {
+                print('Download successful, messages count: ${result['messages']?.length ?? 0}');
+              }
+              return result;
+            }
+            throw Exception('No data in response');
+          }
+          throw Exception(data['message'] ?? 'Failed to download chat history');
+        }
+        throw Exception('Invalid response format');
       }
       throw Exception(
         'HTTP ${response.statusCode}: Failed to download chat history',
       );
+    } catch (e, stackTrace) {
+      if (kDebugMode) {
+        print('Download chat history error: $e');
+        print('Stack trace: $stackTrace');
+      }
+      rethrow;
+    }
+  }
+
+  /// Direct HTTP fallback for downloading chat history
+  Future<Response> _downloadChatHistoryDirect(String chatId) async {
+    try {
+      final token = UserData().accessToken;
+      if (token == null || token.isEmpty) {
+        throw Exception('No access token available');
+      }
+
+      final uri = Uri.parse('http://3.109.91.254:8009/api/chat/session/$chatId/download');
+
+      if (kDebugMode) {
+        print('Direct HTTP download call to: $uri');
+      }
+
+      final httpResponse = await http.get(
+        uri,
+        headers: {
+          'accept': 'application/json',
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      ).timeout(const Duration(seconds: 30));
+
+      if (kDebugMode) {
+        print('Direct HTTP download response status: ${httpResponse.statusCode}');
+      }
+
+      // Convert http.Response to GetConnect Response
+      final body = jsonDecode(httpResponse.body);
+      return Response(
+        statusCode: httpResponse.statusCode,
+        statusText: httpResponse.reasonPhrase,
+        body: body,
+        bodyString: httpResponse.body,
+      );
     } catch (e) {
+      if (kDebugMode) {
+        print('Direct HTTP download call failed: $e');
+      }
       rethrow;
     }
   }

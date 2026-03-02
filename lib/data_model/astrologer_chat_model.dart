@@ -73,6 +73,14 @@ class AstrologerChatSession {
           .toString();
     }
 
+    // If still empty, use a default value (API history endpoint doesn't always include astrologerId)
+    if (extractedAstrologerId.isEmpty) {
+      extractedAstrologerId = 'unknown';
+      if (kDebugMode) {
+        print('Warning: astrologerId not found in session data, using default');
+      }
+    }
+
     return AstrologerChatSession(
       chatId: (json['chatId'] ?? json['id'] ?? json['_id'] ?? '').toString(),
       status: json['status'] as String? ?? 'CREATED',

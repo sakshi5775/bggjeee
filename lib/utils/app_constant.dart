@@ -16,7 +16,7 @@ class AppConstant {
   static const String bottomHomeIcon =
       '$s3BaseUrl/Astro+Service/3D+Logos/Home+3d.png';
   static const String bottomConsultationIcon =
-      '$s3BaseUrl/Astro+Service/3D+Logos/Consultation+3d+chat.png';
+      '$s3BaseUrl/Astro+Service/3D+Logos/consultation+3d.png';
   static const String bottomLiveStreamIcon =
       '$s3BaseUrl/Astro+Service/3D+Logos/astro+tv+3d.png';
 
@@ -126,11 +126,11 @@ class AppConstant {
   static const String videoThumbnail =
       'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/video+3d.png';
   static const String horoscopeGuru = 'assets/app/guru.png';
-  static const String divineShop = 'assets/app/pill_digital_mart.png';
-  static const String ePooja = 'assets/app/e_pooja.png';
+  static const String divineShop = '$s3BaseUrl/Astro+Service/3D+Logos/digital+mart+3d.png';
+  static const String ePooja = '$s3BaseUrl/Astro+Service/3D+Logos/pooja+3d.png';
   static const String aiAstrologer =
       'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/AIAstrologer.svg';
-  static const String education = 'assets/app/pill_digital_education.png';
+  static const String education = '$s3BaseUrl/Astro+Service/3D+Logos/education+3d.png';
   static const String poojaAnuj = 'assets/app/pooja_anuj.png';
   static const String poojaAbhishek = 'assets/app/pooja_abhishek.png';
   static const String chantingMala = 'assets/app/chanting_mala.png';

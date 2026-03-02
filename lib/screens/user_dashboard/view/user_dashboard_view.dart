@@ -4938,7 +4938,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     badgeText: 'New',
                     onTap: () {
                       Navigator.of(context).pop();
-                      Get.find<GlobalNavController>().onTabClick(3);
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.aichat,
+                        arguments: {'showBackButton': true},
+                      );
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -4987,7 +4990,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Live',
                     onTap: () {
                       Navigator.of(context).pop();
-                      Get.find<GlobalNavController>().onTabClick(2);
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.liveAstrologers,
+                      );
                     },
                   ),
 
@@ -5030,7 +5035,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Lal Kitab',
                     onTap: () {
                       Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(AppRoutes.lalKitab);
+                      UserMainController.pushInCurrentTab(AppRoutes.kundliForm);
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -5039,7 +5044,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'KP Astrology',
                     onTap: () {
                       Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(AppRoutes.kpSystem);
+                      UserMainController.pushInCurrentTab(AppRoutes.kundliForm);
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -5048,9 +5053,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Predictions',
                     onTap: () {
                       Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(
-                        AppRoutes.predictions,
-                      );
+                      UserMainController.pushInCurrentTab(AppRoutes.kundliForm);
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -5070,7 +5073,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Horoscope',
                     onTap: () {
                       Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(AppRoutes.horoscope);
+                      UserMainController.pushInCurrentTab(AppRoutes.horoscopeForm);
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -5097,7 +5100,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Dasha',
                     onTap: () {
                       Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(AppRoutes.dasha);
+                      UserMainController.pushInCurrentTab(AppRoutes.kundliForm);
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -5106,7 +5109,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Dosh',
                     onTap: () {
                       Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(AppRoutes.dosh);
+                      UserMainController.pushInCurrentTab(AppRoutes.kundliForm);
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -5317,7 +5320,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Profile',
                     onTap: () {
                       Navigator.of(context).pop();
-                      Get.find<GlobalNavController>().onTabClick(4);
+                      UserMainController.pushInCurrentTab(AppRoutes.profile);
                     },
                   ),
                 ],

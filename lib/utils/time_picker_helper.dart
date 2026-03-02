@@ -1,4 +1,5 @@
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/custom_date_picker_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -39,6 +40,7 @@ class TimePickerHelper {
   }
 
   /// Show time picker in 12-hour AM/PM format with App styling.
+  /// Shows input mode first, clock interface on clock icon click.
   static Future<TimeOfDay?> showTimePicker12h(
     BuildContext context, {
     required TimeOfDay initialTime,
@@ -46,6 +48,7 @@ class TimePickerHelper {
     return showTimePicker(
       context: context,
       initialTime: initialTime,
+      initialEntryMode: TimePickerEntryMode.input, // Show input mode first
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -106,6 +109,7 @@ class TimePickerHelper {
   }
 
   /// Show date picker with App styling.
+  /// Month dropdown appears first, then year dropdown after month selection.
   static Future<DateTime?> showDatePicker(
     BuildContext context, {
     required DateTime initialDate,
@@ -114,59 +118,13 @@ class TimePickerHelper {
     String? helpText,
     DatePickerMode initialDatePickerMode = DatePickerMode.day,
   }) {
-    return showDialog<DateTime>(
-      context: context,
-      builder: (BuildContext context) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: AppColors.deepOrange, // Header background color
-              onPrimary: Colors.white, // Header text color
-              onSurface: Colors.black, // Body text color
-              surface: Colors.white,
-            ),
-            dialogBackgroundColor: Colors.white,
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.deepOrange, // Button text color
-              ),
-            ),
-            datePickerTheme: DatePickerThemeData(
-              headerBackgroundColor: AppColors.deepOrange,
-              headerForegroundColor: Colors.white,
-              backgroundColor: Colors.white,
-              surfaceTintColor: Colors.transparent,
-              dayBackgroundColor: WidgetStateProperty.resolveWith((states) {
-                if (states.contains(WidgetState.selected)) {
-                  return AppColors.deepOrange;
-                }
-                return null;
-              }),
-              todayBackgroundColor: WidgetStateProperty.resolveWith((states) {
-                if (states.contains(WidgetState.selected)) {
-                  return AppColors.deepOrange;
-                }
-                return Colors.transparent;
-              }),
-              todayBorder: BorderSide(color: AppColors.deepOrange),
-              todayForegroundColor: WidgetStateProperty.resolveWith((states) {
-                if (states.contains(WidgetState.selected)) {
-                  return Colors.white;
-                }
-                return AppColors.deepOrange;
-              }),
-            ),
-          ),
-          child: DatePickerDialog(
-            initialDate: initialDate,
-            firstDate: firstDate,
-            lastDate: lastDate,
-            helpText: helpText,
-            initialCalendarMode: initialDatePickerMode,
-            initialEntryMode: DatePickerEntryMode.calendarOnly,
-          ),
-        );
-      },
+    // Use custom date picker with month dropdown first, then year dropdown
+    return CustomDatePickerDialog.show(
+      context,
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+      helpText: helpText,
     );
   }
 }
