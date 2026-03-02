@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/go
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/god_image_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/puja_item_category_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/coin_action_model.dart';
+import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/special_bhog_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/service/god_category_service.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/service/puja_item_category_service.dart';
 
@@ -202,6 +203,9 @@ class VirtualDarshanController extends BaseController
   // Coin Actions
   final RxList<CoinAction> coinActions = <CoinAction>[].obs;
 
+  // Special Bhog Data
+  final Rxn<SpecialBhogResponse> specialBhogData = Rxn<SpecialBhogResponse>();
+
   // Offering Bottom Sheet Tab Controller
   TabController? offeringTabController;
 
@@ -246,6 +250,8 @@ class VirtualDarshanController extends BaseController
     _loadPujaItemCategories();
     // Fetch coin actions
     fetchCoinActions();
+    // Fetch special bhog
+    fetchSpecialBhogData();
   }
 
   Future<void> _loadPujaItemCategories() async {
@@ -484,7 +490,7 @@ class VirtualDarshanController extends BaseController
         final slug = currentCategorySlug;
         if (slug == 'flowers' || slug == 'garland') {
           // Start flower rain burst (1 second animation)
-          startFlowerRainBurst(context);
+          startItemRainBurst(context);
         }
       } else {
         showErrorMessage(
@@ -523,6 +529,36 @@ class VirtualDarshanController extends BaseController
       }
     } catch (e) {
       print("Error fetching coin actions: $e");
+    }
+  }
+
+  Future<void> fetchSpecialBhogData() async {
+    try {
+      final response = await _pujaItemCategoryService.getSpecialBhog();
+      if (response != null && response.success) {
+        specialBhogData.value = response;
+      }
+    } catch (e) {
+      print("Error fetching special bhog: $e");
+    }
+  }
+
+  Future<void> offerSpecialBhog(BhogItem bhog, BuildContext context) async {
+    try {
+      setLoadingState(true);
+      final success = await _pujaItemCategoryService.useItem(bhog.id);
+      if (success) {
+        getAllPunyaWallet();
+        startItemRainBurst(context, imageUrl: bhog.thumbnail);
+        showSuccessMessage(message: "${bhog.bhogName} offered successfully!");
+      } else {
+        showHowToEarnPunyaDialog(context);
+      }
+    } catch (e) {
+      showErrorMessage(message: e.toString());
+      print("Error offering special bhog: $e");
+    } finally {
+      setLoadingState(false);
     }
   }
 
@@ -676,6 +712,87 @@ class VirtualDarshanController extends BaseController
     }
   }
 
+  void startItemRainBurst(BuildContext context, {String? imageUrl}) {
+    if (!Get.isRegistered<VirtualDarshanController>()) return;
+
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final random = Random();
+
+    // Get the image path: custom one, or selected flower
+    final imagePath = imageUrl ?? selectedFlowerAsset.value;
+
+    // Create 20-30 flowers for the burst effect
+    final itemCount = random.nextInt(11) + 20;
+
+    for (int i = 0; i < itemCount; i++) {
+      // Stagger items across time for a natural rain effect
+      Future.delayed(Duration(milliseconds: random.nextInt(500)), () {
+        if (!context.mounted) return;
+
+        // Spread items across the full screen width randomly
+        final fixedX = random.nextDouble() * (screenWidth - 40);
+        final size = 25.0 + random.nextDouble() * 30;
+        // SLOWER animation: 2.5-4 seconds for gentle falling
+        final duration = Duration(milliseconds: 2500 + random.nextInt(1500));
+
+        final animationController = AnimationController(
+          vsync: this,
+          duration: duration,
+        );
+
+        // Start from above the screen (negative values), fall to below screen
+        final fallAnimation = Tween<double>(begin: -0.1, end: 1.15).animate(
+          CurvedAnimation(
+            parent: animationController,
+            curve: Curves.easeInQuad,
+          ),
+        );
+
+        // Gentler rotation
+        final rotationAnimation = Tween<double>(
+          begin: 0,
+          end: (random.nextBool() ? 1 : -1) * pi * 0.5,
+        ).animate(animationController);
+
+        late OverlayEntry entry;
+        late FallingFlowerState itemState;
+
+        entry = OverlayEntry(
+          builder: (_) {
+            return FallingFlowerWidget(
+              key: ValueKey(entry.hashCode),
+              flowerState: itemState,
+            );
+          },
+        );
+
+        itemState = FallingFlowerState(
+          animationController: animationController,
+          fallAnimation: fallAnimation,
+          rotationAnimation: rotationAnimation,
+          fixedX: fixedX,
+          size: size,
+          imagePath: imagePath,
+          screenHeight: screenHeight,
+          entry: entry,
+        );
+
+        animationController.addStatusListener((status) {
+          if (status == AnimationStatus.completed) {
+            entry.remove();
+            activeFlowers.remove(itemState);
+            animationController.dispose();
+          }
+        });
+
+        animationController.forward();
+        activeFlowers.add(itemState);
+        Overlay.of(context).insert(entry);
+      });
+    }
+  }
+
   void startFlowerRain(BuildContext context) {
     final overlay = Overlay.of(context);
     final random = Random();
@@ -781,89 +898,6 @@ class VirtualDarshanController extends BaseController
       flower.animationController.dispose();
     }
     activeFlowers.clear();
-  }
-
-  /// Start a quick burst of flower rain when a flower is selected
-  void startFlowerRainBurst(BuildContext context) {
-    final overlay = Overlay.of(context);
-    final random = Random();
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
-    // Get the selected flower image (either network URL or asset paths)
-    final imagePath = selectedFlowerAsset.value;
-
-    // Create 20-30 flowers for the burst effect
-    final flowerCount = random.nextInt(11) + 20;
-
-    for (int i = 0; i < flowerCount; i++) {
-      // Stagger flowers across time for a natural rain effect
-      Future.delayed(Duration(milliseconds: random.nextInt(500)), () {
-        if (!context.mounted) return;
-
-        // Spread flowers across the full screen width randomly
-        final fixedX = random.nextDouble() * (screenWidth - 40);
-        final size = 25.0 + random.nextDouble() * 30;
-        // SLOWER animation: 2.5-4 seconds for gentle falling
-        final duration = Duration(milliseconds: 2500 + random.nextInt(1500));
-
-        final animationController = AnimationController(
-          vsync: this,
-          duration: duration,
-        );
-
-        // Start from above the screen (negative values), fall to below screen
-        final fallAnimation = Tween<double>(begin: -0.1, end: 1.15).animate(
-          CurvedAnimation(
-            parent: animationController,
-            curve: Curves.easeInQuad,
-          ),
-        );
-
-        // Gentler rotation
-        final rotationAnimation = Tween<double>(
-          begin: 0,
-          end: (random.nextBool() ? 1 : -1) * pi * 0.5,
-        ).animate(animationController);
-
-        late OverlayEntry entry;
-        late FallingFlowerState flowerState;
-
-        entry = OverlayEntry(
-          builder: (_) {
-            return FallingFlowerWidget(
-              key: ValueKey(entry.hashCode),
-              flowerState: flowerState,
-            );
-          },
-        );
-
-        flowerState = FallingFlowerState(
-          animationController: animationController,
-          fallAnimation: fallAnimation,
-          rotationAnimation: rotationAnimation,
-          fixedX: fixedX,
-          size: size,
-          imagePath: imagePath,
-          screenHeight: screenHeight,
-          entry: entry,
-        );
-
-        overlay.insert(entry);
-        activeFlowers.add(flowerState);
-
-        animationController.forward();
-
-        // Remove flower when animation completes
-        animationController.addStatusListener((status) {
-          if (status == AnimationStatus.completed) {
-            entry.remove();
-            animationController.dispose();
-            activeFlowers.remove(flowerState);
-          }
-        });
-      });
-    }
   }
 
   void playShankh() {

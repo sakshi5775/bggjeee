@@ -8,6 +8,7 @@ import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/colle
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/dhup_animation_widget.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
@@ -307,6 +308,33 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
             ),
 
             Positioned(
+              bottom: 150.h,
+              left: 18.w,
+              child: InkWell(
+                onTap: () => showSpecialBhogBottomSheet(context, controller),
+                child: Container(
+                  width: 55.w,
+                  height: 55.h,
+                  padding: AppPaddings.all(5),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: AppColors.deepOrangemix,
+                      width: 2,
+                    ),
+                    gradient: AppColors.gradientBackground,
+                  ),
+                  child: Image.network(
+                    AppConstant.specialBhog,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) =>
+                        Image.asset(AppConstant.eMandirLibraryAarti),
+                  ),
+                ),
+              ),
+            ),
+
+            Positioned(
               bottom: 22.h,
               right: 18.w,
               child: InkWell(
@@ -399,6 +427,217 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
           controller.useCoinItem(item, context);
         },
       ),
+    );
+  }
+
+  void showSpecialBhogBottomSheet(
+    BuildContext context,
+    VirtualDarshanController controller,
+  ) {
+    if (controller.specialBhogData.value == null ||
+        controller.specialBhogData.value!.data == null) {
+      Get.snackbar(
+        "Notice",
+        "No special bhog available for today",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    final data = controller.specialBhogData.value!.data!;
+    final bhogs = data.bhogs;
+    final godCategory = data.godCategory;
+
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      isScrollControlled: true,
+      builder: (_) {
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+            gradient: const LinearGradient(
+              colors: [Colors.white, Color(0xFFFFF6ED)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: Container(
+                  margin: EdgeInsets.only(top: 10.h, bottom: 20.h),
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade400,
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Row(
+                  children: [
+                    if (godCategory != null)
+                      CircleAvatar(
+                        radius: 20.r,
+                        backgroundImage: NetworkImage(godCategory.godThumbnail),
+                        onBackgroundImageError: (_, __) =>
+                            const AssetImage(AppConstant.eMandirOmmIcon),
+                      )
+                    else
+                      CircleAvatar(
+                        radius: 20.r,
+                        backgroundImage: const AssetImage(
+                          AppConstant.eMandirOmmIcon,
+                        ),
+                      ),
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Special Bhog",
+                            style: AppTypography.h3.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: "#6F221E".toColor(),
+                            ),
+                          ),
+                          Text(
+                            controller.specialBhogData.value!.message,
+                            style: AppTypography.body2.copyWith(
+                              color: Colors.grey.shade700,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20.h),
+              if (bhogs.isEmpty)
+                Padding(
+                  padding: EdgeInsets.only(bottom: 30.h),
+                  child: Text(
+                    "No bhogs available.",
+                    style: AppTypography.body1.copyWith(color: Colors.grey),
+                  ),
+                )
+              else
+                Flexible(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: GridView.builder(
+                      shrinkWrap: true,
+                      physics: const ClampingScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 10.w,
+                        mainAxisSpacing: 10.h,
+                        childAspectRatio: 0.8,
+                      ),
+                      itemCount: bhogs.length,
+                      itemBuilder: (context, index) {
+                        final bhog = bhogs[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Get.back();
+                            controller.offerSpecialBhog(bhog, context);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12.r),
+                              border: Border.all(color: Colors.orange.shade200),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.05),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(8.w),
+                                    child: Image.network(
+                                      bhog.image,
+                                      fit: BoxFit.contain,
+                                      errorBuilder: (_, __, ___) => Image.asset(
+                                        AppConstant.eMandirLadduIcon,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.symmetric(vertical: 4.h),
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange.shade50,
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(12.r),
+                                      bottomRight: Radius.circular(12.r),
+                                    ),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        bhog.bhogName,
+                                        style: AppTypography.body2.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12.sp,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      SizedBox(height: 2.h),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Image.asset(
+                                            AppConstant.coin,
+                                            width: 12.w,
+                                            height: 12.h,
+                                          ),
+                                          SizedBox(width: 4.w),
+                                          Text(
+                                            bhog.coin.toString(),
+                                            style: AppTypography.body2.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 12.sp,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              SizedBox(height: 20.h),
+            ],
+          ),
+        );
+      },
     );
   }
 }
