@@ -60,7 +60,8 @@ class EMandirWallpaperStoryController extends BaseController {
         final result = await ImageGallerySaverPlus.saveImage(
           Uint8List.fromList(response.bodyBytes),
           quality: 100,
-          name: "SriMandir_Wallpaper_${DateTime.now().millisecondsSinceEpoch}",
+          name:
+              "DigitalMandir_Wallpaper_${DateTime.now().millisecondsSinceEpoch}",
         );
 
         if (result != null && result['isSuccess'] == true) {

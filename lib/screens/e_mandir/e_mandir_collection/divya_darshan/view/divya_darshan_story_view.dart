@@ -124,7 +124,7 @@ class _DivyaDarshanStoryViewState extends State<DivyaDarshanStoryView>
     _videoController?.pause();
 
     ShareService.shareLink(
-      path: 'srimandir/divya-darshan',
+      path: 'digitalMandir/divya-darshan',
       queryParams: {'id': item.id},
       subject: item.title.hi,
     ).then((_) {

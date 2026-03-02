@@ -484,6 +484,9 @@ class AppConstant {
   static const String consultation =
       '$s3BaseUrl/Astro+Service/3D+Logos/consultation+3d.png';
 
+  static const String specialBhog =
+      '$s3BaseUrl/Astro+Service/SpecialBhog__1_-removebg-preview.png';
+
   ///
 
   ///  about US image
