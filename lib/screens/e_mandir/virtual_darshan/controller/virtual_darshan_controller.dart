@@ -1,17 +1,23 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:astrobharataiuser/app_manager/myButton.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/god_category_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/god_data.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/god_image_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/puja_item_category_model.dart';
+import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/coin_action_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/service/god_category_service.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/service/puja_item_category_service.dart';
+
 import 'package:astrobharataiuser/screens/e_mandir/devotional_library/service/devotional_music_service.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/falling_flower_widget.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
@@ -193,6 +199,9 @@ class VirtualDarshanController extends BaseController
   // Specific image for the Thali icon on the main screen (from thali's first item)
   final RxString thaliItemImage = ''.obs;
 
+  // Coin Actions
+  final RxList<CoinAction> coinActions = <CoinAction>[].obs;
+
   // Offering Bottom Sheet Tab Controller
   TabController? offeringTabController;
 
@@ -235,6 +244,8 @@ class VirtualDarshanController extends BaseController
     _loadGodCategories();
     // Fetch puja item categories from API
     _loadPujaItemCategories();
+    // Fetch coin actions
+    fetchCoinActions();
   }
 
   Future<void> _loadPujaItemCategories() async {
@@ -479,6 +490,7 @@ class VirtualDarshanController extends BaseController
         showErrorMessage(
           message: "Insufficient coins to perform this offering",
         );
+        showHowToEarnPunyaDialog(context);
       }
     } catch (e) {
       showErrorMessage(message: e.toString());
@@ -501,6 +513,118 @@ class VirtualDarshanController extends BaseController
     } finally {
       setLoadingState(false);
     }
+  }
+
+  Future<void> fetchCoinActions() async {
+    try {
+      final response = await _pujaItemCategoryService.getCoinActions();
+      if (response != null && response.success) {
+        coinActions.value = response.coinActions;
+      }
+    } catch (e) {
+      print("Error fetching coin actions: $e");
+    }
+  }
+
+  Future<void> earnCoin(String actionKey) async {
+    try {
+      final success = await _pujaItemCategoryService.earnWalletCoin(actionKey);
+      if (success) {
+        // Find how many coins were earned
+        final action = coinActions.firstWhereOrNull(
+          (a) => a.actionKey == actionKey,
+        );
+        if (action != null) {
+          showSuccessMessage(message: "Punya Earned +${action.coins}");
+        }
+        getAllPunyaWallet();
+      }
+    } catch (e) {
+      print("Error earning coin: $e");
+    }
+  }
+
+  void showHowToEarnPunyaDialog(BuildContext context) {
+    if (coinActions.isEmpty) return;
+
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
+        child: Container(
+          padding: EdgeInsets.all(20.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "How to Earn Punya",
+                style: AppTypography.h3.copyWith(
+                  color: "#6F221E".toColor(),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 16.h),
+              ...coinActions.map((action) {
+                return Container(
+                  margin: EdgeInsets.only(bottom: 12.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 12.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade50,
+                    borderRadius: BorderRadius.circular(12.r),
+                    border: Border.all(color: Colors.orange.shade200),
+                  ),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 16.r,
+                        backgroundColor: Colors.white,
+                        backgroundImage: const AssetImage(
+                          AppConstant.eMandirOmmIcon,
+                        ),
+                      ),
+                      SizedBox(width: 14.w),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              action.actionName,
+                              style: AppTypography.body1.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            SizedBox(height: 4.h),
+                            Text(
+                              "${action.description} +${action.coins} Coins",
+                              style: AppTypography.body2.copyWith(
+                                color: Colors.grey.shade700,
+                                height: 1.3,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+              SizedBox(height: 12.h),
+              MyButton(title: "Got it", onPress: () => Get.back()),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -748,9 +872,15 @@ class VirtualDarshanController extends BaseController
     } else {
       shankhPlayer.stop();
       shankhPlayer.setReleaseMode(ReleaseMode.stop);
-      shankhPlayer.play(UrlSource(AppConstant.shankhMp3)).catchError((e) {
-        print("SHANKH AUDIO ERROR: $e");
-      });
+      shankhPlayer
+          .play(UrlSource(AppConstant.shankhMp3))
+          .then((_) {
+            // Earn coin when shankh plays
+            earnCoin('shankh_blow');
+          })
+          .catchError((e) {
+            print("SHANKH AUDIO ERROR: $e");
+          });
     }
   }
 
