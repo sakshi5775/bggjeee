@@ -193,7 +193,7 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
               top: 10.h,
               right: 10.w,
               child: InkWell(
-                onTap: () {},
+                onTap: () => controller.showHowToEarnPunyaDialog(context),
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
                   decoration: BoxDecoration(

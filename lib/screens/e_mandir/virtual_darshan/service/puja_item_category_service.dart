@@ -1,6 +1,7 @@
 import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
 import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/puja_item_category_model.dart';
+import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/coin_action_model.dart';
 import 'package:get/get.dart';
 
 import '../../../../data_model/e_mandir_dataModels/e_mandir_home_model.dart';
@@ -86,6 +87,36 @@ class PujaItemCategoryService {
       }
       return false;
     } catch (e) {
+      return false;
+    }
+  }
+
+  /// Get all coin actions (how to earn punya)
+  Future<CoinActionsResponse?> getCoinActions() async {
+    try {
+      final response = await _apiRepository.getApi(EndPoints.coinActions);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return CoinActionsResponse.fromJson(response.body);
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching coin actions: $e');
+      return null;
+    }
+  }
+
+  /// Earn punya coins via action key
+  Future<bool> earnWalletCoin(String actionKey) async {
+    try {
+      final response = await _apiRepository.postApi(EndPoints.walletEarn, {
+        "actionKey": actionKey,
+      });
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print('Error earning wallet coin: $e');
       return false;
     }
   }

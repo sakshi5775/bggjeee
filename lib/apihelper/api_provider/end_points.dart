@@ -90,6 +90,12 @@ class EndPoints {
   /// coin use api
   static const String useCoinItem = 'sri-mandir/api/wallet/use-item';
 
+  /// coin actions (how to earn punya)
+  static const String coinActions = 'sri-mandir/api/coin-actions';
+
+  /// wallet earn (earn punya coins via action)
+  static const String walletEarn = 'sri-mandir/api/wallet/earn';
+
   /// ecommerce
   // Category endpoints
   static const String ecommerceCategories = 'ecommerce/api/categories';
