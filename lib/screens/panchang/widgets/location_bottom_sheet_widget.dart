@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
+import 'package:astrobharataiuser/utils/location_prompt_helper.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  LocationBottomSheetWidget  —  3-Tab Location Picker
@@ -292,42 +292,16 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget>
       _gErr = null;
     });
     try {
-      if (!await Geolocator.isLocationServiceEnabled()) {
+      final pos = await LocationPromptHelper.checkAndGetLocation();
+      if (pos == null) {
         if (mounted) {
           setState(() {
             _gLoading = false;
-            _gErr = 'Location services disabled.';
+            // No error message here as the prompt handled it
           });
         }
         return;
       }
-      var perm = await Geolocator.checkPermission();
-      if (perm == LocationPermission.denied) {
-        perm = await Geolocator.requestPermission();
-        if (perm == LocationPermission.denied) {
-          if (mounted) {
-            setState(() {
-              _gLoading = false;
-              _gErr = 'Permission denied.';
-            });
-          }
-          return;
-        }
-      }
-      if (perm == LocationPermission.deniedForever) {
-        if (mounted) {
-          setState(() {
-            _gLoading = false;
-            _gErr = 'Permission permanently denied.';
-          });
-        }
-        return;
-      }
-      final pos = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-        ),
-      );
       _setDM(pos.latitude, _gLatDeg, _gLatMin);
       _setDM(pos.longitude, _gLngDeg, _gLngMin);
 

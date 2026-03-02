@@ -5,9 +5,8 @@ import 'package:astrobharataiuser/utils/address_helper.dart';
 import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/utils/location_prompt_helper.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -88,37 +87,13 @@ class MuhuratController extends BaseController {
     try {
       if (_isDisposed) return;
 
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
+      final position = await LocationPromptHelper.checkAndGetLocation();
+      if (_isDisposed || position == null) {
         if (!_isDisposed) {
           selectedLocation.value = 'Select Location';
         }
         return;
       }
-
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          if (!_isDisposed) {
-            selectedLocation.value = 'Select Location';
-          }
-          return;
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        if (!_isDisposed) {
-          selectedLocation.value = 'Select Location';
-        }
-        return;
-      }
-
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.medium,
-      );
-
-      if (_isDisposed) return;
 
       latitudeController.text = position.latitude.toStringAsFixed(6);
       longitudeController.text = position.longitude.toStringAsFixed(6);
@@ -149,48 +124,10 @@ class MuhuratController extends BaseController {
     try {
       isFetchingLocation.value = true;
 
-      try {
-        await Geolocator.isLocationServiceEnabled();
-      } on MissingPluginException catch (e) {
-        showErrorMessage(
-          title: 'Location Service Unavailable',
-          message: 'Location service plugin is not available.',
-        );
-        debugPrint('Geolocator plugin not found: $e');
+      final position = await LocationPromptHelper.checkAndGetLocation();
+      if (_isDisposed || position == null) {
         return;
       }
-
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        await Geolocator.openLocationSettings();
-        return;
-      }
-
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          showErrorMessage(
-            title: 'Permission Denied',
-            message: 'Location permissions are denied.',
-          );
-          return;
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        showErrorMessage(
-          title: 'Permission Denied',
-          message: 'Location permissions are permanently denied.',
-        );
-        return;
-      }
-
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-
-      if (_isDisposed) return;
 
       latitudeController.text = position.latitude.toStringAsFixed(6);
       longitudeController.text = position.longitude.toStringAsFixed(6);
