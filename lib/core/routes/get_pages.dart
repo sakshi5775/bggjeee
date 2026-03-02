@@ -1333,7 +1333,7 @@ class PageRoutes {
     // Kundli Routes
     GetPage(
       name: AppRoutes.kundliForm,
-      page: () => const KundliFormView(),
+      page: () =>  KundliFormView(),
       binding: KundliFormBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),

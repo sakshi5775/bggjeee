@@ -103,69 +103,72 @@ class _ConsultationHistoryViewState extends State<ConsultationHistoryView>
       child: Scaffold(
         backgroundColor: Colors.transparent,
         drawer: UserDashboardView.buildDrawer(context),
-        body: Column(
-          children: [
-            CommonHeader(
-              title: 'Consultation History',
-              showBackButton: widget.showBackButton,
+        body: SafeArea(
+          bottom: false,
+          child: Column(
+            children: [
+              CommonHeader(
+                title: 'Consultation History',
+                showBackButton: widget.showBackButton,
 
-              customActions: [
-                GestureDetector(
-                  onTap: () => UserMainController.pushInCurrentTab(AppRoutes.wallet),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.account_balance_wallet_outlined,
-                        color: '#3D0C11'.toColor(),
-                        size: 22.w,
-                      ),
-                      Spacing.w(6),
-                      Obx(
-                        () => AutoTranslateText(
-                          '₹${walletController.walletBalance.value.toStringAsFixed(0)}',
-                          style: AppTypography.body1.copyWith(
-                            color: '#3D0C11'.toColor(),
-                            fontWeight: FontWeight.w600,
+                customActions: [
+                  GestureDetector(
+                    onTap: () => UserMainController.pushInCurrentTab(AppRoutes.wallet),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.account_balance_wallet_outlined,
+                          color: '#3D0C11'.toColor(),
+                          size: 22.w,
+                        ),
+                        Spacing.w(6),
+                        Obx(
+                          () => AutoTranslateText(
+                            '₹${walletController.walletBalance.value.toStringAsFixed(0)}',
+                            style: AppTypography.body1.copyWith(
+                              color: '#3D0C11'.toColor(),
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(width: 16.w),
-              ],
-            ),
-            TabBar(
-              controller: _tabController,
-              indicatorColor: AppColors.deepOrange,
-              indicatorWeight: 3,
-              labelColor: '#3D0C11'.toColor(),
-              unselectedLabelColor: '#6F221E'.toColor().withValues(alpha: 0.6),
-              labelStyle: MyTextTheme.mediumBCB.copyWith(
-                fontWeight: FontWeight.w600,
-                color: '#3D0C11'.toColor(),
-              ),
-              unselectedLabelStyle: MyTextTheme.mediumBCN.copyWith(
-                color: '#6F221E'.toColor().withValues(alpha: 0.6),
-              ),
-              tabs: const [
-                Tab(text: 'Chat History'),
-                Tab(text: 'Call History'),
-                Tab(text: 'Video History'),
-              ],
-            ),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _ChatHistoryTab(),
-                  _CallHistoryTab(callType: 'VOICE'),
-                  _CallHistoryTab(callType: 'VIDEO'),
+                  SizedBox(width: 16.w),
                 ],
               ),
-            ),
-          ],
+              TabBar(
+                controller: _tabController,
+                indicatorColor: AppColors.deepOrange,
+                indicatorWeight: 3,
+                labelColor: '#3D0C11'.toColor(),
+                unselectedLabelColor: '#6F221E'.toColor().withValues(alpha: 0.6),
+                labelStyle: MyTextTheme.mediumBCB.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: '#3D0C11'.toColor(),
+                ),
+                unselectedLabelStyle: MyTextTheme.mediumBCN.copyWith(
+                  color: '#6F221E'.toColor().withValues(alpha: 0.6),
+                ),
+                tabs: const [
+                  Tab(text: 'Chat History'),
+                  Tab(text: 'Call History'),
+                  Tab(text: 'Video History'),
+                ],
+              ),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _ChatHistoryTab(),
+                    _CallHistoryTab(callType: 'VOICE'),
+                    _CallHistoryTab(callType: 'VIDEO'),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -194,7 +197,12 @@ class _ChatHistoryTab extends StatelessWidget {
         onRefresh: () => controller.loadHistory(reset: true),
         color: AppColors.deepOrange,
         child: ListView.builder(
-          padding: AppPaddings.all(16),
+          padding: EdgeInsets.only(
+            left: 16.w,
+            right: 16.w,
+            top: 16.h,
+            bottom: 16.h + 70.h + MediaQuery.of(context).padding.bottom,
+          ),
           itemCount:
               list.length +
               (controller.hasMore && controller.searchQuery.value.isEmpty
@@ -231,6 +239,22 @@ class _ChatHistoryTab extends StatelessWidget {
   ) {
     final date = session.completedAt ?? session.createdAt;
     final statusColor = controller.getStatusColor(session.status);
+    
+    // Format duration
+    String durationText = 'N/A';
+    if (session.elapsedSeconds != null && session.elapsedSeconds! > 0) {
+      final minutes = session.elapsedSeconds! ~/ 60;
+      final seconds = session.elapsedSeconds! % 60;
+      if (minutes > 0) {
+        durationText = '${minutes}m ${seconds}s';
+      } else {
+        durationText = '${seconds}s';
+      }
+    }
+    
+    // Format amount
+    final amount = session.totalAmount ?? 0.0;
+    final currency = session.billingConfig.currency;
 
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
@@ -275,47 +299,148 @@ class _ChatHistoryTab extends StatelessWidget {
               ),
             ],
           ),
+          Spacing.h(12),
+          // Message stats
+          Row(
+            children: [
+              Icon(
+                Icons.message,
+                size: 16.w,
+                color: '#6F221E'.toColor().withValues(alpha: 0.6),
+              ),
+              Spacing.w(6),
+              AutoTranslateText(
+                '${session.messageStats.totalMessages} messages',
+                style: MyTextTheme.smallBCN.copyWith(
+                  color: '#6F221E'.toColor().withValues(alpha: 0.8),
+                ),
+              ),
+              Spacing.w(16),
+              Icon(
+                Icons.access_time,
+                size: 16.w,
+                color: '#6F221E'.toColor().withValues(alpha: 0.6),
+              ),
+              Spacing.w(6),
+              AutoTranslateText(
+                durationText,
+                style: MyTextTheme.smallBCN.copyWith(
+                  color: '#6F221E'.toColor().withValues(alpha: 0.8),
+                ),
+              ),
+            ],
+          ),
           Spacing.h(8),
-          AutoTranslateText(
-            'Chat ID: ${session.chatId}',
-            style: MyTextTheme.smallBCN.copyWith(
-              color: '#6F221E'.toColor().withValues(alpha: 0.8),
-            ),
+          // Amount and billing info
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(4.w),
+                    decoration: BoxDecoration(
+                      gradient: AppColors.orangeGradient,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.currency_rupee,
+                      size: 14.w,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Spacing.w(6),
+                  AutoTranslateText(
+                    '$currency ${amount.toStringAsFixed(2)}',
+                    style: AppTypography.body1.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.orangeGradient.colors.first,
+                    ),
+                  ),
+                  if (session.totalMinutesBilled != null) ...[
+                    Spacing.w(8),
+                    AutoTranslateText(
+                      '(${session.totalMinutesBilled} min)',
+                      style: MyTextTheme.smallBCN.copyWith(
+                        color: '#6F221E'.toColor().withValues(alpha: 0.6),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+              if (session.paymentStatus != null)
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                  decoration: BoxDecoration(
+                    color: session.paymentStatus == 'COMPLETED'
+                        ? Colors.green.withValues(alpha: 0.1)
+                        : Colors.orange.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(6.r),
+                  ),
+                  child: AutoTranslateText(
+                    session.paymentStatus!,
+                    style: MyTextTheme.smallBCB.copyWith(
+                      color: session.paymentStatus == 'COMPLETED'
+                          ? Colors.green
+                          : Colors.orange,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 10,
+                    ),
+                  ),
+                ),
+            ],
           ),
           Spacing.h(12),
           Row(
             children: [
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () => Get.snackbar(
-                    'Chat',
-                    'Open chat session',
-                    snackPosition: SnackPosition.BOTTOM,
-                  ),
+                  onPressed: () => controller.viewChatHistory(session.chatId),
                   icon: Icon(Icons.chat_bubble_outline, size: 16.w),
                   label: AutoTranslateText(
                     'View Chat',
                     style: AppTypography.label,
                   ),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.deepOrange,
-                    side: BorderSide(color: AppColors.deepOrange),
+                    foregroundColor: AppColors.orangeGradient.colors.first,
+                    side: BorderSide(
+                      color: AppColors.orangeGradient.colors.first,
+                      width: 1.5,
+                    ),
                   ),
                 ),
               ),
               Spacing.w(12),
               Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () =>
-                      controller.downloadChatTranscript(session.chatId),
-                  icon: Icon(Icons.download, size: 16.w),
-                  label: AutoTranslateText(
-                    'Download',
-                    style: AppTypography.label,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: AppColors.orangeGradient,
+                    borderRadius: BorderRadius.circular(8.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.orangeGradient.colors.first.withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.deepOrange,
-                    foregroundColor: Colors.white,
+                  child: ElevatedButton.icon(
+                    onPressed: () =>
+                        controller.downloadChatTranscript(session.chatId),
+                    icon: Icon(Icons.download_rounded, size: 16.w),
+                    label: AutoTranslateText(
+                      'Download',
+                      style: AppTypography.label.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      foregroundColor: Colors.white,
+                      shadowColor: Colors.transparent,
+                      elevation: 0,
+                    ),
                   ),
                 ),
               ),
@@ -438,7 +563,12 @@ class _CallHistoryTab extends StatelessWidget {
         onRefresh: () => controller.loadHistory(reset: true),
         color: AppColors.deepOrange,
         child: ListView.builder(
-          padding: AppPaddings.all(16),
+          padding: EdgeInsets.only(
+            left: 16.w,
+            right: 16.w,
+            top: 16.h,
+            bottom: 16.h + 70.h + MediaQuery.of(context).padding.bottom,
+          ),
           itemCount: list.length + (controller.hasMore ? 1 : 0),
           itemBuilder: (context, index) {
             if (index == list.length) {

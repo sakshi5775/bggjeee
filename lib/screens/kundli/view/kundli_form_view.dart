@@ -35,9 +35,11 @@ class KundliFormView extends BasePage<KundliFormController> {
                   return _buildSavedKundliTab();
                 } else {
                   return SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 0.h,
+                    padding: EdgeInsets.only(
+                      left: 16.w,
+                      right: 16.w,
+                      top: 0.h,
+                      bottom: 16.h + 70.h + MediaQuery.of(context).padding.bottom,
                     ),
                     child: _buildFormSection(),
                   );
@@ -156,32 +158,35 @@ class KundliFormView extends BasePage<KundliFormController> {
         ),
         // List
         Expanded(
-          child: Obx(() {
-            if (controller.isLoadingSavedKundli.value) {
-              return Center(
-                child: CircularProgressIndicator(color: AppColors.deepOrange),
-              );
-            }
-            final list = controller.filteredKundliList;
-            if (list.isEmpty) {
-              return _buildEmptyState();
-            }
-            return Stack(
-              children: [
-                RefreshIndicator(
-                  color: AppColors.deepOrange,
-                  onRefresh: () => controller.fetchSavedKundliProfiles(),
-                  child: ListView.builder(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 4.h,
+          child: Builder(
+            builder: (context) => Obx(() {
+              if (controller.isLoadingSavedKundli.value) {
+                return Center(
+                  child: CircularProgressIndicator(color: AppColors.deepOrange),
+                );
+              }
+              final list = controller.filteredKundliList;
+              if (list.isEmpty) {
+                return _buildEmptyState();
+              }
+              return Stack(
+                children: [
+                  RefreshIndicator(
+                    color: AppColors.deepOrange,
+                    onRefresh: () => controller.fetchSavedKundliProfiles(),
+                    child: ListView.builder(
+                      padding: EdgeInsets.only(
+                        left: 16.w,
+                        right: 16.w,
+                        top: 4.h,
+                        bottom: 4.h + 70.h + MediaQuery.of(context).padding.bottom,
+                      ),
+                      itemCount: list.length,
+                      itemBuilder: (context, index) {
+                        return _buildSavedKundliCard(list[index]);
+                      },
                     ),
-                    itemCount: list.length,
-                    itemBuilder: (context, index) {
-                      return _buildSavedKundliCard(list[index]);
-                    },
                   ),
-                ),
                 // Loading overlay when opening a saved kundli
                 Obx(() {
                   if (controller.isOpeningSavedKundli.value) {
@@ -227,7 +232,8 @@ class KundliFormView extends BasePage<KundliFormController> {
                 }),
               ],
             );
-          }),
+            }),
+          ),
         ),
       ],
     );
@@ -607,12 +613,15 @@ class KundliFormView extends BasePage<KundliFormController> {
   }
 
   Widget _buildFormSection() {
+    final formKey = GlobalKey<FormState>();
     return Container(
       decoration: _formCardDecoration(),
       padding: EdgeInsets.all(16.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
+      child: Form(
+        key: formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
           Center(
             child: ShaderMask(
               blendMode: BlendMode.srcIn,
@@ -638,6 +647,12 @@ class KundliFormView extends BasePage<KundliFormController> {
                     controller: controller.nameController,
                     hint: 'Full Name',
                     icon: Icons.person_outline,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Please enter full name';
+                      }
+                      return null;
+                    },
                   ),
                 ),
               ),
@@ -657,6 +672,12 @@ class KundliFormView extends BasePage<KundliFormController> {
                   icon: Icons.calendar_today,
                   readOnly: true,
                   onTap: () => _showDatePicker(),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please select date';
+                    }
+                    return null;
+                  },
                 ),
               ),
               SizedBox(width: 10.w),
@@ -688,8 +709,9 @@ class KundliFormView extends BasePage<KundliFormController> {
           // Save Your Kundli checkbox
           _buildSaveCheckbox(),
           Spacing.h(16),
-          _buildSubmitButton(),
+          _buildSubmitButton(formKey),
         ],
+      ),
       ),
     );
   }
@@ -774,9 +796,6 @@ class KundliFormView extends BasePage<KundliFormController> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12.r),
-            border: Border.all(
-              color: AppColors.deepOrange.withValues(alpha: 0.2),
-            ),
             boxShadow: [
               BoxShadow(
                 color: AppColors.deepOrange.withValues(alpha: 0.05),
@@ -816,12 +835,12 @@ class KundliFormView extends BasePage<KundliFormController> {
     required IconData icon,
     bool readOnly = false,
     VoidCallback? onTap,
+    String? Function(String?)? validator,
   }) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
             color: AppColors.deepOrange.withValues(alpha: 0.05),
@@ -834,6 +853,7 @@ class KundliFormView extends BasePage<KundliFormController> {
         controller: controller,
         readOnly: readOnly,
         onTap: onTap,
+        validator: validator,
         style: MyTextTheme.mediumBCN.copyWith(color: AppColors.textColorMaroon),
         decoration: _inputDecoration(
           hint: hint,
@@ -854,41 +874,47 @@ class KundliFormView extends BasePage<KundliFormController> {
   }
 
   Widget _buildCompactLocation() {
-    return GestureDetector(
-      onTap: () => _showLocationBottomSheet(),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(
-            color: AppColors.deepOrange.withValues(alpha: 0.2),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.deepOrange.withValues(alpha: 0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+    return Obx(
+      () => GestureDetector(
+        onTap: () => _showLocationBottomSheet(),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(
+              color: controller.selectedLocation.value == 'Select Location' ||
+                      controller.selectedLocation.value == 'Fetching Location...'
+                  ? AppColors.error.withValues(alpha: 0.3)
+                  : AppColors.deepOrange.withValues(alpha: 0.2),
             ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Icon(Icons.location_on, color: AppColors.deepOrange, size: 20.w),
-            SizedBox(width: 10.w),
-            Expanded(
-              child: Obx(
-                () => AutoTranslateText(
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.deepOrange.withValues(alpha: 0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.location_on, color: AppColors.deepOrange, size: 20.w),
+              SizedBox(width: 10.w),
+              Expanded(
+                child: AutoTranslateText(
                   controller.selectedLocation.value,
                   style: MyTextTheme.mediumBCN.copyWith(
-                    color: AppColors.textColorMaroon,
+                    color: controller.selectedLocation.value == 'Select Location' ||
+                            controller.selectedLocation.value == 'Fetching Location...'
+                        ? AppColors.textSecondary.withValues(alpha: 0.6)
+                        : AppColors.textColorMaroon,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-            ),
-            Icon(Icons.chevron_right, color: AppColors.deepOrange, size: 22.w),
-          ],
+              Icon(Icons.chevron_right, color: AppColors.deepOrange, size: 22.w),
+            ],
+          ),
         ),
       ),
     );
@@ -916,6 +942,12 @@ class KundliFormView extends BasePage<KundliFormController> {
               ),
             )
             .toList(),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please select gender';
+          }
+          return null;
+        },
       ),
     );
   }
@@ -969,12 +1001,12 @@ class KundliFormView extends BasePage<KundliFormController> {
     required List<DropdownMenuItem<T>> items,
     required ValueChanged<T?> onChanged,
     List<Widget> Function(BuildContext)? selectedItemBuilder,
+    String? Function(T?)? validator,
   }) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
             color: AppColors.deepOrange.withValues(alpha: 0.05),
@@ -1005,11 +1037,12 @@ class KundliFormView extends BasePage<KundliFormController> {
         items: items,
         onChanged: onChanged,
         selectedItemBuilder: selectedItemBuilder,
+        validator: validator,
       ),
     );
   }
 
-  Widget _buildSubmitButton() {
+  Widget _buildSubmitButton(GlobalKey<FormState> formKey) {
     return Obx(
       () => Container(
         width: double.infinity,
@@ -1033,7 +1066,11 @@ class KundliFormView extends BasePage<KundliFormController> {
         child: ElevatedButton(
           onPressed: controller.isLoading.value
               ? null
-              : controller.generateKundli,
+              : () {
+                  if (formKey.currentState?.validate() ?? false) {
+                    controller.generateKundli();
+                  }
+                },
           style: ElevatedButton.styleFrom(
             padding: EdgeInsets.zero,
             backgroundColor: Colors.transparent,

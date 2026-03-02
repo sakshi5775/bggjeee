@@ -66,7 +66,12 @@ class CartView extends GetView<CartController> {
                         ),
                       )
                     : SingleChildScrollView(
-                        padding: EdgeInsets.fromLTRB(18.w, 16.h, 18.w, 24.h),
+                        padding: EdgeInsets.only(
+                          left: 18.w,
+                          right: 18.w,
+                          top: 16.h,
+                          bottom: 24.h + 70.h + MediaQuery.of(context).padding.bottom,
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
