@@ -132,7 +132,7 @@ class LagnaChartWidget extends StatelessWidget {
             children: [
               _buildLegendChip('*', 'Retro'),
               _buildLegendChip('^', 'Combust'),
-              _buildLegendChip('□', 'Vargottama'),
+              // _buildLegendChip('□', 'Vargottama'),
               _buildLegendChip('↑', 'Exalt'),
               _buildLegendChip('↓', 'Debil'),
             ],

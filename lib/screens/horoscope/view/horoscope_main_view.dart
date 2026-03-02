@@ -165,7 +165,7 @@ class HoroscopeMainView extends StatelessWidget {
                             curve: Curves.easeOut,
                             padding: EdgeInsets.symmetric(
                               horizontal: 14.w,
-                              // vertical: 8.h,
+                              vertical: 8.h,
                             ),
                             decoration: BoxDecoration(
                               gradient: isSelected

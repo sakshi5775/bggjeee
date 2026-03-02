@@ -85,18 +85,31 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                 decoration: BoxDecoration(
-                  gradient: AppColors.orangeGradient,
+                  gradient: selectedIndex == 0
+                      ? AppColors.orangeGradient
+                      : null,
+                  color: selectedIndex == 0 ? null : Colors.white,
                   borderRadius: BorderRadius.circular(12.r),
+                  border: selectedIndex == 0
+                      ? null
+                      : Border.all(
+                          color: maroon.withValues(alpha: 0.2),
+                          width: 1,
+                        ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.view_module, size: 14.w, color: Colors.white),
+                    Icon(
+                      Icons.view_module,
+                      size: 14.w,
+                      color: selectedIndex == 0 ? Colors.white : maroon,
+                    ),
                     SizedBox(width: 6.w),
                     AutoTranslateText(
                       'Divisions',
                       style: MyTextTheme.mediumBCB.copyWith(
-                        color: Colors.white,
+                        color: selectedIndex == 0 ? Colors.white : maroon,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -105,60 +118,91 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
               ),
             ),
             Expanded(
-              child: SingleChildScrollView(
-                controller: controller.tabsScrollController,
-                scrollDirection: Axis.horizontal,
-                physics: const BouncingScrollPhysics(),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(width: 4.w),
-                    ...controller.tabs.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final tab = entry.value;
-                      final isSelected = selectedIndex == index;
-                      return Padding(
-                        padding: EdgeInsets.only(right: 6.w),
-                        child: GestureDetector(
-                          onTap: () => controller.onTabSelected(index),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            curve: Curves.easeOut,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 12.w,
-                              vertical: 8.h,
-                            ),
-                            decoration: BoxDecoration(
-                              gradient: isSelected
-                                  ? AppColors.orangeGradient
-                                  : null,
-                              borderRadius: BorderRadius.circular(12.r),
-                              border: isSelected
-                                  ? null
-                                  : Border.all(
-                                      color: maroon.withValues(alpha: 0.2),
-                                      width: 1,
-                                    ),
-                            ),
-                            child: Center(
-                              child: AutoTranslateText(
-                                tab,
-                                style: MyTextTheme.mediumBCB.copyWith(
-                                  color: isSelected ? Colors.white : maroon,
-                                  fontWeight: isSelected
-                                      ? FontWeight.w700
-                                      : FontWeight.w500,
+              child: Obx(() {
+                final selectedIndex = controller.selectedTabIndex.value;
+
+                // Centering logic inside the Obx to trigger on index change
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  final scrollController = controller.tabsScrollController;
+                  if (!scrollController.hasClients) return;
+
+                  final key = controller.tabKeys[selectedIndex];
+                  if (key?.currentContext != null) {
+                    final renderObject = key!.currentContext!
+                        .findRenderObject();
+                    if (renderObject is RenderBox && renderObject.hasSize) {
+                      Scrollable.ensureVisible(
+                        key.currentContext!,
+                        alignment: 0.5, // Center the tab
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOut,
+                      );
+                    }
+                  }
+                });
+
+                return SingleChildScrollView(
+                  controller: controller.tabsScrollController,
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(width: 4.w),
+                      ...controller.tabs.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final tab = entry.value;
+                        final isSelected = selectedIndex == index;
+
+                        // Assign GlobalKey for centering
+                        if (!controller.tabKeys.containsKey(index)) {
+                          controller.tabKeys[index] = GlobalKey();
+                        }
+
+                        return Padding(
+                          key: controller.tabKeys[index],
+                          padding: EdgeInsets.only(right: 6.w),
+                          child: GestureDetector(
+                            onTap: () => controller.onTabSelected(index),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              curve: Curves.easeOut,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 12.w,
+                                vertical: 8.h,
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: isSelected
+                                    ? AppColors.orangeGradient
+                                    : null,
+                                borderRadius: BorderRadius.circular(12.r),
+                                border: isSelected
+                                    ? null
+                                    : Border.all(
+                                        color: maroon.withValues(alpha: 0.2),
+                                        width: 1,
+                                      ),
+                              ),
+                              child: Center(
+                                child: AutoTranslateText(
+                                  tab,
+                                  style: MyTextTheme.mediumBCB.copyWith(
+                                    color: isSelected ? Colors.white : maroon,
+                                    fontWeight: isSelected
+                                        ? FontWeight.w700
+                                        : FontWeight.w500,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      );
-                    }),
-                    SizedBox(width: 10.w),
-                  ],
-                ),
-              ),
+                        );
+                      }),
+                      SizedBox(width: 10.w),
+                    ],
+                  ),
+                );
+              }),
             ),
           ],
         );

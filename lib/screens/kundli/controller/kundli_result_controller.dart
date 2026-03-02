@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/screens/navtara/controller/navtara_controller.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
 import 'package:intl/intl.dart';
 
 class KundliResultController extends BaseController {
@@ -22,29 +23,29 @@ class KundliResultController extends BaseController {
   // PageController for swipeable tabs
   late PageController pageController;
 
-  // ScrollController for tabs
+  // ScrollController for horizontal tab bar
   final ScrollController tabsScrollController = ScrollController();
 
-  // Map to store GlobalKeys for each tab
+  // Map to store GlobalKeys for each tab to enable auto-centering
   final Map<int, GlobalKey> tabKeys = {};
 
   // Tabs
   final tabs = [
     'Basic',
-    'Lagna',
-    'Navamsha',
-    'Sun',
-    'Moon',
-    'Bhav-Chalit',
     'Birth Details',
-    'Ashtakvarga',
+    'Lagna Chart',
+    'Navamsha Chart',
+    'Sun Chart',
+    'Moon Chart',
+    'Bhav-Chalit Chart',
+    'Ashtakvarga Table',
     'Divisional Chart',
     'Shad Bala',
     'Planets',
     'Summary(lagna) Report',
     'Panchang',
-    'Binnashtakvarga',
-    'Transit',
+    'Binnashtakvarga Chart',
+    'Transit Chart',
     'Ashtakvarga Chart',
     'Bhav Madhya',
     'Person Details',
@@ -121,26 +122,25 @@ class KundliResultController extends BaseController {
 
   // Feature list items (left column)
   final leftColumnFeatures = [
-    'Lagna',
-    'Sun',
-    'Bhav-Chalit',
+    'Lagna Chart',
+    'Sun Chart',
+    'Moon Chart',
+    'Divisional Chart',
 
     'Birth Details',
-    'Ashtakvarga',
-    'Divisional Chart',
+    'Ashtakvarga Table',
     'Shad Bala',
     'Summary(lagna) Report',
   ];
 
   // Feature list items (right column)
   final rightColumnFeatures = [
-    'Navamsha',
-    'Moon',
+    'Navamsha Chart',
     'Planets',
 
     'Panchang',
-    'Binnashtakvarga',
-    'Transit',
+    'Binnashtakvarga Chart',
+    'Transit Chart',
     'Ashtakvarga Chart',
   ];
 
@@ -647,7 +647,7 @@ class KundliResultController extends BaseController {
 
   void onTabSelected(int index) {
     // Clear Lagna "Planet" selection when switching away from Lagna tab
-    const lagnaIndex = 1;
+    const lagnaIndex = 2; // Fixed index
     if (index != lagnaIndex) {
       selectedLagnaAction.value = null;
     }
@@ -667,25 +667,25 @@ class KundliResultController extends BaseController {
     }
 
     // Fetch Navamsha chart when NAVAMSHA tab is selected
-    if (index == 2) {
+    if (index == 3) {
       // NAVAMSHA tab index
       fetchNavamshaChart();
     }
 
     // Fetch Sun chart when SUN tab is selected
-    if (index == 3) {
+    if (index == 4) {
       // SUN tab index
       fetchSunChart();
     }
 
     // Fetch Moon chart when MOON tab is selected
-    if (index == 4) {
+    if (index == 5) {
       // MOON tab index
       fetchMoonChart();
     }
 
     // Fetch Chalit chart when CHALIT tab is selected
-    if (index == 5) {
+    if (index == 6) {
       // BHAV-CHALIT tab index
       fetchChalitChart();
     }
@@ -707,7 +707,7 @@ class KundliResultController extends BaseController {
     }
 
     // Fetch Planet details when LAGNA or PLANETS tab is selected
-    if (index == 1) {
+    if (index == 2) {
       fetchPlanetDetails();
     }
     final planetsIndex = tabs.indexWhere(
@@ -735,7 +735,7 @@ class KundliResultController extends BaseController {
 
     // Fetch Ashtakvarga data when ASHTAKVARGA tab is selected
     final ashtakvargaIndex = tabs.indexWhere(
-      (tab) => tab.toLowerCase() == 'ashtakvarga',
+      (tab) => tab.toLowerCase().contains('ashtakvarga'),
     );
     if (ashtakvargaIndex != -1 && index == ashtakvargaIndex) {
       fetchAshtakvargaData();
@@ -2018,7 +2018,10 @@ class KundliResultController extends BaseController {
 
     // Handle Varshphal - open standalone Varshphal page (like Dasha, Dosh)
     if (featureLower == 'varshphal') {
-      UserMainController.pushInCurrentTab(AppRoutes.varshphal, arguments: {'formData': formData.value});
+      UserMainController.pushInCurrentTab(
+        AppRoutes.varshphal,
+        arguments: {'formData': formData.value},
+      );
       return;
     }
 
@@ -2031,22 +2034,30 @@ class KundliResultController extends BaseController {
 
     // Map feature names to tab names
     final Map<String, String> featureToTabMap = {
-      'lagna': 'Lagna',
-      'navamsha': 'Navamsha',
-      'sun': 'Sun',
-      'moon': 'Moon',
-      'chalit': 'Bhav-Chalit',
+      'lagna chart': 'Lagna Chart',
+      'lagna': 'Lagna Chart',
+      'navamsha chart': 'Navamsha Chart',
+      'navamsha': 'Navamsha Chart',
+      'sun chart': 'Sun Chart',
+      'sun': 'Sun Chart',
+      'moon chart': 'Moon Chart',
+      'moon': 'Moon Chart',
+      'bhav-chalit chart': 'Bhav-Chalit Chart',
+      'chalit': 'Bhav-Chalit Chart',
       'planets-sub': 'Planets-Sub',
       'birth details': 'Birth Details',
-      'ashtakvarga': 'Ashtakvarga',
-      'Divisional Chart': 'Divisional Chart',
+      'ashtakvarga table': 'Ashtakvarga Table',
+      'ashtakvarga': 'Ashtakvarga Table',
+      'divisional chart': 'Divisional Chart',
       'shad bala': 'Shad Bala',
       'summary(lagna) report': 'Summary(lagna) Report',
       'chalit table': 'Chalit Table',
       'panchang': 'Panchang',
-      'Binnashtakvarga': 'Binnashtakvarga',
-      'transit': 'Transit',
-      'Ashtakvarga Chart': 'Ashtakvarga Chart',
+      'binnashtakvarga chart': 'Binnashtakvarga Chart',
+      'binnashtakvarga': 'Binnashtakvarga Chart',
+      'transit chart': 'Transit Chart',
+      'transit': 'Transit Chart',
+      'ashtakvarga chart': 'Ashtakvarga Chart',
       'bhav madhya': 'Bhav Madhya',
       'person details': 'Person Details',
       'ghatak and favourable': 'Ghatak and Favourable',
@@ -2087,21 +2098,30 @@ class KundliResultController extends BaseController {
     // Handle Dasha navigation
     if (feature.toLowerCase() == 'dasha') {
       // Pass form data to Dasha view
-      UserMainController.pushInCurrentTab(AppRoutes.dasha, arguments: {'formData': formData.value});
+      UserMainController.pushInCurrentTab(
+        AppRoutes.dasha,
+        arguments: {'formData': formData.value},
+      );
       return;
     }
 
     // Handle Yog navigation
     if (feature.toLowerCase() == 'yog') {
       // Pass form data to Yog view
-      UserMainController.pushInCurrentTab(AppRoutes.yog, arguments: {'formData': formData.value});
+      UserMainController.pushInCurrentTab(
+        AppRoutes.yog,
+        arguments: {'formData': formData.value},
+      );
       return;
     }
 
     // Handle Dosh navigation
     if (feature.toLowerCase() == 'dosh') {
       // Pass form data to Dosh view
-      UserMainController.pushInCurrentTab(AppRoutes.dosh, arguments: {'formData': formData.value});
+      UserMainController.pushInCurrentTab(
+        AppRoutes.dosh,
+        arguments: {'formData': formData.value},
+      );
       return;
     }
 
@@ -2109,7 +2129,10 @@ class KundliResultController extends BaseController {
     if (feature.toLowerCase() == 'kp system' ||
         feature.toLowerCase().contains('kp')) {
       // Pass form data to KP System view
-      UserMainController.pushInCurrentTab(AppRoutes.kpSystem, arguments: {'formData': formData.value});
+      UserMainController.pushInCurrentTab(
+        AppRoutes.kpSystem,
+        arguments: {'formData': formData.value},
+      );
       return;
     }
 
@@ -2117,7 +2140,10 @@ class KundliResultController extends BaseController {
     if (feature.toLowerCase().contains('lal kitab') ||
         feature.toLowerCase().contains('lal')) {
       // Pass form data to Lal Kitab view
-      UserMainController.pushInCurrentTab(AppRoutes.lalKitab, arguments: {'formData': formData.value});
+      UserMainController.pushInCurrentTab(
+        AppRoutes.lalKitab,
+        arguments: {'formData': formData.value},
+      );
       return;
     }
 
@@ -2134,6 +2160,15 @@ class KundliResultController extends BaseController {
 
     // Handle Navtara navigation - switch to Navtara tab
     if (featureLower.contains('navtara')) {
+      // Balance Check
+      if (Get.isRegistered<AiPricingController>()) {
+        final pricingController = Get.find<AiPricingController>();
+        if (!pricingController.hasSufficientBalance('navtara')) {
+          pricingController.showInsufficientBalancePopup('navtara');
+          return;
+        }
+      }
+
       debugPrint('Navtara feature tapped. Initiating transition...');
 
       // 1. Ensure Nakshatra is available via standard planet details (Moon Sign logic)
