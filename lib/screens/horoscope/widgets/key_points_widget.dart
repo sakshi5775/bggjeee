@@ -51,13 +51,13 @@ class KeyPointsWidget extends StatelessWidget {
       final groupedData = _groupDataByCategory(data);
 
       return SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 2.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Title Section
-            _buildTitleSection(),
-            Spacing.h(20),
+            //  _buildTitleSection(),
+            //  Spacing.h(20),
 
             // Display tables for each category
             if (groupedData['basic'] != null &&
@@ -106,60 +106,60 @@ class KeyPointsWidget extends StatelessWidget {
     });
   }
 
-  Widget _buildTitleSection() {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
-      decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.deepOrange.withValues(alpha: 0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(12.w),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-            child: Icon(
-              Icons.star_rounded,
-              color: AppColors.golden,
-              size: 28.w,
-            ),
-          ),
-          Spacing.w(16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AutoTranslateText(
-                  'Key Points',
-                  style: MyTextTheme.largeBCB.copyWith(
-                    color: AppColors.golden,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Spacing.h(4),
-                AutoTranslateText(
-                  'Extended Kundali Information',
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: AppColors.golden.withValues(alpha: 0.9),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildTitleSection() {
+  //   return Container(
+  //     padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
+  //     decoration: BoxDecoration(
+  //       gradient: AppColors.primaryGradient,
+  //       borderRadius: BorderRadius.circular(16.r),
+  //       boxShadow: [
+  //         BoxShadow(
+  //           color: AppColors.deepOrange.withValues(alpha: 0.3),
+  //           blurRadius: 12,
+  //           offset: const Offset(0, 4),
+  //         ),
+  //       ],
+  //     ),
+  //     child: Row(
+  //       children: [
+  //         Container(
+  //           padding: EdgeInsets.all(12.w),
+  //           decoration: BoxDecoration(
+  //             color: Colors.white.withValues(alpha: 0.2),
+  //             borderRadius: BorderRadius.circular(12.r),
+  //           ),
+  //           child: Icon(
+  //             Icons.star_rounded,
+  //             color: AppColors.golden,
+  //             size: 28.w,
+  //           ),
+  //         ),
+  //         // Spacing.w(16),
+  //         // Expanded(
+  //         //   child: Column(
+  //         //     crossAxisAlignment: CrossAxisAlignment.start,
+  //         //     children: [
+  //         //       AutoTranslateText(
+  //         //         'Key Points',
+  //         //         style: MyTextTheme.largeBCB.copyWith(
+  //         //           color: AppColors.golden,
+  //         //           fontWeight: FontWeight.bold,
+  //         //         ),
+  //         //       ),
+  //         //       Spacing.h(4),
+  //         //       AutoTranslateText(
+  //         //         'Extended Kundali Information',
+  //         //         style: MyTextTheme.mediumBCN.copyWith(
+  //         //           color: AppColors.golden.withValues(alpha: 0.9),
+  //         //         ),
+  //         //       ),
+  //         //     ],
+  //         //   ),
+  //         // ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Map<String, Map<String, String>> _groupDataByCategory(
     Map<String, dynamic> data,

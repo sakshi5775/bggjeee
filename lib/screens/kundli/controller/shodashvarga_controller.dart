@@ -11,6 +11,9 @@ class ShodashvargaController extends BaseController {
   // ScrollController for horizontal tab bar
   final ScrollController tabsScrollController = ScrollController();
 
+  // Map to store GlobalKeys for each tab to enable auto-centering
+  final Map<int, GlobalKey> tabKeys = {};
+
   // PageController for swipeable tabs
   late PageController pageController;
 

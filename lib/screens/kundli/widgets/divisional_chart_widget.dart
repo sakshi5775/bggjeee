@@ -125,10 +125,11 @@ class DivisionalChartWidget extends StatelessWidget {
         height: 36.h,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
-          itemCount: divisions.length,
+          physics: const BouncingScrollPhysics(),
+          itemCount: DivisionalChartWidget.divisions.length,
           separatorBuilder: (_, __) => SizedBox(width: 6.w),
           itemBuilder: (context, index) {
-            final d = divisions[index];
+            final d = DivisionalChartWidget.divisions[index];
             final code = d['code']!;
             final isSelected = selectedDivision == code;
             return GestureDetector(
@@ -236,7 +237,7 @@ class DivisionalChartWidget extends StatelessWidget {
     String selectedDivision,
     String svgData,
   ) {
-    final divisionInfo = divisions.firstWhere(
+    final divisionInfo = DivisionalChartWidget.divisions.firstWhere(
       (d) => d['code'] == selectedDivision,
       orElse: () => {
         'code': selectedDivision,

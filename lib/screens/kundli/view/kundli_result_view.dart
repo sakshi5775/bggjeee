@@ -42,7 +42,7 @@ class KundliResultView extends BasePage<KundliResultController> {
         backgroundColor: Colors.transparent,
         body: Column(
           children: [
-            const CommonHeader(title: 'Kundli Report'),
+            CommonHeader(title: 'Kundli Report', showBackButton: true),
             _buildTabs(),
             Expanded(
               child: PageView.builder(
@@ -77,7 +77,7 @@ class KundliResultView extends BasePage<KundliResultController> {
         return Row(
           children: [
             Padding(
-              padding: EdgeInsets.only(left: 12.w, right: 10.w),
+              padding: EdgeInsets.only(left: 12.w),
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
                 decoration: BoxDecoration(
@@ -89,39 +89,39 @@ class KundliResultView extends BasePage<KundliResultController> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(6.r),
-                      child: CachedNetworkImage(
-                        imageUrl: AppConstant.serviceGenerateKundali,
-                        width: 24.w,
-                        height: 24.w,
-                        fit: BoxFit.contain,
-                        placeholder: (_, __) => SizedBox(
-                          width: 24.w,
-                          height: 24.w,
-                          child: Center(
-                            child: SizedBox(
-                              width: 12.w,
-                              height: 12.w,
-                              child: const CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                        errorWidget: (_, __, ___) => Icon(
-                          Icons.auto_stories_rounded,
-                          size: 14.w,
-                          color: Colors.white,
-                        ),
-                      ),
+                      // child: CachedNetworkImage(
+                      //   imageUrl: AppConstant.serviceGenerateKundali,
+                      //   width: 24.w,
+                      //   height: 24.w,
+                      //   fit: BoxFit.contain,
+                      //   placeholder: (_, __) => SizedBox(
+                      //     width: 24.w,
+                      //     height: 24.w,
+                      //     child: Center(
+                      //       child: SizedBox(
+                      //         width: 12.w,
+                      //         height: 12.w,
+                      //         child: const CircularProgressIndicator(
+                      //           strokeWidth: 2,
+                      //           color: Colors.white,
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ),
+                      //   errorWidget: (_, __, ___) => Icon(
+                      //     Icons.auto_stories_rounded,
+                      //     size: 14.w,
+                      //     color: Colors.white,
+                      //   ),
+                      // ),
                     ),
-                    SizedBox(width: 6.w),
+                    //   SizedBox(width: 6.w),
                     AutoTranslateText(
                       'Kundli Report',
                       style: MyTextTheme.mediumBCB.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
-                        fontSize: 11.sp,
+                        fontSize: 13.sp,
                       ),
                     ),
                   ],
@@ -334,7 +334,7 @@ class KundliResultView extends BasePage<KundliResultController> {
 
   Widget _buildFeatureList() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 4.w),
+      margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 10.h),
       decoration: BoxDecoration(
         color: AppColors.cardLight,
         borderRadius: BorderRadius.circular(12.r),
@@ -425,17 +425,17 @@ class KundliResultView extends BasePage<KundliResultController> {
     );
   }
 
-  static String? _featureListImageUrl(String title) {
-    final t = title.toLowerCase();
-    if (t == 'panchang') return AppConstant.servicePanchang;
-    return null;
-  }
+  // static String? _featureListImageUrl(String title) {
+  //   final t = title.toLowerCase();
+  //   if (t == 'panchang') return AppConstant.servicePanchang;
+  //   return null;
+  // }
 
   Widget _buildFeatureListItem({
     required String title,
     required VoidCallback onTap,
   }) {
-    final imageUrl = _featureListImageUrl(title);
+    // final imageUrl = _featureListImageUrl(title);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -459,21 +459,6 @@ class KundliResultView extends BasePage<KundliResultController> {
         ),
         child: Row(
           children: [
-            if (imageUrl != null) ...[
-              ClipRRect(
-                borderRadius: BorderRadius.circular(6.r),
-                child: CachedNetworkImage(
-                  imageUrl: imageUrl,
-                  width: 28.w,
-                  height: 28.w,
-                  fit: BoxFit.contain,
-                  placeholder: (_, __) => SizedBox(width: 28.w, height: 28.w),
-                  errorWidget: (_, __, ___) =>
-                      SizedBox(width: 28.w, height: 28.w),
-                ),
-              ),
-              SizedBox(width: 10.w),
-            ],
             Expanded(
               child: AutoTranslateText(
                 title,
@@ -598,104 +583,60 @@ class KundliResultView extends BasePage<KundliResultController> {
   Widget _buildTabContent(int index) {
     final tabName = controller.tabs[index].toLowerCase();
 
-    // Show Basic chart (index 0)
-    if (index == 0) {
-      return _buildOtherTabsContent();
-    }
+    // Mapping based on index for efficiency and tabName for fallback/clarity
+    if (index == 0) return _buildOtherTabsContent();
+    if (index == 1) return BirthDetailsWidget(controller: controller);
+    if (index == 2) return const LagnaChartWidget();
+    if (index == 3) return const NavamshaChartWidget();
+    if (index == 4) return const SunChartWidget();
+    if (index == 5) return const MoonChartWidget();
+    if (index == 6) return const ChalitChartWidget();
 
-    // Show SVG chart when LAGNA tab is selected
-    if (index == 1) {
-      return const LagnaChartWidget();
-    }
-
-    // Show Navamsha chart when NAVAMSHA tab is selected
-    if (index == 2) {
-      return const NavamshaChartWidget();
-    }
-
-    // Show Sun chart when SUN tab is selected
-    if (index == 3) {
-      return const SunChartWidget();
-    }
-
-    // Show Moon chart when MOON tab is selected
-    if (index == 4) {
-      return const MoonChartWidget();
-    }
-
-    // Show Chalit chart when BHAV-CHALIT tab is selected
-    if (index == 5) {
-      return const ChalitChartWidget();
-    }
-
-    // Show Birth Details when BIRTH DETAILS tab is selected
-    if (tabName == 'birth details') {
-      return BirthDetailsWidget(controller: controller);
-    }
-
-    // Show Ashtakvarga when ASHTAKVARGA tab is selected
-    if (tabName == 'ashtakvarga') {
+    // Other tabs using tabName for better mapping
+    if (tabName.contains('ashtakvarga table') || tabName == 'ashtakvarga') {
       return AshtakvargaWidget(controller: controller);
     }
-
-    // Show Divisional Chart when DIVISIONAL CHART tab is selected
-    if (tabName == 'divisional chart') {
+    if (tabName.contains('divisional chart')) {
       return DivisionalChartWidget(controller: controller);
     }
-
-    // Show Planets tab: header + slider bar + PlanetsWidget below
-    if (tabName == 'planets') {
+    if (tabName.contains('planets')) {
       return PlanetsTabWidget(controller: controller);
     }
-
-    // Show Ascendant Report when ASCENDANT REPORT tab is selected
-    if (tabName == 'summary(lagna) report') {
+    if (tabName.contains('summary(lagna) report')) {
       return AscendantReportWidget(controller: controller);
     }
-
-    // Show Daily Panchang when PANCHANG tab is selected
-    if (tabName == 'panchang') {
+    if (tabName.contains('panchang')) {
       return DailyPanchangWidget(controller: controller);
     }
-
-    // Show Binnashtakvarga when BINNASHTAKVARGA tab is selected
-    if (tabName == 'binnashtakvarga') {
+    if (tabName.contains('binnashtakvarga')) {
       return BinnashtakvargaWidget(controller: controller);
     }
-
-    // Show Transit chart when TRANSIT tab is selected
-    if (tabName == 'transit') {
+    if (tabName.contains('transit')) {
       return const TransitChartWidget();
     }
-
-    // Show Ashtakvarga Chart when ASHTAKVARGA CHART tab is selected
     if (tabName == 'ashtakvarga chart') {
       return AshtakvargaChartWidget(controller: controller);
     }
-
-    // Varshphal opens as standalone page (see onFeatureTap)
-
-    // Show Shad Bala when Shad Bala tab is selected
     if (tabName == 'shad bala') {
       return ShadBalaWidget(controller: controller);
     }
 
-    // Show "Coming Soon" for additional features tabs
-    final additionalFeaturesTabs = [
-      'bhav madhya',
-      'person details',
-      'ghatak and favourable',
-      'reports',
-      'friendship',
-      'avkahada chakra',
-      'download pdf',
-    ];
-
-    if (additionalFeaturesTabs.contains(tabName)) {
-      return _buildComingSoonContent(tabName);
+    // "Coming Soon" for other hidden tabs
+    if (controller.visibleTabIndices.contains(index)) {
+      final comingSoonTabs = [
+        'bhav madhya',
+        'person details',
+        'ghatak and favourable',
+        'reports',
+        'friendship',
+        'avkahada chakra',
+        'download pdf',
+      ];
+      if (comingSoonTabs.contains(tabName)) {
+        return _buildComingSoonContent(tabName);
+      }
     }
 
-    // Show features for other tabs
     return _buildOtherTabsContent();
   }
 
