@@ -391,60 +391,20 @@ class _ChatHistoryTab extends StatelessWidget {
             ],
           ),
           Spacing.h(12),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => controller.viewChatHistory(session.chatId),
-                  icon: Icon(Icons.chat_bubble_outline, size: 16.w),
-                  label: AutoTranslateText(
-                    'View Chat',
-                    style: AppTypography.label,
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.orangeGradient.colors.first,
-                    side: BorderSide(
-                      color: AppColors.orangeGradient.colors.first,
-                      width: 1.5,
-                    ),
-                  ),
-                ),
+          OutlinedButton.icon(
+            onPressed: () => controller.viewChatHistory(session.chatId),
+            icon: Icon(Icons.chat_bubble_outline, size: 16.w),
+            label: AutoTranslateText(
+              'View Chat',
+              style: AppTypography.label,
+            ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.orangeGradient.colors.first,
+              side: BorderSide(
+                color: AppColors.orangeGradient.colors.first,
+                width: 1.5,
               ),
-              Spacing.w(12),
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: AppColors.orangeGradient,
-                    borderRadius: BorderRadius.circular(8.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.orangeGradient.colors.first.withValues(alpha: 0.3),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: ElevatedButton.icon(
-                    onPressed: () =>
-                        controller.downloadChatTranscript(session.chatId),
-                    icon: Icon(Icons.download_rounded, size: 16.w),
-                    label: AutoTranslateText(
-                      'Download',
-                      style: AppTypography.label.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      foregroundColor: Colors.white,
-                      shadowColor: Colors.transparent,
-                      elevation: 0,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ],
       ),

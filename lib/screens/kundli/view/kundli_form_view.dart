@@ -16,6 +16,12 @@ import 'package:intl/intl.dart';
 class KundliFormView extends BasePage<KundliFormController> {
   const KundliFormView({super.key});
 
+  // Persistent form key to prevent rebuilds from losing focus
+  static final _formKey = GlobalKey<FormState>();
+  
+  // Focus node for name field to maintain focus
+  static final _nameFocusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -34,15 +40,7 @@ class KundliFormView extends BasePage<KundliFormController> {
                 if (controller.selectedTabIndex.value == 0) {
                   return _buildSavedKundliTab();
                 } else {
-                  return SingleChildScrollView(
-                    padding: EdgeInsets.only(
-                      left: 16.w,
-                      right: 16.w,
-                      top: 0.h,
-                      bottom: 16.h + 70.h + MediaQuery.of(context).padding.bottom,
-                    ),
-                    child: _buildFormSection(),
-                  );
+                  return _buildFormContent();
                 }
               }),
             ),
@@ -612,13 +610,26 @@ class KundliFormView extends BasePage<KundliFormController> {
     );
   }
 
+  Widget _buildFormContent() {
+    return Builder(
+      builder: (context) => SingleChildScrollView(
+        padding: EdgeInsets.only(
+          left: 16.w,
+          right: 16.w,
+          top: 0.h,
+          bottom: 16.h + 70.h + MediaQuery.of(context).padding.bottom,
+        ),
+        child: _buildFormSection(),
+      ),
+    );
+  }
+
   Widget _buildFormSection() {
-    final formKey = GlobalKey<FormState>();
     return Container(
       decoration: _formCardDecoration(),
       padding: EdgeInsets.all(16.w),
       child: Form(
-        key: formKey,
+        key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -641,19 +652,17 @@ class KundliFormView extends BasePage<KundliFormController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: SizedBox(
-                  height: 50.h,
-                  child: _buildCompactField(
-                    controller: controller.nameController,
-                    hint: 'Full Name',
-                    icon: Icons.person_outline,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Please enter full name';
-                      }
-                      return null;
-                    },
-                  ),
+                child: _buildCompactField(
+                  controller: controller.nameController,
+                  focusNode: _nameFocusNode,
+                  hint: 'Full Name',
+                  icon: Icons.person_outline,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter full name';
+                    }
+                    return null;
+                  },
                 ),
               ),
               SizedBox(width: 10.w),
@@ -709,7 +718,7 @@ class KundliFormView extends BasePage<KundliFormController> {
           // Save Your Kundli checkbox
           _buildSaveCheckbox(),
           Spacing.h(16),
-          _buildSubmitButton(formKey),
+          _buildSubmitButton(_formKey),
         ],
       ),
       ),
@@ -831,43 +840,51 @@ class KundliFormView extends BasePage<KundliFormController> {
 
   Widget _buildCompactField({
     required TextEditingController controller,
+    FocusNode? focusNode,
     required String hint,
     required IconData icon,
     bool readOnly = false,
     VoidCallback? onTap,
     String? Function(String?)? validator,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.deepOrange.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.deepOrange.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: TextFormField(
+          controller: controller,
+          focusNode: focusNode,
+          readOnly: readOnly,
+          enabled: !readOnly || onTap != null,
+          onTap: onTap,
+          validator: validator,
+          keyboardType: readOnly ? null : TextInputType.text,
+          textInputAction: TextInputAction.next,
+          style: MyTextTheme.mediumBCN.copyWith(color: AppColors.textColorMaroon),
+          decoration: _inputDecoration(
+            hint: hint,
+            icon: icon,
+            suffix: readOnly && onTap != null
+                ? Padding(
+                    padding: EdgeInsets.only(right: 10.w),
+                    child: Icon(
+                      Icons.arrow_forward_ios,
+                      color: AppColors.deepOrange,
+                      size: 12.w,
+                    ),
+                  )
+                : null,
           ),
-        ],
-      ),
-      child: TextFormField(
-        controller: controller,
-        readOnly: readOnly,
-        onTap: onTap,
-        validator: validator,
-        style: MyTextTheme.mediumBCN.copyWith(color: AppColors.textColorMaroon),
-        decoration: _inputDecoration(
-          hint: hint,
-          icon: icon,
-          suffix: readOnly && onTap != null
-              ? Padding(
-                  padding: EdgeInsets.only(right: 10.w),
-                  child: Icon(
-                    Icons.arrow_forward_ios,
-                    color: AppColors.deepOrange,
-                    size: 12.w,
-                  ),
-                )
-              : null,
         ),
       ),
     );

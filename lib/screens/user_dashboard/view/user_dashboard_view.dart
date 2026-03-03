@@ -154,11 +154,11 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   bottom: 10.h,
                   child: _buildCircularChatButton(),
                 ),
-                Positioned(
-                  left: 20.w,
-                  bottom: 10.h,
-                  child: const FloatingAstrologerButton(),
-                ),
+                // Positioned(
+                //   left: 20.w,
+                //   bottom: 10.h,
+                //   child: const FloatingAstrologerButton(),
+                // ),
               ],
             ),
           ),

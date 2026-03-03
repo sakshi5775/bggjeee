@@ -42,6 +42,7 @@ class AscendantPredictionWidget extends StatelessWidget {
       final physical = response['physical'] as String? ?? '';
 
       return SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

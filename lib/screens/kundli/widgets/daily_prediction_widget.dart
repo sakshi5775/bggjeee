@@ -54,6 +54,7 @@ class DailyPredictionWidget extends StatelessWidget {
       final total = response['total'] as int? ?? 0;
 
       return SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
