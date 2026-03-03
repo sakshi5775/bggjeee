@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/controller/virtual_darshan_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/mandir_header_widget.dart';
@@ -408,35 +409,41 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
       width: double.infinity,
       height: double.infinity,
       decoration: const BoxDecoration(color: Colors.black),
-      child: Image.network(
-        imageUrl,
+      // child: Image.network(
+      //   imageUrl,
+      //   fit: BoxFit.cover,
+      //   width: double.infinity,
+      //   height: double.infinity,
+      //   loadingBuilder: (context, child, loadingProgress) {
+      //     if (loadingProgress == null) return child;
+      //     return Center(
+      //       child: CircularProgressIndicator(
+      //         value: loadingProgress.expectedTotalBytes != null
+      //             ? loadingProgress.cumulativeBytesLoaded /
+      //                   loadingProgress.expectedTotalBytes!
+      //             : null,
+      //         color: Colors.orange,
+      //       ),
+      //     );
+      //   },
+      //   errorBuilder: (context, error, stackTrace) {
+      //     return Center(
+      //       child: Column(
+      //         mainAxisAlignment: MainAxisAlignment.center,
+      //         children: [
+      //           const Icon(Icons.image, size: 48, color: Colors.white),
+      //           const SizedBox(height: 8),
+      //           const Text('loading...', style: TextStyle(color: Colors.white)),
+      //         ],
+      //       ),
+      //     );
+      //   },
+      // ),
+      child: NetworkImageWithLoader(
+        url: imageUrl,
         fit: BoxFit.cover,
         width: double.infinity,
         height: double.infinity,
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Center(
-            child: CircularProgressIndicator(
-              value: loadingProgress.expectedTotalBytes != null
-                  ? loadingProgress.cumulativeBytesLoaded /
-                        loadingProgress.expectedTotalBytes!
-                  : null,
-              color: Colors.orange,
-            ),
-          );
-        },
-        errorBuilder: (context, error, stackTrace) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.image, size: 48, color: Colors.white),
-                const SizedBox(height: 8),
-                const Text('loading...', style: TextStyle(color: Colors.white)),
-              ],
-            ),
-          );
-        },
       ),
     );
   }

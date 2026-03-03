@@ -97,7 +97,7 @@ class EndPoints {
   static const String walletEarn = 'sri-mandir/api/wallet/earn';
 
   /// special bhog
-  static String specialBhog(String id) => 'sri-mandir/api/special-bhog';
+  static String specialBhog(String id) => 'sri-mandir/api/bhog/god/$id';
 
   /// mandir items
   static const String mandirItems = 'sri-mandir/api/mandir-items';
