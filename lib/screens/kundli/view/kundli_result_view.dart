@@ -602,7 +602,7 @@ class KundliResultView extends BasePage<KundliResultController> {
     if (tabName.contains('planets')) {
       return PlanetsTabWidget(controller: controller);
     }
-    if (tabName.contains('summary(lagna) report')) {
+    if (tabName.contains('summary(lagna) report') || tabName.contains('lagna report')) {
       return AscendantReportWidget(controller: controller);
     }
     if (tabName.contains('panchang')) {

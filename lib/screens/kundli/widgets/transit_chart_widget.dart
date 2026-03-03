@@ -18,6 +18,13 @@ class TransitChartWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<KundliResultController>();
 
+    // Trigger fetch if data is not loaded
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (controller.transitSvgData.value == null || controller.transitSvgData.value!.isEmpty) {
+        controller.fetchTransitChart();
+      }
+    });
+
     return Obx(() {
       final svgData = controller.transitSvgData.value;
       if (svgData == null || svgData.isEmpty) {

@@ -689,9 +689,9 @@ class KundliResultController extends BaseController {
       fetchChalitChart();
     }
 
-    // Fetch Transit chart when TRANSIT tab is selected
+    // Fetch Transit chart when TRANSIT CHART tab is selected
     final transitIndex = tabs.indexWhere(
-      (tab) => tab.toLowerCase() == 'transit',
+      (tab) => tab.toLowerCase().contains('transit chart'),
     );
     if (transitIndex != -1 && index == transitIndex) {
       fetchTransitChart();
@@ -769,11 +769,11 @@ class KundliResultController extends BaseController {
       }
     }
 
-    // Fetch Ascendant Report when ASCENDANT REPORT tab is selected
-    final ascendantReportIndex = tabs.indexWhere(
-      (tab) => tab.toLowerCase() == 'summary(lagna) report',
+    // Fetch Ascendant Report when LAGNA REPORT tab is selected
+    final lagnaReportIndex = tabs.indexWhere(
+      (tab) => tab.toLowerCase() == 'lagna report',
     );
-    if (ascendantReportIndex != -1 && index == ascendantReportIndex) {
+    if (lagnaReportIndex != -1 && index == lagnaReportIndex) {
       fetchAscendantReport();
     }
 
@@ -1844,31 +1844,35 @@ class KundliResultController extends BaseController {
       return;
     }
 
-    // Handle Birth Details - switch to Birth Details tab
+    // Handle Lagna Chart - switch to Lagna Chart tab
     if (featureLower == 'lagna') {
-      final lagna = tabs.indexWhere((tab) => tab.toLowerCase() == 'lagna');
-      if (lagna != -1) {
-        onTabSelected(lagna);
-      }
-      return;
-    }
-
-    // Handle Birth Details - switch to Birth Details tab
-    if (featureLower == 'sun') {
-      final sun = tabs.indexWhere((tab) => tab.toLowerCase() == 'sun');
-      if (sun != -1) {
-        onTabSelected(sun);
-      }
-      return;
-    }
-
-    // Handle Birth Details - switch to Birth Details tab
-    if (featureLower == 'bhav-chalit') {
-      final generateChalit = tabs.indexWhere(
-        (tab) => tab.toLowerCase() == 'bhav-chalit',
+      final lagnaIndex = tabs.indexWhere(
+        (tab) => tab.toLowerCase().contains('lagna chart'),
       );
-      if (generateChalit != -1) {
-        onTabSelected(generateChalit);
+      if (lagnaIndex != -1) {
+        onTabSelected(lagnaIndex);
+      }
+      return;
+    }
+
+    // Handle Sun Chart - switch to Sun Chart tab
+    if (featureLower == 'sun') {
+      final sunIndex = tabs.indexWhere(
+        (tab) => tab.toLowerCase().contains('sun chart'),
+      );
+      if (sunIndex != -1) {
+        onTabSelected(sunIndex);
+      }
+      return;
+    }
+
+    // Handle Bhav-Chalit Chart - switch to Bhav-Chalit Chart tab
+    if (featureLower == 'bhav-chalit') {
+      final chalitIndex = tabs.indexWhere(
+        (tab) => tab.toLowerCase().contains('bhav-chalit chart'),
+      );
+      if (chalitIndex != -1) {
+        onTabSelected(chalitIndex);
       }
       return;
     }
@@ -1884,10 +1888,10 @@ class KundliResultController extends BaseController {
       return;
     }
 
-    // Handle Ashtakvarga - switch to Ashtakvarga tab
+    // Handle Ashtakvarga - switch to Ashtakvarga Table tab
     if (featureLower == 'ashtakvarga') {
       final ashtakvargaIndex = tabs.indexWhere(
-        (tab) => tab.toLowerCase() == 'ashtakvarga',
+        (tab) => tab.toLowerCase().contains('ashtakvarga table'),
       );
       if (ashtakvargaIndex != -1) {
         onTabSelected(ashtakvargaIndex);
@@ -1917,25 +1921,23 @@ class KundliResultController extends BaseController {
     //   return;
     // }
 
-    // Handle Ascendant Report - switch to Ascendant Report tab
-    if (featureLower == 'summary(lagna) report') {
-      final ascendantReportIndex = tabs.indexWhere(
-        (tab) => tab.toLowerCase() == 'summary(lagna) report',
+    // Handle Ascendant Report (Lagna Report) - switch to Lagna Report tab
+    if (featureLower == 'summary(lagna) report' || featureLower == 'lagna report') {
+      final lagnaReportIndex = tabs.indexWhere(
+        (tab) => tab.toLowerCase() == 'lagna report',
       );
-      if (ascendantReportIndex != -1) {
-        onTabSelected(ascendantReportIndex);
+      if (lagnaReportIndex != -1) {
+        onTabSelected(lagnaReportIndex);
       }
       return;
     }
 
-    // Handle Mangal Dosh - switch to Mangal Dosh tab
+    // Handle Mangal Dosh - navigate to Dosh page
     if (featureLower == 'mangal dosh') {
-      final shadBalaIndex = tabs.indexWhere(
-        (tab) => tab.toLowerCase() == 'shad bala',
+      UserMainController.pushInCurrentTab(
+        AppRoutes.dosh,
+        arguments: {'formData': formData.value},
       );
-      if (shadBalaIndex != -1) {
-        onTabSelected(shadBalaIndex);
-      }
       return;
     }
 
@@ -1950,10 +1952,10 @@ class KundliResultController extends BaseController {
       return;
     }
 
-    // Handle Birth Details - switch to Birth Details tab
+    // Handle Navamsha Chart - switch to Navamsha Chart tab
     if (featureLower == 'navamsha') {
       final navamshaIndex = tabs.indexWhere(
-        (tab) => tab.toLowerCase() == 'navamsha',
+        (tab) => tab.toLowerCase().contains('navamsha chart'),
       );
       if (navamshaIndex != -1) {
         onTabSelected(navamshaIndex);
@@ -1961,9 +1963,11 @@ class KundliResultController extends BaseController {
       return;
     }
 
-    // Handle Birth Details - switch to Birth Details tab
+    // Handle Moon Chart - switch to Moon Chart tab
     if (featureLower == 'moon') {
-      final moonIndex = tabs.indexWhere((tab) => tab.toLowerCase() == 'moon');
+      final moonIndex = tabs.indexWhere(
+        (tab) => tab.toLowerCase().contains('moon chart'),
+      );
       if (moonIndex != -1) {
         onTabSelected(moonIndex);
       }
@@ -1983,10 +1987,10 @@ class KundliResultController extends BaseController {
       return;
     }
 
-    // Handle Binnashtakvarga - switch to Binnashtakvarga tab
+    // Handle Binnashtakvarga Chart - switch to Binnashtakvarga Chart tab
     if (featureLower == 'binnashtakvarga') {
       final binnashtakvargaIndex = tabs.indexWhere(
-        (tab) => tab.toLowerCase() == 'binnashtakvarga',
+        (tab) => tab.toLowerCase().contains('binnashtakvarga chart'),
       );
       if (binnashtakvargaIndex != -1) {
         onTabSelected(binnashtakvargaIndex);
@@ -1994,10 +1998,10 @@ class KundliResultController extends BaseController {
       return;
     }
 
-    // Handle Binnashtakvarga - switch to Binnashtakvarga tab
+    // Handle Transit Chart - switch to Transit Chart tab
     if (featureLower == 'transit') {
       final transitIndex = tabs.indexWhere(
-        (tab) => tab.toLowerCase() == 'transit',
+        (tab) => tab.toLowerCase().contains('transit chart'),
       );
       if (transitIndex != -1) {
         onTabSelected(transitIndex);
@@ -2008,7 +2012,7 @@ class KundliResultController extends BaseController {
     // Handle Ashtakvarga Chart - switch to Ashtakvarga Chart tab
     if (featureLower == 'ashtakvarga chart') {
       final ashtakvargaChartIndex = tabs.indexWhere(
-        (tab) => tab.toLowerCase() == 'ashtakvarga chart',
+        (tab) => tab.toLowerCase().contains('ashtakvarga chart'),
       );
       if (ashtakvargaChartIndex != -1) {
         onTabSelected(ashtakvargaChartIndex);
