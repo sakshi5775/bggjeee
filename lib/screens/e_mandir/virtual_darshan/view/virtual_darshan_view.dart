@@ -336,6 +336,33 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
             ),
 
             Positioned(
+              bottom: 150.h,
+              right: 18.w,
+              child: InkWell(
+                onTap: () => _showMandirItemsBottomSheet(context, controller),
+                child: Container(
+                  width: 55.w,
+                  height: 55.h,
+                  padding: AppPaddings.all(5),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: AppColors.deepOrangemix,
+                      width: 2,
+                    ),
+                    gradient: AppColors.gradientBackground,
+                  ),
+                  child: Image.network(
+                    AppConstant.mandirItems,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) =>
+                        Image.asset(AppConstant.eMandirLibraryAarti),
+                  ),
+                ),
+              ),
+            ),
+
+            Positioned(
               bottom: 22.h,
               right: 18.w,
               child: InkWell(
@@ -636,6 +663,165 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                 ),
               SizedBox(height: 20.h),
             ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showMandirItemsBottomSheet(
+    BuildContext context,
+    VirtualDarshanController controller,
+  ) {
+    if (controller.mandirItemsData.value == null) {
+      Get.snackbar(
+        "Notice",
+        "No mandir items available",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    final data = controller.mandirItemsData.value!;
+
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      isScrollControlled: true,
+      builder: (_) {
+        return DefaultTabController(
+          length: 2,
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.5,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+              gradient: const LinearGradient(
+                colors: [Colors.white, Color(0xFFFFF6ED)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+            child: Column(
+              children: [
+                SizedBox(height: 10.h),
+                Container(
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade400,
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                ),
+                SizedBox(height: 15.h),
+                Text(
+                  "Customize Mandir",
+                  style: AppTypography.h3.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.deepOrangemix,
+                  ),
+                ),
+                TabBar(
+                  labelColor: AppColors.deepOrangemix,
+                  unselectedLabelColor: Colors.grey,
+                  indicatorColor: AppColors.deepOrangemix,
+                  tabs: const [
+                    Tab(text: "Bells"),
+                    Tab(text: "Mandir Arch"),
+                  ],
+                ),
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      // Bells Tab
+                      GridView.builder(
+                        padding: EdgeInsets.all(16.r),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          childAspectRatio: 0.8,
+                          crossAxisSpacing: 10.w,
+                          mainAxisSpacing: 10.h,
+                        ),
+                        itemCount: data.bells.length,
+                        itemBuilder: (context, index) {
+                          final bell = data.bells[index];
+                          return GestureDetector(
+                            onTap: () {
+                              controller.applyBellSelection(bell);
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12.r),
+                                border: Border.all(
+                                  color: Colors.orange.shade200,
+                                ),
+                                color: Colors.white,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Expanded(
+                                    child: Image.network(
+                                      bell.leftBell,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Image.network(
+                                      bell.rightBell,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      // Mandir Arch Tab
+                      GridView.builder(
+                        padding: EdgeInsets.all(16.r),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 1.5,
+                          crossAxisSpacing: 10.w,
+                          mainAxisSpacing: 10.h,
+                        ),
+                        itemCount: data.upperMandirFront.length,
+                        itemBuilder: (context, index) {
+                          final arch = data.upperMandirFront[index];
+                          return GestureDetector(
+                            onTap: () {
+                              controller.applyArchSelection(arch);
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12.r),
+                                border: Border.all(
+                                  color: Colors.orange.shade200,
+                                ),
+                                color: Colors.white,
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12.r),
+                                child: Image.network(
+                                  arch.image,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },

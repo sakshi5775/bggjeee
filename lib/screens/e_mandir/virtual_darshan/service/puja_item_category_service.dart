@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/puja_item_category_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/coin_action_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/special_bhog_model.dart';
+import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/mandir_items_model.dart';
 import 'package:get/get.dart';
 
 import '../../../../data_model/e_mandir_dataModels/e_mandir_home_model.dart';
@@ -123,15 +124,29 @@ class PujaItemCategoryService {
   }
 
   /// Get special bhog data for the day
-  Future<SpecialBhogResponse?> getSpecialBhog() async {
+  Future<SpecialBhogResponse?> getSpecialBhog(String id) async {
     try {
-      final response = await _apiRepository.getApi(EndPoints.specialBhog);
+      final response = await _apiRepository.getApi(EndPoints.specialBhog(id));
       if (response.statusCode == 200 || response.statusCode == 201) {
         return SpecialBhogResponse.fromJson(response.body);
       }
       return null;
     } catch (e) {
       print('Error fetching special bhog: $e');
+      return null;
+    }
+  }
+
+  /// Get customizable mandir items
+  Future<MandirItemsResponse?> getMandirItems() async {
+    try {
+      final response = await _apiRepository.getApi(EndPoints.mandirItems);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return MandirItemsResponse.fromJson(response.body);
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching mandir items: $e');
       return null;
     }
   }
