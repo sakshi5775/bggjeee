@@ -216,10 +216,12 @@ class MandirHeaderWidget extends StatelessWidget {
                   left: 0,
                   right: 0,
                   height: 80.h,
-                  child: Image.network(
-                    AppConstant.mandirHeaderImage,
-                    fit: BoxFit.fill,
-                    errorBuilder: (_, __, ___) => SizedBox(height: 80.h),
+                  child: Obx(
+                    () => Image.network(
+                      controller.selectedMandirArchImage.value,
+                      fit: BoxFit.fill,
+                      errorBuilder: (_, __, ___) => SizedBox(height: 80.h),
+                    ),
                   ),
                 ),
 
@@ -227,9 +229,11 @@ class MandirHeaderWidget extends StatelessWidget {
                 Positioned(
                   left: -42.w,
                   top: 40.h,
-                  child: _GhantaBell(
-                    imageUrl: AppConstant.rightGhantaImage,
-                    swingDirection: -1,
+                  child: Obx(
+                    () => _GhantaBell(
+                      imageUrl: controller.selectedLeftBellImage.value,
+                      swingDirection: -1,
+                    ),
                   ),
                 ),
 
@@ -237,9 +241,11 @@ class MandirHeaderWidget extends StatelessWidget {
                 Positioned(
                   right: -42.w,
                   top: 40.h,
-                  child: _GhantaBell(
-                    imageUrl: AppConstant.leftGhantaImage,
-                    swingDirection: 1,
+                  child: Obx(
+                    () => _GhantaBell(
+                      imageUrl: controller.selectedRightBellImage.value,
+                      swingDirection: 1,
+                    ),
                   ),
                 ),
               ],

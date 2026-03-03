@@ -126,11 +126,13 @@ class AppConstant {
   static const String videoThumbnail =
       'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/video+3d.png';
   static const String horoscopeGuru = 'assets/app/guru.png';
-  static const String divineShop = '$s3BaseUrl/Astro+Service/3D+Logos/digital+mart+3d.png';
+  static const String divineShop =
+      '$s3BaseUrl/Astro+Service/3D+Logos/digital+mart+3d.png';
   static const String ePooja = '$s3BaseUrl/Astro+Service/3D+Logos/pooja+3d.png';
   static const String aiAstrologer =
       'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/AIAstrologer.svg';
-  static const String education = '$s3BaseUrl/Astro+Service/3D+Logos/education+3d.png';
+  static const String education =
+      '$s3BaseUrl/Astro+Service/3D+Logos/education+3d.png';
   static const String poojaAnuj = 'assets/app/pooja_anuj.png';
   static const String poojaAbhishek = 'assets/app/pooja_abhishek.png';
   static const String chantingMala = 'assets/app/chanting_mala.png';
@@ -486,6 +488,9 @@ class AppConstant {
 
   static const String specialBhog =
       '$s3BaseUrl/Astro+Service/SpecialBhog__1_-removebg-preview.png';
+
+  static const String mandirItems =
+      '$s3BaseUrl/Astro+Service/MnadirItems+(1).png';
 
   ///
 

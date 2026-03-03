@@ -8,6 +8,7 @@ import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/go
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/puja_item_category_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/coin_action_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/special_bhog_model.dart';
+import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/mandir_items_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/service/god_category_service.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/service/puja_item_category_service.dart';
 
@@ -206,6 +207,14 @@ class VirtualDarshanController extends BaseController
   // Special Bhog Data
   final Rxn<SpecialBhogResponse> specialBhogData = Rxn<SpecialBhogResponse>();
 
+  // Mandir Items Selection State
+  final RxString selectedLeftBellImage = AppConstant.leftGhantaImage.obs;
+  final RxString selectedRightBellImage = AppConstant.rightGhantaImage.obs;
+  final RxString selectedMandirArchImage = AppConstant.mandirHeaderImage.obs;
+
+  // Mandir Items Data
+  final Rxn<MandirItemsData> mandirItemsData = Rxn<MandirItemsData>();
+
   // Offering Bottom Sheet Tab Controller
   TabController? offeringTabController;
 
@@ -249,9 +258,10 @@ class VirtualDarshanController extends BaseController
     // Fetch puja item categories from API
     _loadPujaItemCategories();
     // Fetch coin actions
+    // Fetch coin actions
     fetchCoinActions();
-    // Fetch special bhog
-    fetchSpecialBhogData();
+    // Fetch mandir items
+    fetchMandirItemsData();
   }
 
   Future<void> _loadPujaItemCategories() async {
@@ -398,6 +408,7 @@ class VirtualDarshanController extends BaseController
         currentCategoryIndex.value = 0;
         selectedGodID.value = godCategories.first.id.toString();
         await loadGodCategoryImages(godCategories.first.id);
+        await fetchSpecialBhogData(godCategories.first.id);
         // Fetch aarti audio for the first god category
         fetchAartiAudio();
       } else {
@@ -459,6 +470,7 @@ class VirtualDarshanController extends BaseController
       loadGodCategoryImages(godCategories[newIndex].id);
       // Re-fetch aarti audio for the new god category
       fetchAartiAudio();
+      fetchSpecialBhogData(godCategories[newIndex].id);
     }
   }
 
@@ -532,14 +544,25 @@ class VirtualDarshanController extends BaseController
     }
   }
 
-  Future<void> fetchSpecialBhogData() async {
+  Future<void> fetchSpecialBhogData(String id) async {
     try {
-      final response = await _pujaItemCategoryService.getSpecialBhog();
+      final response = await _pujaItemCategoryService.getSpecialBhog(id);
       if (response != null && response.success) {
         specialBhogData.value = response;
       }
     } catch (e) {
       print("Error fetching special bhog: $e");
+    }
+  }
+
+  Future<void> fetchMandirItemsData() async {
+    try {
+      final response = await _pujaItemCategoryService.getMandirItems();
+      if (response != null && response.success && response.data != null) {
+        mandirItemsData.value = response.data;
+      }
+    } catch (e) {
+      print("Error fetching mandir items: $e");
     }
   }
 
@@ -560,6 +583,15 @@ class VirtualDarshanController extends BaseController
     } finally {
       setLoadingState(false);
     }
+  }
+
+  void applyBellSelection(BellItem bell) {
+    selectedLeftBellImage.value = bell.leftBell;
+    selectedRightBellImage.value = bell.rightBell;
+  }
+
+  void applyArchSelection(UpperMandirFrontItem arch) {
+    selectedMandirArchImage.value = arch.image;
   }
 
   Future<void> earnCoin(String actionKey) async {
@@ -1016,6 +1048,7 @@ class VirtualDarshanController extends BaseController
   void navigateToGod(int index, String id) {
     selectedGodID.value = id;
     swipeToCategory(index);
+    fetchSpecialBhogData(id);
   }
 
   void navigateToDevotionalLibrary() {

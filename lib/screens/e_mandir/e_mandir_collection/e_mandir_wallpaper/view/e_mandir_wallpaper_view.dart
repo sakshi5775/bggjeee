@@ -28,7 +28,7 @@ class EMandirWallpaperView extends BasePage<EMandirWallpaperController> {
         backgroundColor: Colors.transparent,
         body: Column(
           children: [
-            const CommonHeader(title: 'Divine Wallpapers'),
+            Obx(() => CommonHeader(title: controller.selectedFilter.value)),
             SizedBox(height: 4.h),
             // Filter chips
             SizedBox(
