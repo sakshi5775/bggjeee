@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../../app_manager/network_image.dart';
 import '../../../../utils/app_constant.dart';
 
 class OfferingBottomSheetWidget extends GetView<VirtualDarshanController> {
@@ -131,25 +132,19 @@ class OfferingBottomSheetWidget extends GetView<VirtualDarshanController> {
                       ),
                     ],
                   ),
-                  child: ClipOval(
-                    child: item.image != null && item.image!.isNotEmpty
-                        ? Image.network(
-                            item.image!,
-                            fit: BoxFit.cover,
-                            width: 40.w,
-                            height: 40.h,
-                            errorBuilder: (_, __, ___) => Icon(
-                              Icons.local_florist,
-                              size: 24.r,
-                              color: Colors.orange,
-                            ),
-                          )
-                        : Icon(
-                            Icons.local_florist,
-                            size: 24.r,
-                            color: Colors.orange,
-                          ),
-                  ),
+                  child: item.image != null && item.image!.isNotEmpty
+                      ? NetworkImageWithLoader(
+                          url: item.image!,
+                          fit: BoxFit.cover,
+                          isCircular: true,
+                          width: 40.w,
+                          height: 40.h,
+                        )
+                      : Icon(
+                          Icons.local_florist,
+                          size: 24.r,
+                          color: Colors.orange,
+                        ),
                 ),
               ],
             ),

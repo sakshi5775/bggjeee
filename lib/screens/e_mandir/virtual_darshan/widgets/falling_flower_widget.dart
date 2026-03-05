@@ -1,6 +1,8 @@
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/controller/virtual_darshan_controller.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../app_manager/network_image.dart';
+
 class FallingFlowerWidget extends StatelessWidget {
   final FallingFlowerState flowerState;
 
@@ -24,13 +26,11 @@ class FallingFlowerWidget extends StatelessWidget {
         );
       },
       child: flowerState.imagePath.startsWith('http')
-          ? Image.network(
-              flowerState.imagePath,
+          ? NetworkImageWithLoader(
+              url: flowerState.imagePath,
               width: flowerState.size,
               fit: BoxFit.cover,
               height: flowerState.size,
-              errorBuilder: (_, __, ___) =>
-                  SizedBox(width: flowerState.size, height: flowerState.size),
             )
           : Image.asset(
               flowerState.imagePath,
