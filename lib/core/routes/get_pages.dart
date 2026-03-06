@@ -126,6 +126,8 @@ import 'package:astrobharataiuser/screens/ecommerce/view/orders_view.dart';
 import 'package:astrobharataiuser/screens/ecommerce/view/order_detail_view.dart';
 import 'package:astrobharataiuser/screens/ecommerce/view/addresses_view.dart';
 import 'package:astrobharataiuser/screens/ecommerce/view/coupons_view.dart';
+import 'package:astrobharataiuser/screens/ecommerce/view/faq_view.dart';
+import 'package:astrobharataiuser/screens/ecommerce/view/refund_policy_view.dart';
 import 'package:astrobharataiuser/screens/ecommerce/view/payments_view.dart';
 import 'package:astrobharataiuser/screens/ecommerce/view/payment_detail_view.dart';
 import 'package:astrobharataiuser/binding/ecommerce_binding/ecommerce_binding.dart';
@@ -659,6 +661,12 @@ class PageRoutes {
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
       binding: CouponsBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.faq,
+      page: () => const FaqView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
     ),
     GetPage(
       name: AppRoutes.kundliReportHistory,
@@ -1684,6 +1692,11 @@ class PageRoutes {
     GetPage(
       name: AppRoutes.userPrivacyPolicy,
       page: () => const UserPrivacyPolicyView(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.refundPolicy,
+      page: () => const RefundPolicyView(),
       transition: Transition.rightToLeft,
     ),
     GetPage(

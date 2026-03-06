@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/predictions_controller.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/prediction_style.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/product_navigation_helper.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -147,12 +148,42 @@ class RudrakshaPredictionWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AutoTranslateText(
-                    rudraksh[i],
-                    style: MyTextTheme.smallBCB.copyWith(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: AutoTranslateText(
+                          rudraksh[i],
+                          style: MyTextTheme.smallBCB.copyWith(
+                            color: AppColors.textPrimary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      GestureDetector(
+                        onTap: () {
+                          ProductNavigationHelper.navigateToProductCategory('rudraksha');
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10.w,
+                            vertical: 4.h,
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: AppColors.orangeGradient,
+                            borderRadius: BorderRadius.circular(6.r),
+                          ),
+                          child: AutoTranslateText(
+                            'Buy Now',
+                            style: MyTextTheme.smallBCB.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 10.sp,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   if (i < name.length) ...[
                     Spacing.h(4),

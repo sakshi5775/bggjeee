@@ -6,8 +6,7 @@ import 'package:astrobharataiuser/screens/kundli/widgets/kp_chart_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/kp_rasi_chart_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/kp_planets_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/kp_cusps_widget.dart';
-import 'package:astrobharataiuser/screens/kundli/widgets/kp_planet_signification_widget.dart';
-import 'package:astrobharataiuser/screens/kundli/widgets/kp_house_significators_widget.dart';
+import 'package:astrobharataiuser/screens/kundli/widgets/kp_significations_merged_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/kp_planet_signification_level_wise_widget.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
@@ -45,8 +44,7 @@ class KpSystemView extends BasePage<KpSystemController> {
                   KpRasiChartWidget(controller: controller),
                   KpPlanetsWidget(controller: controller),
                   KpCuspsWidget(controller: controller),
-                  KpPlanetSignificationWidget(controller: controller),
-                  KpHouseSignificatorsWidget(controller: controller),
+                  KpSignificationsMergedWidget(controller: controller),
                   KpPlanetSignificationLevelWiseWidget(controller: controller),
                 ],
               ),

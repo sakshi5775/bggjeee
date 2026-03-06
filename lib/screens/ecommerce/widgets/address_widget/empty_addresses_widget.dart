@@ -41,7 +41,7 @@ class EmptyAddressesWidget extends StatelessWidget {
               'No addresses saved yet',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontFamily: 'Baloo 2',
+                fontFamily: 'Baloo2',
                 fontWeight: FontWeight.w700,
                 fontSize: 22.sp,
                 color: '#68171E'.toColor(),

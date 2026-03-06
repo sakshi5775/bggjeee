@@ -216,10 +216,10 @@ class AstrologerChatService {
       Response? response;
       try {
         response = await _apiRepository.getApi(
-          EndPoints.chatSessionsHistory,
-          query: {'page': page, 'limit': limit},
-          useAuthHeader: true,
-        );
+        EndPoints.chatSessionsHistory,
+        query: {'page': page, 'limit': limit},
+        useAuthHeader: true,
+      );
       } catch (e) {
         if (kDebugMode) {
           print('API Repository failed, trying direct HTTP: $e');
@@ -562,9 +562,9 @@ class AstrologerChatService {
       Response response;
       try {
         response = await _apiRepository.getApi(
-          EndPoints.chatSessionDownload(chatId),
-          useAuthHeader: true,
-        );
+        EndPoints.chatSessionDownload(chatId),
+        useAuthHeader: true,
+      );
       } catch (e) {
         if (kDebugMode) {
           print('API Repository failed, trying direct HTTP: $e');
@@ -595,7 +595,7 @@ class AstrologerChatService {
 
         if (body is Map<String, dynamic>) {
           final data = body;
-          if (data['success'] == true) {
+        if (data['success'] == true) {
             final result = data['data'] as Map<String, dynamic>?;
             if (result != null) {
               if (kDebugMode) {
@@ -604,8 +604,8 @@ class AstrologerChatService {
               return result;
             }
             throw Exception('No data in response');
-          }
-          throw Exception(data['message'] ?? 'Failed to download chat history');
+        }
+        throw Exception(data['message'] ?? 'Failed to download chat history');
         }
         throw Exception('Invalid response format');
       }

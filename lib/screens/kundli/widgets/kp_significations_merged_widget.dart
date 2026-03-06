@@ -1,30 +1,46 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
-import 'package:astrobharataiuser/screens/kundli/controller/lal_kitab_controller.dart';
+import 'package:astrobharataiuser/screens/kundli/controller/kp_system_controller.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-/// Lal Kitab Kundli – compact table form (Sign #, Sign Name, Planets).
-class LalKitabKundliWidget extends StatelessWidget {
-  final LalKitabController controller;
+/// Merged widget showing both Planet Significations and House Significators
+class KpSignificationsMergedWidget extends StatelessWidget {
+  final KpSystemController controller;
 
-  const LalKitabKundliWidget({super.key, required this.controller});
+  const KpSignificationsMergedWidget({
+    super.key,
+    required this.controller,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (controller.isLoadingLalKitabHoroscope.value) {
+      final isLoadingPlanet = controller.isLoadingKpPlanetSignifications.value;
+      final isLoadingHouse = controller.isLoadingKpHouseSignificators.value;
+      final isLoading = isLoadingPlanet || isLoadingHouse;
+
+      if (isLoading) {
         return Center(
           child: CircularProgressIndicator(color: '#ed6f30'.toColor()),
         );
       }
 
-      final data = controller.lalKitabHoroscopeData.value;
-      final response = data?['data']?['response'] as List<dynamic>?;
-      if (response == null || response.isEmpty) {
+      final planetData = controller.kpPlanetSignificationsData.value;
+      final houseData = controller.kpHouseSignificatorsData.value;
+
+      final planetResponse =
+          planetData?['data']?['response'] as Map<String, dynamic>?;
+      final houseResponse =
+          houseData?['data']?['response'] as Map<String, dynamic>?;
+
+      final hasPlanetData = planetResponse != null && planetResponse.isNotEmpty;
+      final hasHouseData = houseResponse != null && houseResponse.isNotEmpty;
+
+      if (!hasPlanetData && !hasHouseData) {
         return Center(
           child: AutoTranslateText(
             'No data available',
@@ -37,24 +53,63 @@ class LalKitabKundliWidget extends StatelessWidget {
 
       return SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-        child: _planetCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildTitleRow('Planetary Positions', Icons.pie_chart_rounded),
-              _buildTableHeader(const ['Sign', 'Sign Name', 'Planets']),
-              ...response.asMap().entries.map(
-                (e) => _buildTableRow(e.value as Map<String, dynamic>, e.key),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Planet Significations Section
+            if (hasPlanetData) ...[
+              _buildCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildTitleRow('Planet Significations', Icons.layers),
+                    _buildTableHeader(const ['Planet', 'Houses']),
+                    ...planetResponse.entries.toList().asMap().entries.map(
+                          (e) {
+                            final planet = e.value.key;
+                            final houses = e.value.value as List<dynamic>? ?? [];
+                            final housesStr = houses.isEmpty
+                                ? '--'
+                                : houses.map((h) => h.toString()).join(', ');
+                            return _buildTableRow(planet, housesStr, e.key);
+                          },
+                        ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 12.h),
+            ],
+            // House Significators Section
+            if (hasHouseData) ...[
+              _buildCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildTitleRow('House Significators', Icons.home_work_rounded),
+                    _buildTableHeader(const ['House', 'Significators']),
+                    ...houseResponse.entries.toList().asMap().entries.map(
+                          (e) {
+                            final house = e.value.key;
+                            final planets = e.value.value as List<dynamic>? ?? [];
+                            final planetsStr = planets.isEmpty
+                                ? '--'
+                                : planets.map((p) => p.toString()).join(', ');
+                            return _buildTableRow(house, planetsStr, e.key);
+                          },
+                        ),
+                  ],
+                ),
               ),
             ],
-          ),
+          ],
         ),
       );
     });
   }
 
-  Widget _planetCard({required Widget child}) {
+  Widget _buildCard({required Widget child}) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -119,7 +174,7 @@ class LalKitabKundliWidget extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            flex: 1,
+            flex: labels[0] == 'House' ? 1 : 2,
             child: AutoTranslateText(
               labels[0],
               style: MyTextTheme.smallBCB.copyWith(
@@ -127,13 +182,11 @@ class LalKitabKundliWidget extends StatelessWidget {
                 fontSize: 10.sp,
                 fontWeight: FontWeight.w600,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
             ),
           ),
           Expanded(
-            flex: 2,
+            flex: labels[0] == 'House' ? 4 : 3,
             child: AutoTranslateText(
               labels[1],
               style: MyTextTheme.smallBCB.copyWith(
@@ -141,22 +194,6 @@ class LalKitabKundliWidget extends StatelessWidget {
                 fontSize: 10.sp,
                 fontWeight: FontWeight.w600,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: AutoTranslateText(
-              labels[2],
-              style: MyTextTheme.smallBCB.copyWith(
-                color: Colors.white,
-                fontSize: 10.sp,
-                fontWeight: FontWeight.w600,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
             ),
           ),
@@ -165,20 +202,11 @@ class LalKitabKundliWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildTableRow(Map<String, dynamic> sign, int index) {
-    final signNum = sign['sign'] as int? ?? 0;
-    final signName = sign['sign_name'] as String? ?? '';
-    final planetSmall = sign['planet_small'] as List<dynamic>? ?? [];
-    final planets = sign['planet'] as List<dynamic>? ?? [];
-    final planetText = planetSmall.isNotEmpty
-        ? planetSmall.map((e) => e.toString()).join(', ')
-        : (planets.isNotEmpty
-              ? planets.map((e) => e.toString()).join(', ')
-              : '-');
+  Widget _buildTableRow(String first, String second, int index) {
     final isEven = index.isEven;
-
+    final isHouseRow = first.contains('House') || RegExp(r'^[0-9]+$').hasMatch(first);
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
       decoration: BoxDecoration(
         color: isEven
             ? '#ed6f30'.toColor().withValues(alpha: 0.04)
@@ -192,9 +220,14 @@ class LalKitabKundliWidget extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Expanded(flex: 1, child: _cell('$signNum')),
-          Expanded(flex: 2, child: _cell(signName, isBold: true)),
-          Expanded(flex: 2, child: _cell(planetText)),
+          Expanded(
+            flex: isHouseRow ? 1 : 2,
+            child: _cell(first, isBold: true),
+          ),
+          Expanded(
+            flex: isHouseRow ? 4 : 3,
+            child: _cell(second),
+          ),
         ],
       ),
     );
@@ -206,9 +239,9 @@ class LalKitabKundliWidget extends StatelessWidget {
       style: MyTextTheme.smallBCB.copyWith(
         color: '#6F221E'.toColor(),
         fontWeight: isBold ? FontWeight.w600 : FontWeight.w500,
-        fontSize: 10.sp,
+        fontSize: 11.sp,
       ),
-      maxLines: 2,
+      maxLines: 3,
       overflow: TextOverflow.ellipsis,
       textAlign: TextAlign.center,
     );

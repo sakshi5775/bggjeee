@@ -1291,7 +1291,7 @@ class ProfileView extends GetView<ProfileController> {
                           AutoTranslateText(
                             'Edit Profile',
                             style: TextStyle(
-                              fontFamily: 'Baloo 2',
+                              fontFamily: 'Baloo2',
                               fontWeight: FontWeight.w700,
                               fontSize: 22,
                               color: Colors.white,
@@ -1806,7 +1806,7 @@ class ProfileView extends GetView<ProfileController> {
         AutoTranslateText(
           title,
           style: TextStyle(
-            fontFamily: 'Baloo 2',
+            fontFamily: 'Baloo2',
             fontWeight: FontWeight.w700,
             fontSize: 18,
             color: '#68171E'.toColor(),

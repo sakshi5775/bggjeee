@@ -26,6 +26,13 @@ class ProductListController extends BaseController {
   final isGridView = true.obs;
   final isFeatured = false.obs;
 
+  /// When set, header shows this instead of category name (e.g. "Best Sellers", "Featured Products").
+  final listTitle = Rxn<String>();
+  /// When set, products are loaded by this filter: 'bestSellers', 'recommended', 'featured'.
+  final filterType = Rxn<String>();
+  /// When true, show grid of all categories first; on tap open products for that category.
+  final showCategoriesFirst = false.obs;
+
   // Available categories for filter
   final availableCategories = <CategoryModel>[].obs;
   final categoryTree = <CategoryModel>[].obs; // Category tree structure
@@ -55,12 +62,62 @@ class ProductListController extends BaseController {
       if (args['isFeatured'] != null) {
         isFeatured.value = args['isFeatured'] as bool;
       }
+      if (args['title'] != null) {
+        listTitle.value = args['title'] as String;
+      }
+      if (args['filterType'] != null) {
+        filterType.value = args['filterType'] as String;
+      }
+      if (args['showCategoriesFirst'] == true || args['title'] == 'All Categories') {
+        showCategoriesFirst.value = true;
+        listTitle.value = args['title'] as String? ?? 'All Categories';
+      }
     }
     loadInitialData();
   }
 
+  void selectCategoryFromGrid(CategoryModel category) {
+    showCategoriesFirst.value = false;
+    selectedCategory.value = category;
+    listTitle.value = null;
+    loadProducts(reset: true);
+  }
+
   Future<void> loadInitialData() async {
-    await Future.wait([loadCategories(), loadProducts(reset: true)]);
+    await loadCategories();
+    if (showCategoriesFirst.value == true) {
+      return;
+    }
+    if (filterType.value != null) {
+      await loadProductsByFilterType();
+    } else {
+      await loadProducts(reset: true);
+    }
+  }
+
+  Future<void> loadProductsByFilterType() async {
+    final type = filterType.value;
+    if (type == null) return;
+    try {
+      isLoadingProducts.value = true;
+      products.clear();
+      List<ProductModel>? result;
+      if (type == 'bestSellers') {
+        result = await _ecommerceService.getTopSellingProducts(limit: 100);
+      } else if (type == 'recommended') {
+        result = await _ecommerceService.getRecommendations(limit: 100);
+      } else if (type == 'featured') {
+        result = await _ecommerceService.getFeaturedProducts(limit: 100);
+      }
+      if (result != null && result.isNotEmpty) {
+        products.addAll(result);
+      }
+      hasMoreProducts.value = false;
+    } catch (e) {
+      print('Error loading products by filterType: $e');
+    } finally {
+      isLoadingProducts.value = false;
+    }
   }
 
   // Helper function to recursively flatten category tree

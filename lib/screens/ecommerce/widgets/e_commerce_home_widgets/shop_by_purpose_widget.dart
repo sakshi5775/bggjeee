@@ -3,14 +3,13 @@ import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/ecommerce_home_controller.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
+import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
-import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 
 class ShopByPurposeWidget extends StatelessWidget {
   final EcommerceHomeController controller;
@@ -20,84 +19,53 @@ class ShopByPurposeWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Modern Header Section
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppColors.templeGold.withValues(alpha: 0.1),
-                    AppColors.cream.withValues(alpha: 0.05),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                AutoTranslateText(
+                  'Shop By Purpose',
+                  style: AppTypography.h2.copyWith(color: '#68171E'.toColor()),
                 ),
-                borderRadius: BorderRadius.circular(16.r),
-                border: Border.all(
-                  color: AppColors.templeGold.withValues(alpha: 0.2),
-                  width: 1,
+                GestureDetector(
+                  onTap: () => UserMainController.pushInCurrentTab(
+                    AppRoutes.productList,
+                    arguments: {'title': 'Shop by Purpose'},
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AutoTranslateText(
+                        'View All',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12.sp,
+                          color: '#68171E'.toColor(),
+                        ),
+                      ),
+                      Spacing.w(4),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        size: 12.sp,
+                        color: '#68171E'.toColor(),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 48.w,
-                    height: 48.h,
-                    decoration: BoxDecoration(
-                      gradient: AppColors.orangeGradient,
-                      borderRadius: BorderRadius.circular(14.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.deepOrange.withValues(alpha: 0.3),
-                          blurRadius: 8,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Icon(
-                      Icons.auto_awesome,
-                      size: 24.w,
-                      color: Colors.white,
-                    ),
-                  ),
-                  Spacing.w(16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        AutoTranslateText(
-                          'Shop By Purpose',
-                          style: MyTextTheme.largeBCB
-                              .merge(AppTypography.h2)
-                              .copyWith(color: "#68171E".toColor()),
-                        ),
-                        Spacing.h(4),
-                        AutoTranslateText(
-                          'Buy Stones according to problem',
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w400,
-                            fontSize: 12,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              ],
             ),
-            Spacing.h(20),
-            // Purpose Cards
+          ),
+          Spacing.h(6),
+          // Purpose Cards
             Obx(() {
               if (controller.isLoadingPurposes.value) {
                 return SizedBox(
-                  height: 200.h,
+                  height: 180.h,
                   child: Center(
                     child: CircularProgressIndicator(
                       color: AppColors.templeGold,
@@ -109,7 +77,7 @@ class ShopByPurposeWidget extends StatelessWidget {
 
               if (controller.purposes.isEmpty) {
                 return SizedBox(
-                  height: 200.h,
+                  height: 180.h,
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -134,12 +102,12 @@ class ShopByPurposeWidget extends StatelessWidget {
               }
 
               return SizedBox(
-                height: 200.h,
+                height: 180.h,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
-                  padding: AppPaddings.symmetric(v: 8.h),
+                  padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 8.h, bottom: 8.h),
                   itemCount: controller.purposes.length,
-                  separatorBuilder: (context, index) => Spacing.w(16.w),
+                  separatorBuilder: (context, index) => Spacing.w(12.w),
                   itemBuilder: (context, index) {
                     final purpose = controller.purposes[index];
                     return _buildPurposeCard(purpose, context, index);
@@ -150,7 +118,6 @@ class ShopByPurposeWidget extends StatelessWidget {
             Spacing.h(20),
           ],
         ),
-      ),
     );
   }
 
@@ -161,135 +128,94 @@ class ShopByPurposeWidget extends StatelessWidget {
   ) {
     return GestureDetector(
       onTap: () {
-        // Navigate to product list with purpose filter
         UserMainController.pushInCurrentTab(
           AppRoutes.productList,
           arguments: {'purpose': purpose['title']},
         );
       },
       child: Container(
-        width: 160.w,
-        height: 200.h,
-
+        width: 150.w,
+        height: 180.h,
         decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(20.r),
+          borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: AppColors.deepOrange,
-              blurRadius: 2,
+              color: Colors.black.withValues(alpha: 0.15),
+              blurRadius: 8,
               offset: Offset(0, 2),
             ),
           ],
         ),
-        child: Stack(
-          children: [
-            // Decorative circles
-            Positioned(
-              top: -30.h,
-              right: -30.w,
-              child: Container(
-                width: 100.w,
-                height: 100.h,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.15),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: -20.h,
-              left: -20.w,
-              child: Container(
-                width: 80.w,
-                height: 80.h,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.1),
-                ),
-              ),
-            ),
-            // Content
-            Padding(
-              padding: EdgeInsets.all(16.w),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Image Section
-                  Expanded(
-                    child: Center(
-                      child: Container(
-                        width: 60.w,
-                        height: 60.w,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.25),
-                          shape: BoxShape.circle,
-                        ),
-                        child: ClipOval(
-                          child:
-                              purpose['image'] != null &&
-                                  purpose['image']!.isNotEmpty
-                              ? NetworkImageWithLoader(
-                                  url: purpose['image']!,
-                                  width: 60.w,
-                                  height: 60.w,
-                                )
-                              : Container(
-                                  decoration: BoxDecoration(
-                                    gradient: RadialGradient(
-                                      colors: [
-                                        AppColors.white,
-                                        AppColors.deepOrange,
-                                      ],
-                                    ),
-                                  ),
-                                  child: Icon(
-                                    _getPurposeIcon(purpose['title']!),
-                                    size: 48.w,
-                                    color: Colors.white,
-                                  ),
-                                ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16.r),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // Full-bleed image covering entire card
+              purpose['image'] != null && purpose['image']!.isNotEmpty
+                  ? NetworkImageWithLoader(
+                      url: purpose['image']!,
+                      width: double.infinity,
+                      height: double.infinity,
+                    )
+                  : Container(
+                      color: Colors.grey.withValues(alpha: 0.3),
+                      child: Center(
+                        child: Icon(
+                          _getPurposeIcon(purpose['title']!),
+                          size: 48.w,
+                          color: Colors.white70,
                         ),
                       ),
                     ),
-                  ),
-                  Spacing.h(12),
-                  // Title Section
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 10.h,
+              // Gradient overlay at bottom for text readability
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Container(
+                  height: 70.h,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withValues(alpha: 0.7),
+                      ],
                     ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.r),
-                      gradient: AppColors.orangeGradient,
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.deepOrange,
-                          blurRadius: 8,
-                          offset: Offset(0, 2),
+                  ),
+                ),
+              ),
+              // Category name over the image (bottom)
+              Positioned(
+                left: 12.w,
+                right: 12.w,
+                bottom: 16.h,
+                child: Center(
+                  child: AutoTranslateText(
+                    purpose['title']!,
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15.sp,
+                      color: Colors.white,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black.withValues(alpha: 0.5),
+                          blurRadius: 4,
+                          offset: Offset(0, 1),
                         ),
                       ],
                     ),
-                    child: Center(
-                      child: AutoTranslateText(
-                        purpose['title']!,
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          color: AppColors.white,
-                        ),
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

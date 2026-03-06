@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/data_model/address_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/cart_controller.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/address_form_sheet.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/cart_widgets/cart_checkout_button_widget.dart';
+import 'package:astrobharataiuser/screens/ecommerce/widgets/e_commerce_home_widgets/featured_products_widget.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/cart_widgets/cart_items_list_widget.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/cart_widgets/cart_price_summary_widget.dart';
@@ -58,11 +59,28 @@ class CartView extends GetView<CartController> {
               // Content
               Expanded(
                 child: items.isEmpty
-                    ? _EmptyCartWidget(
-                        onShopNow: () => Get.offNamedUntil(
-                          AppRoutes.ecommerceHome,
-                          (route) =>
-                              route.settings.name == AppRoutes.userDashboard,
+                    ? SingleChildScrollView(
+                        padding: EdgeInsets.only(
+                          left: 18.w,
+                          right: 18.w,
+                          bottom: 24.h +
+                              MediaQuery.of(context).padding.bottom,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            SizedBox(height: 24.h),
+                            _EmptyCartWidget(
+                              onShopNow: () {
+                                Get.find<UserMainController>().changeTab(3);
+                              },
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 24.h),
+                              child: _buildYouMayAlsoLikeSection(),
+                            ),
+                            SizedBox(height: 24.h),
+                          ],
                         ),
                       )
                     : SingleChildScrollView(
@@ -230,6 +248,9 @@ class CartView extends GetView<CartController> {
                               totalAmount: totalAmount,
                               currencyFormat: currencyFormat,
                             ),
+                            SizedBox(height: 24.h),
+                            // You may also like
+                            _buildYouMayAlsoLikeSection(),
                             SizedBox(height: 40.h),
                           ],
                         ),
@@ -424,6 +445,64 @@ class CartView extends GetView<CartController> {
         ],
       ),
     );
+  }
+
+  Widget _buildYouMayAlsoLikeSection() {
+    return Obx(() {
+      if (controller.isLoadingYouMayAlsoLike.value &&
+          controller.youMayAlsoLikeProducts.isEmpty) {
+        return Padding(
+          padding: EdgeInsets.symmetric(vertical: 16.h),
+          child: Center(
+            child: SizedBox(
+              width: 24.w,
+              height: 24.w,
+              child: CircularProgressIndicator(
+                color: AppColors.saffron,
+                strokeWidth: 2,
+              ),
+            ),
+          ),
+        );
+      }
+      if (controller.youMayAlsoLikeProducts.isEmpty) return SizedBox.shrink();
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(bottom: 12.h),
+            child: AutoTranslateText(
+              'You may also like',
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w700,
+                color: '#68171E'.toColor(),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 300.h,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: controller.youMayAlsoLikeProducts.length,
+              separatorBuilder: (_, __) => SizedBox(width: 10.w),
+              itemBuilder: (context, index) {
+                final product = controller.youMayAlsoLikeProducts[index];
+                return FeaturedProductsWidget.buildFeaturedStyleCard(
+                  product,
+                  () => UserMainController.pushInCurrentTab(
+                    AppRoutes.productDetail,
+                    arguments: {'product': product},
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      );
+    });
   }
 }
 
@@ -1061,7 +1140,7 @@ class _EmptyCartWidget extends StatelessWidget {
               'Your cart is empty',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontFamily: 'Baloo 2',
+                fontFamily: 'Baloo2',
                 fontWeight: FontWeight.w700,
                 fontSize: 22.sp,
                 color: '#68171E'.toColor(),

@@ -889,10 +889,6 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(
-          color: '#68171E'.toColor().withValues(alpha: 0.2),
-          width: 1,
-        ),
       ),
       child: Obx(
         () => DropdownButtonFormField<String>(
@@ -907,7 +903,24 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
               color: AppColors.deepOrange,
               size: 20.w,
             ),
-            border: InputBorder.none,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.r),
+              borderSide: BorderSide(
+                color: '#68171E'.toColor().withValues(alpha: 0.2),
+                width: 1,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.r),
+              borderSide: BorderSide(
+                color: '#68171E'.toColor().withValues(alpha: 0.2),
+                width: 1,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.r),
+              borderSide: BorderSide(color: AppColors.deepOrange, width: 1.5),
+            ),
             contentPadding: EdgeInsets.symmetric(
               horizontal: 12.w,
               vertical: 14.h,

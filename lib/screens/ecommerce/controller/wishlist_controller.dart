@@ -14,6 +14,10 @@ class WishlistController extends BaseController {
 
   List<WishlistItem> get items => wishlist.value?.items ?? <WishlistItem>[];
 
+  // You may also like (featured products for wishlist page)
+  final youMayAlsoLikeProducts = <ProductModel>[].obs;
+  final isLoadingYouMayAlsoLike = false.obs;
+
   String _resolveKey({ProductModel? product, WishlistItem? item}) {
     final candidates = <String?>[
       product?.id,
@@ -131,6 +135,18 @@ class WishlistController extends BaseController {
   void onInit() {
     super.onInit();
     loadWishlist();
+    loadYouMayAlsoLike();
+  }
+
+  Future<void> loadYouMayAlsoLike() async {
+    try {
+      isLoadingYouMayAlsoLike.value = true;
+      final list = await _service.getFeaturedProducts(limit: 8);
+      if (list != null && list.isNotEmpty) {
+        youMayAlsoLikeProducts.assignAll(list);
+      }
+    } catch (_) {}
+    isLoadingYouMayAlsoLike.value = false;
   }
 
   Future<void> loadWishlist() async {

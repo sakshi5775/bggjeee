@@ -52,6 +52,7 @@ class AppRoutes {
   static const String paymentDetail = '/payments/detail';
   static const String addresses = '/addresses';
   static const String coupons = '/coupons';
+  static const String faq = '/faq';
   static const String followingAstrologers = '/following-astrologers';
   static const String remedies = '/remedies';
   static const String remedyCategoryListing = '/remedy-category-listing';
@@ -263,6 +264,7 @@ class AppRoutes {
   static const String astrologerRegistrationOtp =
       '/astrologer-registration-otp';
   static const String userPrivacyPolicy = '/user-privacy-policy';
+  static const String refundPolicy = '/refund-policy';
   static const String reportPdfView = '/report-pdf-view';
   static const String navtaraDashboard = '/navtara-dashboard';
   static const String kundliReportHistory = '/kundli-report-history';

@@ -1,4 +1,4 @@
-﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/data_model/coupon_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/coupons_controller.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -107,7 +107,7 @@ class _EmptyCouponsView extends StatelessWidget {
               'No coupons available',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontFamily: 'Baloo 2',
+                fontFamily: 'Baloo2',
                 fontWeight: FontWeight.w700,
                 fontSize: 22.sp,
                 color: '#68171E'.toColor(),
@@ -217,7 +217,7 @@ class _CouponCard extends StatelessWidget {
                           AutoTranslateText(
                             coupon.code ?? '',
                             style: TextStyle(
-                              fontFamily: 'Baloo 2',
+                              fontFamily: 'Baloo2',
                               fontWeight: FontWeight.w700,
                               fontSize: 24.sp,
                               color: '#68171E'.toColor(),
@@ -342,7 +342,7 @@ class _CouponCard extends StatelessWidget {
                             ? '${discountValue.toStringAsFixed(0)}% OFF'
                             : '₹${discountValue.toStringAsFixed(0)} OFF',
                         style: TextStyle(
-                          fontFamily: 'Baloo 2',
+                          fontFamily: 'Baloo2',
                           fontWeight: FontWeight.w700,
                           fontSize: 20.sp,
                           color: '#E3B341'.toColor(),

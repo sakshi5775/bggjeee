@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/gemstones_report_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/product_navigation_helper.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
@@ -164,8 +165,40 @@ class GemstonesReportView extends BasePage<GemstonesReportController> {
             ],
             if (notToWearWith.isNotEmpty) ...[
               Spacing.h(10),
-              _compactListCard('Not to wear with', notToWearWith, Icons.block),
+              _compactListCard('Not to Wear With', notToWearWith, Icons.block),
             ],
+            // Buy Now Button
+            Spacing.h(16),
+            GestureDetector(
+              onTap: () {
+                ProductNavigationHelper.navigateToProductCategory('gemstone');
+              },
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 14.h),
+                decoration: BoxDecoration(
+                  gradient: AppColors.orangeGradient,
+                  borderRadius: BorderRadius.circular(12.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.deepOrange.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: AutoTranslateText(
+                    'Buy Gemstones Now',
+                    style: MyTextTheme.mediumBCB.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                ),
+              ),
+            ),
             if (timeToWearShort.isNotEmpty || timeToWear.isNotEmpty) ...[
               Spacing.h(10),
               _compactCard(

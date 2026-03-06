@@ -2,14 +2,16 @@ import 'dart:async';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
+import 'package:astrobharataiuser/data_model/banner_model.dart';
+import 'package:astrobharataiuser/data_model/blog_model.dart';
 import 'package:astrobharataiuser/data_model/category_model.dart';
 import 'package:astrobharataiuser/data_model/product_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/blogs/service/blog_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/banner_service.dart';
-import 'package:astrobharataiuser/data_model/banner_model.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class EcommerceHomeController extends BaseController {
   final EcommerceService _ecommerceService = EcommerceService();
@@ -93,9 +95,25 @@ class EcommerceHomeController extends BaseController {
   final purposes = <Map<String, String>>[].obs;
   final isLoadingPurposes = false.obs;
 
+  // Category sections: Rudraksha, Kits, Pyramids
+  final rudrakshaProducts = <ProductModel>[].obs;
+  final kitsProducts = <ProductModel>[].obs;
+  final pyramidsProducts = <ProductModel>[].obs;
+  final rudrakshaCategory = Rxn<CategoryModel>();
+  final kitsCategory = Rxn<CategoryModel>();
+  final pyramidsCategory = Rxn<CategoryModel>();
+  final isLoadingRudraksha = false.obs;
+  final isLoadingKits = false.obs;
+  final isLoadingPyramids = false.obs;
+
   // Banners
   final RxList<BannerItem> ecommerceBanners = <BannerItem>[].obs;
   final RxBool isLoadingBanners = false.obs;
+
+  // Blogs (top 5 for Digital Mart section)
+  final BlogService _blogService = BlogService();
+  final RxList<Blog> blogs = <Blog>[].obs;
+  final RxBool isLoadingBlogs = false.obs;
 
   // Banner carousel
   final PageController bannerPageController = PageController();
@@ -138,21 +156,18 @@ class EcommerceHomeController extends BaseController {
   void _startBannerAutoScroll() {
     _bannerTimer?.cancel();
     _bannerTimer = Timer.periodic(Duration(seconds: 3), (timer) {
-      if (featuredProducts.isNotEmpty) {
-        final featuredCount = featuredProducts.length > 3
-            ? 3
-            : featuredProducts.length;
-        if (featuredCount > 1) {
-          final nextIndex = (currentBannerIndex.value + 1) % featuredCount;
-          if (bannerPageController.hasClients) {
-            bannerPageController.animateToPage(
-              nextIndex,
-              duration: Duration(milliseconds: 500),
-              curve: Curves.easeInOut,
-            );
-          }
-        }
-      }
+      if (featuredProducts.isEmpty) return;
+      final featuredCount =
+          featuredProducts.length > 3 ? 3 : featuredProducts.length;
+      if (featuredCount <= 1) return;
+      // Only animate when exactly one PageView is attached (view is visible)
+      if (bannerPageController.positions.length != 1) return;
+      final nextIndex = (currentBannerIndex.value + 1) % featuredCount;
+      bannerPageController.animateToPage(
+        nextIndex,
+        duration: Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
     });
   }
 
@@ -222,7 +237,120 @@ class EcommerceHomeController extends BaseController {
       loadTopSellingProducts(),
       if (!isGuest) ...[loadRecommendations(), loadRecentlyViewedProducts()],
       loadPurposes(),
+      loadBlogs(),
     ]);
+    // Load Rudraksha, Kits, Pyramids after categories are available
+    await loadCategorySectionProducts();
+  }
+
+  Future<void> loadBlogs() async {
+    try {
+      isLoadingBlogs.value = true;
+      final response = await _blogService.getBlogs(
+        page: 1,
+        useAuthHeader: false,
+      );
+      if (response != null && response.data != null) {
+        blogs.value = response.data!
+            .where(
+              (blog) =>
+                  blog.status == 'published' && !(blog.isDeleted ?? false),
+            )
+            .take(5)
+            .toList();
+      }
+    } catch (_) {}
+    isLoadingBlogs.value = false;
+  }
+
+  Future<void> loadCategorySectionProducts() async {
+    await Future.wait([
+      _loadProductsForCategorySection(
+        nameOrSlug: 'rudraksha',
+        nameVariants: ['rudraksha', 'Rudraksha'],
+        products: rudrakshaProducts,
+        isLoading: isLoadingRudraksha,
+        categoryOut: rudrakshaCategory,
+      ),
+      _loadProductsForCategorySection(
+        nameOrSlug: 'kits',
+        nameVariants: ['kits', 'Kits', 'kit'],
+        products: kitsProducts,
+        isLoading: isLoadingKits,
+        categoryOut: kitsCategory,
+      ),
+      _loadProductsForCategorySection(
+        nameOrSlug: 'pyramids',
+        nameVariants: ['pyramids', 'Pyramids', 'pyramid', 'Pyramid'],
+        products: pyramidsProducts,
+        isLoading: isLoadingPyramids,
+        categoryOut: pyramidsCategory,
+      ),
+    ]);
+  }
+
+  List<CategoryModel> _flattenCategoryTree(List<CategoryModel> categories) {
+    final list = <CategoryModel>[];
+    for (final c in categories) {
+      list.add(c);
+      if (c.children != null && c.children!.isNotEmpty) {
+        list.addAll(_flattenCategoryTree(c.children!));
+      }
+    }
+    return list;
+  }
+
+  Future<void> _loadProductsForCategorySection({
+    required String nameOrSlug,
+    required List<String> nameVariants,
+    required RxList<ProductModel> products,
+    required RxBool isLoading,
+    Rxn<CategoryModel>? categoryOut,
+  }) async {
+    try {
+      isLoading.value = true;
+      products.clear();
+      categoryOut?.value = null;
+      CategoryModel? category;
+      final flatTree = _flattenCategoryTree(categoryTree);
+      final allCats = [
+        ...flatTree,
+        ...allCategories.where(
+            (c) => flatTree.every((t) => t.id != c.id)),
+      ];
+      for (final variant in nameVariants) {
+        final slug = variant.toLowerCase().replaceAll(' ', '-');
+        final variantLower = variant.toLowerCase();
+        category = allCats.firstWhereOrNull(
+          (c) {
+            final name = c.name?.toLowerCase() ?? '';
+            final catSlug = c.slug?.toLowerCase() ?? '';
+            return catSlug == slug ||
+                catSlug.contains(slug) ||
+                name == variantLower ||
+                name.contains(variantLower);
+          },
+        );
+        if (category != null) break;
+      }
+      if (category != null) {
+        categoryOut?.value = category;
+        if (category.slug != null && category.slug!.isNotEmpty) {
+          final result = await _ecommerceService.getProductsByCategorySlug(
+            category.slug!,
+            page: 1,
+            limit: 50,
+          );
+          if (result?.items != null && result!.items!.isNotEmpty) {
+            products.addAll(result.items!);
+          }
+        }
+      }
+    } catch (e) {
+      print('Error loading $nameOrSlug products: $e');
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   Future<void> loadCategoryTree() async {

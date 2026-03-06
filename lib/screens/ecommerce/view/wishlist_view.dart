@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/wishlist_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/cart_controller.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/wishlist_controller.dart';
+import 'package:astrobharataiuser/screens/ecommerce/widgets/e_commerce_home_widgets/featured_products_widget.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
@@ -87,19 +88,41 @@ class WishlistView extends GetView<WishlistController> {
 
                 final items = controller.items;
                 if (items.isEmpty) {
-                  return _EmptyWishlist(onShopNow: () => Get.back());
+                  return SingleChildScrollView(
+                    padding: EdgeInsets.fromLTRB(18.w, 20.h, 18.w, 24.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _EmptyWishlist(
+                          onShopNow: () {
+                            Get.find<UserMainController>().changeTab(3);
+                          },
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 24.h),
+                          child: _YouMayAlsoLikeSection(controller: controller),
+                        ),
+                        SizedBox(height: 24.h),
+                      ],
+                    ),
+                  );
                 }
 
                 return ListView.separated(
                   padding: EdgeInsets.fromLTRB(18.w, 20.h, 18.w, 24.h),
-                  itemCount: items.length,
+                  itemCount: items.length + 1,
                   separatorBuilder: (_, __) => SizedBox(height: 16.h),
-                  itemBuilder: (_, index) => _WishlistItemCard(
-                    item: items[index],
-                    controller: controller,
-                    cartController: cartController,
-                    currencyFormat: currencyFormat,
-                  ),
+                  itemBuilder: (_, index) {
+                    if (index == items.length) {
+                      return _YouMayAlsoLikeSection(controller: controller);
+                    }
+                    return _WishlistItemCard(
+                      item: items[index],
+                      controller: controller,
+                      cartController: cartController,
+                      currencyFormat: currencyFormat,
+                    );
+                  },
                 );
               }),
             ),
@@ -338,7 +361,7 @@ class _WishlistItemCard extends StatelessWidget {
                             child: AutoTranslateText(
                               currencyFormat.format(price),
                               style: TextStyle(
-                                fontFamily: 'Baloo 2',
+                                fontFamily: 'Baloo2',
                                 fontWeight: FontWeight.w700,
                                 fontSize: 20.sp,
                                 color: '#68171E'.toColor(),
@@ -535,7 +558,7 @@ class _EmptyWishlist extends StatelessWidget {
               'Your wishlist is empty',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontFamily: 'Baloo 2',
+                fontFamily: 'Baloo2',
                 fontWeight: FontWeight.w700,
                 fontSize: 22.sp,
                 color: '#68171E'.toColor(),
@@ -605,5 +628,70 @@ class _EmptyWishlist extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _YouMayAlsoLikeSection extends StatelessWidget {
+  const _YouMayAlsoLikeSection({required this.controller});
+
+  final WishlistController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      if (controller.isLoadingYouMayAlsoLike.value &&
+          controller.youMayAlsoLikeProducts.isEmpty) {
+        return Padding(
+          padding: EdgeInsets.symmetric(vertical: 24.h),
+          child: Center(
+            child: SizedBox(
+              width: 24.w,
+              height: 24.w,
+              child: CircularProgressIndicator(
+                color: AppColors.saffron,
+                strokeWidth: 2,
+              ),
+            ),
+          ),
+        );
+      }
+      if (controller.youMayAlsoLikeProducts.isEmpty) return SizedBox.shrink();
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(top: 8.h, bottom: 12.h),
+            child: AutoTranslateText(
+              'You may also like',
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w700,
+                color: '#68171E'.toColor(),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 300.h,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: controller.youMayAlsoLikeProducts.length,
+              separatorBuilder: (_, __) => SizedBox(width: 10.w),
+              itemBuilder: (context, index) {
+                final product = controller.youMayAlsoLikeProducts[index];
+                return FeaturedProductsWidget.buildFeaturedStyleCard(
+                  product,
+                  () => UserMainController.pushInCurrentTab(
+                    AppRoutes.productDetail,
+                    arguments: {'product': product},
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      );
+    });
   }
 }

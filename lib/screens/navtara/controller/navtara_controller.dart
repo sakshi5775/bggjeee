@@ -39,6 +39,9 @@ class NavtaraController extends BaseController
   final isMatchmaking = false.obs;
   final selectedHistoryType = Rxn<String>(); // Null means 'All'
   final selectedHistoryStatus = Rxn<String>(); // Null means 'All'
+  // Store names for compatibility check
+  final person1Name = "".obs;
+  final person2Name = "".obs;
 
   late TabController tabController;
   late PageController pageController;
@@ -167,12 +170,21 @@ class NavtaraController extends BaseController
     required String boyNakshatra,
     required String girlName,
     required String girlNakshatra,
+    String? language,
   }) {
     isMatchmaking.value = true;
     fullName.value = boyName;
     primaryNakshatra.value = boyNakshatra;
     secondaryNakshatra.value = girlNakshatra;
-    checkCompatibility();
+    // Store both names for compatibility check
+    person1Name.value = boyName;
+    person2Name.value = girlName;
+    // Store language if provided
+    if (language != null) {
+      selectedLanguage.value = language;
+    }
+    // Don't auto-call checkCompatibility - let it be called only when user goes to Navtara tab
+    // checkCompatibility();
   }
 
   /// Initialize from Kundli Result
@@ -285,13 +297,24 @@ class NavtaraController extends BaseController
           return;
         }
       }
-      _showLoader('Checking Compatibility...');
+      _showLoader(
+        'Checking compatibility… May take 2–3 minutes. Please wait.',
+      );
       debugPrint('Calling checkCompatibility API...');
+      // Always use ROMANTIC relationship type for matchmaking
+      final relationshipType = 'ROMANTIC';
+      // Get language - use stored language or default to english
+      final lang = isMatchmaking.value 
+          ? (selectedLanguage.value.isNotEmpty ? selectedLanguage.value : 'english')
+          : _getLanguageName(selectedLanguage.value);
+      
       compatibility.value = await _service.checkCompatibility(
         nakshatra1: primaryNakshatra.value!,
         nakshatra2: secondaryNakshatra.value!,
-        relationshipType: 'ROMANTIC',
-        language: _getLanguageName(selectedLanguage.value),
+        name1: person1Name.value.isNotEmpty ? person1Name.value : null,
+        name2: person2Name.value.isNotEmpty ? person2Name.value : null,
+        relationshipType: relationshipType,
+        language: lang,
         timeout: const Duration(minutes: 5),
       );
       debugPrint(
@@ -301,12 +324,18 @@ class NavtaraController extends BaseController
       _hideLoader();
 
       if (compatibility.value == null) {
-        _showErrorDialog('Failed to check compatibility.');
+        _showErrorDialog(
+          NavtaraService.lastCompatibilityErrorMessage ??
+              'Failed to check compatibility.',
+        );
       }
     } catch (e) {
       debugPrint('Error in checkCompatibility: $e');
       _hideLoader();
-      _showErrorDialog('An unexpected error occurred.');
+      _showErrorDialog(
+        NavtaraService.lastCompatibilityErrorMessage ??
+            'An unexpected error occurred.',
+      );
     }
   }
 

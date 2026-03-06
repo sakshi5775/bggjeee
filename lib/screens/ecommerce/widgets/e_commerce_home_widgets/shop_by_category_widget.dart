@@ -1,8 +1,11 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/category_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/ecommerce_home_controller.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
+import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,7 +23,7 @@ class ShopByCategoryWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -29,18 +32,13 @@ class ShopByCategoryWidget extends StatelessWidget {
                   children: [
                     AutoTranslateText(
                       'Shop by Category',
-                      style: TextStyle(
-                        fontFamily: 'Baloo',
-                        fontWeight: FontWeight.w500,
-                        fontSize: 24,
-                        color: '#8B1925'.toColor(),
-                      ),
+                      style: AppTypography.h2.copyWith(color: '#68171E'.toColor()),
                     ),
                     Spacing.h(3.68),
                     AutoTranslateText(
                       'Explore our divine collections',
                       style: TextStyle(
-                        fontFamily: 'Baloo',
+                        fontFamily: 'Poppins',
                         fontWeight: FontWeight.w400,
                         fontSize: 12.88,
                         color: '#6A7282'.toColor(),
@@ -50,24 +48,30 @@ class ShopByCategoryWidget extends StatelessWidget {
                   ],
                 ),
                 GestureDetector(
-                  onTap: () => controller.navigateToProductList(),
+                  onTap: () => UserMainController.pushInCurrentTab(
+                    AppRoutes.productList,
+                    arguments: {
+                      'title': 'All Categories',
+                      'showCategoriesFirst': true,
+                    },
+                  ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       AutoTranslateText(
                         'View All',
                         style: TextStyle(
-                          fontFamily: 'Baloo',
+                          fontFamily: 'Poppins',
                           fontWeight: FontWeight.w400,
                           fontSize: 12.88,
-                          color: '#8B1925'.toColor(),
+                          color: '#68171E'.toColor(),
                         ),
                       ),
                       Spacing.w(5.52),
                       Icon(
                         Icons.arrow_forward_ios,
                         size: 14.71.h,
-                        color: '#8B1925'.toColor(),
+                        color: '#68171E'.toColor(),
                       ),
                     ],
                   ),

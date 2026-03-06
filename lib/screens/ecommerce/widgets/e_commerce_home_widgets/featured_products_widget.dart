@@ -1,10 +1,12 @@
-﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/product_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/cart_controller.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/ecommerce_home_controller.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/wishlist_controller.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +14,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../app_manager/my_text_theme.dart';
 import '../../../../theme/app_typography.dart';
 
 class FeaturedProductsWidget extends StatelessWidget {
@@ -32,28 +33,64 @@ class FeaturedProductsWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.only(left: 16.w, bottom: 8.h),
-              child: AutoTranslateText(
-                'Featured Products',
-                style: MyTextTheme.largeBCB
-                    .merge(AppTypography.h2)
-                    .copyWith(color: "#68171E".toColor()),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AutoTranslateText(
+                    'Featured Products',
+                    style: AppTypography.h2.copyWith(color: '#68171E'.toColor()),
+                  ),
+                  GestureDetector(
+                    onTap: () => UserMainController.pushInCurrentTab(
+                      AppRoutes.productList,
+                      arguments: {
+                        'title': 'Featured Products',
+                        'filterType': 'featured',
+                        'isFeatured': true,
+                      },
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AutoTranslateText(
+                          'View All',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12.sp,
+                            color: '#68171E'.toColor(),
+                          ),
+                        ),
+                        Spacing.w(4),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: 12.sp,
+                          color: '#68171E'.toColor(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
             SizedBox(
-              height: 280.h,
+              height: 320.h,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 padding: EdgeInsets.only(
                   left: 16.w,
                   right: 16.w,
-                  bottom: 4.h, // Add bottom padding for shadow
+                  bottom: 4.h,
                 ),
                 itemCount: controller.featuredProducts.length,
                 separatorBuilder: (context, index) => Spacing.w(10.14.w),
                 itemBuilder: (context, index) {
                   final product = controller.featuredProducts[index];
-                  return _buildProductCard(product);
+                  return FeaturedProductsWidget.buildFeaturedStyleCard(
+                    product,
+                    () => controller.navigateToProductDetail(product),
+                  );
                 },
               ),
             ),
@@ -63,7 +100,8 @@ class FeaturedProductsWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildProductCard(ProductModel product) {
+  /// Same card design and size as featured list. Use for Recommended for you etc.
+  static Widget buildFeaturedStyleCard(ProductModel product, VoidCallback onTap) {
     final cartController = Get.isRegistered<CartController>()
         ? Get.find<CartController>()
         : Get.put(CartController());
@@ -99,41 +137,54 @@ class FeaturedProductsWidget extends StatelessWidget {
     final basePrice = product.basePrice ?? 0.0;
     final discountPercent = product.discountPercentage ?? 0.0;
 
+    const double imageFraction = 0.78;
+    const double infoFraction = 0.22;
+    final double cardHeight = 300.h;
+    final double cardWidth = 220.w;
+    final double imageHeight = cardHeight * imageFraction;
+    final double infoHeight = cardHeight * infoFraction;
+
     return GestureDetector(
-      onTap: () => controller.navigateToProductDetail(product),
+      onTap: onTap,
       child: Container(
-        width: 185.8.w,
-        padding: EdgeInsets.all(10.14.w),
+        width: cardWidth,
+        height: cardHeight,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20.28.r),
+          borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
-              blurRadius: 2,
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 8,
               offset: Offset(0, 2),
             ),
           ],
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Product Image
+            // 80% – Product Image with optional badge
             Stack(
+              clipBehavior: Clip.none,
               children: [
                 Container(
-                  width: 165.65.w,
-                  height: 124.76.h,
+                  width: double.infinity,
+                  height: imageHeight,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12.r),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(16.r),
+                    ),
                   ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12.r),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(16.r),
+                    ),
                     child: imageUrl != null
                         ? NetworkImageWithLoader(
                             url: imageUrl,
-                            width: 165.65.w,
-                            height: 124.76.h,
+                            width: double.infinity,
+                            height: imageHeight,
+                            fit: BoxFit.cover,
                           )
                         : Container(
                             color: Colors.grey.withValues(alpha: 0.2),
@@ -145,262 +196,216 @@ class FeaturedProductsWidget extends StatelessWidget {
                           ),
                   ),
                 ),
-                Positioned(
-                  top: 8.h,
-                  right: 8.w,
-                  child: Obx(() {
-                    final isFavorite = wishlistController.isInWishlist(product);
-                    return GestureDetector(
-                      onTap: () => wishlistController.toggleWishlist(product),
-                      child: Container(
-                        padding: EdgeInsets.all(6.w),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.1),
-                              blurRadius: 4,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          isFavorite ? Icons.favorite : Icons.favorite_border,
-                          size: 16.sp,
-                          color: isFavorite
-                              ? AppColors.sacredRed
-                              : AppColors.textSecondary,
-                        ),
+                if (discountPercent > 0)
+                  Positioned(
+                    top: 8.h,
+                    left: 8.w,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                        vertical: 4.h,
                       ),
-                    );
-                  }),
-                ),
-              ],
-            ),
-            Spacing.h(7.34),
-            // Product Name and Rating
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: AutoTranslateText(
-                    product.name ?? '',
-                    style: TextStyle(
-                      fontFamily: 'Baloo 2',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16.23,
-                      color: '#3D0C11'.toColor(),
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Spacing.w(10.48),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.star, size: 8.58.sp, color: '#FEC62B'.toColor()),
-                    Spacing.w(3.04),
-                    AutoTranslateText(
-                      product.averageRating?.toStringAsFixed(1) ?? '4.9',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w500,
-                        fontSize: 10.48.sp,
+                      decoration: BoxDecoration(
                         color: '#FEC62B'.toColor(),
-                        height: 1.2,
+                        borderRadius: BorderRadius.circular(4.r),
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            Spacing.h(8.11),
-            // Price Section
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    AutoTranslateText(
-                      priceFormat.format(currentPrice),
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12.17.sp,
-                        color: '#3D0C11'.toColor(),
-                        height: 1.0,
-                      ),
-                    ),
-                    if (basePrice > currentPrice) ...[
-                      Spacing.w(4.06),
-                      AutoTranslateText(
-                        priceFormat.format(basePrice),
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 8.11.sp,
-                          color: '#99A1AF'.toColor(),
-                          height: 2.5,
-                          decoration: TextDecoration.lineThrough,
-                        ),
-                      ),
-                      Spacing.w(4.06),
-                      AutoTranslateText(
+                      child: AutoTranslateText(
                         '${discountPercent.toStringAsFixed(0)}% Off',
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w600,
-                          fontSize: 8.11.sp,
-                          color: '#8B1925'.toColor(),
-                          height: 1.2,
+                          fontSize: 9.sp,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            // 20% – Information section (fits within infoHeight, no overflow)
+            Container(
+              height: infoHeight,
+              padding: EdgeInsets.fromLTRB(10.w, 4.h, 10.w, 4.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AutoTranslateText(
+                    product.name ?? '',
+                    style: TextStyle(
+                      fontFamily: 'Baloo2',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 11.sp,
+                      color: '#3D0C11'.toColor(),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Row(
+                    children: [
+                      Icon(Icons.star, size: 9.sp, color: '#FEC62B'.toColor()),
+                      Spacing.w(2),
+                      AutoTranslateText(
+                        product.averageRating?.toStringAsFixed(1) ?? '4.9',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 9.sp,
+                          color: '#FEC62B'.toColor(),
+                        ),
+                      ),
+                      Spacing.w(4),
+                      Expanded(
+                        child: AutoTranslateText(
+                          '${product.reviewCount ?? 0} reviews',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 8.sp,
+                            color: '#99A1AF'.toColor(),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
-                  ],
-                ),
-                Spacing.h(4.06),
-                Row(
-                  children: [
-                    AutoTranslateText(
-                      'Free Delivery',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 8.11.sp,
-                        color: AppColors.success,
-                        height: 1.2,
-                      ),
-                    ),
-                    AutoTranslateText(
-                      '(COD Available)',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 8.11.sp,
-                        color: '#99A1AF'.toColor(),
-                        height: 1.2,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Obx(() {
-                    final quantity = cartController.quantityForProduct(product);
-                    final isProcessing = cartController.isProductUpdating(
-                      product,
-                    );
-
-                    if (quantity <= 0) {
-                      return GestureDetector(
-                        onTap: isProcessing
-                            ? null
-                            : () async {
-                                await cartController.addItem(
-                                  product: product,
-                                  quantity: 1,
-                                );
-                              },
-                        child: Container(
-                          height: 25.35.h,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                '#FF8C42'.toColor(),
-                                '#E63946'.toColor(),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(10.14.r),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.1),
-                                blurRadius: 2.56,
-                                offset: Offset(0, 1.28),
-                              ),
-                            ],
-                          ),
-                          child: Center(
-                            child: isProcessing
-                                ? SizedBox(
-                                    width: 16.w,
-                                    height: 16.h,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : AutoTranslateText(
-                                    'Buy Now',
-                                    style: TextStyle(
-                                      fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 10.14.sp,
-                                      color: Colors.white,
-                                      height: 1.26,
-                                    ),
-                                  ),
-                          ),
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      AutoTranslateText(
+                        priceFormat.format(currentPrice),
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12.sp,
+                          color: '#3D0C11'.toColor(),
                         ),
-                      );
-                    }
-
-                    return Container(
-                      height: 25.35.h,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: ['#FF8C42'.toColor(), '#E63946'.toColor()],
-                        ),
-                        borderRadius: BorderRadius.circular(10.14.r),
                       ),
-                      child: Center(
-                        child: AutoTranslateText(
-                          quantity.toString(),
+                      if (basePrice > currentPrice) ...[
+                        Spacing.w(4),
+                        AutoTranslateText(
+                          priceFormat.format(basePrice),
                           style: TextStyle(
                             fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 10.14.sp,
-                            color: Colors.white,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 9.sp,
+                            color: '#99A1AF'.toColor(),
+                            decoration: TextDecoration.lineThrough,
                           ),
                         ),
-                      ),
-                    );
-                  }),
-                ),
-                Spacing.w(5.07),
-                GestureDetector(
-                  onTap: () async {
-                    final cartController = Get.find<CartController>();
-                    await cartController.addItem(product: product, quantity: 1);
-                  },
-                  child: Container(
-                    width: 24.06.w,
-                    height: 24.06.h,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        color: '#FF8C42'.toColor(),
-                        width: 0.39,
-                      ),
-                      borderRadius: BorderRadius.circular(10.14.r),
-                    ),
-                    child: Icon(
-                      Icons.add,
-                      size: 16.w,
-                      color: '#FF8C42'.toColor(),
-                    ),
+                      ],
+                      Spacer(),
+                      Obx(() {
+                        final quantity = cartController.quantityForProduct(product);
+                        final isProcessing = cartController.isProductUpdating(
+                          product,
+                        );
+                        if (quantity <= 0) {
+                          return Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              GestureDetector(
+                                onTap: isProcessing
+                                    ? null
+                                    : () async {
+                                        await cartController.addItem(
+                                          product: product,
+                                          quantity: 1,
+                                        );
+                                      },
+                                child: Container(
+                                  height: 34.h,
+                                  padding: EdgeInsets.symmetric(horizontal: 10.w),
+                                  decoration: BoxDecoration(
+                                    gradient: AppColors.orangeGradient,
+                                    borderRadius: BorderRadius.circular(10.r),
+                                  ),
+                                  child: Center(
+                                    child: isProcessing
+                                        ? SizedBox(
+                                            width: 14.w,
+                                            height: 14.h,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Colors.white,
+                                            ),
+                                          )
+                                        : Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.check,
+                                                size: 14.sp,
+                                                color: Colors.white,
+                                              ),
+                                              Spacing.w(4),
+                                              AutoTranslateText(
+                                                'Add',
+                                                style: TextStyle(
+                                                  fontFamily: 'Poppins',
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 12.sp,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                  ),
+                                ),
+                              ),
+                              Spacing.w(6),
+                              Obx(() {
+                                final isFavorite =
+                                    wishlistController.isInWishlist(product);
+                                return GestureDetector(
+                                  onTap: () =>
+                                      wishlistController.toggleWishlist(product),
+                                    child: Container(
+                                      width: 34.w,
+                                      height: 34.h,
+                                      decoration: BoxDecoration(
+                                        gradient: AppColors.orangeGradient,
+                                        borderRadius: BorderRadius.circular(10.r),
+                                      ),
+                                      child: Icon(
+                                        isFavorite
+                                            ? Icons.favorite
+                                            : Icons.favorite_border,
+                                        size: 18.sp,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                );
+                              }),
+                            ],
+                          );
+                        }
+                        return Container(
+                          height: 34.h,
+                          padding: EdgeInsets.symmetric(horizontal: 8.w),
+                          decoration: BoxDecoration(
+                            gradient: AppColors.orangeGradient,
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
+                          child: Center(
+                            child: AutoTranslateText(
+                              quantity.toString(),
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 11.sp,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),

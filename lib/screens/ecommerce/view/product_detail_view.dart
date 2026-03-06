@@ -430,7 +430,7 @@ class ProductDetailView extends StatelessWidget {
             AutoTranslateText(
               'You May Also Like',
               style: TextStyle(
-                fontFamily: 'Baloo Bhai 2',
+                fontFamily: 'Baloo2',
                 fontWeight: FontWeight.w600,
                 fontSize: 20,
                 color: '#820B17'.toColor(),
@@ -565,7 +565,7 @@ class ProductDetailView extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontFamily: 'Baloo Bhai 2',
+                      fontFamily: 'Baloo2',
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
                       color: '#820B17'.toColor(),
