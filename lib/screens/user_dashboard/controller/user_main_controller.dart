@@ -8,6 +8,7 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/routes/get_pages.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/all_astrologers_view.dart';
+import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/controller/virtual_darshan_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/view/virtual_darshan_view.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 
@@ -84,6 +85,13 @@ class UserMainController extends GetxController {
       ];
       LoginGuard.showLoginRequiredModal(message: messages[index]);
       return;
+    }
+
+    // Stop animations if leaving Virtual Darshan tab
+    if (currentIndex.value == 2 && index != 2) {
+      if (Get.isRegistered<VirtualDarshanController>()) {
+        Get.find<VirtualDarshanController>().stopAllAnimationsForTabSwitch();
+      }
     }
 
     // Push current tab to history before switching

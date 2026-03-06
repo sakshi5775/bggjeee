@@ -1,5 +1,6 @@
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
+import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/controller/virtual_darshan_controller.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -88,6 +89,15 @@ class GlobalNavController extends GetxController {
 
   void updateRoute(String route, {Object? args}) {
     print('GlobalNav: updateRoute → $route with args: $args');
+
+    // Stop animations if leaving Virtual Darshan page
+    if (currentRoute.value == AppRoutes.virtualDarshan &&
+        route != AppRoutes.virtualDarshan) {
+      if (Get.isRegistered<VirtualDarshanController>()) {
+        Get.find<VirtualDarshanController>().stopAllAnimationsForTabSwitch();
+      }
+    }
+
     currentRoute.value = route;
 
     // Sync sub-menu state based on route and arguments

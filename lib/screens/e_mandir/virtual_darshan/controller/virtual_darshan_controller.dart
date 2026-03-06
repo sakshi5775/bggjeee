@@ -86,6 +86,9 @@ class VirtualDarshanController extends BaseController
 
   // API data
   final RxList<GodCategoryModel> godCategories = <GodCategoryModel>[].obs;
+
+  final RxList<GodCategoryModel> filterdGodCategories =
+      <GodCategoryModel>[].obs;
   final RxBool isLoadingCategories = true.obs;
   final RxString errorMessage = ''.obs;
 
@@ -93,6 +96,9 @@ class VirtualDarshanController extends BaseController
   final RxList<GodImageModel> categoryImages = <GodImageModel>[].obs;
   final RxBool isLoadingCategoryImages = false.obs;
   final RxInt currentCategoryIndex = 0.obs;
+
+  /// god category search controller in header widget
+  final Rx<TextEditingController> searchC = TextEditingController().obs;
 
   // Getter for current category name
   String get currentGodName {
@@ -222,9 +228,28 @@ class VirtualDarshanController extends BaseController
   List<String> get offeringTabs =>
       pujaItemCategories.map((c) => c.name).toList();
 
+  void filterSearch(String query) {
+    if (query.isEmpty) {
+      // If the search bar is empty, show all categories
+      filterdGodCategories.assignAll(godCategories);
+    } else {
+      // Filter the list based on the query
+      filterdGodCategories.assignAll(
+        godCategories.where((category) {
+          // IMPORTANT: Replace '.name' with the actual property you want to search by in your model
+          return category.godName.toLowerCase().contains(query.toLowerCase());
+        }).toList(),
+      );
+    }
+  }
+
   @override
   void onInit() {
     super.onInit();
+    // Listen to changes in the text field automatically
+    searchC.value.addListener(() {
+      filterSearch(searchC.value.text);
+    });
     aartiController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 6),
@@ -253,6 +278,7 @@ class VirtualDarshanController extends BaseController
     audioPlayer.setReleaseMode(ReleaseMode.loop);
     shankhPlayer.setReleaseMode(ReleaseMode.stop);
     dailyCheckIn();
+    getAllPunyaWallet();
     // Fetch god categories from API
     _loadGodCategories();
     // Fetch puja item categories from API
@@ -404,6 +430,7 @@ class VirtualDarshanController extends BaseController
       final response = await _godCategoryService.getGodCategories();
       if (response != null && response.success && response.items.isNotEmpty) {
         godCategories.value = response.items;
+        filterdGodCategories.assignAll(godCategories);
         // Auto-select first category and load its images
         currentCategoryIndex.value = 0;
         selectedGodID.value = godCategories.first.id.toString();
@@ -560,6 +587,13 @@ class VirtualDarshanController extends BaseController
       final response = await _pujaItemCategoryService.getMandirItems();
       if (response != null && response.success && response.data != null) {
         mandirItemsData.value = response.data;
+        selectedMandirArchImage.value =
+            mandirItemsData.value?.upperMandirFront.first.image ?? '';
+
+        selectedLeftBellImage.value =
+            mandirItemsData.value?.bells.first.leftBell ?? '';
+        selectedRightBellImage.value =
+            mandirItemsData.value?.bells.first.rightBell ?? '';
       }
     } catch (e) {
       print("Error fetching mandir items: $e");
@@ -1053,5 +1087,26 @@ class VirtualDarshanController extends BaseController
 
   void navigateToDevotionalLibrary() {
     UserMainController.pushInCurrentTab('/devotional-library');
+  }
+
+  /// Stops all active animations and audio when navigating away from the Virtual Darshan tab.
+  void stopAllAnimationsForTabSwitch() {
+    if (isAartiActive.value) {
+      aartiController.reset();
+      thaliTransitionController.reverse();
+      audioPlayer.stop();
+      stopFlowerRain();
+      isAartiActive.value = false;
+    }
+
+    // Clear any loose flowers that were raining
+    activeFlowers.clear();
+    flowerTimer?.cancel();
+    flowerTimer = null;
+
+    try {
+      audioPlayer.pause();
+      shankhPlayer.stop();
+    } catch (_) {}
   }
 }

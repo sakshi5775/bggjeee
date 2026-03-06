@@ -1,3 +1,4 @@
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
@@ -240,15 +241,10 @@ void showCollectionBottomSheet(BuildContext context) {
                             padding: EdgeInsets.only(right: 8.w),
                             child: item.imageAsset != null
                                 ? (item.imageAsset!.startsWith('http')
-                                      ? Image.network(
-                                          item.imageAsset!,
+                                      ? NetworkImageWithLoader(
+                                          url: item.imageAsset!,
                                           width: 32.w,
                                           height: 32.h,
-                                          errorBuilder: (_, __, ___) => Icon(
-                                            Icons.image,
-                                            color: Colors.white54,
-                                            size: 32.r,
-                                          ),
                                         )
                                       : Image.asset(
                                           item.imageAsset!,

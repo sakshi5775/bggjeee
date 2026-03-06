@@ -1,4 +1,6 @@
 import 'dart:math' as math;
+import 'package:astrobharataiuser/app_manager/my_text_field.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/controller/virtual_darshan_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -104,7 +106,6 @@ class MandirHeaderWidget extends StatelessWidget {
                       }),
                     ),
 
-                    // Fixed: divider + spacing
                     SizedBox(width: 8.w),
                     VerticalDivider(
                       width: 1.w,
@@ -112,43 +113,12 @@ class MandirHeaderWidget extends StatelessWidget {
                       color: Colors.white,
                     ),
                     SizedBox(width: 8.w),
-
-                    // Scrollable: category thumbnails + "+" button
                     Expanded(
                       child: ListView.builder(
                         controller: controller.scrollController,
                         scrollDirection: Axis.horizontal,
                         itemCount: count,
                         itemBuilder: (_, index) {
-                          // Last item: circular + button
-                          // if (index == count) {
-                          //   return Center(
-                          //     child: GestureDetector(
-                          //       onTap: () {
-                          //         // TODO: handle + button tap
-                          //       },
-                          //       child: Container(
-                          //         margin: EdgeInsets.symmetric(horizontal: 3.w),
-                          //         width: 40.w,
-                          //         height: 40.w,
-                          //         decoration: BoxDecoration(
-                          //           shape: BoxShape.circle,
-                          //           color: Colors.white.withOpacity(0.3),
-                          //           border: Border.all(
-                          //             color: Colors.white,
-                          //             width: 1.5,
-                          //           ),
-                          //         ),
-                          //         child: Icon(
-                          //           Icons.add,
-                          //           color: Colors.white,
-                          //           size: 14.r,
-                          //         ),
-                          //       ),
-                          //     ),
-                          //   );
-                          // }
-
                           // Category items
                           final isSelected = selectedIdx == index;
                           final catImage = controller.godCategories.isNotEmpty
@@ -177,19 +147,11 @@ class MandirHeaderWidget extends StatelessWidget {
                                         )
                                       : null,
                                 ),
-                                child: ClipOval(
-                                  child: SizedBox(
-                                    width: 36.w,
-                                    height: 36.w,
-                                    child: Image.network(
-                                      catImage ?? '',
-                                      fit: BoxFit.cover,
-                                      width: 36.w,
-                                      height: 36.w,
-                                      errorBuilder: (_, __, ___) =>
-                                          Icon(Icons.person, size: 14.r),
-                                    ),
-                                  ),
+
+                                child: NetworkImageWithLoader(
+                                  url: catImage ?? '',
+                                  fit: BoxFit.cover,
+                                  isCircular: true,
                                 ),
                               ),
                             ),
@@ -217,10 +179,9 @@ class MandirHeaderWidget extends StatelessWidget {
                   right: 0,
                   height: 80.h,
                   child: Obx(
-                    () => Image.network(
-                      controller.selectedMandirArchImage.value,
+                    () => NetworkImageWithLoader(
+                      url: controller.selectedMandirArchImage.value,
                       fit: BoxFit.fill,
-                      errorBuilder: (_, __, ___) => SizedBox(height: 80.h),
                     ),
                   ),
                 ),
@@ -297,10 +258,18 @@ class MandirHeaderWidget extends StatelessWidget {
               ),
             ),
             Divider(height: 1, color: Colors.grey.shade200),
+
+            MyTextField(
+              hintText: 'Search',
+              suffixIcon: Icon(Icons.search),
+              controller: controller.searchC.value,
+              maxLine: 1,
+            ),
+
             // Grid of gods
             Flexible(
               child: Obx(() {
-                final categories = controller.godCategories;
+                final categories = controller.filterdGodCategories;
                 final selectedIdx = controller.currentCategoryIndex.value;
 
                 return GridView.builder(
@@ -350,19 +319,11 @@ class MandirHeaderWidget extends StatelessWidget {
                                     ]
                                   : null,
                             ),
-                            child: ClipOval(
-                              child: Image.network(
-                                imageUrl,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => Container(
-                                  color: Colors.grey.shade200,
-                                  child: Icon(
-                                    Icons.person,
-                                    size: 24.r,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ),
+
+                            child: NetworkImageWithLoader(
+                              url: imageUrl,
+                              fit: BoxFit.cover,
+                              isCircular: true,
                             ),
                           ),
                           SizedBox(height: 6.h),
@@ -563,12 +524,12 @@ class _GhantaBellState extends State<_GhantaBell>
             child: child,
           );
         },
-        child: Image.network(
-          widget.imageUrl,
-          width: 180.w,
+
+        child: NetworkImageWithLoader(
+          url: widget.imageUrl,
           height: 210.h,
+          width: 180.w,
           fit: BoxFit.contain,
-          errorBuilder: (_, __, ___) => SizedBox(width: 80.w, height: 110.h),
         ),
       ),
     );

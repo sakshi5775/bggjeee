@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/controller/virtual_darshan_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -105,16 +106,11 @@ class DhupAnimationWidget extends GetView<VirtualDarshanController> {
 
   Widget _buildImage(String imageUrl, double scale) {
     if (imageUrl.isNotEmpty) {
-      return Image.network(
-        imageUrl,
+      return NetworkImageWithLoader(
+        url: imageUrl,
         fit: BoxFit.contain,
         width: scale * 0.75,
         height: scale * 0.75,
-        errorBuilder: (_, __, ___) => Icon(
-          Icons.local_fire_department,
-          size: scale * 0.5,
-          color: Colors.orange,
-        ),
       );
     }
     return Icon(

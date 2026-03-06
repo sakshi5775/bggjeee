@@ -153,16 +153,11 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                         }
                       },
                       child: (thaliImage.isNotEmpty)
-                          ? Image.network(
-                              thaliImage,
+                          ? NetworkImageWithLoader(
+                              url: thaliImage,
                               fit: BoxFit.contain,
                               width: thaliScale,
                               height: thaliScale,
-                              errorBuilder: (_, __, ___) => Image.asset(
-                                AppConstant.eMandirLadduIcon,
-                                width: thaliScale * 0.8,
-                                height: thaliScale * 0.8,
-                              ),
                             )
                           : Image.asset(
                               AppConstant.eMandirLadduIcon,
@@ -251,16 +246,22 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                     ),
                     child:
                         controller.selectedOfferingIcon.value.startsWith('http')
-                        ? Image.network(
-                            controller.selectedOfferingIcon.value,
+                        // ? Image.network(
+                        //     controller.selectedOfferingIcon.value,
+                        //     fit: BoxFit.cover,
+                        //     width: 40.w,
+                        //     height: 40.h,
+                        //     errorBuilder: (_, __, ___) => Image.asset(
+                        //       AppConstant.eMandirLadduIcon,
+                        //       width: 40.w,
+                        //       height: 40.h,
+                        //     ),
+                        //   )
+                        ? NetworkImageWithLoader(
+                            url: controller.selectedOfferingIcon.value,
                             fit: BoxFit.cover,
                             width: 40.w,
                             height: 40.h,
-                            errorBuilder: (_, __, ___) => Image.asset(
-                              AppConstant.eMandirLadduIcon,
-                              width: 40.w,
-                              height: 40.h,
-                            ),
                           )
                         : Image.asset(
                             controller.selectedOfferingIcon.value,
@@ -288,13 +289,12 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                       width: 2,
                     ),
                   ),
-                  child: Image.network(
-                    AppConstant.sriMandirDiyaAArti,
+
+                  child: NetworkImageWithLoader(
+                    url: AppConstant.sriMandirDiyaAArti,
+                    fit: BoxFit.fill,
                     width: 40.w,
                     height: 40.h,
-                    fit: BoxFit.fill,
-                    errorBuilder: (_, __, ___) =>
-                        Image.asset(AppConstant.eMandirAartiIcon),
                   ),
                 ),
               ),
@@ -353,11 +353,15 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                     ),
                     gradient: AppColors.gradientBackground,
                   ),
-                  child: Image.network(
-                    AppConstant.mandirItems,
+                  // child: Image.network(
+                  //   AppConstant.mandirItems,
+                  //   fit: BoxFit.cover,
+                  //   errorBuilder: (_, __, ___) =>
+                  //       Image.asset(AppConstant.eMandirLibraryAarti),
+                  // ),
+                  child: NetworkImageWithLoader(
+                    url: AppConstant.mandirItems,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) =>
-                        Image.asset(AppConstant.eMandirLibraryAarti),
                   ),
                 ),
               ),
@@ -380,12 +384,16 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                     ),
                     gradient: AppColors.gradientBackground,
                   ),
-                  child: Image.network(
-                    AppConstant.collectionSangrahIcon,
+                  // child: Image.network(
+                  //   AppConstant.collectionSangrahIcon,
 
+                  //   fit: BoxFit.fill,
+                  //   errorBuilder: (_, __, ___) =>
+                  //       Image.asset(AppConstant.eMandirLibraryAarti),
+                  // ),
+                  child: NetworkImageWithLoader(
+                    url: AppConstant.collectionSangrahIcon,
                     fit: BoxFit.fill,
-                    errorBuilder: (_, __, ___) =>
-                        Image.asset(AppConstant.eMandirLibraryAarti),
                   ),
                 ),
               ),
@@ -409,36 +417,7 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
       width: double.infinity,
       height: double.infinity,
       decoration: const BoxDecoration(color: Colors.black),
-      // child: Image.network(
-      //   imageUrl,
-      //   fit: BoxFit.cover,
-      //   width: double.infinity,
-      //   height: double.infinity,
-      //   loadingBuilder: (context, child, loadingProgress) {
-      //     if (loadingProgress == null) return child;
-      //     return Center(
-      //       child: CircularProgressIndicator(
-      //         value: loadingProgress.expectedTotalBytes != null
-      //             ? loadingProgress.cumulativeBytesLoaded /
-      //                   loadingProgress.expectedTotalBytes!
-      //             : null,
-      //         color: Colors.orange,
-      //       ),
-      //     );
-      //   },
-      //   errorBuilder: (context, error, stackTrace) {
-      //     return Center(
-      //       child: Column(
-      //         mainAxisAlignment: MainAxisAlignment.center,
-      //         children: [
-      //           const Icon(Icons.image, size: 48, color: Colors.white),
-      //           const SizedBox(height: 8),
-      //           const Text('loading...', style: TextStyle(color: Colors.white)),
-      //         ],
-      //       ),
-      //     );
-      //   },
-      // ),
+
       child: NetworkImageWithLoader(
         url: imageUrl,
         fit: BoxFit.cover,
@@ -606,12 +585,9 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                                 Expanded(
                                   child: Padding(
                                     padding: EdgeInsets.all(8.w),
-                                    child: Image.network(
-                                      bhog.image,
+                                    child: NetworkImageWithLoader(
+                                      url: bhog.image,
                                       fit: BoxFit.contain,
-                                      errorBuilder: (_, __, ___) => Image.asset(
-                                        AppConstant.eMandirLadduIcon,
-                                      ),
                                     ),
                                   ),
                                 ),
@@ -771,14 +747,14 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Expanded(
-                                    child: Image.network(
-                                      bell.leftBell,
+                                    child: NetworkImageWithLoader(
+                                      url: bell.leftBell,
                                       fit: BoxFit.contain,
                                     ),
                                   ),
                                   Expanded(
-                                    child: Image.network(
-                                      bell.rightBell,
+                                    child: NetworkImageWithLoader(
+                                      url: bell.rightBell,
                                       fit: BoxFit.contain,
                                     ),
                                   ),
@@ -815,8 +791,8 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12.r),
-                                child: Image.network(
-                                  arch.image,
+                                child: NetworkImageWithLoader(
+                                  url: arch.image,
                                   fit: BoxFit.cover,
                                 ),
                               ),
