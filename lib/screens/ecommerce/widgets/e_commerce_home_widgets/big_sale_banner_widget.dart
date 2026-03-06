@@ -148,7 +148,7 @@ class BigSaleBannerWidget extends StatelessWidget {
                 AutoTranslateText(
                   'Up to 50%',
                   style: TextStyle(
-                    fontFamily: 'Nunito Sans',
+                    fontFamily: 'Poppins',
                     fontWeight: FontWeight.w700,
                     fontSize: 13.68.sp,
                     color: Colors.white,
@@ -159,7 +159,7 @@ class BigSaleBannerWidget extends StatelessWidget {
                 AutoTranslateText(
                   'Happening Now',
                   style: TextStyle(
-                    fontFamily: 'Raleway',
+                    fontFamily: 'Poppins',
                     fontWeight: FontWeight.w700,
                     fontSize: 12.54.sp,
                     color: Colors.white,
@@ -203,7 +203,7 @@ class BigSaleBannerWidget extends StatelessWidget {
             AutoTranslateText(
               'Up to 50%',
               style: TextStyle(
-                fontFamily: 'Nunito Sans',
+                fontFamily: 'Poppins',
                 fontWeight: FontWeight.w700,
                 fontSize: 13.68.sp,
                 color: Colors.white,

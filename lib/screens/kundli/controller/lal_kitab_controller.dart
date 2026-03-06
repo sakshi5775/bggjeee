@@ -27,7 +27,7 @@ class LalKitabController extends BaseController {
     },
     {'left': 'House', 'right': 'Planet', 'hasApi': true, 'hasApiRight': true},
     {
-      'left': 'Chart',
+      'left': 'Planetary Positions',
       'right': 'Ask a question',
       'hasApi': true,
       'hasApiRight': false,
@@ -154,7 +154,7 @@ class LalKitabController extends BaseController {
   // Navigate to specific tab by name (from table card tap)
   void navigateToTab(String tabName) {
     switch (tabName) {
-      case 'Table':
+      case 'Overview':
         onTabSelected(0);
         break;
       case 'Lal Kitab Kundli':
@@ -175,7 +175,7 @@ class LalKitabController extends BaseController {
       case 'Planet':
         onTabSelected(6);
         break;
-      case 'Chart':
+      case 'Planetary Positions':
         onTabSelected(7);
         break;
       case 'Lal Kitab Dasha':
@@ -188,14 +188,14 @@ class LalKitabController extends BaseController {
 
   // Tab names for display (0=Table, 1-7=content)
   final List<String> tabNames = [
-    'Table',
+    'Overview',
     'Lal Kitab Kundli',
     'Remedies',
     'Debts',
     'Varsha Kundli',
     'House',
     'Planet',
-    'Chart',
+    'Planetary Positions',
   ];
 
   // Fetch Lal Kitab Horoscope
@@ -456,7 +456,7 @@ class LalKitabController extends BaseController {
   // Fetch Lal Kitab Chart
   Future<void> fetchLalKitabChart() async {
     if (formData.value == null) {
-      debugPrint('Form data is null, cannot fetch Lal Kitab Chart');
+      debugPrint('Form data is null, cannot fetch Lal Kitab Chart or Planetary Positions');
       return;
     }
 

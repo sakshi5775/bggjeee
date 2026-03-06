@@ -639,7 +639,7 @@ class PredictionsController extends BaseController {
 
   // Tab names for display (index 0 = Table, 1-11 = prediction types)
   final List<String> tabNames = [
-    'Table',
+    'Overview',
     'Numerology',
     'Daily',
     'Weekly',

@@ -2285,7 +2285,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               return const SizedBox.shrink();
             }
             final list = controller.blogs;
-            final count = list.length >= 8 ? 8 : list.length;
+            final count = list.length >= 5 ? 5 : list.length;
             return SizedBox(
               height: 140.h,
               child: ListView.separated(

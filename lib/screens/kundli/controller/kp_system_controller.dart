@@ -15,13 +15,13 @@ class KpSystemController extends BaseController {
     },
     {'left': 'Planets', 'right': 'Cusps', 'hasApi': true, 'hasApiRight': true},
     {
-      'left': 'Planet Signification',
-      'right': 'House Significators',
+      'left': 'Planet And House Significations',
+      'right': '',
       'hasApi': true,
       'hasApiRight': true,
     },
     {
-      'left': 'Planet Signification(View2)',
+      'left': 'Planet Signification Level Wise',
       'right': '',
       'hasApi': true,
       'hasApiRight': false,
@@ -125,11 +125,13 @@ class KpSystemController extends BaseController {
       fetchKpPlanetDetails();
     else if (index == 4 && kpCuspsDetailsData.value == null)
       fetchKpCuspsDetails();
-    else if (index == 5 && kpPlanetSignificationsData.value == null)
-      fetchKpPlanetSignifications();
-    else if (index == 6 && kpHouseSignificatorsData.value == null)
-      fetchKpHouseSignificators();
-    else if (index == 7 && kpPlanetSignificatorsLevelWiseData.value == null)
+    else if (index == 5) {
+      // Merged tab: fetch both Planet Significations and House Significators
+      if (kpPlanetSignificationsData.value == null)
+        fetchKpPlanetSignifications();
+      if (kpHouseSignificatorsData.value == null)
+        fetchKpHouseSignificators();
+    } else if (index == 6 && kpPlanetSignificatorsLevelWiseData.value == null)
       fetchKpPlanetSignificatorsLevelWise();
   }
 
@@ -152,7 +154,7 @@ class KpSystemController extends BaseController {
     }
   }
 
-  /// Page index: 0=Table, 1=KP Chart, 2=Rasi Chart, 3=Planets, 4=Cusps, 5=Planet Signification, 6=House Significators, 7=Planet Signification(View2)
+  /// Page index: 0=Table, 1=KP Chart, 2=Rasi Chart, 3=Planets, 4=Cusps, 5=Significations (merged), 6=Planet Signification Level Wise
   int _tabNameToPageIndex(String tabName) {
     switch (tabName) {
       case 'KP Chart':
@@ -163,13 +165,13 @@ class KpSystemController extends BaseController {
         return 3;
       case 'Cusps':
         return 4;
-      case 'Planet Signification':
-        return 5;
+      case 'Planet Signification House wise':
       case 'House Significators':
+      case 'Planet And House Significations':
+        return 5;
+      case 'Planet Signification Level Wise':
         return 6;
-      case 'Planet Signification(View2)':
-        return 7;
-      // Nakshatra Nadi commented out
+// Nakshatra Nadi commented out
       default:
         return 0;
     }
@@ -191,14 +193,13 @@ class KpSystemController extends BaseController {
 
   // Tab names for display – first is Table (like Predictions), then content tabs. Nakshatra Nadi commented out.
   final List<String> tabNames = [
-    'Table',
+    'Overview',
     'KP Chart',
     'Rasi Chart',
     'Planets',
     'Cusps',
-    'Planet Signification',
-    'House Significators',
-    'Planet Signification(View2)',
+    'Planet And House Significations',
+    'Planet Signification Level Wise',
     // 'Nakshatra Nadi',
   ];
 

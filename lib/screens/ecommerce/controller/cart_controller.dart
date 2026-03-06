@@ -41,12 +41,28 @@ class CartController extends BaseController {
 
   final EcommerceRazorpayService _razorpayService = EcommerceRazorpayService();
 
+  // You may also like (featured products for cart page)
+  final youMayAlsoLikeProducts = <ProductModel>[].obs;
+  final isLoadingYouMayAlsoLike = false.obs;
+
   @override
   void onInit() {
     super.onInit();
     loadCart();
     loadAddresses();
+    loadYouMayAlsoLike();
     _initializeRazorpay();
+  }
+
+  Future<void> loadYouMayAlsoLike() async {
+    try {
+      isLoadingYouMayAlsoLike.value = true;
+      final list = await _service.getFeaturedProducts(limit: 8);
+      if (list != null && list.isNotEmpty) {
+        youMayAlsoLikeProducts.assignAll(list);
+      }
+    } catch (_) {}
+    isLoadingYouMayAlsoLike.value = false;
   }
 
   @override

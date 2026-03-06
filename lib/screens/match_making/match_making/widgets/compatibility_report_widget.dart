@@ -6,8 +6,9 @@ import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:astrobharataiuser/screens/navtara/controller/navtara_controller.dart';
 import 'package:astrobharataiuser/screens/navtara/model/navtara_models.dart';
+import 'package:astrobharataiuser/screens/navtara/widgets/navtara_compatibility_widget.dart';
+import 'package:astrobharataiuser/screens/navtara/controller/navtara_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,6 +22,7 @@ class CompatibilityReportWidget extends StatelessWidget {
   final bool showMatchScore;
   final Widget? kundliSection;
   final bool showGunMilan;
+  final bool showDashakootGunMilan;
   final num? matchScoreTotalOverride;
   final bool showTotalSeparately;
   final num? rawTotal;
@@ -28,6 +30,8 @@ class CompatibilityReportWidget extends StatelessWidget {
   final bool showNavtaraSection;
   final Widget? navtaraWidget;
   final String matchLabel;
+  final String chartStyleForFullKundli;
+  final bool showScoreAsPercentage;
 
   const CompatibilityReportWidget({
     super.key,
@@ -37,6 +41,7 @@ class CompatibilityReportWidget extends StatelessWidget {
     this.showMatchScore = true,
     this.kundliSection,
     this.showGunMilan = true,
+    this.showDashakootGunMilan = false,
     this.matchScoreTotalOverride,
     this.showTotalSeparately = false,
     this.rawTotal,
@@ -44,6 +49,8 @@ class CompatibilityReportWidget extends StatelessWidget {
     this.showNavtaraSection = true,
     this.navtaraWidget,
     this.matchLabel = 'Gun Milan',
+    this.chartStyleForFullKundli = 'north',
+    this.showScoreAsPercentage = false,
   });
 
   @override
@@ -64,10 +71,14 @@ class CompatibilityReportWidget extends StatelessWidget {
     final score = response['score'] as num? ?? 0.0;
     final baseTotal = (matchScoreTotalOverride ?? 36).toDouble();
     final effectiveTotal = rawTotal != null ? rawTotal!.toDouble() : baseTotal;
-    // If score is already a percentage (e.g., Western 72/5), use score as percent when score > total
-    final percentValue = (score > effectiveTotal && rawTotal != null)
-        ? score.round()
-        : (effectiveTotal > 0 ? ((score / effectiveTotal) * 100).round() : 0);
+    // Cap score at total so we never display e.g. 12/10
+    final cappedScore = effectiveTotal > 0
+        ? score.toDouble().clamp(0.0, effectiveTotal)
+        : 0.0;
+    // Calculate percentage - cap at 100%
+    final percentValue = effectiveTotal > 0
+        ? ((cappedScore / effectiveTotal) * 100).round().clamp(0, 100)
+        : 0;
     final int finalPercent = percentValue;
     final matchStatus = finalPercent >= 75
         ? 'Good Match'
@@ -76,6 +87,8 @@ class CompatibilityReportWidget extends StatelessWidget {
         : 'Poor Match';
     final showSeparateTotal =
         showTotalSeparately || (rawTotal != null && score > effectiveTotal);
+    final botResponse = response['bot_response'] as String? ?? '';
+    final statusText = botResponse.isNotEmpty ? botResponse : matchStatus;
 
     // Extract kootas
     final tara = response['tara'] as Map<String, dynamic>?;
@@ -92,9 +105,6 @@ class CompatibilityReportWidget extends StatelessWidget {
         response['boy_astro_details'] as Map<String, dynamic>?;
     final girlAstroDetails =
         response['girl_astro_details'] as Map<String, dynamic>?;
-
-    // Extract bot response
-    final botResponse = response['bot_response'] as String? ?? '';
 
     if (showNavtaraOnly) {
       return navtaraWidget ??
@@ -114,15 +124,34 @@ class CompatibilityReportWidget extends StatelessWidget {
         if (showMatchScore) ...[
           Center(
             child: _buildMatchScore(
-              score,
+              cappedScore,
               effectiveTotal,
               finalPercent,
-              matchStatus,
+              statusText,
               showSeparateTotal,
               rawTotal,
               matchLabel,
+              showScoreAsPercentage: showScoreAsPercentage,
             ),
           ),
+          Spacing.h(20),
+        ],
+
+        // Aggregate Match – all API fields
+        if (response.containsKey('ashtakoot_score')) ...[
+          _buildAggregateDetails(response),
+          Spacing.h(20),
+        ],
+
+        // Rajju Vedha Details
+        if (response.containsKey('is_rajju_dosha_present')) ...[
+          _buildRajjuVedhaDetails(response),
+          Spacing.h(20),
+        ],
+
+        // Papasamaya Match – all API fields
+        if (response.containsKey('boy_papa')) ...[
+          _buildPapasamayaDetails(response),
           Spacing.h(20),
         ],
 
@@ -140,7 +169,7 @@ class CompatibilityReportWidget extends StatelessWidget {
 
         Spacing.h(20),
 
-        // 36 Gun Milan Details
+        // 36 Gun Milan Details (Ashtakoot)
         if (showGunMilan) ...[
           _buildGunMilanDetails(
             tara: tara,
@@ -153,6 +182,12 @@ class CompatibilityReportWidget extends StatelessWidget {
             varna: varna,
           ),
 
+          Spacing.h(20),
+        ],
+
+        // 10 Gun Milan Details (Dashakoot)
+        if (showDashakootGunMilan) ...[
+          _buildDashakootGunMilanDetails(response),
           Spacing.h(20),
         ],
 
@@ -183,8 +218,8 @@ class CompatibilityReportWidget extends StatelessWidget {
     final boyRasiFromBhakoot = bhakoot?['boy_rasi_name'] as String? ?? '';
     final girlRasiFromBhakoot = bhakoot?['girl_rasi_name'] as String? ?? '';
 
-    // Extract data from API response - prefer formData DOB if available
-    final boyName = boyDetails?['name'] as String? ?? '';
+    // Extract data from API response - prefer formData name/DOB if available
+    final boyName = formData?['boyName'] as String? ?? boyDetails?['name'] as String? ?? '';
     // Use formData DOB first, then fallback to API response
     final boyDob =
         formData?['boyDob'] as String? ??
@@ -200,7 +235,7 @@ class CompatibilityReportWidget extends StatelessWidget {
         boyDetails?['ascendant'] as String? ??
         '';
 
-    final girlName = girlDetails?['name'] as String? ?? '';
+    final girlName = formData?['girlName'] as String? ?? girlDetails?['name'] as String? ?? '';
     // Use formData DOB first, then fallback to API response
     final girlDob =
         formData?['girlDob'] as String? ??
@@ -297,13 +332,14 @@ class CompatibilityReportWidget extends StatelessWidget {
                 Spacing.h(8),
                 TextButton(
                   onPressed: () {
-                    // Navigate to Girl Full Kundli
                     UserMainController.pushInCurrentTab(
                       AppRoutes.matchMakingFullKundli,
                       arguments: {
                         'isBoy': false,
                         'astroDetails': girlDetails ?? {},
                         'planetaryDetails': girlPlanetaryDetails ?? {},
+                        'formData': formData,
+                        'chartStyle': chartStyleForFullKundli,
                       },
                     );
                   },
@@ -409,13 +445,14 @@ class CompatibilityReportWidget extends StatelessWidget {
                 Spacing.h(8),
                 TextButton(
                   onPressed: () {
-                    // Navigate to Boy Full Kundli
                     UserMainController.pushInCurrentTab(
                       AppRoutes.matchMakingFullKundli,
                       arguments: {
                         'isBoy': true,
                         'astroDetails': boyDetails ?? {},
                         'planetaryDetails': boyPlanetaryDetails ?? {},
+                        'formData': formData,
+                        'chartStyle': chartStyleForFullKundli,
                       },
                     );
                   },
@@ -479,13 +516,25 @@ class CompatibilityReportWidget extends StatelessWidget {
     String matchStatus,
     bool showSeparateTotal,
     num? rawTotal,
-    String matchLabel,
-  ) {
-    final displayScore = score.toStringAsFixed(0);
+    String matchLabel, {
+    bool showScoreAsPercentage = false,
+  }) {
+    // Ensure displayed score never exceeds total (e.g. never 12/10)
+    final safeScore = totalScore > 0
+        ? score.toDouble().clamp(0.0, totalScore.toDouble())
+        : 0.0;
+    final displayScore = safeScore.toStringAsFixed(
+        safeScore == safeScore.roundToDouble() ? 0 : 1);
     final displayTotal = rawTotal?.toString() ?? totalScore.toStringAsFixed(0);
     final progressValue = totalScore > 0
-        ? (score / totalScore).clamp(0, 1).toDouble()
+        ? (safeScore / totalScore).clamp(0.0, 1.0).toDouble()
         : 0.0;
+
+    final centerText = showScoreAsPercentage
+        ? '$displayScore%'
+        : showSeparateTotal
+            ? displayScore
+            : '$displayScore/$displayTotal';
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -516,9 +565,7 @@ class CompatibilityReportWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   AutoTranslateText(
-                    showSeparateTotal
-                        ? displayScore
-                        : '${score.toStringAsFixed(0)}/${totalScore.toInt()}',
+                    centerText,
                     style: MyTextTheme.largeBCB.copyWith(
                       color: "#6F221E".toColor(),
                       fontWeight: FontWeight.bold,
@@ -537,17 +584,18 @@ class CompatibilityReportWidget extends StatelessWidget {
           ),
         ),
         Spacing.h(20),
-        AutoTranslateText(
-          '$percentage%',
-          style: AppTypography.h1.copyWith(
-            color: percentage >= 75
-                ? Colors.purple
-                : percentage >= 50
-                ? Colors.orange
-                : Colors.red,
+        if (!showScoreAsPercentage)
+          AutoTranslateText(
+            '$percentage%',
+            style: AppTypography.h1.copyWith(
+              color: percentage >= 75
+                  ? Colors.purple
+                  : percentage >= 50
+                  ? Colors.orange
+                  : Colors.red,
+            ),
           ),
-        ),
-        Spacing.h(4),
+        if (!showScoreAsPercentage) Spacing.h(4),
         AutoTranslateText(
           matchStatus,
           style: MyTextTheme.mediumBCB.copyWith(
@@ -558,6 +606,8 @@ class CompatibilityReportWidget extends StatelessWidget {
                 : Colors.red,
             fontWeight: FontWeight.bold,
           ),
+          maxLines: 3,
+          textAlign: TextAlign.center,
         ),
         if (showSeparateTotal) ...[
           Spacing.h(6),
@@ -678,6 +728,64 @@ class CompatibilityReportWidget extends StatelessWidget {
     return _ExpandableSection(
       title: '36 Gun Milan Details',
       subtitle: '8 Kootas Analysis',
+      icon: Icons.star,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Spacing.h(12),
+          ...kootas.map((koota) => _buildKootaRow(koota)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDashakootGunMilanDetails(Map<String, dynamic> response) {
+    final keys = [
+      'dina', 'gana', 'mahendra', 'sthree', 'yoni', 'rasi',
+      'rasiathi', 'vasya', 'rajju', 'vedha',
+    ];
+    final kootas = <_KootaData>[];
+    for (final key in keys) {
+      final m = response[key] as Map<String, dynamic>?;
+      if (m == null) continue;
+      final score = (m[key] as num? ?? 0).toDouble();
+      final fullScore = (m['full_score'] as num? ?? 1).toDouble();
+      final description = (m['description'] ?? '').toString();
+      final name = (m['name'] ?? key).toString();
+      String boyInfo = '';
+      String girlInfo = '';
+      if (m.containsKey('boy_star')) {
+        boyInfo = (m['boy_star'] ?? '').toString();
+        girlInfo = (m['girl_star'] ?? '').toString();
+      } else if (m.containsKey('boy_gana')) {
+        boyInfo = (m['boy_gana'] ?? '').toString();
+        girlInfo = (m['girl_gana'] ?? '').toString();
+      } else if (m.containsKey('boy_yoni')) {
+        boyInfo = (m['boy_yoni'] ?? '').toString();
+        girlInfo = (m['girl_yoni'] ?? '').toString();
+      } else if (m.containsKey('boy_rasi') && !m.containsKey('boy_lord')) {
+        boyInfo = (m['boy_rasi'] ?? '').toString();
+        girlInfo = (m['girl_rasi'] ?? '').toString();
+      } else if (m.containsKey('boy_lord')) {
+        boyInfo = (m['boy_lord'] ?? '').toString();
+        girlInfo = (m['girl_lord'] ?? '').toString();
+      } else if (m.containsKey('boy_rajju')) {
+        boyInfo = (m['boy_rajju'] ?? '').toString();
+        girlInfo = (m['girl_rajju'] ?? '').toString();
+      }
+      kootas.add(_KootaData(
+        name: key,
+        displayName: name,
+        score: score,
+        fullScore: fullScore,
+        description: description,
+        boyInfo: boyInfo,
+        girlInfo: girlInfo,
+      ));
+    }
+    return _ExpandableSection(
+      title: '10 Gun Milan Details (Dashakoot)',
+      subtitle: '10 Kootas Analysis',
       icon: Icons.star,
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -957,7 +1065,274 @@ class CompatibilityReportWidget extends StatelessWidget {
     );
   }
 
+  Widget _buildAggregateDetails(Map<String, dynamic> response) {
+    final ashtakoot = response['ashtakoot_score']?.toString() ?? '–';
+    final dashkoot = response['dashkoot_score']?.toString() ?? '–';
+    final score = response['score']?.toString() ?? '–';
+    final extended = response['extended_response']?.toString();
+    final items = <_LabelValue>[
+      _LabelValue('Ashtakoot Score', ashtakoot),
+      _LabelValue('Dashkoot Score', dashkoot),
+      _LabelValue('Compatibility Score', '$score/100'),
+      _LabelValue('Rajju Dosha', (response['rajjudosh'] == true) ? 'Present' : 'Absent'),
+      _LabelValue('Vedha Dosha', (response['vedhadosh'] == true) ? 'Present' : 'Absent'),
+    ];
+    final mangaldosh = response['mangaldosh']?.toString();
+    if (mangaldosh != null && mangaldosh.isNotEmpty) {
+      items.add(_LabelValue('Mangal Dosha', mangaldosh));
+      final pts = response['mangaldosh_points'] as Map<String, dynamic>?;
+      if (pts != null) {
+        items.add(_LabelValue('Mangal Dosha (Boy)', pts['boy']?.toString() ?? '–'));
+        items.add(_LabelValue('Mangal Dosha (Girl)', pts['girl']?.toString() ?? '–'));
+      }
+    }
+    final pitradosh = response['pitradosh']?.toString();
+    if (pitradosh != null && pitradosh.isNotEmpty) {
+      items.add(_LabelValue('Pitra Dosha', pitradosh));
+      final pts = response['pitradosh_points'] as Map<String, dynamic>?;
+      if (pts != null) {
+        items.add(_LabelValue('Pitra Dosha (Boy)', pts['boy'] == true ? 'Yes' : 'No'));
+        items.add(_LabelValue('Pitra Dosha (Girl)', pts['girl'] == true ? 'Yes' : 'No'));
+      }
+    }
+    final kaalsarp = response['kaalsarpdosh']?.toString();
+    if (kaalsarp != null && kaalsarp.isNotEmpty) {
+      items.add(_LabelValue('Kaal Sarp Dosha', kaalsarp));
+      final pts = response['kaalsarp_points'] as Map<String, dynamic>?;
+      if (pts != null) {
+        items.add(_LabelValue('Kaal Sarp (Boy)', pts['boy'] == true ? 'Yes' : 'No'));
+        items.add(_LabelValue('Kaal Sarp (Girl)', pts['girl'] == true ? 'Yes' : 'No'));
+      }
+    }
+    final manglikSaturn = response['manglikdosh_saturn']?.toString();
+    if (manglikSaturn != null && manglikSaturn.isNotEmpty) {
+      items.add(_LabelValue('Manglik Dosha (Saturn)', manglikSaturn));
+      final pts = response['manglikdosh_saturn_points'] as Map<String, dynamic>?;
+      if (pts != null) {
+        items.add(_LabelValue('Manglik Saturn (Boy)', pts['boy'] == true ? 'Yes' : 'No'));
+        items.add(_LabelValue('Manglik Saturn (Girl)', pts['girl'] == true ? 'Yes' : 'No'));
+      }
+    }
+    final manglikRK = response['manglikdosh_rahuketu']?.toString();
+    if (manglikRK != null && manglikRK.isNotEmpty) {
+      items.add(_LabelValue('Manglik Dosha (Rahu-Ketu)', manglikRK));
+      final pts = response['manglikdosh_rahuketu_points'] as Map<String, dynamic>?;
+      if (pts != null) {
+        items.add(_LabelValue('Manglik Rahu-Ketu (Boy)', pts['boy'] == true ? 'Yes' : 'No'));
+        items.add(_LabelValue('Manglik Rahu-Ketu (Girl)', pts['girl'] == true ? 'Yes' : 'No'));
+      }
+    }
+    if (extended != null && extended.isNotEmpty) {
+      items.add(_LabelValue('Extended Response', extended));
+    }
+
+    return _ExpandableSection(
+      title: 'Aggregate Match Details',
+      subtitle: 'Scores and dosha from API',
+      icon: Icons.analytics,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Spacing.h(12),
+          ...items.map((e) => Padding(
+                padding: EdgeInsets.only(bottom: 10.h),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 160.w,
+                      child: AutoTranslateText(
+                        e.label,
+                        style: MyTextTheme.smallBCB.copyWith(
+                          color: "#6F221E".toColor(),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: AutoTranslateText(
+                        e.value,
+                        style: MyTextTheme.smallBCN.copyWith(
+                          color: "#6F221E".toColor().withValues(alpha: 0.9),
+                          height: 1.3,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRajjuVedhaDetails(Map<String, dynamic> response) {
+    final rajju = response['is_rajju_dosha_present'] == true;
+    final vedha = response['is_vedha_dosha_present'] == true;
+    return _ExpandableSection(
+      title: 'Rajju & Vedha Details',
+      subtitle: 'From API',
+      icon: Icons.info_outline,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Spacing.h(12),
+          _buildKeyValueRow('Rajju Dosha Present', rajju ? 'Yes' : 'No'),
+          Spacing.h(8),
+          _buildKeyValueRow('Vedha Dosha Present', vedha ? 'Yes' : 'No'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildKeyValueRow(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 160.w,
+          child: AutoTranslateText(
+            label,
+            style: MyTextTheme.smallBCB.copyWith(color: "#6F221E".toColor()),
+          ),
+        ),
+        Expanded(
+          child: AutoTranslateText(
+            value,
+            style: MyTextTheme.smallBCN.copyWith(
+              color: "#6F221E".toColor().withValues(alpha: 0.9),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPapasamayaDetails(Map<String, dynamic> response) {
+    final boyPapa = response['boy_papa'] as Map<String, dynamic>?;
+    final girlPapa = response['girl_papa'] as Map<String, dynamic>?;
+    final boyTotal = response['boy_total']?.toString() ?? '–';
+    final girlTotal = response['girl_total']?.toString() ?? '–';
+    final score = response['score']?.toString() ?? '–';
+    final botResponse = response['bot_response']?.toString() ?? '';
+
+    final children = <Widget>[
+      Spacing.h(12),
+      _buildKeyValueRow('Boy total', boyTotal),
+      Spacing.h(8),
+      _buildKeyValueRow('Girl total', girlTotal),
+      Spacing.h(8),
+      _buildKeyValueRow('Score', score),
+    ];
+    if (boyPapa != null && boyPapa.isNotEmpty) {
+      children.add(Spacing.h(12));
+      children.add(AutoTranslateText(
+        'Boy Papa',
+        style: MyTextTheme.smallBCB.copyWith(color: "#6F221E".toColor()),
+      ));
+      for (final e in boyPapa.entries) {
+        children.add(Padding(
+          padding: EdgeInsets.only(left: 12.w, top: 4.h),
+          child: _buildKeyValueRow(e.key, e.value?.toString() ?? '–'),
+        ));
+      }
+    }
+    if (girlPapa != null && girlPapa.isNotEmpty) {
+      children.add(Spacing.h(12));
+      children.add(AutoTranslateText(
+        'Girl Papa',
+        style: MyTextTheme.smallBCB.copyWith(color: "#6F221E".toColor()),
+      ));
+      for (final e in girlPapa.entries) {
+        children.add(Padding(
+          padding: EdgeInsets.only(left: 12.w, top: 4.h),
+          child: _buildKeyValueRow(e.key, e.value?.toString() ?? '–'),
+        ));
+      }
+    }
+    if (botResponse.isNotEmpty) {
+      children.add(Spacing.h(12));
+      children.add(AutoTranslateText(
+        botResponse,
+        style: MyTextTheme.smallBCN.copyWith(
+          color: "#6F221E".toColor().withValues(alpha: 0.9),
+          height: 1.3,
+        ),
+      ));
+    }
+
+    return _ExpandableSection(
+      title: 'Papasamaya Match',
+      subtitle: 'From API',
+      icon: Icons.pie_chart_outline,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: children,
+      ),
+    );
+  }
+
   Widget _buildManglikDosha(Map<String, dynamic> response) {
+    // Aggregate API: use API strings and points when present
+    if (response.containsKey('mangaldosh')) {
+      final mangaldosh = response['mangaldosh']?.toString() ?? '';
+      final pts = response['mangaldosh_points'] as Map<String, dynamic>?;
+      final boyPts = pts?['boy']?.toString() ?? '–';
+      final girlPts = pts?['girl']?.toString() ?? '–';
+      return Container(
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(
+            color: '#68171E'.toColor().withValues(alpha: 0.2),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.local_fire_department, color: AppColors.deepOrange, size: 20.w),
+                Spacing.w(8),
+                AutoTranslateText(
+                  'Manglik Dosha Analysis',
+                  style: MyTextTheme.largeBCB.copyWith(
+                    color: "#6F221E".toColor(),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            Spacing.h(8),
+            AutoTranslateText(
+              mangaldosh,
+              style: MyTextTheme.smallBCN.copyWith(
+                color: "#6F221E".toColor().withValues(alpha: 0.8),
+                height: 1.4,
+              ),
+            ),
+            Spacing.h(8),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildKootaInfoTile('Boy (points)', boyPts),
+                ),
+                Spacing.w(8),
+                Expanded(
+                  child: _buildKootaInfoTile('Girl (points)', girlPts),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    }
+
     // Check for Manglik Dosha in planetary details from API
     final boyPlanetaryDetails =
         response['boy_planetary_details'] as Map<String, dynamic>?;
@@ -1328,131 +1703,23 @@ class CompatibilityReportWidget extends StatelessWidget {
     Map<String, dynamic>? boyAstro,
     Map<String, dynamic>? girlAstro,
   ) {
-    if (!Get.isRegistered<NavtaraController>()) return const SizedBox.shrink();
-    final navtaraController = Get.find<NavtaraController>();
-
-    String extract(dynamic data) {
-      if (data == null) return '';
-      final potentialKeys = [
-        'nakshatra',
-        'nakshatra_name',
-        'nakshtra',
-        'nakshtra_name',
-        'birth_nakshatra',
-      ];
-
-      if (data is Map) {
-        for (final key in potentialKeys) {
-          if (data.containsKey(key)) {
-            final val = data[key];
-            if (val is String && val.isNotEmpty && val != '-') return val;
-            if (val is Map && val.containsKey('name')) {
-              final name = val['name'].toString();
-              if (name.isNotEmpty && name != '-') return name;
-            }
-          }
-        }
-        // Deep scan if not found in top level
-        for (final val in data.values) {
-          final res = extract(val);
-          if (res.isNotEmpty) return res;
-        }
-      } else if (data is List) {
-        for (final item in data) {
-          final res = extract(item);
-          if (res.isNotEmpty) return res;
-        }
-      }
-      return '';
-    }
-
-    final boyNakshatra = extract(boyAstro);
-    final girlNakshatra = extract(girlAstro);
-
-    if (boyNakshatra.isEmpty || girlNakshatra.isEmpty)
-      return const SizedBox.shrink();
-
-    // Initialize if not already set
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (navtaraController.primaryNakshatra.value != boyNakshatra ||
-          navtaraController.secondaryNakshatra.value != girlNakshatra) {
-        navtaraController.initFromMatching(
-          boyName: boyAstro?['name'] ?? 'Boy',
-          boyNakshatra: boyNakshatra,
-          girlName: girlAstro?['name'] ?? 'Girl',
-          girlNakshatra: girlNakshatra,
-        );
-      }
-    });
-
-    return Obx(() {
-      final compatibility = navtaraController.compatibility.value;
-      if (navtaraController.isLoading.value && compatibility == null) {
-        return const Center(
-          child: Padding(
-            padding: EdgeInsets.all(20.0),
-            child: CircularProgressIndicator(),
+    // Show Navtara compatibility widget if controller is registered and has data
+    if (Get.isRegistered<NavtaraController>()) {
+      final controller = Get.find<NavtaraController>();
+      if (controller.compatibility.value != null) {
+        return NavtaraCompatibilityWidget(controller: controller);
+      } else if (controller.isLoading.value) {
+        return const Center(child: CircularProgressIndicator());
+      } else {
+        return Center(
+          child: AutoTranslateText(
+            'Compatibility analysis unavailable.',
+            style: MyTextTheme.mediumBCN,
           ),
         );
       }
-
-      if (compatibility == null) return const SizedBox.shrink();
-
-      final analysis = compatibility.compatibilityAnalysis;
-
-      return _ExpandableSection(
-        title: 'Nakshatra Compatibility (Navtara)',
-        subtitle: 'Deeper Nakshatra Analysis',
-        icon: Icons.favorite,
-        child: Column(
-          children: [
-            Spacing.h(16),
-            // Compatibility Score
-            Center(
-              child: Column(
-                children: [
-                  AutoTranslateText(
-                    '${analysis.compatibilityScore.toInt()}%',
-                    style: AppTypography.h1.copyWith(
-                      color: AppColors.deepOrange,
-                    ),
-                  ),
-                  AutoTranslateText(
-                    analysis.compatibilityLevel,
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      color: AppColors.deepOrange,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Spacing.h(20),
-
-            // Categories
-            _buildNavtaraCategoryTile('Boy to Girl', analysis.person1ToPerson2),
-            Spacing.h(12),
-            _buildNavtaraCategoryTile('Girl to Boy', analysis.person2ToPerson1),
-
-            Spacing.h(20),
-            _buildCompatibilityList(
-              'Strengths',
-              analysis.strengths,
-              Colors.green,
-            ),
-            Spacing.h(12),
-            _buildCompatibilityList(
-              'Challenges',
-              analysis.challenges,
-              Colors.orange,
-            ),
-
-            Spacing.h(20),
-            _buildAdviceCard('Advice', analysis.advice),
-            Spacing.h(16),
-          ],
-        ),
-      );
-    });
+    }
+    return const SizedBox.shrink();
   }
 
   Widget _buildNavtaraCategoryTile(
@@ -1587,6 +1854,12 @@ class CompatibilityReportWidget extends StatelessWidget {
       ),
     );
   }
+}
+
+class _LabelValue {
+  final String label;
+  final String value;
+  _LabelValue(this.label, this.value);
 }
 
 class _KootaData {

@@ -57,8 +57,11 @@ class _ProductListViewState extends State<ProductListView> {
             Obx(() {
               final category = controller.selectedCategory.value;
               final productCount = controller.products.length;
+              final title = controller.listTitle.value ??
+                  category?.name ??
+                  'Products';
               return CommonHeader(
-                title: category?.name ?? 'Products',
+                title: title,
                 subtitle: AutoTranslateText(
                   'Showing $productCount Premium items',
                   style: TextStyle(
@@ -92,6 +95,9 @@ class _ProductListViewState extends State<ProductListView> {
             }),
             Expanded(
               child: Obx(() {
+                if (controller.showCategoriesFirst.value) {
+                  return _buildAllCategoriesGrid(context, controller);
+                }
                 if (controller.isLoadingProducts.value &&
                     controller.products.isEmpty) {
                   return Center(
@@ -123,12 +129,8 @@ class _ProductListViewState extends State<ProductListView> {
                 return Column(
                   children: [
                     SizedBox(height: 10.14.h),
-                    // Search and Filter Bar
                     _buildSearchAndFilterBar(context, controller),
                     SizedBox(height: 14.71.h),
-                    // Category Filters (Horizontal Scroll)
-
-                    // Products Grid
                     Expanded(child: _buildGridView(context, controller)),
                   ],
                 );
@@ -202,6 +204,113 @@ class _ProductListViewState extends State<ProductListView> {
             child: Icon(Icons.tune, size: 24.w, color: '#DD2914'.toColor()),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAllCategoriesGrid(
+    BuildContext context,
+    ProductListController controller,
+  ) {
+    return Obx(() {
+      final categories = controller.categoryTree.isNotEmpty
+          ? controller.categoryTree
+          : controller.availableCategories
+              .where((c) => c.parent == null)
+              .toList();
+      if (controller.isLoadingCategories.value && categories.isEmpty) {
+        return Center(
+          child: CircularProgressIndicator(color: AppColors.saffron),
+        );
+      }
+      if (categories.isEmpty) {
+        return Center(
+          child: AutoTranslateText(
+            'No categories available',
+            style: TextStyle(color: AppColors.textSecondary),
+          ),
+        );
+      }
+      return GridView.builder(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 0.85,
+          crossAxisSpacing: 12.w,
+          mainAxisSpacing: 12.h,
+        ),
+        itemCount: categories.length,
+        itemBuilder: (context, index) {
+          final category = categories[index];
+          return _buildAllCategoriesGridCard(context, controller, category);
+        },
+      );
+    });
+  }
+
+  Widget _buildAllCategoriesGridCard(
+    BuildContext context,
+    ProductListController controller,
+    CategoryModel category,
+  ) {
+    final imageUrl = category.image;
+    final fullUrl = imageUrl != null && imageUrl.isNotEmpty && imageUrl.startsWith('/')
+        ? 'http://65.1.131.197:8000$imageUrl'
+        : imageUrl;
+    return GestureDetector(
+      onTap: () => controller.selectCategoryFromGrid(category),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 8,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
+                child: fullUrl != null && fullUrl.isNotEmpty
+                    ? NetworkImageWithLoader(
+                        url: fullUrl,
+                        width: double.infinity,
+                        height: double.infinity,
+                        fit: BoxFit.cover,
+                      )
+                    : Container(
+                        color: AppColors.saffron.withValues(alpha: 0.2),
+                        child: Icon(
+                          Icons.category,
+                          size: 48.w,
+                          color: AppColors.saffron,
+                        ),
+                      ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+              child: AutoTranslateText(
+                category.name ?? '',
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12.sp,
+                  color: AppColors.textPrimary,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -478,6 +587,7 @@ class _ProductListViewState extends State<ProductListView> {
                             url: imageUrl,
                             width: double.infinity,
                             height: 124.76.h,
+                            fit: BoxFit.cover,
                           )
                         : Container(
                             width: double.infinity,
@@ -546,7 +656,7 @@ class _ProductListViewState extends State<ProductListView> {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontFamily: 'Baloo 2',
+                              fontFamily: 'Baloo2',
                               fontWeight: FontWeight.w700,
                               fontSize: 16.23.sp,
                               color: '#3D0C11'.toColor(),

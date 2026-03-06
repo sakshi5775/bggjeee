@@ -4,13 +4,14 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/match_making/match_making/service/match_making_service.dart';
 import 'package:astrobharataiuser/screens/match_making/match_making/widgets/astrologers_section_widget.dart';
 import 'package:astrobharataiuser/screens/match_making/match_making/widgets/compatibility_report_widget.dart';
-import 'package:astrobharataiuser/screens/match_making/match_making/widgets/kundli_chart_widget.dart';
+import 'package:astrobharataiuser/screens/match_making/match_making/widgets/match_making_lagna_chart_widget.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 
 import 'package:astrobharataiuser/screens/navtara/controller/navtara_controller.dart';
+import 'package:astrobharataiuser/screens/navtara/widgets/navtara_compatibility_widget.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
-import 'package:astrobharataiuser/screens/match_making/match_making/view/match_making_navtara_view.dart';
+import 'package:astrobharataiuser/widgets/common_tab_slider.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
@@ -30,13 +31,28 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
   bool _showMatchingImage = true;
   final MatchMakingService _service = MatchMakingService();
   Map<String, dynamic>? _currentResponse;
+  final Map<String, Map<String, dynamic>> _tabResponses = {};
   Map<String, dynamic>? _formData;
   bool _isFetching = false;
   String _activeTab = 'North Match';
+  late PageController _pageController;
+  bool _hasRunExtractors = false;
+  final List<String> _tabs = [
+    'North Match',
+    'South Match',
+    'East Match',
+    'Aggregate Match',
+    'Rajju Vedha Details',
+    'Papasamaya Match',
+    'Nakshatra Match',
+    'Western Match',
+    'Navtara',
+  ];
 
   @override
   void initState() {
     super.initState();
+    _pageController = PageController(initialPage: 0);
     // Register NavtaraController if not already registered
     if (!Get.isRegistered<NavtaraController>()) {
       Get.put(NavtaraController());
@@ -45,6 +61,19 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
     if (!Get.isRegistered<AiPricingController>()) {
       Get.put(AiPricingController());
     }
+    // After first build, seed North tab response and extract nakshatra/zodiac from API
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (_currentResponse != null && !_tabResponses.containsKey('North Match')) {
+        _tabResponses['North Match'] = _currentResponse!;
+      }
+      if (!_hasRunExtractors) {
+        _hasRunExtractors = true;
+        _extractNakshatraNumbers();
+        _extractZodiacSigns();
+      }
+      if (mounted) setState(() {});
+    });
     // Show matching animation for 3 seconds, then show report
     Future.delayed(const Duration(seconds: 5), () {
       if (mounted) {
@@ -56,19 +85,32 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
   }
 
   @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final args = Get.arguments;
-    if (args == null || args is! Map<String, dynamic>) {
-      return _buildErrorView('No data available');
-    }
 
-    _formData ??= args['formData'] as Map<String, dynamic>?;
-
-    // Handle response - it can be a String (error) or Map (success)
+    // Only require args when we don't already have data (Get.arguments can become null after route/nav updates, e.g. when Navtara dialog closes)
     if (_currentResponse == null) {
+      if (args == null || args is! Map<String, dynamic>) {
+        return _buildErrorView('No data available');
+      }
+
+      _formData ??= args['formData'] as Map<String, dynamic>?;
+
+      // Handle response - it can be a String (error) or Map (success)
       final responseValue = args['response'];
       if (responseValue is Map<String, dynamic>) {
-        _currentResponse = responseValue;
+        // Check if it's nested under 'response' key (API structure: {status: 200, response: {...}})
+        if (responseValue.containsKey('response') && responseValue['response'] is Map<String, dynamic>) {
+          _currentResponse = responseValue['response'] as Map<String, dynamic>;
+        } else {
+          _currentResponse = responseValue;
+        }
       } else if (responseValue is String) {
         return _buildErrorView(responseValue);
       } else {
@@ -77,14 +119,20 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
         if (status != null && status != 200 && responseMsg is String) {
           return _buildErrorView(responseMsg);
         }
-        _currentResponse = args;
+        // Check if args itself has nested response
+        if (args.containsKey('response') && args['response'] is Map<String, dynamic>) {
+          _currentResponse = args['response'] as Map<String, dynamic>;
+        } else {
+          _currentResponse = args;
+        }
+      }
+
+      if (_currentResponse == null) {
+        return _buildErrorView('No data available');
       }
     }
 
-    if (_currentResponse == null) {
-      return _buildErrorView('No data available');
-    }
-
+    // Check if response has status at top level (might be nested structure)
     final status = _currentResponse!['status'];
     if (status != null && status != 200) {
       final errorMsg = _currentResponse!['response'];
@@ -92,8 +140,6 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
         return _buildErrorView(errorMsg);
       }
     }
-
-    final response = _currentResponse!;
 
     if (_showMatchingImage) {
       return Container(
@@ -121,107 +167,115 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
           children: [
             CommonHeader(
               title: 'Match Making Result',
-              showCart: false,
-              showWallet: false,
-              showSearch: false,
+              showBackButton: true,
             ),
+            _buildMatchTabs(),
+            if (_isFetching)
+              const LinearProgressIndicator(minHeight: 2),
             Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.only(bottom: 20.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 12.h,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _buildMatchTabs(),
-                          if (_isFetching) ...[
-                            Spacing.h(12),
-                            const LinearProgressIndicator(minHeight: 2),
-                          ],
-                          Spacing.h(16),
-                          CompatibilityReportWidget(
-                            data: response,
-                            formData: _formData,
-                            showProfile:
-                                _activeTab == 'North Match' ||
-                                _activeTab == 'South Match',
-                            showGunMilan: _activeTab == 'North Match',
-                            matchScoreTotalOverride: _resolveTotal(response),
-                            showTotalSeparately: _activeTab == 'Western Match',
-                            rawTotal: response['total'] as num?,
-                            kundliSection:
-                                (_activeTab == 'North Match' &&
-                                    response['boy_planetary_details'] != null &&
-                                    response['girl_planetary_details'] != null)
-                                ? KundliChartWidget(
-                                    boyPlanetaryDetails:
-                                        response['boy_planetary_details']
-                                            as Map<String, dynamic>,
-                                    girlPlanetaryDetails:
-                                        response['girl_planetary_details']
-                                            as Map<String, dynamic>,
-                                    boyAstroDetails:
-                                        response['boy_astro_details']
-                                            as Map<String, dynamic>?,
-                                    girlAstroDetails:
-                                        response['girl_astro_details']
-                                            as Map<String, dynamic>?,
-                                  )
-                                : null,
-                            showNavtaraSection: _activeTab == 'Navtara',
-                            matchLabel: _activeTab == 'Papasamaya Match'
-                                ? 'Papa Match'
-                                : _activeTab == 'Nakshatra Match'
-                                ? 'Star Match'
-                                : _activeTab == 'Western Match'
-                                ? 'Zodiac Match'
-                                : 'Gun Milan',
-                            navtaraWidget: _activeTab == 'Navtara'
-                                ? Center(
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        Get.to(
-                                          () => const MatchMakingNavtaraView(),
-                                        );
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: "#6F221E".toColor(),
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 32.w,
-                                          vertical: 12.h,
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            25.r,
-                                          ),
-                                        ),
-                                      ),
-                                      child: AutoTranslateText(
-                                        'Open Navtara Analysis',
-                                        style: MyTextTheme.mediumBCB.copyWith(
-                                          color: const Color(0xFFDFB343),
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                : null,
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  if (index < _tabs.length && _activeTab != _tabs[index]) {
+                    // Call _onTabSelected first so it runs (it updates _activeTab inside)
+                    _onTabSelected(_tabs[index], fromSwipe: true);
+                  }
+                },
+                children: _tabs.map((tab) {
+                  final responseForTab = _tabResponses[tab] ?? _currentResponse;
+                  final showLoading = _isFetching && tab == _activeTab;
+                  return SingleChildScrollView(
+                    padding: EdgeInsets.only(bottom: 20.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 12.h,
                           ),
-                        ],
-                      ),
+                          child: showLoading
+                              ? const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(24.0),
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                )
+                              : responseForTab == null
+                                  ? Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(24.w),
+                                        child: AutoTranslateText(
+                                          'Tap the tab to load',
+                                          style: MyTextTheme.mediumBCN,
+                                        ),
+                                      ),
+                                    )
+                                  : CompatibilityReportWidget(
+                                      data: responseForTab,
+                                      formData: _formData,
+                                      showProfile:
+                                          tab == 'North Match' ||
+                                          tab == 'South Match' ||
+                                          tab == 'East Match',
+                                      showGunMilan: tab == 'North Match' || tab == 'East Match',
+                                      showDashakootGunMilan: tab == 'South Match',
+                                      matchScoreTotalOverride: _resolveTotal(responseForTab, tab),
+                                      showTotalSeparately: tab == 'Western Match',
+                                      rawTotal: tab == 'Western Match' ? null : responseForTab['total'] as num?,
+                                      showScoreAsPercentage: tab == 'Western Match',
+                                      kundliSection:
+                                          (tab == 'North Match' ||
+                                              tab == 'South Match' ||
+                                              tab == 'East Match') &&
+                                              _formData != null
+                                          ? MatchMakingLagnaChartWidget(
+                                              formData: _formData!,
+                                              chartStyle: tab == 'North Match'
+                                                  ? 'north'
+                                                  : tab == 'South Match'
+                                                      ? 'south'
+                                                      : 'east',
+                                            )
+                                          : null,
+                                      showNavtaraOnly: tab == 'Navtara',
+                                      showNavtaraSection: tab == 'Navtara',
+                                      matchLabel: tab == 'Papasamaya Match'
+                                          ? 'Papa Match'
+                                          : tab == 'Nakshatra Match'
+                                          ? 'Star Match'
+                                          : tab == 'Western Match'
+                                          ? 'Zodiac Match'
+                                          : 'Gun Milan',
+                                      chartStyleForFullKundli: tab == 'North Match'
+                                          ? 'north'
+                                          : tab == 'South Match'
+                                              ? 'south'
+                                              : tab == 'East Match'
+                                                  ? 'east'
+                                                  : 'north',
+                                      navtaraWidget: tab == 'Navtara'
+                                          ? (Get.isRegistered<NavtaraController>()
+                                              ? Obx(() {
+                                                  final ctl = Get.find<NavtaraController>();
+                                                  return ctl.compatibility.value != null
+                                                      ? NavtaraCompatibilityWidget(controller: ctl)
+                                                      : const Center(
+                                                          child: CircularProgressIndicator(),
+                                                        );
+                                                })
+                                              : const SizedBox.shrink())
+                                          : null,
+                                    ),
+                        ),
+                        Spacing.h(20),
+                        const AstrologersSectionWidget(),
+                        Spacing.h(20),
+                      ],
                     ),
-                    Spacing.h(20),
-                    const AstrologersSectionWidget(),
-                    Spacing.h(20),
-                  ],
-                ),
+                  );
+                }).toList(),
               ),
             ),
           ],
@@ -231,106 +285,108 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
   }
 
   Widget _buildMatchTabs() {
-    final tabs = [
-      'North Match',
-      'South Match',
-      'Aggregate Match',
-      'Rajju Vedha Details',
-      'Papasamaya Match',
-      'Nakshatra Match',
-      'Western Match',
-      'Navtara',
-    ];
+    final selectedIndex = _tabs.indexWhere((t) => t == _activeTab);
+    final effectiveIndex = selectedIndex >= 0 ? selectedIndex : 0;
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 8.h),
-        child: Row(
-          children: tabs.map((t) {
-            final isActive = _activeTab == t;
-            final isNavtara = t == 'Navtara';
-
-            return Padding(
-              padding: EdgeInsets.only(right: 8.w),
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  ChoiceChip(
-                    label: AutoTranslateText(
-                      t,
-                      style: MyTextTheme.smallBCB
-                          .copyWith(
-                            color: isActive
-                                ? Colors.white
-                                : "#6F221E".toColor(),
-                          )
-                          .merge(AppTypography.body2),
-                    ),
-                    selected: isActive,
-                    onSelected: (_) => _onTabSelected(t),
-                    selectedColor: "#6F221E".toColor(),
-                    backgroundColor: const Color(0xFFFDF3E6),
-                    shape: StadiumBorder(
-                      side: BorderSide(
-                        color: "#6F221E".toColor().withValues(alpha: 0.3),
-                        width: 0.8,
-                      ),
-                    ),
-                  ),
-                  if (isNavtara && Get.isRegistered<AiPricingController>())
-                    Obx(() {
-                      final pricingCtrl = Get.find<AiPricingController>();
-                      final price = pricingCtrl.getDisplayPrice('navtara');
-                      if (price.isEmpty) return const SizedBox.shrink();
-
-                      return Positioned(
-                        top: -8.h,
-                        right: 0,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 4.w,
-                            vertical: 2.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFF6B35),
-                            borderRadius: BorderRadius.circular(4.r),
-                          ),
-                          child: Text(
-                            price,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 8.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
-                ],
-              ),
+    return CommonTabSlider(
+      tabs: _tabs,
+      selectedIndex: effectiveIndex,
+      onTabSelected: (index) {
+        if (index < _tabs.length) {
+          _onTabSelected(_tabs[index], fromSwipe: false);
+          if (_pageController.hasClients) {
+            _pageController.animateToPage(
+              index,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
             );
-          }).toList(),
-        ),
-      ),
+          }
+        }
+      },
     );
   }
 
-  Future<void> _onTabSelected(String tab) async {
+  Future<void> _onTabSelected(String tab, {bool fromSwipe = false}) async {
     if (_isFetching || _activeTab == tab) return;
     final form = _formData;
     if (form == null) {
       return;
     }
 
-    // Prompt for missing extra fields
+    // All matchmaking APIs: use cached data when available so we don't hit APIs again on tab switch
+    // North Match, South Match, East Match, Aggregate, Rajju Vedha, Papasamaya, Nakshatra, Western → _tabResponses[tab]
+    // Navtara → NavtaraController.compatibility
+    if (tab == 'Navtara') {
+      if (Get.isRegistered<NavtaraController>()) {
+        final navtaraCtl = Get.find<NavtaraController>();
+        if (navtaraCtl.compatibility.value != null) {
+          setState(() => _activeTab = tab);
+          return;
+        }
+      }
+    } else {
+      final cached = _tabResponses[tab];
+      if (cached != null) {
+        setState(() {
+          _activeTab = tab;
+          _currentResponse = cached;
+        });
+        return;
+      }
+    }
+
+    // Check balance for Navtara tab
+    if (tab == 'Navtara') {
+      if (Get.isRegistered<AiPricingController>()) {
+        final pricingCtrl = Get.find<AiPricingController>();
+        if (!pricingCtrl.hasSufficientBalance('navtara')) {
+          pricingCtrl.showInsufficientBalancePopup('navtara');
+          // Reset to previous tab if swiping
+          if (fromSwipe && _pageController.hasClients) {
+            final prevIndex = _tabs.indexWhere((t) => t == _activeTab);
+            if (prevIndex >= 0) {
+              _pageController.jumpToPage(prevIndex);
+            }
+          }
+          return;
+        }
+      }
+    }
+
+    // Extract nakshatra numbers and zodiac signs from API response if available
     if (tab == 'Nakshatra Match') {
-      final ok = await _ensureNakshatraFields();
-      if (!ok) return;
+      final extracted = _extractNakshatraNumbers();
+      if (!extracted) {
+        // Fallback to popup if extraction fails
+        final ok = await _ensureNakshatraFields();
+        if (!ok) {
+          // Reset to previous tab if swiping
+          if (fromSwipe && _pageController.hasClients) {
+            final prevIndex = _tabs.indexWhere((t) => t == _activeTab);
+            if (prevIndex >= 0) {
+              _pageController.jumpToPage(prevIndex);
+            }
+          }
+          return;
+        }
+      }
     }
     if (tab == 'Western Match') {
-      final ok = await _ensureWesternFields();
-      if (!ok) return;
+      final extracted = _extractZodiacSigns();
+      if (!extracted) {
+        // Fallback to popup if extraction fails
+        final ok = await _ensureWesternFields();
+        if (!ok) {
+          // Reset to previous tab if swiping
+          if (fromSwipe && _pageController.hasClients) {
+            final prevIndex = _tabs.indexWhere((t) => t == _activeTab);
+            if (prevIndex >= 0) {
+              _pageController.jumpToPage(prevIndex);
+            }
+          }
+          return;
+        }
+      }
     }
 
     setState(() {
@@ -342,6 +398,7 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
       Map<String, dynamic>? res;
       switch (tab) {
         case 'North Match':
+        case 'East Match':
           res = await _service.getAshtakootMatching(
             boyDob: form['boyDob'],
             boyTob: form['boyTob'],
@@ -431,28 +488,86 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
           );
           break;
         case 'Navtara':
+          // Check balance before proceeding
+          if (Get.isRegistered<AiPricingController>()) {
+            final pricingCtrl = Get.find<AiPricingController>();
+            if (!pricingCtrl.hasSufficientBalance('navtara')) {
+              pricingCtrl.showInsufficientBalancePopup('navtara');
+              res = null;
+              break;
+            }
+          }
+
+          // Use a response that has astro details (North or South tab)
+          Map<String, dynamic>? responseData = _tabResponses['North Match']
+              ?? _tabResponses['South Match']
+              ?? _currentResponse;
+
+          // If we don't have astro details yet, fetch North Match so Navtara can get nakshatra
+          if (responseData == null ||
+              ((responseData['boy_astro_details'] == null &&
+                  responseData['boy_planetary_details'] == null))) {
+            final northRes = await _fetchAndStoreNorthMatch();
+            if (northRes != null) responseData = northRes;
+          }
+
           final boyAstro =
-              _currentResponse?['boy_astro_details'] as Map<String, dynamic>?;
+              responseData?['boy_astro_details'] as Map<String, dynamic>?;
           final girlAstro =
-              _currentResponse?['girl_astro_details'] as Map<String, dynamic>?;
+              responseData?['girl_astro_details'] as Map<String, dynamic>?;
+          final boyPlanetary = responseData?['boy_planetary_details'] as Map<String, dynamic>?;
+          final girlPlanetary = responseData?['girl_planetary_details'] as Map<String, dynamic>?;
 
-          if (boyAstro != null && girlAstro != null) {
-            // Use nakshatra_no if available (as it's more reliable for Navtara API)
-            // Fallback to name-based extraction
-            dynamic boyNak =
-                boyAstro['nakshatra_no'] ?? boyAstro['nakshatra'] ?? '';
-            dynamic girlNak =
-                girlAstro['nakshatra_no'] ?? girlAstro['nakshatra'] ?? '';
+          // Prefer nakshatra from astrological details (boy/girl full kundli), then Moon
+          String? boyNakshatra = boyAstro?['nakshatra'] as String?;
+          String? girlNakshatra = girlAstro?['nakshatra'] as String?;
+          if (boyNakshatra == null && boyPlanetary != null && boyPlanetary['2'] is Map<String, dynamic>) {
+            final moon = boyPlanetary['2'] as Map<String, dynamic>;
+            boyNakshatra = moon['nakshatra'] as String?;
+          }
+          if (girlNakshatra == null && girlPlanetary != null && girlPlanetary['2'] is Map<String, dynamic>) {
+            final moon = girlPlanetary['2'] as Map<String, dynamic>;
+            girlNakshatra = moon['nakshatra'] as String?;
+          }
 
-            if (Get.isRegistered<NavtaraController>()) {
+          if (boyNakshatra != null && girlNakshatra != null && Get.isRegistered<NavtaraController>()) {
+            try {
               final navtaraCtl = Get.find<NavtaraController>();
+              // Get language from form (convert code to name if needed)
+              String? language;
+              if (form['lang'] != null) {
+                final langCode = form['lang'].toString().toLowerCase();
+                language = _getLanguageName(langCode);
+              }
+              
               navtaraCtl.initFromMatching(
-                boyName: form['boyName'] ?? 'Boy',
-                boyNakshatra: boyNak.toString(),
-                girlName: form['girlName'] ?? 'Girl',
-                girlNakshatra: girlNak.toString(),
+                boyName: form['boyName']?.toString() ?? 'Boy',
+                boyNakshatra: boyNakshatra,
+                girlName: form['girlName']?.toString() ?? 'Girl',
+                girlNakshatra: girlNakshatra,
+                language: language,
+              );
+              // Call compatibility API when Navtara tab is selected
+              navtaraCtl.checkCompatibility();
+            } catch (e) {
+              debugPrint('Error initializing Navtara: $e');
+              Get.snackbar(
+                'Error',
+                'Failed to initialize Navtara analysis',
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: Colors.red,
+                colorText: Colors.white,
               );
             }
+          } else {
+            debugPrint('Missing nakshatra data: Boy=$boyNakshatra, Girl=$girlNakshatra');
+            Get.snackbar(
+              'Error',
+              'Nakshatra data not available',
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.red,
+              colorText: Colors.white,
+            );
           }
           res = _currentResponse;
           break;
@@ -467,8 +582,6 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
 
           if (status != null && status != 200 && responseValue is String) {
             // Error case - response is a string message
-            // Don't update _currentResponse, keep showing current data or show error
-            // You could also show a snackbar here
             Get.snackbar(
               'Error',
               responseValue,
@@ -477,11 +590,13 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
               colorText: Colors.white,
             );
           } else if (responseValue is Map<String, dynamic>) {
-            // Success case - response is a map
+            // Success case - response is a map nested under 'response' key
             // Normalize keys (e.g., total_score -> score)
             if (responseValue.containsKey('total_score')) {
               responseValue['score'] = responseValue['total_score'];
             }
+            // Store per-tab so PageView and tabs stay in sync
+            _tabResponses[tab] = responseValue;
             _currentResponse = responseValue;
           } else if (responseValue is String) {
             // Error case - response is a string
@@ -493,8 +608,12 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
               colorText: Colors.white,
             );
           } else {
-            // Fallback - use the whole response
-            _currentResponse = res;
+            // Fallback - use the whole response (might already be the nested data)
+            final fallback = res is Map<String, dynamic> ? res : null;
+            if (fallback != null) {
+              _tabResponses[tab] = fallback;
+              _currentResponse = fallback;
+            }
           }
         });
       }
@@ -509,13 +628,10 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
     }
   }
 
-  num? _resolveTotal(Map<String, dynamic> response) {
-    // Prefer explicit total if provided
-    final totalFromApi = response['total'];
-    if (totalFromApi is num && totalFromApi > 0) return totalFromApi;
-
-    switch (_activeTab) {
+  num? _resolveTotal(Map<String, dynamic> response, String tab) {
+    switch (tab) {
       case 'North Match':
+      case 'East Match':
         return 36;
       case 'South Match':
         return 10;
@@ -526,13 +642,149 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
       case 'Nakshatra Match':
         return 10;
       case 'Western Match':
-        if (response['total'] is num) return response['total'] as num;
-        return 100;
+        return 100; // API score is compatibility % (e.g. 58)
       case 'Rajju Vedha Details':
-        return null; // no score shown
+        return null;
       default:
+        final totalFromApi = response['total'];
+        if (totalFromApi is num && totalFromApi > 0) return totalFromApi;
         return null;
     }
+  }
+
+  /// Map nakshatra name (from astro_details) to star number 1-27 for API
+  int? _nakshatraNameToNumber(String name) {
+    const names = [
+      'ashwini', 'bharani', 'krittika', 'rohini', 'mrigashira', 'ardra', 'punarvasu',
+      'pushya', 'ashlesha', 'magha', 'purvaphalguni', 'uttaraphalguni', 'hasta', 'chitra',
+      'swati', 'vishakha', 'anuradha', 'jyeshtha', 'mula', 'purvashadha', 'uttarashadha',
+      'shravana', 'dhanishta', 'shatabhisha', 'purvabhadrapada', 'uttarabhadrapada', 'revati',
+    ];
+    final key = name.toLowerCase().replaceAll(' ', '').replaceAll(RegExp(r'[^a-z]'), '');
+    for (int i = 0; i < names.length; i++) {
+      if (key.contains(names[i]) || names[i].contains(key)) return i + 1;
+    }
+    return null;
+  }
+
+  String _getLanguageName(String code) {
+    switch (code.toLowerCase()) {
+      case 'hi':
+        return 'hindi';
+      case 'kn':
+        return 'kannada';
+      case 'te':
+        return 'telugu';
+      case 'ta':
+        return 'tamil';
+      case 'ml':
+        return 'malayalam';
+      case 'mr':
+        return 'marathi';
+      case 'bn':
+        return 'bengali';
+      case 'gu':
+        return 'gujarati';
+      case 'en':
+      default:
+        return 'english';
+    }
+  }
+
+  /// Fetch North Match (ashtakoot-with-astro-details) and store in _tabResponses so Navtara can get nakshatra.
+  /// Returns the inner response map if successful, null otherwise.
+  Future<Map<String, dynamic>?> _fetchAndStoreNorthMatch() async {
+    final form = _formData;
+    if (form == null) return null;
+    final boyDob = form['boyDob']?.toString();
+    final girlDob = form['girlDob']?.toString();
+    if (boyDob == null || girlDob == null) return null;
+    try {
+      final result = await _service.getAshtakootMatching(
+        boyDob: boyDob,
+        boyTob: form['boyTob']?.toString() ?? '',
+        boyTz: (form['boyTz'] is num) ? (form['boyTz'] as num).toDouble() : double.tryParse(form['boyTz']?.toString() ?? '') ?? 5.5,
+        boyLat: (form['boyLat'] is num) ? (form['boyLat'] as num).toDouble() : double.tryParse(form['boyLat']?.toString() ?? '') ?? 0.0,
+        boyLon: (form['boyLon'] is num) ? (form['boyLon'] as num).toDouble() : double.tryParse(form['boyLon']?.toString() ?? '') ?? 0.0,
+        girlDob: girlDob,
+        girlTob: form['girlTob']?.toString() ?? '',
+        girlTz: (form['girlTz'] is num) ? (form['girlTz'] as num).toDouble() : double.tryParse(form['girlTz']?.toString() ?? '') ?? 5.5,
+        girlLat: (form['girlLat'] is num) ? (form['girlLat'] as num).toDouble() : double.tryParse(form['girlLat']?.toString() ?? '') ?? 0.0,
+        girlLon: (form['girlLon'] is num) ? (form['girlLon'] as num).toDouble() : double.tryParse(form['girlLon']?.toString() ?? '') ?? 0.0,
+        lang: form['lang']?.toString() ?? 'en',
+      );
+      if (result == null || !mounted) return null;
+      final responseValue = result['response'];
+      final Map<String, dynamic>? inner = responseValue is Map<String, dynamic> ? responseValue : null;
+      if (inner != null) {
+        _tabResponses['North Match'] = inner;
+        _currentResponse = inner;
+        if (mounted) setState(() {});
+        return inner;
+      }
+    } catch (e) {
+      debugPrint('_fetchAndStoreNorthMatch error: $e');
+    }
+    return null;
+  }
+
+  /// Extract nakshatra numbers from API response (boy_planetary_details and girl_planetary_details)
+  bool _extractNakshatraNumbers() {
+    // Get the actual response data (could be nested under 'response' key)
+    Map<String, dynamic>? response = _currentResponse;
+    if (response == null) {
+      debugPrint('_extractNakshatraNumbers: _currentResponse is null');
+      return false;
+    }
+
+    // Check if data is nested under 'response' key
+    if (response.containsKey('response') && response['response'] is Map<String, dynamic>) {
+      response = response['response'] as Map<String, dynamic>;
+      debugPrint('_extractNakshatraNumbers: Using nested response');
+    }
+
+    // Try to get from boy_planetary_details[2] (Moon) and girl_planetary_details[2] (Moon)
+    final boyPlanetary = response['boy_planetary_details'] as Map<String, dynamic>?;
+    final girlPlanetary = response['girl_planetary_details'] as Map<String, dynamic>?;
+
+    debugPrint('_extractNakshatraNumbers: boyPlanetary=${boyPlanetary != null}, girlPlanetary=${girlPlanetary != null}');
+
+    int? boyStar;
+    int? girlStar;
+
+    // Prefer astrological details (full kundli) nakshatra, then Moon's nakshatra_no
+    final boyAstro = response['boy_astro_details'] as Map<String, dynamic>?;
+    final girlAstro = response['girl_astro_details'] as Map<String, dynamic>?;
+    if (boyAstro != null) {
+      final name = (boyAstro['nakshatra'] as String?).toString().trim();
+      if (name.isNotEmpty) boyStar = _nakshatraNameToNumber(name);
+    }
+    if (girlAstro != null) {
+      final name = (girlAstro['nakshatra'] as String?).toString().trim();
+      if (name.isNotEmpty) girlStar = _nakshatraNameToNumber(name);
+    }
+    // From Moon (index 2) in planetary details
+    if (boyStar == null && boyPlanetary != null && boyPlanetary['2'] is Map<String, dynamic>) {
+      final moon = boyPlanetary['2'] as Map<String, dynamic>;
+      boyStar = moon['nakshatra_no'] as int?;
+      debugPrint('Boy Moon nakshatra_no: $boyStar');
+    }
+    if (girlStar == null && girlPlanetary != null && girlPlanetary['2'] is Map<String, dynamic>) {
+      final moon = girlPlanetary['2'] as Map<String, dynamic>;
+      girlStar = moon['nakshatra_no'] as int?;
+      debugPrint('Girl Moon nakshatra_no: $girlStar');
+    }
+
+    if (boyStar != null && girlStar != null && boyStar >= 1 && boyStar <= 27 && girlStar >= 1 && girlStar <= 27) {
+      _formData ??= {};
+      _formData!['boyStar'] = boyStar;
+      _formData!['girlStar'] = girlStar;
+      debugPrint('✓ Extracted nakshatra numbers: Boy=$boyStar, Girl=$girlStar');
+      return true;
+    }
+
+    debugPrint('✗ Failed to extract nakshatra numbers: Boy=$boyStar, Girl=$girlStar');
+    return false;
   }
 
   Future<bool> _ensureNakshatraFields() async {
@@ -576,6 +828,75 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
       onCancel: () => Get.back(result: false),
     );
     return result ?? false;
+  }
+
+  /// Extract zodiac sign numbers from API response (ascendant_sign from astro_details)
+  bool _extractZodiacSigns() {
+    // Get the actual response data (could be nested under 'response' key)
+    Map<String, dynamic>? response = _currentResponse;
+    if (response == null) {
+      debugPrint('_extractZodiacSigns: _currentResponse is null');
+      return false;
+    }
+
+    // Check if data is nested under 'response' key
+    if (response.containsKey('response') && response['response'] is Map<String, dynamic>) {
+      response = response['response'] as Map<String, dynamic>;
+      debugPrint('_extractZodiacSigns: Using nested response');
+    }
+
+    final boyAstro = response['boy_astro_details'] as Map<String, dynamic>?;
+    final girlAstro = response['girl_astro_details'] as Map<String, dynamic>?;
+
+    debugPrint('_extractZodiacSigns: boyAstro=${boyAstro != null}, girlAstro=${girlAstro != null}');
+
+    int? boySign;
+    int? girlSign;
+
+    if (boyAstro != null) {
+      final ascendantSign = boyAstro['ascendant_sign'] as String?;
+      if (ascendantSign != null) {
+        boySign = _getZodiacNumber(ascendantSign);
+        debugPrint('Boy ascendant_sign: $ascendantSign -> $boySign');
+      }
+    }
+
+    if (girlAstro != null) {
+      final ascendantSign = girlAstro['ascendant_sign'] as String?;
+      if (ascendantSign != null) {
+        girlSign = _getZodiacNumber(ascendantSign);
+        debugPrint('Girl ascendant_sign: $ascendantSign -> $girlSign');
+      }
+    }
+
+    if (boySign != null && girlSign != null && boySign >= 1 && boySign <= 12 && girlSign >= 1 && girlSign <= 12) {
+      _formData ??= {};
+      _formData!['boySign'] = boySign;
+      _formData!['girlSign'] = girlSign;
+      debugPrint('✓ Extracted zodiac signs: Boy=$boySign, Girl=$girlSign');
+      return true;
+    }
+
+    debugPrint('✗ Failed to extract zodiac signs: Boy=$boySign, Girl=$girlSign');
+    return false;
+  }
+
+  int _getZodiacNumber(String sign) {
+    final zodiacMap = {
+      'Aries': 1,
+      'Taurus': 2,
+      'Gemini': 3,
+      'Cancer': 4,
+      'Leo': 5,
+      'Virgo': 6,
+      'Libra': 7,
+      'Scorpio': 8,
+      'Sagittarius': 9,
+      'Capricorn': 10,
+      'Aquarius': 11,
+      'Pisces': 12,
+    };
+    return zodiacMap[sign] ?? 1;
   }
 
   Future<bool> _ensureWesternFields() async {
@@ -641,7 +962,10 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
         backgroundColor: Colors.transparent,
         body: Column(
           children: [
-            const CommonHeader(title: 'Match Making Result'),
+            CommonHeader(
+              title: 'Match Making Result',
+              showBackButton: true,
+            ),
             Expanded(
               child: Center(
                 child: Padding(

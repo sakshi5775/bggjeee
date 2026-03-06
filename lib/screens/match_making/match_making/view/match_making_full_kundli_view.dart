@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
+import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
@@ -9,6 +10,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class MatchMakingFullKundliView extends StatelessWidget {
@@ -36,6 +38,8 @@ class MatchMakingFullKundliView extends StatelessWidget {
     final astroDetails = args['astroDetails'] as Map<String, dynamic>? ?? {};
     final planetaryDetails =
         args['planetaryDetails'] as Map<String, dynamic>? ?? {};
+    final formData = args['formData'] as Map<String, dynamic>?;
+    final chartStyle = (args['chartStyle'] as String?)?.toLowerCase() ?? 'north';
 
     return Container(
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
@@ -43,18 +47,22 @@ class MatchMakingFullKundliView extends StatelessWidget {
         backgroundColor: Colors.transparent,
         body: Column(
           children: [
-            // Header
             CommonHeader(title: '${isBoy ? 'Boy' : 'Girl'} Full Kundli'),
 
-            // Content
             Expanded(
               child: SingleChildScrollView(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Kundli Chart - Show only the relevant person's chart
-                    if (planetaryDetails.isNotEmpty)
+                    // Lagna chart from API when formData available (North/South/East)
+                    if (formData != null && formData.isNotEmpty)
+                      FullKundliLagnaChart(
+                        formData: formData,
+                        isBoy: isBoy,
+                        chartStyle: chartStyle,
+                      )
+                    else if (planetaryDetails.isNotEmpty)
                       _buildSingleKundliChart(
                         planetaryDetails: planetaryDetails,
                         astroDetails: astroDetails,
@@ -63,12 +71,10 @@ class MatchMakingFullKundliView extends StatelessWidget {
 
                     Spacing.h(20),
 
-                    // Astro Details Section
                     _buildAstroDetailsSection(astroDetails),
 
                     Spacing.h(20),
 
-                    // Planetary Details Section
                     if (planetaryDetails.isNotEmpty)
                       _buildPlanetaryDetailsSection(planetaryDetails),
                   ],
@@ -647,6 +653,183 @@ class MatchMakingFullKundliView extends StatelessWidget {
     if (isCombust) symbol += '^';
 
     return symbol;
+  }
+}
+
+/// Fetches and displays Lagna chart from Kundli API for one person (boy or girl).
+class FullKundliLagnaChart extends StatefulWidget {
+  final Map<String, dynamic> formData;
+  final bool isBoy;
+  final String chartStyle;
+
+  const FullKundliLagnaChart({
+    super.key,
+    required this.formData,
+    required this.isBoy,
+    this.chartStyle = 'north',
+  });
+
+  @override
+  State<FullKundliLagnaChart> createState() => _FullKundliLagnaChartState();
+}
+
+class _FullKundliLagnaChartState extends State<FullKundliLagnaChart> {
+  final KundliService _kundliService = KundliService();
+  String? _svg;
+  bool _loading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchChart();
+  }
+
+  Future<void> _fetchChart() async {
+    final form = widget.formData;
+    final dob = (widget.isBoy ? form['boyDob'] : form['girlDob'] ?? '').toString().replaceAll('-', '/');
+    final tob = (widget.isBoy ? form['boyTob'] : form['girlTob'] ?? '12:00').toString();
+    final tz = (form[widget.isBoy ? 'boyTz' : 'girlTz'] is num)
+        ? (form[widget.isBoy ? 'boyTz' : 'girlTz'] as num).toDouble()
+        : double.tryParse(form[widget.isBoy ? 'boyTz' : 'girlTz']?.toString() ?? '') ?? 5.5;
+    final lat = (form[widget.isBoy ? 'boyLat' : 'girlLat'] is num)
+        ? (form[widget.isBoy ? 'boyLat' : 'girlLat'] as num).toDouble()
+        : double.tryParse(form[widget.isBoy ? 'boyLat' : 'girlLat']?.toString() ?? '') ?? 0.0;
+    final lon = (form[widget.isBoy ? 'boyLon' : 'girlLon'] is num)
+        ? (form[widget.isBoy ? 'boyLon' : 'girlLon'] as num).toDouble()
+        : double.tryParse(form[widget.isBoy ? 'boyLon' : 'girlLon']?.toString() ?? '') ?? 0.0;
+    String lang = (form['lang'] ?? 'en').toString();
+    if (lang.isEmpty) lang = 'en';
+    final style = ['north', 'south', 'east'].contains(widget.chartStyle.toLowerCase())
+        ? widget.chartStyle.toLowerCase()
+        : 'north';
+
+    try {
+      var data = await _kundliService.generateKundli(
+        date: dob,
+        time: tob,
+        latitude: lat,
+        longitude: lon,
+        tz: tz,
+        lang: lang,
+        style: style,
+      );
+      if (data == null && lang != 'en') {
+        data = await _kundliService.generateKundli(
+          date: dob,
+          time: tob,
+          latitude: lat,
+          longitude: lon,
+          tz: tz,
+          lang: 'en',
+          style: style,
+        );
+      }
+      if (!mounted) return;
+      setState(() {
+        _svg = data?['data'] as String?;
+        _loading = false;
+        if (_svg == null) _error = 'Could not load chart';
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _loading = false;
+        _error = e.toString();
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_loading) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AutoTranslateText(
+            'Lagna Chart',
+            style: MyTextTheme.largeBCB.copyWith(
+              color: "#6F221E".toColor(),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Spacing.h(16),
+          const Center(
+            child: Padding(
+              padding: EdgeInsets.all(24.0),
+              child: CircularProgressIndicator(color: Color(0xFFed6f30)),
+            ),
+          ),
+        ],
+      );
+    }
+    if (_error != null || _svg == null) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AutoTranslateText(
+            'Lagna Chart',
+            style: MyTextTheme.largeBCB.copyWith(
+              color: "#6F221E".toColor(),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Spacing.h(16),
+          Center(
+            child: Padding(
+              padding: EdgeInsets.all(16.w),
+              child: AutoTranslateText(
+                _error ?? 'Chart unavailable',
+                style: MyTextTheme.smallBCN.copyWith(color: Colors.red),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AutoTranslateText(
+          'Lagna Chart',
+          style: MyTextTheme.largeBCB.copyWith(
+            color: "#6F221E".toColor(),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Spacing.h(16),
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(
+              color: "#ed6f30".toColor().withValues(alpha: 0.2),
+              width: 1,
+            ),
+          ),
+          padding: EdgeInsets.all(10.w),
+          child: Center(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final chartSize = (constraints.maxWidth - 20.w).clamp(200.0, 400.w);
+                return SizedBox(
+                  width: chartSize,
+                  height: chartSize,
+                  child: SvgPicture.string(
+                    _svg!,
+                    width: chartSize,
+                    height: chartSize,
+                    fit: BoxFit.contain,
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 

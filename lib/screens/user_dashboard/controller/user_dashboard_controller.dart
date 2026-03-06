@@ -385,6 +385,8 @@ class UserDashboardController extends BaseController
     }
     // Load pujas from API
     loadPujas();
+    // Load top 5 blogs for Blogs and News section (works for guest too)
+    loadBlogs(requireAuth: false);
     // Load YouTube videos
     loadYouTubeVideos();
     // Translate static strings

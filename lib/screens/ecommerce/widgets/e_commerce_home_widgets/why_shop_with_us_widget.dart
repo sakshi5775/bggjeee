@@ -1,143 +1,281 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
-import 'package:astrobharataiuser/core/value/dimension.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
-class WhyShopWithUsWidget extends StatelessWidget {
+// FAQ section colors (avoid runtime null from hex extension)
+const Color _faqMaroon = Color(0xFF68171E);
+const Color _faqMaroonDark = Color(0xFF4a1015);
+const Color _faqMaroonDarker = Color(0xFF3D0C11);
+const Color _faqGold = Color(0xFFDFB343);
+
+/// FAQ data: AstroBharat AI – Trust & Sales FAQs
+class WhyShopWithUsWidget extends StatefulWidget {
   const WhyShopWithUsWidget({super.key});
+
+  static const List<Map<String, String>> allFaqs = [
+    {
+      'q': 'What exactly is AstroBharat AI?',
+      'a':
+          'AstroBharat AI is a next-generation spiritual-tech platform that combines artificial intelligence with the timeless wisdom of Sanatan Dharma to provide ethical astrology guidance, spiritual insights, and life clarity.',
+    },
+    {
+      'q': 'Who is behind AstroBharat AI?',
+      'a':
+          'AstroBharat AI is guided by Dr. Kunwar Harshit Rajveer, continuing a 51-year legacy of authentic Jyotish tradition established by Raj Jyotishi Shri Kamlesh Kumar.',
+    },
+    {
+      'q': 'How is AstroBharat AI different from other astrology apps?',
+      'a':
+          'Most astrology platforms focus only on predictions. AstroBharat AI focuses on awareness, karmic understanding, and ethical guidance, helping users make better life decisions.',
+    },
+    {
+      'q': 'Is AstroBharat AI based on authentic Vedic knowledge?',
+      'a':
+          'Yes. The platform is deeply rooted in the principles of Sanatan Dharma and the traditional science of Jyotish Shastra, supported by verified astrologers and spiritual experts.',
+    },
+    {
+      'q': 'Can beginners use AstroBharat AI easily?',
+      'a':
+          'Absolutely. The platform is designed to make ancient wisdom simple, practical, and understandable for modern users.',
+    },
+    {
+      'q': 'Is AstroBharat AI only for India?',
+      'a':
+          'No. AstroBharat AI is a global platform connecting 5,000+ astrologers and spiritual experts across 150+ countries.',
+    },
+    {
+      'q': 'What kind of guidance can I receive from AstroBharat AI?',
+      'a':
+          'Users can receive spiritual guidance related to career decisions, relationships, marriage, business growth, financial planning, health awareness, and spiritual development.',
+    },
+    {
+      'q': 'Is my personal information safe on the platform?',
+      'a':
+          'Yes. AstroBharat AI follows strict privacy standards and ensures that user information remains confidential and ethically handled.',
+    },
+    {
+      'q': 'Why should I trust AstroBharat AI?',
+      'a':
+          'The platform is built on decades of authentic Jyotish experience, verified astrologers, and a mission to preserve India\'s sacred knowledge responsibly through technology.',
+    },
+    {
+      'q': 'What is the vision of AstroBharat AI?',
+      'a':
+          'AstroBharat AI aims to transform ancient Indian spiritual wisdom into a modern global life-guidance system, helping millions of people achieve clarity, balance, and conscious living.',
+    },
+  ];
+
+  @override
+  State<WhyShopWithUsWidget> createState() => _WhyShopWithUsWidgetState();
+}
+
+class _WhyShopWithUsWidgetState extends State<WhyShopWithUsWidget> {
+  int? expandedIndex;
 
   @override
   Widget build(BuildContext context) {
-    final features = [
-      {
-        'icon': Icons.verified,
-        'title': '100%\nAuthentic',
-        'subtitle': 'Certified Gems',
-      },
-      {
-        'icon': Icons.temple_hindu,
-        'emoji': '🕉️',
-        'title': 'Temple\nBlessed',
-        'subtitle': 'Vedic Rituals',
-      },
-      {
-        'icon': Icons.local_shipping,
-        'title': 'Fast\nDelivery',
-        'subtitle': 'Within 48hrs',
-      },
-    ];
+    const int showCount = 5;
+    final faqs = WhyShopWithUsWidget.allFaqs;
+    final showFaqs = faqs.take(showCount).toList();
 
     return SliverToBoxAdapter(
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 16.w),
-        padding: EdgeInsets.all(22.04.w),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              '#820B17'.toColor(),
-              '#68171E'.toColor(),
-              '#5D1C21'.toColor(),
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20.r),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Header
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
+                child: Text(
+                  'Why AstroBharat AI?',
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 18.sp,
+                    color: _faqMaroon,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              // FAQ items (first 5)
+              ...List.generate(showFaqs.length, (index) {
+                final faq = showFaqs[index];
+                final isExpanded = expandedIndex == index;
+                return _buildFaqTile(
+                  question: faq['q']!,
+                  answer: faq['a']!,
+                  isExpanded: isExpanded,
+                  onTap: () {
+                    setState(() {
+                      expandedIndex = isExpanded ? null : index;
+                    });
+                  },
+                );
+              }),
+              // View All FAQ button
+              Padding(
+                padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 20.h),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      try {
+                        if (Get.isRegistered<UserMainController>()) {
+                          UserMainController.pushInCurrentTab(AppRoutes.faq);
+                        } else {
+                          Get.toNamed(AppRoutes.faq);
+                        }
+                      } catch (_) {
+                        Get.toNamed(AppRoutes.faq);
+                      }
+                    },
+                    borderRadius: BorderRadius.circular(14.r),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 14.h),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: _faqMaroon,
+                          width: 1.5,
+                        ),
+                        borderRadius: BorderRadius.circular(14.r),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'View All FAQ',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14.sp,
+                              color: _faqMaroon,
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          Icon(
+                            Icons.arrow_forward_rounded,
+                            size: 18.w,
+                            color: _faqMaroon,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
-          borderRadius: BorderRadius.circular(22.04.r),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.25),
-              blurRadius: 45.91,
-              offset: Offset(0, -11.02),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            AutoTranslateText(
-              'Why Shop With Us?',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w500,
-                fontSize: 22.04.sp,
-                color: '#DFB343'.toColor(),
-                height: 1.33,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            Spacing.h(22.04),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: features.map((feature) {
-                return _buildFeatureItem(feature);
-              }).toList(),
-            ),
-          ],
         ),
       ),
     );
   }
 
-  Widget _buildFeatureItem(Map<String, dynamic> feature) {
-    return Expanded(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 51.42.w,
-            height: 51.42.h,
+  Widget _buildFaqTile({
+    required String question,
+    required String answer,
+    required bool isExpanded,
+    required VoidCallback onTap,
+  }) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12.r),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOut,
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: ['#E3B341'.toColor(), '#C9A033'.toColor()],
-              ),
-              borderRadius: BorderRadius.circular(14.69.r),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  blurRadius: 5.51,
-                  offset: Offset(0, -2.75),
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 24.w,
+                      height: 24.w,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: _faqMaroon,
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        'Q',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12.sp,
+                          color: _faqMaroon,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 10.w),
+                    Expanded(
+                      child: Text(
+                        question,
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13.sp,
+                          color: _faqMaroon,
+                          height: 1.35,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
+                    AnimatedRotation(
+                      turns: isExpanded ? 0.5 : 0,
+                      duration: const Duration(milliseconds: 250),
+                      child: Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: _faqMaroon,
+                        size: 24.w,
+                      ),
+                    ),
+                  ],
+                ),
+                AnimatedCrossFade(
+                  firstChild: const SizedBox.shrink(),
+                  secondChild: Padding(
+                    padding: EdgeInsets.only(top: 12.h, left: 34.w),
+                    child: Text(
+                      answer,
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 12.sp,
+                        color: _faqMaroon,
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+                  crossFadeState: isExpanded
+                      ? CrossFadeState.showSecond
+                      : CrossFadeState.showFirst,
+                  duration: const Duration(milliseconds: 250),
                 ),
               ],
             ),
-            child: feature['emoji'] != null
-                ? Center(
-                    child: AutoTranslateText(
-                      feature['emoji']!,
-                      style: TextStyle(fontSize: 22.04.sp, height: 1.33),
-                    ),
-                  )
-                : Icon(
-                    feature['icon'] as IconData,
-                    color: '#3D0C11'.toColor(),
-                    size: 25.71.sp,
-                  ),
           ),
-          Spacing.h(10.94),
-          AutoTranslateText(
-            feature['title']!,
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w500,
-              fontSize: 12.86.sp,
-              color: Colors.white,
-              height: 1.43,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          Spacing.h(2.3),
-          AutoTranslateText(
-            feature['subtitle']!,
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w400,
-              fontSize: 11.02.sp,
-              color: Colors.white.withValues(alpha: 0.6),
-              height: 1.33,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+        ),
       ),
     );
   }

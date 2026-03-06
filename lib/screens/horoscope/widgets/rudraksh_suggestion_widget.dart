@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/horoscope/controller/horoscope_main_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/product_navigation_helper.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -169,6 +170,37 @@ class RudrakshSuggestionWidget extends StatelessWidget {
                   ),
                 );
               }),
+          Spacing.h(16),
+          // Buy Now Button
+          GestureDetector(
+            onTap: () {
+              ProductNavigationHelper.navigateToProductCategory('rudraksha');
+            },
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: 12.h),
+              decoration: BoxDecoration(
+                gradient: AppColors.orangeGradient,
+                borderRadius: BorderRadius.circular(12.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.deepOrange.withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Center(
+                child: AutoTranslateText(
+                  'Buy Rudraksha Now',
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

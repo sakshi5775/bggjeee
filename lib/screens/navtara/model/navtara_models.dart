@@ -265,9 +265,33 @@ class CompatibilityAnalysis {
     required this.recommendations,
   });
 
+  static double _toDouble(dynamic v) {
+    if (v == null) return 0.0;
+    if (v is num) return v.toDouble();
+    if (v is String) return double.tryParse(v) ?? 0.0;
+    return 0.0;
+  }
+
+  /// Normalize API list that may be List<String> or List<Map> (e.g. {challenge: '...'}) to List<String>
+  static List<String> _toStringList(dynamic list) {
+    if (list == null || list is! List) return [];
+    final out = <String>[];
+    for (final e in list) {
+      if (e is String) {
+        out.add(e);
+      } else if (e is Map<String, dynamic>) {
+        final s = (e['challenge'] ?? e['text'] ?? e['summary'])?.toString();
+        if (s != null && s.isNotEmpty) out.add(s);
+      } else if (e != null) {
+        out.add(e.toString());
+      }
+    }
+    return out;
+  }
+
   factory CompatibilityAnalysis.fromJson(Map<String, dynamic> json) {
     return CompatibilityAnalysis(
-      compatibilityScore: (json['compatibilityScore'] ?? 0.0).toDouble(),
+      compatibilityScore: _toDouble(json['compatibilityScore']),
       compatibilityLevel: json['compatibilityLevel'] ?? '',
       person1ToPerson2: CompatibilityCategory.fromJson(
         json['person1ToPerson2'] ?? {},
@@ -276,10 +300,10 @@ class CompatibilityAnalysis {
         json['person2ToPerson1'] ?? {},
       ),
       mutualHarmony: json['mutualHarmony'] ?? '',
-      strengths: List<String>.from(json['strengths'] ?? []),
-      challenges: List<String>.from(json['challenges'] ?? []),
+      strengths: _toStringList(json['strengths']),
+      challenges: _toStringList(json['challenges']),
       advice: json['advice'] ?? '',
-      recommendations: List<String>.from(json['recommendations'] ?? []),
+      recommendations: _toStringList(json['recommendations']),
     );
   }
 }
@@ -295,11 +319,19 @@ class CompatibilityCategory {
     required this.favorability,
   });
 
+  static int _toInt(dynamic v) {
+    if (v == null) return 0;
+    if (v is int) return v;
+    if (v is num) return v.toInt();
+    if (v is String) return int.tryParse(v) ?? 0;
+    return 0;
+  }
+
   factory CompatibilityCategory.fromJson(Map<String, dynamic> json) {
     return CompatibilityCategory(
       category: json['category'] ?? '',
       nature: json['nature'] ?? '',
-      favorability: json['favorability'] ?? 0,
+      favorability: _toInt(json['favorability']),
     );
   }
 }

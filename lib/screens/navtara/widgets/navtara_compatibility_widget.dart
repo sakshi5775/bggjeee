@@ -98,7 +98,7 @@ class _NavtaraCompatibilityWidgetState
           ),
           Spacing.h(12),
           Text(
-            '${analysis.compatibilityScore.toStringAsFixed(1)}%',
+            analysis.compatibilityScore.toStringAsFixed(1),
             style: MyTextTheme.largeBCB.copyWith(
               fontSize: 48.sp,
               color: AppColors.deepOrange,

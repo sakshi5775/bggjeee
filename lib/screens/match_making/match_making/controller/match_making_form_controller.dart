@@ -387,6 +387,8 @@ class MatchMakingFormController extends BaseController {
         }
 
         final formData = {
+          'boyName': (boy['name'] ?? 'Boy').toString(),
+          'girlName': (girl['name'] ?? 'Girl').toString(),
           'boyDob': boyDob,
           'boyTob': boyTob,
           'boyTz': boyTz,
@@ -880,6 +882,8 @@ class MatchMakingFormController extends BaseController {
         }
 
         final formData = {
+          'boyName': person1NameController.text.trim(),
+          'girlName': person2NameController.text.trim(),
           'boyDob': boyDob,
           'boyTob': boyTob,
           'boyTz': boyTz,

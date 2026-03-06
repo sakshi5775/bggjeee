@@ -85,7 +85,7 @@ Future<AddressFormResult?> showAddressFormSheet({
                                   ? 'Add New Address'
                                   : 'Edit Address',
                               style: TextStyle(
-                                fontFamily: 'Baloo 2',
+                                fontFamily: 'Baloo2',
                                 fontWeight: FontWeight.w700,
                                 fontSize: 22.sp,
                                 color: Colors.white,
@@ -470,7 +470,7 @@ class _SectionHeader extends StatelessWidget {
         AutoTranslateText(
           title,
           style: TextStyle(
-            fontFamily: 'Baloo 2',
+            fontFamily: 'Baloo2',
             fontWeight: FontWeight.w700,
             fontSize: 18.sp,
             color: '#68171E'.toColor(),
