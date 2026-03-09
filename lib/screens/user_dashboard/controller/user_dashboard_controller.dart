@@ -12,7 +12,7 @@ import 'package:astrobharataiuser/screens/astrology_services/services/live_strea
 import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/banner_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/daily_quote_service.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/service/dashboard_search_service.dart';
+import 'package:astrobharataiuser/widgets/inline_search_overlay.dart';
 import 'package:astrobharataiuser/services/global_free_service_manager.dart';
 import 'package:astrobharataiuser/screens/blogs/service/blog_service.dart';
 import 'package:astrobharataiuser/screens/ai_chat/services/ai_chat_service.dart';
@@ -30,7 +30,6 @@ import 'package:astrobharataiuser/screens/user_dashboard/service/youtube_service
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:video_player/video_player.dart';
@@ -189,7 +188,6 @@ class UserDashboardController extends BaseController
   final RxBool isLoadingDigitalMartCategories = false.obs;
 
   // Search functionality
-  final DashboardSearchService _searchService = DashboardSearchService();
   final stt.SpeechToText _speechToText = stt.SpeechToText();
 
   // Free services - now handled globally by GlobalFreeServiceManager
@@ -1245,39 +1243,26 @@ class UserDashboardController extends BaseController
     _processSearch(query.trim(), fromHeaderSearch: fromHeaderSearch);
   }
 
-  /// Process search query and navigate
+  /// Process search query: show inline search overlay (results below search) with this query.
   void _processSearch(String query, {bool fromHeaderSearch = false}) {
     if (query.trim().isEmpty) return;
 
-    debugPrint('Dashboard Search: Processing query: "$query"');
-
-    final route = _searchService.searchRoute(query);
-
-    if (route != null) {
-      debugPrint('Dashboard Search: Navigating to: $route');
-      UserMainController.pushInCurrentTab(route);
-      if (fromHeaderSearch) {
-        headerSearchController.clear();
-        isHeaderSearchOpen.value = false;
-        headerSearchFocusNode.unfocus();
-      } else {
-        searchController.clear();
-        searchQuery.value = '';
-        animatedSearchText.value = '';
-        Future.delayed(const Duration(milliseconds: 500), () {
-          if (_shouldAnimate && !_isAnimating) {
-            _startTypewriterAnimation();
-          }
-        });
-      }
+    if (fromHeaderSearch) {
+      headerSearchController.clear();
+      isHeaderSearchOpen.value = false;
+      headerSearchFocusNode.unfocus();
     } else {
-      Get.snackbar(
-        'Search',
-        'No results found for "$query". Try searching for: horoscope, kundli, tarot, palm reading, etc.',
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 3),
-      );
+      searchController.clear();
+      searchQuery.value = '';
+      animatedSearchText.value = '';
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (_shouldAnimate && !_isAnimating) {
+          _startTypewriterAnimation();
+        }
+      });
     }
+
+    InlineSearchOverlay.showWithContext(initialQuery: query.trim());
   }
 
   void openHeaderSearch() {

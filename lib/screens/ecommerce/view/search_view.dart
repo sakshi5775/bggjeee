@@ -1,8 +1,10 @@
-﻿import 'package:astrobharataiuser/app_manager/network_image.dart';
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/data_model/category_model.dart';
 import 'package:astrobharataiuser/data_model/product_model.dart';
 import 'package:astrobharataiuser/data_model/search_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/search_controller.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -27,14 +29,9 @@ class EcommerceSearchView extends StatelessWidget {
             children: [
               CommonHeader(
                 title: 'Search Products',
-                customActions: [
-                  IconButton(
-                    icon: Icon(Icons.close, color: '#6F221E'.toColor()),
-                    onPressed: () => Get.back(),
-                  ),
-                ],
               ),
               _buildSearchBar(controller),
+              _buildSearchEntireApp(controller),
               Expanded(
                 child: Obx(
                   () => NotificationListener<ScrollNotification>(
@@ -54,6 +51,39 @@ class EcommerceSearchView extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildSearchEntireApp(EcommerceSearchController controller) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+      child: Row(
+        children: [
+          Icon(Icons.public, size: 16.sp, color: AppColors.textSecondary),
+          SizedBox(width: 6.w),
+          TextButton(
+            onPressed: () {
+              final q = controller.query.value.trim();
+              UserMainController.pushInCurrentTab(
+                AppRoutes.globalSearch,
+                arguments: q.isEmpty ? null : <String, dynamic>{'initialQuery': q},
+              );
+            },
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: AutoTranslateText(
+              'Search entire app (astrologers, kundli, courses, etc.)',
+              style: AppTypography.body2.copyWith(
+                color: AppColors.deepOrangemix,
+                fontSize: 12.sp,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -124,7 +154,6 @@ class EcommerceSearchView extends StatelessWidget {
     return ListView(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       children: [
-        if (controller.query.value.isEmpty) _buildPopularSection(controller),
         if (controller.query.value.isNotEmpty)
           _buildSuggestionSection(controller, controller.suggestions.value),
         if (hasResults) ...[
@@ -176,61 +205,14 @@ class EcommerceSearchView extends StatelessWidget {
     );
   }
 
-  Widget _buildPopularSection(EcommerceSearchController controller) {
-    if (controller.popularTerms.isEmpty) return const SizedBox();
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        AutoTranslateText(
-          'Popular searches',
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        SizedBox(height: 10.h),
-        Wrap(
-          spacing: 8.w,
-          runSpacing: 8.h,
-          children: controller.popularTerms
-              .map(
-                (term) => GestureDetector(
-                  onTap: () => controller.onPopularTermSelected(term),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 14.w,
-                      vertical: 8.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20.r),
-                      border: Border.all(
-                        color: AppColors.textSecondary.withValues(alpha: 0.2),
-                      ),
-                    ),
-                    child: AutoTranslateText(
-                      term.term ?? '',
-                      style: TextStyle(
-                        color: AppColors.textPrimary,
-                      ).merge(AppTypography.body2),
-                    ),
-                  ),
-                ),
-              )
-              .toList(),
-        ),
-        SizedBox(height: 20.h),
-      ],
-    );
-  }
-
   Widget _buildSuggestionSection(
     EcommerceSearchController controller,
     SearchSuggestions suggestionData,
   ) {
     final hasSuggestions =
         suggestionData.products.isNotEmpty ||
-        suggestionData.categories.isNotEmpty;
+        suggestionData.categories.isNotEmpty ||
+        controller.categorySearchResults.isNotEmpty;
 
     if (!hasSuggestions && controller.isLoadingSuggestions.value) {
       return const Padding(
@@ -295,6 +277,38 @@ class EcommerceSearchView extends StatelessWidget {
               onTap: () => controller.onSuggestionCategorySelected(category),
             ),
           ),
+          SizedBox(height: 12.h),
+        ],
+        if (controller.categorySearchResults.isNotEmpty) ...[
+          AutoTranslateText(
+            'Categories (search)',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: AppColors.textSecondary,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          ...controller.categorySearchResults.map(
+            (CategoryModel cat) => ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.category_outlined),
+              title: AutoTranslateText(
+                cat.name ?? '',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              subtitle: AutoTranslateText(
+                [
+                  if (cat.level != null && cat.level!.isNotEmpty) cat.level!,
+                  if (cat.productCount != null) '${cat.productCount} products',
+                ].join(' • '),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              onTap: () => controller.onCategorySearchResultSelected(cat),
+            ),
+          ),
+          SizedBox(height: 12.h),
         ],
         SizedBox(height: 12.h),
         Divider(color: AppColors.textSecondary.withValues(alpha: 0.1)),

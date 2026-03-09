@@ -106,6 +106,8 @@ class EndPoints {
   // Category endpoints
   static const String ecommerceCategories = 'ecommerce/api/categories';
   static const String ecommerceCategoriesTree = 'ecommerce/api/categories/tree';
+  static const String ecommerceCategoriesSearch =
+      'ecommerce/api/categories/search';
   static String ecommerceCategoryById(String id) =>
       'ecommerce/api/categories/$id';
   static String ecommerceCategoryBySlug(String slug) =>
@@ -126,6 +128,8 @@ class EndPoints {
       'ecommerce/api/products/slug/$slug';
   static String ecommerceProductVariants(String productId) =>
       'ecommerce/api/products/$productId/variants';
+  static String ecommerceProductVariantDetail(String productId, String variantId) =>
+      'ecommerce/api/products/$productId/variants/$variantId';
   static String ecommerceProductRelated(String productId) =>
       'ecommerce/api/products/$productId/related';
   static String ecommerceProductReviews(String productId) =>
@@ -352,6 +356,8 @@ class EndPoints {
 
   /// Astrologers Public API
   static const String astrologersPublic = 'astrologers/api/astrologers/public';
+  /// Astrologers Top (period + sortBy)
+  static const String astrologersTop = 'astrologers/api/astrologers/top';
 
   /// Wallet APIs
   static const String walletRechargeInitiate =

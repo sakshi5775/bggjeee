@@ -107,6 +107,9 @@ class GlobalNavController extends GetxController {
       _selectedIndex.value = 0;
       activeSubMenuIndex.value = null;
       activeSubItemIndex.value = null;
+    } else if (route == AppRoutes.consultHome) {
+      activeSubMenuIndex.value = 1;
+      activeSubItemIndex.value = 0; // Consult
     } else if (route == AppRoutes.allAstrologers) {
       activeSubMenuIndex.value = 1; // Consult (still on Consult submenu when in astrologers list)
       activeSubItemIndex.value = 0; // Consult
@@ -260,11 +263,8 @@ class GlobalNavController extends GetxController {
 
   void _handleConsultSubItem(int subIndex) {
     if (subIndex == 0) {
-      // Consult - AllAstrologersView with Chat, Call, Video on each card (like home slider)
-      UserMainController.pushInCurrentTab(
-        AppRoutes.allAstrologers,
-        arguments: null,
-      );
+      // Consult - Consult home (Astrologer | AI Astrologer tabs with filters and sliders)
+      UserMainController.popCurrentTabToRoot();
     } else if (subIndex == 1) {
       // Astrostream
       UserMainController.pushInCurrentTab(AppRoutes.liveAstrologers);

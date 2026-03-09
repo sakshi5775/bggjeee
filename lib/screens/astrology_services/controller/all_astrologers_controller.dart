@@ -45,6 +45,14 @@ class AllAstrologersController extends GetxController {
   String? initialFilter;
   String? initialAvailability;
 
+  // Full API filters (from Consult "View all" or Get.arguments map)
+  final RxnString languageFilter = RxnString();
+  final RxDouble minRatingFilter = 0.0.obs;
+  final RxDouble maxPriceFilter = 0.0.obs;
+  final RxInt experienceFilter = 0.obs;
+  final RxString sortByFilter = 'rating'.obs;
+  final RxString searchFilter = ''.obs;
+
   AllAstrologersController({this.initialFilter, this.initialAvailability});
 
   final RxnString selectedAvailability = RxnString();
@@ -61,7 +69,7 @@ class AllAstrologersController extends GetxController {
       selectedAvailability.value = initialAvailability;
     }
 
-    // Check Get.arguments (from navigation)
+    // Check Get.arguments (from navigation e.g. Consult "View all")
     if (Get.arguments is Map) {
       final args = Get.arguments as Map;
       if (args.containsKey('availability')) {
@@ -70,10 +78,49 @@ class AllAstrologersController extends GetxController {
       if (args.containsKey('filter')) {
         selectedFilter.value = args['filter'] as String;
       }
+      if (args.containsKey('specialization')) {
+        final s = args['specialization']?.toString();
+        if (s != null && s.isNotEmpty) _mapSpecializationToFilter(s);
+      }
+      if (args.containsKey('astrologerCategory')) {
+        final c = args['astrologerCategory']?.toString();
+        if (c == 'CELEBRITY_ASTROLOGER') selectedFilter.value = 'Celebrity';
+        else if (c == 'KID_ASTROLOGER') selectedFilter.value = 'Kids';
+      }
+      if (args.containsKey('language')) {
+        languageFilter.value = args['language']?.toString();
+      }
+      if (args.containsKey('minRating')) {
+        final v = args['minRating'];
+        if (v != null) minRatingFilter.value = (v is num) ? v.toDouble() : double.tryParse(v.toString()) ?? 0;
+      }
+      if (args.containsKey('maxPrice')) {
+        final v = args['maxPrice'];
+        if (v != null) maxPriceFilter.value = (v is num) ? v.toDouble() : double.tryParse(v.toString()) ?? 0;
+      }
+      if (args.containsKey('experience')) {
+        final v = args['experience'];
+        if (v != null) experienceFilter.value = (v is num) ? v.toInt() : int.tryParse(v.toString()) ?? 0;
+      }
+      if (args.containsKey('sortBy')) {
+        sortByFilter.value = args['sortBy']?.toString() ?? 'rating';
+      }
+      if (args.containsKey('search')) {
+        searchFilter.value = args['search']?.toString() ?? '';
+      }
     }
 
     loadAstrologers();
     loadBanners();
+  }
+
+  void _mapSpecializationToFilter(String spec) {
+    final upper = spec.toUpperCase();
+    if (upper == 'TAROT') selectedFilter.value = 'Tarots';
+    else if (upper == 'PRASHNA') selectedFilter.value = 'Prashana';
+    else if (upper == 'VEDIC') selectedFilter.value = 'Vedic';
+    else if (upper == 'VASTU') selectedFilter.value = 'Vastu';
+    else selectedFilter.value = spec.length > 1 ? '${spec[0].toUpperCase()}${spec.substring(1).toLowerCase()}' : spec;
   }
 
   /// Call from view when user scrolls near bottom (NotificationListener).
@@ -119,13 +166,19 @@ class AllAstrologersController extends GetxController {
         limit: limit.value,
         specialization: specialization,
         astrologerCategory: astrologerCategory,
-        // We still pass availability to API if it supports ONLINE status filtering
         availability:
             (selectedAvailability.value == 'CHAT' ||
                 selectedAvailability.value == 'VOICE_CALL' ||
                 selectedAvailability.value == 'VIDEO_CALL')
             ? 'ONLINE'
             : selectedAvailability.value,
+        language: languageFilter.value,
+        minRating: minRatingFilter.value > 0 ? minRatingFilter.value : null,
+        maxPrice: maxPriceFilter.value > 0 ? maxPriceFilter.value : null,
+        experience: experienceFilter.value > 0 ? experienceFilter.value : null,
+        sortBy: sortByFilter.value.isNotEmpty ? sortByFilter.value : null,
+        search: searchFilter.value.isNotEmpty ? searchFilter.value : null,
+        useCache: false,
       );
 
       if (response != null) {

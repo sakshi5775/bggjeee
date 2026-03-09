@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/data_model/category_model.dart';
 import 'package:astrobharataiuser/data_model/product_model.dart';
 import 'package:astrobharataiuser/data_model/search_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
@@ -20,8 +21,9 @@ class EcommerceSearchController extends BaseController {
   final isLoadingMore = false.obs;
   final isLoadingSuggestions = false.obs;
   final searchResults = <ProductModel>[].obs;
-  final popularTerms = <SearchPopularTerm>[].obs;
   final suggestions = Rx<SearchSuggestions>(SearchSuggestions());
+  /// Categories from categories/search API (q, type, page, limit) – uses productCount & level
+  final categorySearchResults = <CategoryModel>[].obs;
   final hasMoreResults = true.obs;
 
   SearchResponse? lastResponse;
@@ -33,7 +35,6 @@ class EcommerceSearchController extends BaseController {
   @override
   void onInit() {
     super.onInit();
-    _loadPopularSearches();
     final args = Get.arguments;
     if (args is Map && args['initialQuery'] is String) {
       final initial = (args['initialQuery'] as String).trim();
@@ -57,6 +58,7 @@ class EcommerceSearchController extends BaseController {
     query.value = value;
     if (value.trim().isEmpty) {
       suggestions.value = SearchSuggestions();
+      categorySearchResults.clear();
       return;
     }
     _debounce?.cancel();
@@ -118,41 +120,22 @@ class EcommerceSearchController extends BaseController {
     final currentQuery = query.value.trim();
     if (currentQuery.length < 2) {
       suggestions.value = SearchSuggestions();
+      categorySearchResults.clear();
       return;
     }
     try {
       isLoadingSuggestions.value = true;
-      suggestions.value = await _service.getSearchSuggestions(
-        query: currentQuery,
-        limit: 5,
-      );
+      final results = await Future.wait([
+        _service.getSearchSuggestions(query: currentQuery, limit: 5),
+        _service.searchCategories(q: currentQuery, type: 'all', limit: 5),
+      ]);
+      suggestions.value = results[0] as SearchSuggestions;
+      final categoryData = results[1] as CategoryData?;
+      categorySearchResults
+        ..clear()
+        ..addAll(categoryData?.items ?? []);
     } finally {
       isLoadingSuggestions.value = false;
-    }
-  }
-
-  Future<void> _loadPopularSearches() async {
-    final terms = await _service.getPopularSearches(limit: 10);
-    popularTerms
-      ..clear()
-      ..addAll(terms);
-  }
-
-  void onPopularTermSelected(SearchPopularTerm term) {
-    if (term.type == 'category' && term.slug != null) {
-      UserMainController.pushInCurrentTab(
-        AppRoutes.productList,
-        arguments: {'categorySlug': term.slug},
-      );
-      return;
-    }
-    if (term.term != null) {
-      final keyword = term.term!.trim();
-      if (keyword.isNotEmpty) {
-        searchController.text = keyword;
-        query.value = keyword;
-        performSearch(reset: true);
-      }
     }
   }
 
@@ -162,6 +145,22 @@ class EcommerceSearchController extends BaseController {
       arguments: {
         if (category.slug != null) 'categorySlug': category.slug,
         if (category.id != null) 'categoryId': category.id,
+      },
+    );
+  }
+
+  /// When user taps a category from categories/search results (uses slug/id, productCount, level).
+  void onCategorySearchResultSelected(CategoryModel category) {
+    UserMainController.pushInCurrentTab(
+      AppRoutes.productList,
+      arguments: {
+        if (category.slug != null && category.slug!.isNotEmpty)
+          'categorySlug': category.slug
+        else if (category.id != null)
+          'categoryId': category.id
+        else
+          'category': category,
+        'title': category.name,
       },
     );
   }

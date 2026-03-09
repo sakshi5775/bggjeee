@@ -1044,33 +1044,46 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                     title,
                     style: AppTypography.h2.copyWith(color: '#68171E'.toColor()),
                   ),
-                  if (category != null)
-                    GestureDetector(
-                      onTap: () => UserMainController.pushInCurrentTab(
-                        AppRoutes.productList,
-                        arguments: {'category': category},
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          AutoTranslateText(
-                            'View All',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w500,
-                              fontSize: 12.sp,
-                              color: '#68171E'.toColor(),
-                            ),
-                          ),
-                          SizedBox(width: 4.w),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            size: 12.sp,
+                  // Always show View All (e.g. Pyramids category may be added in API later)
+                  GestureDetector(
+                    onTap: () {
+                      if (category != null) {
+                        UserMainController.pushInCurrentTab(
+                          AppRoutes.productList,
+                          arguments: {'category': category},
+                        );
+                      } else {
+                        final slug = title.toLowerCase().replaceAll(' ', '-');
+                        UserMainController.pushInCurrentTab(
+                          AppRoutes.productList,
+                          arguments: {
+                            'categorySlug': slug,
+                            'title': title,
+                          },
+                        );
+                      }
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AutoTranslateText(
+                          'View All',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12.sp,
                             color: '#68171E'.toColor(),
                           ),
-                        ],
-                      ),
+                        ),
+                        SizedBox(width: 4.w),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: 12.sp,
+                          color: '#68171E'.toColor(),
+                        ),
+                      ],
                     ),
+                  ),
                 ],
               ),
             ),

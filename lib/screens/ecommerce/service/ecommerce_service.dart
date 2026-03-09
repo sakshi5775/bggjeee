@@ -40,10 +40,11 @@ class EcommerceService with ApiHelperMixin {
     return CartAndWishlistResponse(cart: cartModel, wishlist: wishlistModel);
   }
 
-  // Get categories
+  // Get categories (optional: parent for hierarchical filter, isActive, isFeatured)
   Future<CategoryData?> getCategories({
     int page = 1,
     int limit = 20,
+    String? parent,
     bool? isActive,
     bool? isFeatured,
   }) async {
@@ -52,6 +53,9 @@ class EcommerceService with ApiHelperMixin {
         'page': page.toString(),
         'limit': limit.toString(),
       };
+      if (parent != null && parent.isNotEmpty) {
+        queryParams['parent'] = parent;
+      }
       if (isActive != null) {
         queryParams['isActive'] = isActive.toString();
       }
@@ -67,6 +71,43 @@ class EcommerceService with ApiHelperMixin {
       if (response.body['success'] == true) {
         final categoryResponse = CategoryResponse.fromJson(response.body);
         return categoryResponse.data;
+      }
+      return null;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Search categories by name, slug, or description. Optional: type (root/subcategory/all), page, limit.
+  /// Returns items with productCount and level.
+  Future<CategoryData?> searchCategories({
+    String? q,
+    String? type,
+    int page = 1,
+    int limit = 10,
+  }) async {
+    try {
+      final queryParams = <String, String>{
+        'page': page.toString(),
+        'limit': limit.toString(),
+      };
+      if (q != null && q.isNotEmpty) {
+        queryParams['q'] = q;
+      }
+      if (type != null && type.isNotEmpty) {
+        queryParams['type'] = type;
+      }
+
+      final response = await _apiRepository.getApi(
+        EndPoints.ecommerceCategoriesSearch,
+        query: queryParams,
+      );
+
+      if (response.body['success'] == true &&
+          response.body['data'] is Map<String, dynamic>) {
+        return CategoryData.fromJson(
+          response.body['data'] as Map<String, dynamic>,
+        );
       }
       return null;
     } catch (e) {
@@ -171,10 +212,26 @@ class EcommerceService with ApiHelperMixin {
     }
   }
 
+  /// Products by category slug. Slug required; all other params optional per API.
+  /// Supports: subcategorySlug, search, minPrice, maxPrice, mukhiCount, material, origin,
+  /// isCertified, isEnergized, isFeatured, inStock, status, sortBy.
+  /// Response includes pagination.aggregations (priceRange, categories) and pagination.category.
   Future<ProductData?> getProductsByCategorySlug(
     String slug, {
     int page = 1,
     int limit = 20,
+    String? subcategorySlug,
+    String? search,
+    double? minPrice,
+    double? maxPrice,
+    int? mukhiCount,
+    String? material,
+    String? origin,
+    bool? isCertified,
+    bool? isEnergized,
+    bool? isFeatured,
+    bool? inStock,
+    String? status,
     String? sortBy,
   }) async {
     try {
@@ -182,6 +239,42 @@ class EcommerceService with ApiHelperMixin {
         'page': page.toString(),
         'limit': limit.toString(),
       };
+      if (subcategorySlug != null && subcategorySlug.isNotEmpty) {
+        queryParams['subcategorySlug'] = subcategorySlug;
+      }
+      if (search != null && search.isNotEmpty) {
+        queryParams['search'] = search;
+      }
+      if (minPrice != null) {
+        queryParams['minPrice'] = minPrice.toString();
+      }
+      if (maxPrice != null) {
+        queryParams['maxPrice'] = maxPrice.toString();
+      }
+      if (mukhiCount != null) {
+        queryParams['mukhiCount'] = mukhiCount.toString();
+      }
+      if (material != null && material.isNotEmpty) {
+        queryParams['material'] = material;
+      }
+      if (origin != null && origin.isNotEmpty) {
+        queryParams['origin'] = origin;
+      }
+      if (isCertified != null) {
+        queryParams['isCertified'] = isCertified.toString();
+      }
+      if (isEnergized != null) {
+        queryParams['isEnergized'] = isEnergized.toString();
+      }
+      if (isFeatured != null) {
+        queryParams['isFeatured'] = isFeatured.toString();
+      }
+      if (inStock != null) {
+        queryParams['inStock'] = inStock.toString();
+      }
+      if (status != null && status.isNotEmpty) {
+        queryParams['status'] = status;
+      }
       if (sortBy != null && sortBy.isNotEmpty) {
         queryParams['sortBy'] = sortBy;
       }
@@ -252,7 +345,7 @@ class EcommerceService with ApiHelperMixin {
     }
   }
 
-  // Get all products with filters
+  // Get all products with filters (all params optional per API; status for admin)
   Future<ProductData?> getProducts({
     int page = 1,
     int limit = 20,
@@ -269,6 +362,7 @@ class EcommerceService with ApiHelperMixin {
     bool? isFeatured,
     bool? inStock,
     String? purpose,
+    String? status,
     String? sortBy,
   }) async {
     try {
@@ -315,6 +409,9 @@ class EcommerceService with ApiHelperMixin {
       }
       if (purpose != null && purpose.isNotEmpty) {
         queryParams['purpose'] = purpose;
+      }
+      if (status != null && status.isNotEmpty) {
+        queryParams['status'] = status;
       }
       if (sortBy != null && sortBy.isNotEmpty) {
         queryParams['sortBy'] = sortBy;
@@ -662,6 +759,28 @@ class EcommerceService with ApiHelperMixin {
           return variants;
         }
         return [];
+      }
+      return null;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Get single variant details (productId and variantId required).
+  Future<ProductVariant?> getProductVariantDetail(
+    String productId,
+    String variantId,
+  ) async {
+    try {
+      final response = await _apiRepository.getApi(
+        EndPoints.ecommerceProductVariantDetail(productId, variantId),
+      );
+
+      if (response.body['success'] == true &&
+          response.body['data'] is Map<String, dynamic>) {
+        return ProductVariant.fromJson(
+          response.body['data'] as Map<String, dynamic>,
+        );
       }
       return null;
     } catch (e) {

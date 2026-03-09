@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
+import 'package:astrobharataiuser/data_model/banner_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/all_astrologers_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -13,17 +14,22 @@ import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_co
 import '../../../theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/banner_carousel_widget.dart';
+import 'package:astrobharataiuser/screens/consult/controller/consult_controller.dart';
 
 class AllAstrologersView extends StatelessWidget {
   final String? initialFilter;
   final bool hideHeader;
   final bool showBackButton;
+  /// When false, the horizontal filter chips (All, Vedic, etc.) are hidden.
+  /// Used when embedded in Consult tab where sort/filter pills are shown above.
+  final bool showFilterChips;
 
   const AllAstrologersView({
     super.key,
     this.initialFilter,
     this.hideHeader = false,
     this.showBackButton = true,
+    this.showFilterChips = true,
   });
 
   @override
@@ -58,9 +64,9 @@ class AllAstrologersView extends StatelessWidget {
           bottom: false,
           child: Column(
             children: [
-              if (hideHeader)
+              if (hideHeader && showFilterChips)
                 _buildFiltersOnly(context, controller)
-              else ...[
+              else if (!hideHeader) ...[
                 Obx(() {
                   String title = 'Astrologers';
                   final avail = controller.selectedAvailability.value;
@@ -82,7 +88,7 @@ class AllAstrologersView extends StatelessWidget {
                 _buildFiltersOnly(context, controller),
               ],
 
-              // Astrologer List
+              // Astrologer List (banner is inside this scroll, so it scrolls with the list)
               Expanded(
                 child: Obx(() {
                   if (controller.isLoading.value &&
@@ -149,15 +155,22 @@ class AllAstrologersView extends StatelessWidget {
                             padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
                             sliver: SliverToBoxAdapter(
                               child: Obx(() {
-                                if (controller.astrologerBanners.isNotEmpty) {
-                                  return Padding(
-                                    padding: EdgeInsets.only(bottom: 16.h),
-                                    child: BannerCarouselWidget(
-                                      banners: controller.astrologerBanners,
-                                    ),
-                                  );
+                                final astroBanners = controller.astrologerBanners;
+                                final useGeneral = hideHeader &&
+                                    Get.isRegistered<ConsultController>();
+                                final generalBanners = useGeneral
+                                    ? Get.find<ConsultController>().generalBanners
+                                    : <BannerItem>[];
+                                final banners = astroBanners.isNotEmpty
+                                    ? astroBanners
+                                    : generalBanners;
+                                if (banners.isEmpty) {
+                                  return const SizedBox.shrink();
                                 }
-                                return const SizedBox.shrink();
+                                return Padding(
+                                  padding: EdgeInsets.only(bottom: 16.h),
+                                  child: BannerCarouselWidget(banners: banners),
+                                );
                               }),
                             ),
                           ),
