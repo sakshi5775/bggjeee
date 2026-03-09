@@ -203,6 +203,45 @@ class AstrologerService {
     }
   }
 
+  /// Top astrologers by period and sort.
+  /// [period]: all, daily, weekly, monthly
+  /// [sortBy]: all, rating, followers_gained, reviews_count
+  Future<List<AstrologerModel>?> getTopAstrologers({
+    int limit = 10,
+    String? period,
+    String? sortBy,
+  }) async {
+    try {
+      final query = <String, dynamic>{
+        'limit': limit.toString(),
+      };
+      if (period != null && period.isNotEmpty && period.toLowerCase() != 'all') {
+        query['period'] = period;
+      }
+      if (sortBy != null && sortBy.isNotEmpty && sortBy.toLowerCase() != 'all') {
+        query['sortBy'] = sortBy;
+      }
+      final response = await _apiRepository.getApi(
+        EndPoints.astrologersTop,
+        query: query,
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final body = response.body;
+        if (body['success'] == true && body['data'] != null) {
+          final data = body['data'] as Map<String, dynamic>;
+          final list = data['astrologers'] as List<dynamic>? ?? [];
+          return list
+              .map((e) => AstrologerModel.fromJson(e as Map<String, dynamic>))
+              .toList();
+        }
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Error fetching top astrologers: $e');
+      return null;
+    }
+  }
+
   // Follow an astrologer
   Future<Map<String, dynamic>> followAstrologer(String astrologerId, {String source = 'PROFILE'}) async {
     try {

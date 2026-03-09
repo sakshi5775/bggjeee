@@ -26,6 +26,7 @@ class ProductModel {
   List<String>? spiritualBenefits;
   String? usageInstructions;
   String? authenticityGuarantee;
+  List<String>? purpose;
   List<String>? tags;
   String? status;
   bool? isFeatured;
@@ -69,6 +70,7 @@ class ProductModel {
     this.spiritualBenefits,
     this.usageInstructions,
     this.authenticityGuarantee,
+    this.purpose,
     this.tags,
     this.status,
     this.isFeatured,
@@ -187,7 +189,20 @@ class ProductModel {
       
       usageInstructions = json['usageInstructions']?.toString();
       authenticityGuarantee = json['authenticityGuarantee']?.toString();
-      
+      purpose = [];
+      if (json['purpose'] != null) {
+        try {
+          final purposeValue = json['purpose'];
+          if (purposeValue is List) {
+            purpose = purposeValue
+                .map<String>((e) => e?.toString() ?? '')
+                .where((e) => e.isNotEmpty)
+                .toList();
+          }
+        } catch (e) {
+          purpose = [];
+        }
+      }
       // Parse tags safely
       tags = [];
       if (json['tags'] != null) {
@@ -281,6 +296,7 @@ class ProductModel {
     data['spiritualBenefits'] = spiritualBenefits;
     data['usageInstructions'] = usageInstructions;
     data['authenticityGuarantee'] = authenticityGuarantee;
+    data['purpose'] = purpose;
     data['tags'] = tags;
     data['status'] = status;
     data['isFeatured'] = isFeatured;

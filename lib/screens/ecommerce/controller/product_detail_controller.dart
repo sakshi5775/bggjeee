@@ -281,8 +281,21 @@ class ProductDetailController extends BaseController {
     }
   }
 
-  void selectVariant(ProductVariant variant) {
+  /// Selects a variant and fetches full details (incl. inventory) via getProductVariantDetail API.
+  Future<void> selectVariant(ProductVariant variant) async {
     selectedVariant.value = variant;
+    final productId = product.value?.id;
+    final variantId = variant.id;
+    if (productId != null && productId.isNotEmpty && variantId != null && variantId.isNotEmpty) {
+      try {
+        final detail = await _ecommerceService.getProductVariantDetail(productId, variantId);
+        if (detail != null) {
+          selectedVariant.value = detail;
+        }
+      } catch (e) {
+        // Keep existing variant on error
+      }
+    }
   }
 
   void changeImageIndex(int index) {

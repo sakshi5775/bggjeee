@@ -11,6 +11,7 @@ class AppRoutes {
   // Dashboard Routes
   static const String userDashboard = '/user-dashboard';
   static const String astrologyServices = '/astrology-services';
+  static const String consultHome = '/consult-home';
   static const String allAstrologers = '/all-astrologers';
   static const String allServices = '/all-services';
   static const String astrologerDetail = '/astrologer-detail';
@@ -50,6 +51,7 @@ class AppRoutes {
   static const String orders = '/orders';
   static const String orderDetail = '/orders/detail';
   static const String search = '/search';
+  static const String globalSearch = '/global-search';
   static const String payments = '/payments';
   static const String paymentDetail = '/payments/detail';
   static const String addresses = '/addresses';

@@ -10,7 +10,12 @@ class CategoryModel {
   bool? isFeatured;
   bool? isDeleted;
   String? slug;
+  List<String>? metaKeywords;
+  /// From categories/search: "root" or "subcategory"
+  String? level;
   List<CategoryModel>? children;
+  /// From get-by-id/slug: same structure as children
+  List<CategoryModel>? subcategories;
   int? productCount;
   String? createdAt;
   String? updatedAt;
@@ -27,7 +32,10 @@ class CategoryModel {
     this.isFeatured,
     this.isDeleted,
     this.slug,
+    this.metaKeywords,
+    this.level,
     this.children,
+    this.subcategories,
     this.productCount,
     this.createdAt,
     this.updatedAt,
@@ -48,14 +56,29 @@ class CategoryModel {
     isDeleted = json['isDeleted'] is bool ? json['isDeleted'] : null;
     slug = json['slug']?.toString();
     productCount = _toInt(json['productCount']);
+    level = json['level']?.toString();
     createdAt = json['createdAt']?.toString();
     updatedAt = json['updatedAt']?.toString();
+    if (json['metaKeywords'] != null && json['metaKeywords'] is List) {
+      metaKeywords = (json['metaKeywords'] as List)
+          .map((e) => e?.toString() ?? '')
+          .where((e) => e.isNotEmpty)
+          .toList();
+    }
 
     if (json['children'] != null && json['children'] is List) {
       children = <CategoryModel>[];
       for (final child in json['children']) {
         if (child is Map<String, dynamic>) {
           children!.add(CategoryModel.fromJson(child));
+        }
+      }
+    }
+    if (json['subcategories'] != null && json['subcategories'] is List) {
+      subcategories = <CategoryModel>[];
+      for (final sub in json['subcategories']) {
+        if (sub is Map<String, dynamic>) {
+          subcategories!.add(CategoryModel.fromJson(sub));
         }
       }
     }
@@ -77,11 +100,17 @@ class CategoryModel {
     data['isFeatured'] = isFeatured;
     data['isDeleted'] = isDeleted;
     data['slug'] = slug;
+    data['metaKeywords'] = metaKeywords;
+    data['level'] = level;
     data['productCount'] = productCount;
     data['createdAt'] = createdAt;
     data['updatedAt'] = updatedAt;
     if (children != null) {
       data['children'] = children!.map((child) => child.toJson()).toList();
+    }
+    if (subcategories != null) {
+      data['subcategories'] =
+          subcategories!.map((child) => child.toJson()).toList();
     }
     return data;
   }
@@ -215,6 +244,11 @@ class Pagination {
   bool? hasPrevPage;
   int? limit;
   Map<String, dynamic>? aggregations;
+  /// From categories/search response
+  String? searchQuery;
+  String? type;
+  /// From products-by-category response: category info in pagination
+  Map<String, dynamic>? category;
 
   Pagination({
     this.totalItems,
@@ -224,6 +258,9 @@ class Pagination {
     this.hasPrevPage,
     this.limit,
     this.aggregations,
+    this.searchQuery,
+    this.type,
+    this.category,
   });
 
   Pagination.fromJson(Map<String, dynamic> json) {
@@ -233,8 +270,13 @@ class Pagination {
     hasNextPage = json['hasNextPage'] is bool ? json['hasNextPage'] : null;
     hasPrevPage = json['hasPrevPage'] is bool ? json['hasPrevPage'] : null;
     limit = _toInt(json['limit']);
+    searchQuery = json['searchQuery']?.toString();
+    type = json['type']?.toString();
     if (json['aggregations'] != null && json['aggregations'] is Map) {
       aggregations = Map<String, dynamic>.from(json['aggregations'] as Map);
+    }
+    if (json['category'] != null && json['category'] is Map) {
+      category = Map<String, dynamic>.from(json['category'] as Map);
     }
   }
 
@@ -247,6 +289,9 @@ class Pagination {
     data['hasPrevPage'] = hasPrevPage;
     data['limit'] = limit;
     data['aggregations'] = aggregations;
+    data['searchQuery'] = searchQuery;
+    data['type'] = type;
+    data['category'] = category;
     return data;
   }
 

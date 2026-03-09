@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
-import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/data_model/banner_model.dart';
 import 'package:astrobharataiuser/data_model/blog_model.dart';
@@ -10,6 +9,7 @@ import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.da
 import 'package:astrobharataiuser/screens/blogs/service/blog_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/banner_service.dart';
+import 'package:astrobharataiuser/widgets/inline_search_overlay.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -318,6 +318,7 @@ class EcommerceHomeController extends BaseController {
         ...allCategories.where(
             (c) => flatTree.every((t) => t.id != c.id)),
       ];
+      // Prefer exact slug/name match so we get main category (e.g. "Kits") not subcategory (e.g. "Dosh Kit")
       for (final variant in nameVariants) {
         final slug = variant.toLowerCase().replaceAll(' ', '-');
         final variantLower = variant.toLowerCase();
@@ -325,13 +326,24 @@ class EcommerceHomeController extends BaseController {
           (c) {
             final name = c.name?.toLowerCase() ?? '';
             final catSlug = c.slug?.toLowerCase() ?? '';
-            return catSlug == slug ||
-                catSlug.contains(slug) ||
-                name == variantLower ||
-                name.contains(variantLower);
+            return catSlug == slug || name == variantLower;
           },
         );
         if (category != null) break;
+      }
+      if (category == null) {
+        for (final variant in nameVariants) {
+          final slug = variant.toLowerCase().replaceAll(' ', '-');
+          final variantLower = variant.toLowerCase();
+          category = allCats.firstWhereOrNull(
+            (c) {
+              final name = c.name?.toLowerCase() ?? '';
+              final catSlug = c.slug?.toLowerCase() ?? '';
+              return catSlug.contains(slug) || name.contains(variantLower);
+            },
+          );
+          if (category != null) break;
+        }
       }
       if (category != null) {
         categoryOut?.value = category;
@@ -629,12 +641,8 @@ class EcommerceHomeController extends BaseController {
   }
 
   void navigateToSearch({String? initialQuery}) {
-    UserMainController.pushInCurrentTab(
-      AppRoutes.search,
-      arguments: {
-        if (initialQuery != null && initialQuery.isNotEmpty)
-          'initialQuery': initialQuery,
-      },
+    InlineSearchOverlay.showWithContext(
+      initialQuery: initialQuery,
     );
   }
 

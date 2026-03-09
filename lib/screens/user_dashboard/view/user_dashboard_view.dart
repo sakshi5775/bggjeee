@@ -8,6 +8,7 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
+import 'package:astrobharataiuser/widgets/inline_search_overlay.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:astrobharataiuser/core/controllers/global_nav_controller.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/all_astrologers_view.dart';
@@ -195,7 +196,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             CommonHeader(
               showHome: false,
               showDrawer: false,
-              onSearchTap: controller.openHeaderSearch,
+              onSearchTap: () => InlineSearchOverlay.show(context),
             ),
             _buildSlider(context),
           ],

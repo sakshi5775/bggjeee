@@ -30,6 +30,8 @@ class ProductListController extends BaseController {
   final listTitle = Rxn<String>();
   /// When set, products are loaded by this filter: 'bestSellers', 'recommended', 'featured'.
   final filterType = Rxn<String>();
+  /// When navigating by slug (e.g. Pyramids before category exists in API), stored so loadInitialData can await it.
+  final pendingCategorySlug = Rxn<String>();
   /// When true, show grid of all categories first; on tap open products for that category.
   final showCategoriesFirst = false.obs;
 
@@ -48,7 +50,7 @@ class ProductListController extends BaseController {
       } else if (args['categoryId'] != null) {
         loadCategoryById(args['categoryId']);
       } else if (args['categorySlug'] != null) {
-        loadCategoryBySlug(args['categorySlug']);
+        pendingCategorySlug.value = args['categorySlug'] as String;
       }
       if (args['subcategory'] != null) {
         selectedSubcategory.value = args['subcategory'];
@@ -85,6 +87,11 @@ class ProductListController extends BaseController {
 
   Future<void> loadInitialData() async {
     await loadCategories();
+    final slug = pendingCategorySlug.value;
+    if (slug != null) {
+      pendingCategorySlug.value = null;
+      await loadCategoryBySlug(slug);
+    }
     if (showCategoriesFirst.value == true) {
       return;
     }
@@ -234,6 +241,8 @@ class ProductListController extends BaseController {
             category.slug!,
             page: currentPage,
             limit: limit,
+            subcategorySlug: subcategory?.slug,
+            search: searchQuery.value.isNotEmpty ? searchQuery.value : null,
             sortBy: sortBy.value,
           );
         } else if (category.id != null) {
@@ -332,6 +341,14 @@ class ProductListController extends BaseController {
           parentCategory.children!.isNotEmpty) {
         return parentCategory.children!;
       }
+    }
+
+    // When category was loaded by slug, use subcategories from API response
+    if (category.subcategories != null && category.subcategories!.isNotEmpty) {
+      return category.subcategories!;
+    }
+    if (category.children != null && category.children!.isNotEmpty) {
+      return category.children!;
     }
 
     return available.where((cat) => parentMatches(cat)).toList();

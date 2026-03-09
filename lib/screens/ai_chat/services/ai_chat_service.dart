@@ -8,12 +8,14 @@ import 'package:get/get.dart';
 class AiChatService {
   final ApiRepository _apiRepository = Get.find();
 
-  // Get personas with pagination
+  // Get personas with pagination and filters
   Future<PersonaResponse?> getPersonas({
     int page = 1,
     int limit = 20,
     String? category,
     String? sortBy,
+    bool? featured,
+    String? tags,
   }) async {
     try {
       final query = <String, dynamic>{
@@ -27,6 +29,14 @@ class AiChatService {
 
       if (sortBy != null && sortBy.isNotEmpty) {
         query['sortBy'] = sortBy;
+      }
+
+      if (featured != null) {
+        query['featured'] = featured.toString();
+      }
+
+      if (tags != null && tags.isNotEmpty) {
+        query['tags'] = tags;
       }
 
       final response = await _apiRepository.getApi(
