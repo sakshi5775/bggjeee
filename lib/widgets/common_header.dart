@@ -1,5 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/app_manager/svg_assets.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
@@ -216,8 +217,8 @@ class CommonHeader extends StatelessWidget {
                 child: Row(
                   spacing: 8,
                   children: [
-                    Image.network(
-                      AppConstant.logo,
+                    NetworkImageWithLoader(
+                      url: AppConstant.logo,
                       width: 40.w,
                       height: 40.h,
                       fit: BoxFit.contain,

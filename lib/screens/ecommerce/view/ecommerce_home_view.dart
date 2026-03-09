@@ -298,18 +298,17 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                   ),
                 );
               }
-              final tree =
-                  List<CategoryModel>.from(controller.categoryTree);
+              final tree = List<CategoryModel>.from(controller.categoryTree);
               final allCategories = tree
-                  .where((cat) =>
-                      cat.isFeatured == true && cat.parent == null)
+                  .where((cat) => cat.isFeatured == true && cat.parent == null)
                   .toList();
               List<CategoryModel> list;
               if (allCategories.isNotEmpty) {
                 list = allCategories.take(_top10Count).toList();
               } else {
-                final featured =
-                    List<CategoryModel>.from(controller.categories);
+                final featured = List<CategoryModel>.from(
+                  controller.categories,
+                );
                 list = featured.take(_top10Count).toList();
               }
               if (list.isEmpty) return SizedBox.shrink();
@@ -400,8 +399,9 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                                       color: Colors.white,
                                       shadows: [
                                         Shadow(
-                                          color: Colors.black
-                                              .withValues(alpha: 0.5),
+                                          color: Colors.black.withValues(
+                                            alpha: 0.5,
+                                          ),
                                           blurRadius: 4,
                                           offset: Offset(0, 1),
                                         ),
@@ -478,8 +478,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
             ),
           ),
           Obx(() {
-            if (controller.isLoadingBlogs.value &&
-                controller.blogs.isEmpty) {
+            if (controller.isLoadingBlogs.value && controller.blogs.isEmpty) {
               return SizedBox(
                 height: 140.h,
                 child: Center(
@@ -530,8 +529,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
     const double cardWidth = 150;
     const double thumbHeight = 94;
     final img = blog.featuredImage ?? '';
-    final useImage =
-        img.isNotEmpty && !_isVideoUrl(img);
+    final useImage = img.isNotEmpty && !_isVideoUrl(img);
 
     return GestureDetector(
       onTap: () => UserMainController.pushInCurrentTab(
@@ -676,12 +674,38 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
     );
   }
 
-  static const List<({String label, String url, String iconUrl})> _socialLinks = [
-    (label: 'Facebook', url: 'https://www.facebook.com/astrobharatai/', iconUrl: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Social+Media+Icons/icons8-facebook-48.png'),
-    (label: 'Instagram', url: 'https://www.instagram.com/astrobharatai/', iconUrl: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Social+Media+Icons/icons8-instagram-48.png'),
-    (label: 'LinkedIn', url: 'https://www.linkedin.com/company/astrobharatai/', iconUrl: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Social+Media+Icons/icons8-linkedin-48.png'),
-    (label: 'X', url: 'https://x.com/AstroBharatAI', iconUrl: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Social+Media+Icons/icons8-twitter-50.png'),
-    (label: 'YouTube', url: 'https://www.youtube.com/@AstroBharatAI', iconUrl: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Social+Media+Icons/icons8-youtube-48.png'),
+  static const List<({String label, String url, String iconUrl})>
+  _socialLinks = [
+    (
+      label: 'Facebook',
+      url: 'https://www.facebook.com/astrobharatai/',
+      iconUrl:
+          'https://d3c2un7ipdye89.cloudfront.net/Social+Media+Icons/icons8-facebook-48.png',
+    ),
+    (
+      label: 'Instagram',
+      url: 'https://www.instagram.com/astrobharatai/',
+      iconUrl:
+          'https://d3c2un7ipdye89.cloudfront.net/Social+Media+Icons/icons8-instagram-48.png',
+    ),
+    (
+      label: 'LinkedIn',
+      url: 'https://www.linkedin.com/company/astrobharatai/',
+      iconUrl:
+          'https://d3c2un7ipdye89.cloudfront.net/Social+Media+Icons/icons8-linkedin-48.png',
+    ),
+    (
+      label: 'X',
+      url: 'https://x.com/AstroBharatAI',
+      iconUrl:
+          'https://d3c2un7ipdye89.cloudfront.net/Social+Media+Icons/icons8-twitter-50.png',
+    ),
+    (
+      label: 'YouTube',
+      url: 'https://www.youtube.com/@AstroBharatAI',
+      iconUrl:
+          'https://d3c2un7ipdye89.cloudfront.net/Social+Media+Icons/icons8-youtube-48.png',
+    ),
   ];
 
   Widget _buildSocialMediaSliver() {
@@ -705,7 +729,15 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: _socialLinks.map((e) => _buildSocialIcon(label: e.label, url: e.url, iconUrl: e.iconUrl)).toList(),
+              children: _socialLinks
+                  .map(
+                    (e) => _buildSocialIcon(
+                      label: e.label,
+                      url: e.url,
+                      iconUrl: e.iconUrl,
+                    ),
+                  )
+                  .toList(),
             ),
           ),
           SizedBox(height: 8.h),
@@ -788,7 +820,11 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
     );
   }
 
-  Widget _buildSocialIcon({required String label, required String url, required String iconUrl}) {
+  Widget _buildSocialIcon({
+    required String label,
+    required String url,
+    required String iconUrl,
+  }) {
     return GestureDetector(
       onTap: () => _launchSocialUrl(url),
       child: Container(
@@ -806,11 +842,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
           ],
         ),
         padding: EdgeInsets.all(8.w),
-        child: NetworkImageWithLoader(
-          url: iconUrl,
-          width: 32.w,
-          height: 32.w,
-        ),
+        child: NetworkImageWithLoader(url: iconUrl, width: 32.w, height: 32.w),
       ),
     );
   }
@@ -1042,7 +1074,9 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                 children: [
                   AutoTranslateText(
                     title,
-                    style: AppTypography.h2.copyWith(color: '#68171E'.toColor()),
+                    style: AppTypography.h2.copyWith(
+                      color: '#68171E'.toColor(),
+                    ),
                   ),
                   if (category != null)
                     GestureDetector(
@@ -1086,7 +1120,11 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                 height: 320.h,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 4.h),
+                  padding: EdgeInsets.only(
+                    left: 16.w,
+                    right: 16.w,
+                    bottom: 4.h,
+                  ),
                   itemCount: products.length,
                   separatorBuilder: (_, __) => SizedBox(width: 10.w),
                   itemBuilder: (context, index) {
@@ -1302,8 +1340,8 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                           'title': title,
                           'filterType':
                               title.toLowerCase().contains('recommended')
-                                  ? 'recommended'
-                                  : 'recentlyViewed',
+                              ? 'recommended'
+                              : 'recentlyViewed',
                         },
                       );
                     },
@@ -2027,7 +2065,9 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
               children: [
                 Obx(() {
                   final quantity = cartController.quantityForProduct(product);
-                  final isProcessing = cartController.isProductUpdating(product);
+                  final isProcessing = cartController.isProductUpdating(
+                    product,
+                  );
 
                   if (quantity <= 0) {
                     return Container(

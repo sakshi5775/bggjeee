@@ -20,32 +20,31 @@ class AstrologyServicesController extends GetxController {
     {
       'name': 'Daily Horoscope',
       'icon':
-          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/DailyHoroscope.png',
+          'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/DailyHoroscope.png',
     },
     {
       'name': 'Kundli Analysis',
       'icon':
-          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/kundali.jpeg',
+          'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/kundali.jpeg',
     },
     {
       'name': 'Compatibility',
       'icon':
-          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/Compatibility.png',
+          'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/Compatibility.png',
     },
     {
       'name': 'Tarot Reading',
       'icon':
-          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/TarotReading.png',
+          'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/TarotReading.png',
     },
     {
       'name': 'Numerology',
-      'icon':
-          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/num.jpeg',
+      'icon': 'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/num.jpeg',
     },
     {
       'name': 'Remedies',
       'icon':
-          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/Remediess.png',
+          'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/Remediess.png',
     },
   ];
   // Reactive variables

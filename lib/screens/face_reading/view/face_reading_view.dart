@@ -1,5 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
@@ -54,7 +55,9 @@ class FaceReadingView extends StatelessWidget {
                         message: 'Login to view your face reading history.',
                       );
                       if (ok) {
-                        UserMainController.pushInCurrentTab(AppRoutes.faceReadingHistory);
+                        UserMainController.pushInCurrentTab(
+                          AppRoutes.faceReadingHistory,
+                        );
                       }
                     },
                   ),
@@ -108,23 +111,14 @@ class FaceReadingView extends StatelessWidget {
   }
 
   Widget _buildMainIcon() {
-    return Container(
+    return SizedBox(
       width: 140.w,
       height: 140.w,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24.r),
-        child: Image.network(
-          AppConstant.faceReadingHub,
+        child: NetworkImageWithLoader(
+          url: AppConstant.faceReadingHub,
           fit: BoxFit.cover,
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return const Center(child: CircularProgressIndicator());
-          },
-          errorBuilder: (_, __, ___) => Icon(
-            Icons.face_retouching_natural,
-            size: 60.w,
-            color: '#ffffff'.toColor(),
-          ),
         ),
       ),
     );
@@ -231,7 +225,9 @@ class FaceReadingView extends StatelessWidget {
                       message: 'Please login to continue with face reading.',
                     );
                     if (ok) {
-                      UserMainController.pushInCurrentTab(AppRoutes.faceReadingUpload);
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.faceReadingUpload,
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(

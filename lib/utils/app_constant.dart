@@ -54,83 +54,83 @@ class AppConstant {
   static const String gemstoneCard = 'assets/app/gemstone_card.png';
   static const String quoteBackground = 'assets/app/quote_background.png';
   static const String quoteOfTheDay =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/App/quote_of_the_day.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/App/quote_of_the_day.png';
 
   // Onboarding Screen Backgrounds
   static const String onboardingScreen1Bgimg =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/Onboarding+Screens/onboarding_screen1_bgimg.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/Onboarding+Screens/onboarding_screen1_bgimg.png';
   static const String onboardingScreen2Bgimg =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/Onboarding+Screens/onboarding_screen2_bgimg.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/Onboarding+Screens/onboarding_screen2_bgimg.png';
   static const String onboardingScreen3Bgimg =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/Onboarding+Screens/onboarding_screen3_bgimg.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/Onboarding+Screens/onboarding_screen3_bgimg.png';
 
   // Match Making JSON Files
   static const String matchMakingKundliJson =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/Json/match_making_kundli.json';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/Json/match_making_kundli.json';
   static const String matchMakingAnimationJson =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/Json/match_making_animation.json';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/Json/match_making_animation.json';
 
   // Kundli Images
   static const String kundliBoy =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/App/kundliBoy.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/App/kundliBoy.png';
   static const String kundliGirl =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/App/kundliGirl.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/App/kundliGirl.png';
 
   // Book Images
   static const String book =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/App/book.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/App/book.png';
   static const String bookBackground =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/App/book_background.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/App/book_background.png';
 
   // Vastu Compass Images
   static const String needle =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/App/needle.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/App/needle.png';
   static const String outerFrame =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/App/outer_frame.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/App/outer_frame.png';
   static const String star =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/App/star.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/App/star.png';
   static const String zoneRing =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/App/zone_ring.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/App/zone_ring.png';
   static const String directionRing =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/App/direction_ring.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/App/direction_ring.png';
 
   // Face Reading Images
   static const String faceReadingEx =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/Face+Reading/face_reading_ex.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/Face+Reading/face_reading_ex.png';
   static const String faceReadingEx2 =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/Face+Reading/face_reading_ex_2.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/Face+Reading/face_reading_ex_2.png';
   static const String faceReadingEx3 =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/Face+Reading/face_reading_ex_3.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/Face+Reading/face_reading_ex_3.png';
   static const String faceReadingHub =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/App/FaceReadingHub.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/App/FaceReadingHub.png';
 
   // Palm Reading Images
   static const String palmreadingscreen =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/App/palmreadingscreen.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/App/palmreadingscreen.png';
   static const String palmscan =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/App/palmscan.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/App/palmscan.png';
 
   // Free Service Image
   static const String freeservice =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/App/freeservice.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/App/freeservice.png';
 
   // Audio Files
   static const String aartiMp3 =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/Audio/aarti.mp3';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/Audio/aarti.mp3';
   static const String shankhMp3 =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/Audio/shankh.mp3';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/Audio/shankh.mp3';
 
   static const String templeImage = 'assets/app/temple_image.png';
   static const String templeMahakaleshwar =
       'assets/app/temple_mahakaleshwar.png';
   static const String videoThumbnail =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/video+3d.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/3D+Logos/video+3d.png';
   static const String horoscopeGuru = 'assets/app/guru.png';
   static const String divineShop =
       '$s3BaseUrl/Astro+Service/3D+Logos/digital+mart+3d.png';
   static const String ePooja = '$s3BaseUrl/Astro+Service/3D+Logos/pooja+3d.png';
   static const String aiAstrologer =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/AIAstrologer.svg';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/AIAstrologer.svg';
   static const String education =
       '$s3BaseUrl/Astro+Service/3D+Logos/education+3d.png';
   static const String poojaAnuj = 'assets/app/pooja_anuj.png';
@@ -174,7 +174,7 @@ class AppConstant {
 
   // ecommerce images
   static const String shopMainBanner =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/Images/shop_main_banner.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/Images/shop_main_banner.png';
 
   // astrology report images
   static const String astrologyReportBrihatKudli =
@@ -190,52 +190,52 @@ class AppConstant {
   // Service Icons (from Figma)
   static const String service2025 = 'assets/app/service_2025.svg';
   static const String serviceGenerateKundali =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/Kundali+3d.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/3D+Logos/Kundali+3d.png';
   static const String serviceFaceReading =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/FaceReading.svg';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/FaceReading.svg';
   static const String servicePalmReading =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/PalmReading.svg';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/PalmReading.svg';
   static const String serviceConsult = 'assets/app/service_consult.svg';
   static const String servicePanchang =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/panchang+n.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/3D+Logos/panchang+n.png';
   static const String serviceMatchMaking =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/kundali+matchinh.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/3D+Logos/kundali+matchinh.png';
   static const String serviceNumerology =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/Neumorology+n.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/3D+Logos/Neumorology+n.png';
   static const String serviceTarot =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/TarrotCard.svg';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/TarrotCard.svg';
   static const String serviceRasiChart =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/RasiChart.svg';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/RasiChart.svg';
 
   // Common
   static const String fullChakra = 'assets/app/fullchakra.svg';
 
   // Dashboard card images
   static const String cardConsultation =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/App/ganeshji_u.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/App/ganeshji_u.png';
   static const String cardPalm = 'assets/app/palmReadingCard.png';
   static const String cardKundli =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/Kundali+3d.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/3D+Logos/Kundali+3d.png';
 
   static const String tarot = 'assets/app/tarot.svg';
 
   static const String horoscope =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/Horoscope+3d.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/3D+Logos/Horoscope+3d.png';
   static const String vastu =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/Vastu.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/Vastu.png';
   static const String writingAstrology =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/Writing.svg';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/Writing.svg';
   static const String ramalShastra = 'assets/app/ramalShastra.png';
   static const String carrotAstrology =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/carrotAstrology.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/carrotAstrology.png';
 
   // 3D Logos for Kundli/Horoscope
   static const String varshpal3d =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/Varshpal.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/3D+Logos/Varshpal.png';
   static const String shodashVarga3d =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/ShodashVarga.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/3D+Logos/ShodashVarga.png';
   static const String yog3d =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/Yog3d.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/3D+Logos/Yog3d.png';
 
   // Panchang Icons
   static const String panchangBackButton = 'assets/icons/close-icon.svg';
@@ -271,15 +271,15 @@ class AppConstant {
 
   // shop banner images
   static const String shopBanner1 =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/Images/BANNER+1.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/Images/BANNER+1.png';
   static const String shopBanner2 =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/Images/BANNER+2.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/Images/BANNER+2.png';
   static const String shopBanner3 =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/Images/BANNER+3.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/Images/BANNER+3.png';
   static const String shopBanner4 =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/Images/BANNER+4.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/Images/BANNER+4.png';
   static const String shopBanner5 =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/Images/BANNER+5.png';
+      'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/Images/BANNER+5.png';
 
   // cunsultation category icons
 
@@ -299,21 +299,21 @@ class AppConstant {
   static const String prashnaKundali = 'assets/app/prashnakundali.svg';
 
   static const String lifePredictions =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/Life+prediction+n.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/3D+Logos/Life+prediction+n.png';
 
   static const String dosh =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/dosh+n.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/3D+Logos/dosh+n.png';
 
   static const String dasha =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/dasha+n.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/3D+Logos/dasha+n.png';
 
   static const String kPAstrology =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/KP+ASTROLOGY.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/3D+Logos/KP+ASTROLOGY.png';
   static const String kpN =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/kp+n.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/3D+Logos/kp+n.png';
 
   static const String lalKitab =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/lal+kitab+n.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/3D+Logos/lal+kitab+n.png';
 
   static const String gemstone2 = 'assets/app/gemstone2.png';
   static const String pendent = 'assets/app/pendent.png';
@@ -323,29 +323,29 @@ class AppConstant {
 
   // Zodiac Sign Images
   static const String zodiacAries =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Aries.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Zodiac+Signs/Aries.png';
   static const String zodiacTaurus =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Taurus.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Zodiac+Signs/Taurus.png';
   static const String zodiacGemini =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Gemini.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Zodiac+Signs/Gemini.png';
   static const String zodiacCancer =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Cancer.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Zodiac+Signs/Cancer.png';
   static const String zodiacLeo =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Leo.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Zodiac+Signs/Leo.png';
   static const String zodiacVirgo =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Virgo.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Zodiac+Signs/Virgo.png';
   static const String zodiacLibra =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Libra.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Zodiac+Signs/Libra.png';
   static const String zodiacScorpio =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Scorpio.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Zodiac+Signs/Scorpio.png';
   static const String zodiacSagittarius =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Saggitarius.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Zodiac+Signs/Saggitarius.png';
   static const String zodiacCapricorn =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Capricorn.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Zodiac+Signs/Capricorn.png';
   static const String zodiacAquarius =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Aquarius.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Zodiac+Signs/Aquarius.png';
   static const String zodiacPisces =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Pisces.png';
+      'https://d3c2un7ipdye89.cloudfront.net/Zodiac+Signs/Pisces.png';
 
   // Digital Mandir Images
   static const String eMandirGanesha = 'assets/images/ganesha.png';

@@ -1,5 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_controller.dart';
@@ -45,8 +46,9 @@ class PalmReadingView extends StatelessWidget {
                     title: 'Palm Reading',
                     customActions: [
                       IconButton(
-                        onPressed: () =>
-                            UserMainController.pushInCurrentTab(AppRoutes.palmReadingHistory),
+                        onPressed: () => UserMainController.pushInCurrentTab(
+                          AppRoutes.palmReadingHistory,
+                        ),
                         icon: Icon(
                           Icons.access_time,
                           color: '#3E2723'.toColor(),
@@ -112,16 +114,9 @@ class PalmReadingView extends StatelessWidget {
       child: Center(
         child: Transform.scale(
           scale: 2.0,
-          child: Image.network(
-            AppConstant.palmreadingscreen,
+          child: NetworkImageWithLoader(
+            url: AppConstant.palmreadingscreen,
             fit: BoxFit.contain,
-            loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress == null) return child;
-              return const Center(child: CircularProgressIndicator());
-            },
-            errorBuilder: (context, error, stackTrace) {
-              return const Center(child: Icon(Icons.error));
-            },
           ),
         ),
       ),
@@ -333,7 +328,8 @@ class PalmReadingView extends StatelessWidget {
             ],
           ),
           child: ElevatedButton(
-            onPressed: () => UserMainController.pushInCurrentTab(AppRoutes.palmReadingForm),
+            onPressed: () =>
+                UserMainController.pushInCurrentTab(AppRoutes.palmReadingForm),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
               foregroundColor: Colors.white,

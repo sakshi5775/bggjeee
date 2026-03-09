@@ -9,6 +9,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../app_manager/network_image.dart';
+
 class DigitalLearningBannerSlider extends StatefulWidget {
   const DigitalLearningBannerSlider({super.key});
 
@@ -249,35 +251,11 @@ class _DigitalLearningBannerSliderState
       }
     } else {
       // Image Banners
-      return Image.network(
-        _banners[index],
+      return NetworkImageWithLoader(
+        url: _banners[index],
         fit: BoxFit.fill,
         width: double.infinity,
-        errorBuilder: (context, error, stackTrace) {
-          // Fallback or placeholder
-          return Container(
-            color: Colors.grey[200],
-            child: const Center(
-              child: Icon(Icons.image_not_supported, color: Colors.grey),
-            ),
-          );
-        },
       );
     }
-  }
-
-  Widget _buildNavArrow(IconData icon, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.all(8.w),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.black.withValues(alpha: 0.3),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
-        ),
-        child: Icon(icon, color: Colors.white, size: 16.w),
-      ),
-    );
   }
 }

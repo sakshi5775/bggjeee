@@ -9,12 +9,12 @@ import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
+import '../../../app_manager/network_image.dart';
 import '../../../app_manager/svg_assets.dart' show SvgAssets;
 
 class CelebrityAstrologerWidget extends BasePage<UserDashboardController> {
@@ -254,38 +254,7 @@ class CelebrityAstrologerWidget extends BasePage<UserDashboardController> {
                 shape: BoxShape.circle,
                 border: Border.all(color: AppColors.deepOrange, width: 2.w),
               ),
-              child: ClipOval(
-                child: imagePath.isNotEmpty
-                    ? CachedNetworkImage(
-                        imageUrl: imagePath,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                          color: Colors.grey[300],
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.deepOrange,
-                              strokeWidth: 2,
-                            ),
-                          ),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          color: Colors.grey[300],
-                          child: Icon(
-                            Icons.person,
-                            size: 40.w,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      )
-                    : Container(
-                        color: Colors.grey[300],
-                        child: Icon(
-                          Icons.person,
-                          size: 40.w,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-              ),
+              child: NetworkImageWithLoader(url: imagePath, fit: BoxFit.cover),
             ),
             Spacing.h(12),
             // Name

@@ -246,17 +246,6 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                     ),
                     child:
                         controller.selectedOfferingIcon.value.startsWith('http')
-                        // ? Image.network(
-                        //     controller.selectedOfferingIcon.value,
-                        //     fit: BoxFit.cover,
-                        //     width: 40.w,
-                        //     height: 40.h,
-                        //     errorBuilder: (_, __, ___) => Image.asset(
-                        //       AppConstant.eMandirLadduIcon,
-                        //       width: 40.w,
-                        //       height: 40.h,
-                        //     ),
-                        //   )
                         ? NetworkImageWithLoader(
                             url: controller.selectedOfferingIcon.value,
                             fit: BoxFit.cover,
@@ -326,11 +315,9 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                     ),
                     gradient: AppColors.gradientBackground,
                   ),
-                  child: Image.network(
-                    AppConstant.specialBhog,
+                  child: NetworkImageWithLoader(
+                    url: AppConstant.specialBhog,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) =>
-                        Image.asset(AppConstant.eMandirLibraryAarti),
                   ),
                 ),
               ),
@@ -353,12 +340,7 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                     ),
                     gradient: AppColors.gradientBackground,
                   ),
-                  // child: Image.network(
-                  //   AppConstant.mandirItems,
-                  //   fit: BoxFit.cover,
-                  //   errorBuilder: (_, __, ___) =>
-                  //       Image.asset(AppConstant.eMandirLibraryAarti),
-                  // ),
+
                   child: NetworkImageWithLoader(
                     url: AppConstant.mandirItems,
                     fit: BoxFit.cover,
@@ -384,13 +366,7 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                     ),
                     gradient: AppColors.gradientBackground,
                   ),
-                  // child: Image.network(
-                  //   AppConstant.collectionSangrahIcon,
 
-                  //   fit: BoxFit.fill,
-                  //   errorBuilder: (_, __, ___) =>
-                  //       Image.asset(AppConstant.eMandirLibraryAarti),
-                  // ),
                   child: NetworkImageWithLoader(
                     url: AppConstant.collectionSangrahIcon,
                     fit: BoxFit.fill,

@@ -9,6 +9,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
+import '../../../../app_manager/network_image.dart';
+
 /// Horizontal scrollable list of festivals (max 5), with a "View All" button.
 class FestivalWidget extends GetView<NamasteHomeController> {
   const FestivalWidget({super.key});
@@ -117,15 +119,12 @@ class _FestivalCard extends StatelessWidget {
               tag: 'festival_image_${festival.id}',
               child: ClipRRect(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-                child: festival.image.startsWith('http')
-                    ? Image.network(
-                        festival.image,
-                        height: 110.h,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _imagePlaceholder(),
-                      )
-                    : _imagePlaceholder(),
+                child: NetworkImageWithLoader(
+                  url: festival.image,
+                  height: 110.h,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
 
@@ -163,19 +162,6 @@ class _FestivalCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _imagePlaceholder() {
-    return Container(
-      height: 110.h,
-      width: double.infinity,
-      color: Colors.orange.shade50,
-      child: Icon(
-        Icons.temple_hindu_rounded,
-        size: 40.r,
-        color: Colors.orange.shade300,
       ),
     );
   }

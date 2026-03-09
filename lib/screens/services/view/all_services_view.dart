@@ -40,7 +40,8 @@ class AllServicesView extends StatelessWidget {
                       left: 16.w,
                       right: 16.w,
                       top: 16.h,
-                      bottom: 16.h + 70.h + MediaQuery.of(context).padding.bottom,
+                      bottom:
+                          16.h + 70.h + MediaQuery.of(context).padding.bottom,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,16 +128,56 @@ class AllServicesView extends StatelessWidget {
 
   Widget _buildHoroscopicServicesSection() {
     final horoscopeList = <Map<String, String>>[
-      {'label': 'Kundli', 'route': AppRoutes.kundliForm, 'icon': AppConstant.serviceGenerateKundali},
-      {'label': 'Kundli Matching', 'route': AppRoutes.matchMakingForm, 'icon': AppConstant.serviceMatchMaking},
-      {'label': 'Horoscope', 'route': AppRoutes.horoscopeForm, 'icon': AppConstant.horoscope},
-      {'label': 'Predictions', 'route': AppRoutes.kundliForm, 'icon': AppConstant.lifePredictions},
-      {'label': 'Dasha', 'route': AppRoutes.kundliForm, 'icon': AppConstant.dasha},
-      {'label': 'Dosh', 'route': AppRoutes.kundliForm, 'icon': AppConstant.dosh},
-      {'label': 'Lal Kitab', 'route': AppRoutes.kundliForm, 'icon': AppConstant.lalKitab},
-      {'label': 'KP Astrology', 'route': AppRoutes.kundliForm, 'icon': AppConstant.kpN},
-      {'label': 'Numerology', 'route': AppRoutes.numerologyForm, 'icon': AppConstant.serviceNumerology},
-      {'label': 'Panchang', 'route': AppRoutes.panchang, 'icon': AppConstant.servicePanchang},
+      {
+        'label': 'Kundli',
+        'route': AppRoutes.kundliForm,
+        'icon': AppConstant.serviceGenerateKundali,
+      },
+      {
+        'label': 'Kundli Matching',
+        'route': AppRoutes.matchMakingForm,
+        'icon': AppConstant.serviceMatchMaking,
+      },
+      {
+        'label': 'Horoscope',
+        'route': AppRoutes.horoscopeForm,
+        'icon': AppConstant.horoscope,
+      },
+      {
+        'label': 'Predictions',
+        'route': AppRoutes.kundliForm,
+        'icon': AppConstant.lifePredictions,
+      },
+      {
+        'label': 'Dasha',
+        'route': AppRoutes.kundliForm,
+        'icon': AppConstant.dasha,
+      },
+      {
+        'label': 'Dosh',
+        'route': AppRoutes.kundliForm,
+        'icon': AppConstant.dosh,
+      },
+      {
+        'label': 'Lal Kitab',
+        'route': AppRoutes.kundliForm,
+        'icon': AppConstant.lalKitab,
+      },
+      {
+        'label': 'KP Astrology',
+        'route': AppRoutes.kundliForm,
+        'icon': AppConstant.kpN,
+      },
+      {
+        'label': 'Numerology',
+        'route': AppRoutes.numerologyForm,
+        'icon': AppConstant.serviceNumerology,
+      },
+      {
+        'label': 'Panchang',
+        'route': AppRoutes.panchang,
+        'icon': AppConstant.servicePanchang,
+      },
     ];
 
     return LayoutBuilder(
@@ -161,24 +202,64 @@ class AllServicesView extends StatelessWidget {
   }
 
   Widget _buildAstrologyToolsSection() {
-    const faceUrl = 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/face2.jpeg';
-    const palmUrl = 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/hand.jpeg';
-    const vastuUrl = 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/vastu.jpeg';
-    const ramalUrl = 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/ramal.jpeg';
-    const writingUrl = 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/writing.jpeg';
-    const prashnaUrl = 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/PrashanKundli.jpg';
-    const tarotUrl = 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/TarotReading.png';
-    const carrotUrl = 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/carrotAstro.png';
+    const faceUrl =
+        'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/face2.jpeg';
+    const palmUrl =
+        'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/hand.jpeg';
+    const vastuUrl =
+        'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/vastu.jpeg';
+    const ramalUrl =
+        'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/ramal.jpeg';
+    const writingUrl =
+        'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/writing.jpeg';
+    const prashnaUrl =
+        'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/PrashanKundli.jpg';
+    const tarotUrl =
+        'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/TarotReading.png';
+    const carrotUrl =
+        'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/carrotAstro.png';
 
     final toolsList = <Map<String, String>>[
-      {'label': 'Face Reading', 'route': AppRoutes.faceReading, 'icon': faceUrl},
-      {'label': 'Palm Reading', 'route': AppRoutes.palmReading, 'icon': palmUrl},
-      {'label': 'Vastu Reading', 'route': AppRoutes.vastuDashboard, 'icon': vastuUrl},
-      {'label': 'Ramal Shastra', 'route': AppRoutes.ramalShastra, 'icon': ramalUrl},
-      {'label': 'Writing Astrology', 'route': AppRoutes.handwritingAstrology, 'icon': writingUrl},
-      {'label': 'Prashna Kundli', 'route': AppRoutes.prashnaKundali, 'icon': prashnaUrl},
-      {'label': 'Tarot Reading', 'route': AppRoutes.tarotReading, 'icon': tarotUrl},
-      {'label': 'Carrot Astrology', 'route': AppRoutes.carrotAstrology, 'icon': carrotUrl},
+      {
+        'label': 'Face Reading',
+        'route': AppRoutes.faceReading,
+        'icon': faceUrl,
+      },
+      {
+        'label': 'Palm Reading',
+        'route': AppRoutes.palmReading,
+        'icon': palmUrl,
+      },
+      {
+        'label': 'Vastu Reading',
+        'route': AppRoutes.vastuDashboard,
+        'icon': vastuUrl,
+      },
+      {
+        'label': 'Ramal Shastra',
+        'route': AppRoutes.ramalShastra,
+        'icon': ramalUrl,
+      },
+      {
+        'label': 'Writing Astrology',
+        'route': AppRoutes.handwritingAstrology,
+        'icon': writingUrl,
+      },
+      {
+        'label': 'Prashna Kundli',
+        'route': AppRoutes.prashnaKundali,
+        'icon': prashnaUrl,
+      },
+      {
+        'label': 'Tarot Reading',
+        'route': AppRoutes.tarotReading,
+        'icon': tarotUrl,
+      },
+      {
+        'label': 'Carrot Astrology',
+        'route': AppRoutes.carrotAstrology,
+        'icon': carrotUrl,
+      },
     ];
 
     return LayoutBuilder(
@@ -270,11 +351,7 @@ class AllServicesView extends StatelessWidget {
         color: Colors.orange.shade50,
         borderRadius: BorderRadius.circular(8.r),
       ),
-      child: Icon(
-        Icons.auto_awesome,
-        color: AppColors.deepOrange,
-        size: 20.h,
-      ),
+      child: Icon(Icons.auto_awesome, color: AppColors.deepOrange, size: 20.h),
     );
   }
 }

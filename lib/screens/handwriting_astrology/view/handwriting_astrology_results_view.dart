@@ -15,6 +15,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
+import '../../../app_manager/network_image.dart';
+
 class HandwritingAstrologyResultsView extends StatelessWidget {
   const HandwritingAstrologyResultsView({Key? key}) : super(key: key);
 
@@ -87,8 +89,9 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
                     color: '#6F221E'.toColor(),
                     size: 22.w,
                   ),
-                  onPressed: () =>
-                      UserMainController.pushInCurrentTab(AppRoutes.handwritingAstrologyHistory),
+                  onPressed: () => UserMainController.pushInCurrentTab(
+                    AppRoutes.handwritingAstrologyHistory,
+                  ),
                 ),
               ],
             ),
@@ -180,17 +183,9 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10.r),
-                child: Image.network(
-                  result.imageUrls!.first,
+                child: NetworkImageWithLoader(
+                  url: result.imageUrls!.first,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    color: '#FFF2E8'.toColor(),
-                    child: Icon(
-                      Icons.edit_note,
-                      size: 50.w,
-                      color: "#F38B3B".toColor(),
-                    ),
-                  ),
                 ),
               ),
             )
@@ -1172,22 +1167,11 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
               children: imageUrls.map((url) {
                 return ClipRRect(
                   borderRadius: BorderRadius.circular(12.r),
-                  child: Image.network(
-                    url,
+                  child: NetworkImageWithLoader(
+                    url: url,
                     width: 100.w,
                     height: 100.w,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        width: 100.w,
-                        height: 100.w,
-                        color: '#E8E8E8'.toColor(),
-                        child: Icon(
-                          Icons.broken_image,
-                          color: '#999999'.toColor(),
-                        ),
-                      );
-                    },
                   ),
                 );
               }).toList(),

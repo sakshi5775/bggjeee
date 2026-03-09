@@ -1,5 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -219,7 +220,8 @@ class CompatibilityReportWidget extends StatelessWidget {
     final girlRasiFromBhakoot = bhakoot?['girl_rasi_name'] as String? ?? '';
 
     // Extract data from API response - prefer formData name/DOB if available
-    final boyName = formData?['boyName'] as String? ?? boyDetails?['name'] as String? ?? '';
+    final boyName =
+        formData?['boyName'] as String? ?? boyDetails?['name'] as String? ?? '';
     // Use formData DOB first, then fallback to API response
     final boyDob =
         formData?['boyDob'] as String? ??
@@ -235,7 +237,10 @@ class CompatibilityReportWidget extends StatelessWidget {
         boyDetails?['ascendant'] as String? ??
         '';
 
-    final girlName = formData?['girlName'] as String? ?? girlDetails?['name'] as String? ?? '';
+    final girlName =
+        formData?['girlName'] as String? ??
+        girlDetails?['name'] as String? ??
+        '';
     // Use formData DOB first, then fallback to API response
     final girlDob =
         formData?['girlDob'] as String? ??
@@ -271,32 +276,12 @@ class CompatibilityReportWidget extends StatelessWidget {
           Expanded(
             child: Column(
               children: [
-                ClipOval(
-                  child: Image.network(
-                    AppConstant.kundliGirl,
-                    width: 70.w,
-                    height: 70.w,
-                    fit: BoxFit.cover,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return const Center(child: CircularProgressIndicator());
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        width: 70.w,
-                        height: 70.w,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppColors.deepOrange.withValues(alpha: 0.2),
-                        ),
-                        child: Icon(
-                          Icons.person,
-                          size: 40.w,
-                          color: '#68171E'.toColor(),
-                        ),
-                      );
-                    },
-                  ),
+                NetworkImageWithLoader(
+                  url: AppConstant.kundliGirl,
+                  height: 70.w,
+                  width: 70.w,
+                  fit: BoxFit.cover,
+                  isCircular: true,
                 ),
                 Spacing.h(8),
                 AutoTranslateText(
@@ -384,32 +369,12 @@ class CompatibilityReportWidget extends StatelessWidget {
           Expanded(
             child: Column(
               children: [
-                ClipOval(
-                  child: Image.network(
-                    AppConstant.kundliBoy,
-                    width: 70.w,
-                    height: 70.w,
-                    fit: BoxFit.cover,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return const Center(child: CircularProgressIndicator());
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        width: 70.w,
-                        height: 70.w,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppColors.deepOrange.withValues(alpha: 0.2),
-                        ),
-                        child: Icon(
-                          Icons.person,
-                          size: 40.w,
-                          color: '#68171E'.toColor(),
-                        ),
-                      );
-                    },
-                  ),
+                NetworkImageWithLoader(
+                  url: AppConstant.kundliBoy,
+                  width: 70.w,
+                  height: 70.w,
+                  fit: BoxFit.cover,
+                  isCircular: true,
                 ),
                 Spacing.h(8),
                 AutoTranslateText(
@@ -524,7 +489,8 @@ class CompatibilityReportWidget extends StatelessWidget {
         ? score.toDouble().clamp(0.0, totalScore.toDouble())
         : 0.0;
     final displayScore = safeScore.toStringAsFixed(
-        safeScore == safeScore.roundToDouble() ? 0 : 1);
+      safeScore == safeScore.roundToDouble() ? 0 : 1,
+    );
     final displayTotal = rawTotal?.toString() ?? totalScore.toStringAsFixed(0);
     final progressValue = totalScore > 0
         ? (safeScore / totalScore).clamp(0.0, 1.0).toDouble()
@@ -533,8 +499,8 @@ class CompatibilityReportWidget extends StatelessWidget {
     final centerText = showScoreAsPercentage
         ? '$displayScore%'
         : showSeparateTotal
-            ? displayScore
-            : '$displayScore/$displayTotal';
+        ? displayScore
+        : '$displayScore/$displayTotal';
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -741,8 +707,16 @@ class CompatibilityReportWidget extends StatelessWidget {
 
   Widget _buildDashakootGunMilanDetails(Map<String, dynamic> response) {
     final keys = [
-      'dina', 'gana', 'mahendra', 'sthree', 'yoni', 'rasi',
-      'rasiathi', 'vasya', 'rajju', 'vedha',
+      'dina',
+      'gana',
+      'mahendra',
+      'sthree',
+      'yoni',
+      'rasi',
+      'rasiathi',
+      'vasya',
+      'rajju',
+      'vedha',
     ];
     final kootas = <_KootaData>[];
     for (final key in keys) {
@@ -773,15 +747,17 @@ class CompatibilityReportWidget extends StatelessWidget {
         boyInfo = (m['boy_rajju'] ?? '').toString();
         girlInfo = (m['girl_rajju'] ?? '').toString();
       }
-      kootas.add(_KootaData(
-        name: key,
-        displayName: name,
-        score: score,
-        fullScore: fullScore,
-        description: description,
-        boyInfo: boyInfo,
-        girlInfo: girlInfo,
-      ));
+      kootas.add(
+        _KootaData(
+          name: key,
+          displayName: name,
+          score: score,
+          fullScore: fullScore,
+          description: description,
+          boyInfo: boyInfo,
+          girlInfo: girlInfo,
+        ),
+      );
     }
     return _ExpandableSection(
       title: '10 Gun Milan Details (Dashakoot)',
@@ -1074,16 +1050,26 @@ class CompatibilityReportWidget extends StatelessWidget {
       _LabelValue('Ashtakoot Score', ashtakoot),
       _LabelValue('Dashkoot Score', dashkoot),
       _LabelValue('Compatibility Score', '$score/100'),
-      _LabelValue('Rajju Dosha', (response['rajjudosh'] == true) ? 'Present' : 'Absent'),
-      _LabelValue('Vedha Dosha', (response['vedhadosh'] == true) ? 'Present' : 'Absent'),
+      _LabelValue(
+        'Rajju Dosha',
+        (response['rajjudosh'] == true) ? 'Present' : 'Absent',
+      ),
+      _LabelValue(
+        'Vedha Dosha',
+        (response['vedhadosh'] == true) ? 'Present' : 'Absent',
+      ),
     ];
     final mangaldosh = response['mangaldosh']?.toString();
     if (mangaldosh != null && mangaldosh.isNotEmpty) {
       items.add(_LabelValue('Mangal Dosha', mangaldosh));
       final pts = response['mangaldosh_points'] as Map<String, dynamic>?;
       if (pts != null) {
-        items.add(_LabelValue('Mangal Dosha (Boy)', pts['boy']?.toString() ?? '–'));
-        items.add(_LabelValue('Mangal Dosha (Girl)', pts['girl']?.toString() ?? '–'));
+        items.add(
+          _LabelValue('Mangal Dosha (Boy)', pts['boy']?.toString() ?? '–'),
+        );
+        items.add(
+          _LabelValue('Mangal Dosha (Girl)', pts['girl']?.toString() ?? '–'),
+        );
       }
     }
     final pitradosh = response['pitradosh']?.toString();
@@ -1091,8 +1077,12 @@ class CompatibilityReportWidget extends StatelessWidget {
       items.add(_LabelValue('Pitra Dosha', pitradosh));
       final pts = response['pitradosh_points'] as Map<String, dynamic>?;
       if (pts != null) {
-        items.add(_LabelValue('Pitra Dosha (Boy)', pts['boy'] == true ? 'Yes' : 'No'));
-        items.add(_LabelValue('Pitra Dosha (Girl)', pts['girl'] == true ? 'Yes' : 'No'));
+        items.add(
+          _LabelValue('Pitra Dosha (Boy)', pts['boy'] == true ? 'Yes' : 'No'),
+        );
+        items.add(
+          _LabelValue('Pitra Dosha (Girl)', pts['girl'] == true ? 'Yes' : 'No'),
+        );
       }
     }
     final kaalsarp = response['kaalsarpdosh']?.toString();
@@ -1100,26 +1090,52 @@ class CompatibilityReportWidget extends StatelessWidget {
       items.add(_LabelValue('Kaal Sarp Dosha', kaalsarp));
       final pts = response['kaalsarp_points'] as Map<String, dynamic>?;
       if (pts != null) {
-        items.add(_LabelValue('Kaal Sarp (Boy)', pts['boy'] == true ? 'Yes' : 'No'));
-        items.add(_LabelValue('Kaal Sarp (Girl)', pts['girl'] == true ? 'Yes' : 'No'));
+        items.add(
+          _LabelValue('Kaal Sarp (Boy)', pts['boy'] == true ? 'Yes' : 'No'),
+        );
+        items.add(
+          _LabelValue('Kaal Sarp (Girl)', pts['girl'] == true ? 'Yes' : 'No'),
+        );
       }
     }
     final manglikSaturn = response['manglikdosh_saturn']?.toString();
     if (manglikSaturn != null && manglikSaturn.isNotEmpty) {
       items.add(_LabelValue('Manglik Dosha (Saturn)', manglikSaturn));
-      final pts = response['manglikdosh_saturn_points'] as Map<String, dynamic>?;
+      final pts =
+          response['manglikdosh_saturn_points'] as Map<String, dynamic>?;
       if (pts != null) {
-        items.add(_LabelValue('Manglik Saturn (Boy)', pts['boy'] == true ? 'Yes' : 'No'));
-        items.add(_LabelValue('Manglik Saturn (Girl)', pts['girl'] == true ? 'Yes' : 'No'));
+        items.add(
+          _LabelValue(
+            'Manglik Saturn (Boy)',
+            pts['boy'] == true ? 'Yes' : 'No',
+          ),
+        );
+        items.add(
+          _LabelValue(
+            'Manglik Saturn (Girl)',
+            pts['girl'] == true ? 'Yes' : 'No',
+          ),
+        );
       }
     }
     final manglikRK = response['manglikdosh_rahuketu']?.toString();
     if (manglikRK != null && manglikRK.isNotEmpty) {
       items.add(_LabelValue('Manglik Dosha (Rahu-Ketu)', manglikRK));
-      final pts = response['manglikdosh_rahuketu_points'] as Map<String, dynamic>?;
+      final pts =
+          response['manglikdosh_rahuketu_points'] as Map<String, dynamic>?;
       if (pts != null) {
-        items.add(_LabelValue('Manglik Rahu-Ketu (Boy)', pts['boy'] == true ? 'Yes' : 'No'));
-        items.add(_LabelValue('Manglik Rahu-Ketu (Girl)', pts['girl'] == true ? 'Yes' : 'No'));
+        items.add(
+          _LabelValue(
+            'Manglik Rahu-Ketu (Boy)',
+            pts['boy'] == true ? 'Yes' : 'No',
+          ),
+        );
+        items.add(
+          _LabelValue(
+            'Manglik Rahu-Ketu (Girl)',
+            pts['girl'] == true ? 'Yes' : 'No',
+          ),
+        );
       }
     }
     if (extended != null && extended.isNotEmpty) {
@@ -1135,32 +1151,34 @@ class CompatibilityReportWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Spacing.h(12),
-          ...items.map((e) => Padding(
-                padding: EdgeInsets.only(bottom: 10.h),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: 160.w,
-                      child: AutoTranslateText(
-                        e.label,
-                        style: MyTextTheme.smallBCB.copyWith(
-                          color: "#6F221E".toColor(),
-                        ),
+          ...items.map(
+            (e) => Padding(
+              padding: EdgeInsets.only(bottom: 10.h),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 160.w,
+                    child: AutoTranslateText(
+                      e.label,
+                      style: MyTextTheme.smallBCB.copyWith(
+                        color: "#6F221E".toColor(),
                       ),
                     ),
-                    Expanded(
-                      child: AutoTranslateText(
-                        e.value,
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: "#6F221E".toColor().withValues(alpha: 0.9),
-                          height: 1.3,
-                        ),
+                  ),
+                  Expanded(
+                    child: AutoTranslateText(
+                      e.value,
+                      style: MyTextTheme.smallBCN.copyWith(
+                        color: "#6F221E".toColor().withValues(alpha: 0.9),
+                        height: 1.3,
                       ),
                     ),
-                  ],
-                ),
-              )),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -1227,39 +1245,49 @@ class CompatibilityReportWidget extends StatelessWidget {
     ];
     if (boyPapa != null && boyPapa.isNotEmpty) {
       children.add(Spacing.h(12));
-      children.add(AutoTranslateText(
-        'Boy Papa',
-        style: MyTextTheme.smallBCB.copyWith(color: "#6F221E".toColor()),
-      ));
+      children.add(
+        AutoTranslateText(
+          'Boy Papa',
+          style: MyTextTheme.smallBCB.copyWith(color: "#6F221E".toColor()),
+        ),
+      );
       for (final e in boyPapa.entries) {
-        children.add(Padding(
-          padding: EdgeInsets.only(left: 12.w, top: 4.h),
-          child: _buildKeyValueRow(e.key, e.value?.toString() ?? '–'),
-        ));
+        children.add(
+          Padding(
+            padding: EdgeInsets.only(left: 12.w, top: 4.h),
+            child: _buildKeyValueRow(e.key, e.value?.toString() ?? '–'),
+          ),
+        );
       }
     }
     if (girlPapa != null && girlPapa.isNotEmpty) {
       children.add(Spacing.h(12));
-      children.add(AutoTranslateText(
-        'Girl Papa',
-        style: MyTextTheme.smallBCB.copyWith(color: "#6F221E".toColor()),
-      ));
+      children.add(
+        AutoTranslateText(
+          'Girl Papa',
+          style: MyTextTheme.smallBCB.copyWith(color: "#6F221E".toColor()),
+        ),
+      );
       for (final e in girlPapa.entries) {
-        children.add(Padding(
-          padding: EdgeInsets.only(left: 12.w, top: 4.h),
-          child: _buildKeyValueRow(e.key, e.value?.toString() ?? '–'),
-        ));
+        children.add(
+          Padding(
+            padding: EdgeInsets.only(left: 12.w, top: 4.h),
+            child: _buildKeyValueRow(e.key, e.value?.toString() ?? '–'),
+          ),
+        );
       }
     }
     if (botResponse.isNotEmpty) {
       children.add(Spacing.h(12));
-      children.add(AutoTranslateText(
-        botResponse,
-        style: MyTextTheme.smallBCN.copyWith(
-          color: "#6F221E".toColor().withValues(alpha: 0.9),
-          height: 1.3,
+      children.add(
+        AutoTranslateText(
+          botResponse,
+          style: MyTextTheme.smallBCN.copyWith(
+            color: "#6F221E".toColor().withValues(alpha: 0.9),
+            height: 1.3,
+          ),
         ),
-      ));
+      );
     }
 
     return _ExpandableSection(
@@ -1297,7 +1325,11 @@ class CompatibilityReportWidget extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.local_fire_department, color: AppColors.deepOrange, size: 20.w),
+                Icon(
+                  Icons.local_fire_department,
+                  color: AppColors.deepOrange,
+                  size: 20.w,
+                ),
                 Spacing.w(8),
                 AutoTranslateText(
                   'Manglik Dosha Analysis',
@@ -1319,13 +1351,9 @@ class CompatibilityReportWidget extends StatelessWidget {
             Spacing.h(8),
             Row(
               children: [
-                Expanded(
-                  child: _buildKootaInfoTile('Boy (points)', boyPts),
-                ),
+                Expanded(child: _buildKootaInfoTile('Boy (points)', boyPts)),
                 Spacing.w(8),
-                Expanded(
-                  child: _buildKootaInfoTile('Girl (points)', girlPts),
-                ),
+                Expanded(child: _buildKootaInfoTile('Girl (points)', girlPts)),
               ],
             ),
           ],
@@ -1575,7 +1603,7 @@ class CompatibilityReportWidget extends StatelessWidget {
               Icon(Icons.star, color: AppColors.deepOrange, size: 20.w),
               Spacing.w(8),
               SvgPicture.network(
-                'https://astrobharatai.s3.ap-south-1.amazonaws.com/homepageVideos/Frame+1321314931.svg',
+                'https://d3c2un7ipdye89.cloudfront.net/homepageVideos/Frame+1321314931.svg',
                 height: 24.h,
                 fit: BoxFit.contain,
               ),

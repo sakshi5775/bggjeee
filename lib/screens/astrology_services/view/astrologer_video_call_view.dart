@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../app_manager/network_image.dart';
+
 class AstrologerVideoCallView extends StatelessWidget {
   const AstrologerVideoCallView({Key? key}) : super(key: key);
 
@@ -25,9 +27,7 @@ class AstrologerVideoCallView extends StatelessWidget {
             // Header (primaryGradient - same as voice call)
             Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-              decoration: BoxDecoration(
-                gradient: AppColors.primaryGradient,
-              ),
+              decoration: BoxDecoration(gradient: AppColors.primaryGradient),
               child: SafeArea(
                 bottom: false,
                 child: Row(
@@ -68,7 +68,9 @@ class AstrologerVideoCallView extends StatelessWidget {
                               children: [
                                 AutoTranslateText(
                                   controller.astrologer.displayName,
-                                  style: MyTextTheme.mediumBCB.copyWith(color: Colors.white),
+                                  style: MyTextTheme.mediumBCB.copyWith(
+                                    color: Colors.white,
+                                  ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -130,10 +132,7 @@ class AstrologerVideoCallView extends StatelessWidget {
             Expanded(child: _buildVideoArea(controller)),
 
             // Footer with Controls (SafeArea so not hidden by system nav)
-            SafeArea(
-              top: false,
-              child: _buildFooter(controller),
-            ),
+            SafeArea(top: false, child: _buildFooter(controller)),
           ],
         ),
       ),
@@ -208,15 +207,22 @@ class AstrologerVideoCallView extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              _buildImage(controller.astrologer.profilePicture, size: double.infinity),
+              _buildImage(
+                controller.astrologer.profilePicture,
+                size: double.infinity,
+              ),
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      AppColors.primaryGradient.colors.first.withValues(alpha: 0.2),
-                      AppColors.primaryGradient.colors.last.withValues(alpha: 0.5),
+                      AppColors.primaryGradient.colors.first.withValues(
+                        alpha: 0.2,
+                      ),
+                      AppColors.primaryGradient.colors.last.withValues(
+                        alpha: 0.5,
+                      ),
                     ],
                   ),
                 ),
@@ -450,106 +456,107 @@ class AstrologerVideoCallView extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           Spacing.h(8),
-          Obx(
-            () {
-              final connected = controller.isCallConnected.value;
-              final status = controller.callStatus.value;
-              return Container(
-                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
+          Obx(() {
+            final connected = controller.isCallConnected.value;
+            final status = controller.callStatus.value;
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 8.w,
+                    height: 8.w,
+                    decoration: BoxDecoration(
+                      color: connected
+                          ? AppColors.success
+                          : AppColors.templeGold,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  Spacing.w(8),
+                  AutoTranslateText(
+                    status,
+                    style: MyTextTheme.smallBCB.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12.sp,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+          Spacing.h(14),
+          Obx(() {
+            if (!controller.isCallConnected.value) {
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 4.h),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(
-                      width: 8.w,
-                      height: 8.w,
-                      decoration: BoxDecoration(
-                        color: connected ? AppColors.success : AppColors.templeGold,
-                        shape: BoxShape.circle,
+                    AutoTranslateText(
+                      '₹${controller.pricePerMinute.value.toStringAsFixed(0)}/min',
+                      style: MyTextTheme.smallBCB.copyWith(
+                        color: AppColors.templeGold,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Spacing.w(8),
-                    AutoTranslateText(
-                      status,
-                      style: MyTextTheme.smallBCB.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12.sp,
+                    Spacing.w(16),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 10.h,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: AppColors.orangeGradient,
+                        borderRadius: BorderRadius.circular(16.r),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.schedule, color: Colors.white, size: 18.w),
+                          Spacing.w(8),
+                          AutoTranslateText(
+                            'Waiting: ${controller.formattedRingingCountdown}',
+                            style: MyTextTheme.mediumBCB.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16.sp,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
               );
-            },
-          ),
-          Spacing.h(14),
-          Obx(
-            () {
-              if (!controller.isCallConnected.value) {
-                return Padding(
-                  padding: EdgeInsets.symmetric(vertical: 4.h),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      AutoTranslateText(
-                        '₹${controller.pricePerMinute.value.toStringAsFixed(0)}/min',
-                        style: MyTextTheme.smallBCB.copyWith(
-                          color: AppColors.templeGold,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Spacing.w(16),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-                        decoration: BoxDecoration(
-                          gradient: AppColors.orangeGradient,
-                          borderRadius: BorderRadius.circular(16.r),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.schedule, color: Colors.white, size: 18.w),
-                            Spacing.w(8),
-                            AutoTranslateText(
-                              'Waiting: ${controller.formattedRingingCountdown}',
-                              style: MyTextTheme.mediumBCB.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16.sp,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }
-              if (controller.callDuration.value == '00:00' ||
-                  controller.callDuration.value == '00:00:00') {
-                return const SizedBox.shrink();
-              }
-              return Container(
-                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
-                decoration: BoxDecoration(
-                  gradient: AppColors.orangeGradient,
-                  borderRadius: BorderRadius.circular(16.r),
+            }
+            if (controller.callDuration.value == '00:00' ||
+                controller.callDuration.value == '00:00:00') {
+              return const SizedBox.shrink();
+            }
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
+              decoration: BoxDecoration(
+                gradient: AppColors.orangeGradient,
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              child: AutoTranslateText(
+                controller.callDuration.value,
+                style: MyTextTheme.mediumBCB.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22.sp,
                 ),
-                child: AutoTranslateText(
-                  controller.callDuration.value,
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22.sp,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              );
-            },
-          ),
+                textAlign: TextAlign.center,
+              ),
+            );
+          }),
           Spacing.h(24),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -662,42 +669,11 @@ class AstrologerVideoCallView extends StatelessWidget {
     }
 
     if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-      return Image.network(
-        imageUrl,
+      return NetworkImageWithLoader(
+        url: imageUrl,
         width: size == double.infinity ? null : size.w,
         height: size == double.infinity ? null : size.h,
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return Container(
-            width: size == double.infinity ? null : size.w,
-            height: size == double.infinity ? null : size.h,
-            color: Colors.grey.withValues(alpha: 0.3),
-            child: Center(
-              child: Icon(
-                Icons.person,
-                size: (size == double.infinity ? 200 : size / 2).w,
-                color: Colors.grey,
-              ),
-            ),
-          );
-        },
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Container(
-            width: size == double.infinity ? null : size.w,
-            height: size == double.infinity ? null : size.h,
-            color: Colors.black,
-            child: Center(
-              child: CircularProgressIndicator(
-                value: loadingProgress.expectedTotalBytes != null
-                    ? loadingProgress.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes!
-                    : null,
-                color: const Color(0xFFDFB343),
-              ),
-            ),
-          );
-        },
       );
     } else {
       return Image.asset(

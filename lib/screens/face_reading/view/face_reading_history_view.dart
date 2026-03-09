@@ -14,6 +14,8 @@ import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:intl/intl.dart';
 
+import '../../../app_manager/network_image.dart';
+
 class FaceReadingHistoryView extends StatefulWidget {
   const FaceReadingHistoryView({Key? key}) : super(key: key);
 
@@ -163,7 +165,10 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
 
       Get.back(); // Close loading dialog
 
-      UserMainController.pushInCurrentTab(AppRoutes.faceReadingResults, arguments: {'result': reading});
+      UserMainController.pushInCurrentTab(
+        AppRoutes.faceReadingResults,
+        arguments: {'result': reading},
+      );
     } catch (e) {
       Get.back(); // Close loading dialog if still open
       Get.snackbar(
@@ -325,27 +330,10 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10.r),
-                  child: reading.imageUrl != null
-                      ? Image.network(
-                          reading.imageUrl!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Container(
-                            color: '#FFF2E8'.toColor(),
-                            child: Icon(
-                              Icons.person,
-                              size: 40.w,
-                              color: "#F38B3B".toColor(),
-                            ),
-                          ),
-                        )
-                      : Container(
-                          color: '#FFF2E8'.toColor(),
-                          child: Icon(
-                            Icons.person,
-                            size: 40.w,
-                            color: "#F38B3B".toColor(),
-                          ),
-                        ),
+                  child: NetworkImageWithLoader(
+                    url: reading.imageUrl!,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               Spacing.w(16),

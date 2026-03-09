@@ -1,4 +1,5 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/app_manager/svg_assets.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -32,8 +33,8 @@ class ComingSoonPage extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.network(
-                      AppConstant.logo,
+                    NetworkImageWithLoader(
+                      url: AppConstant.logo,
                       width: 160.w,
                       height: 160.h,
                     ),

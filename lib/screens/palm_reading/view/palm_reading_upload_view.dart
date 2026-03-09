@@ -1,5 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -161,16 +162,9 @@ class PalmReadingUploadView extends StatelessWidget {
                 child: Center(
                   child: Transform.scale(
                     scale: 1.6,
-                    child: Image.network(
-                      AppConstant.palmscan,
+                    child: NetworkImageWithLoader(
+                      url: AppConstant.palmscan,
                       fit: BoxFit.contain,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Center(child: Icon(Icons.error));
-                      },
                     ),
                   ),
                 ),

@@ -10,6 +10,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
+import '../../../../../app_manager/network_image.dart';
+
 class AllFestivalView extends GetView<AllFestivalController> {
   const AllFestivalView({super.key});
 
@@ -126,15 +128,12 @@ class _FestivalListItem extends StatelessWidget {
                 borderRadius: BorderRadius.horizontal(
                   left: Radius.circular(14.r),
                 ),
-                child: festival.image.startsWith('http')
-                    ? Image.network(
-                        festival.image,
-                        height: 100.h,
-                        width: 100.w,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _imagePlaceholder(),
-                      )
-                    : _imagePlaceholder(),
+                child: NetworkImageWithLoader(
+                  url: festival.image,
+                  height: 100.h,
+                  width: 100.w,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
 
@@ -223,19 +222,6 @@ class _FestivalListItem extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _imagePlaceholder() {
-    return Container(
-      height: 100.h,
-      width: 100.w,
-      color: Colors.orange.shade50,
-      child: Icon(
-        Icons.temple_hindu_rounded,
-        size: 36.r,
-        color: Colors.orange.shade300,
       ),
     );
   }

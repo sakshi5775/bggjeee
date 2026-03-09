@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../../../app_manager/network_image.dart';
+
 /// Grid layout of festival cards used inside the 'Library' filter tab.
 class FestivalGridWidget extends StatelessWidget {
   final List<FestivalModel> festivals;
@@ -65,15 +67,12 @@ class _FestivalGridCard extends StatelessWidget {
               tag: 'festival_image_${festival.id}',
               child: ClipRRect(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-                child: festival.image.startsWith('http')
-                    ? Image.network(
-                        festival.image,
-                        height: 120.h,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _imagePlaceholder(),
-                      )
-                    : _imagePlaceholder(),
+                child: NetworkImageWithLoader(
+                  url: festival.image,
+                  height: 120.h,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
 
@@ -111,19 +110,6 @@ class _FestivalGridCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _imagePlaceholder() {
-    return Container(
-      height: 120.h,
-      width: double.infinity,
-      color: Colors.orange.shade50,
-      child: Icon(
-        Icons.temple_hindu_rounded,
-        size: 40.r,
-        color: Colors.orange.shade300,
       ),
     );
   }

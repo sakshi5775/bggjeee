@@ -12,6 +12,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
+import '../../../app_manager/network_image.dart';
+
 class FollowingAstrologersView extends StatelessWidget {
   final bool showBackButton;
   const FollowingAstrologersView({Key? key, this.showBackButton = true})
@@ -174,7 +176,10 @@ class FollowingAstrologersView extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        UserMainController.pushInCurrentTab(AppRoutes.astrologerDetail, arguments: astrologer);
+        UserMainController.pushInCurrentTab(
+          AppRoutes.astrologerDetail,
+          arguments: astrologer,
+        );
       },
       child: Container(
         margin: EdgeInsets.only(bottom: 16.h),
@@ -404,62 +409,11 @@ class FollowingAstrologersView extends StatelessWidget {
   }
 
   Widget _buildImage(String? imageUrl, {double size = 80}) {
-    if (imageUrl == null || imageUrl.isEmpty || imageUrl == 'placeholder_url') {
-      return Container(
-        width: size.w,
-        height: size.h,
-        color: Colors.grey.withValues(alpha: 0.3),
-        child: Icon(Icons.person, size: (size / 2).w, color: Colors.grey),
-      );
-    }
-
-    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-      return Image.network(
-        imageUrl,
-        width: size.w,
-        height: size.h,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return Container(
-            width: size.w,
-            height: size.h,
-            color: Colors.grey.withValues(alpha: 0.3),
-            child: Icon(Icons.person, size: (size / 2).w, color: Colors.grey),
-          );
-        },
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Container(
-            width: size.w,
-            height: size.h,
-            color: Colors.grey.withValues(alpha: 0.3),
-            child: Center(
-              child: CircularProgressIndicator(
-                value: loadingProgress.expectedTotalBytes != null
-                    ? loadingProgress.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes!
-                    : null,
-                color: const Color(0xFFDFB343),
-              ),
-            ),
-          );
-        },
-      );
-    } else {
-      return Image.asset(
-        imageUrl,
-        width: size.w,
-        height: size.h,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return Container(
-            width: size.w,
-            height: size.h,
-            color: Colors.grey.withValues(alpha: 0.3),
-            child: Icon(Icons.person, size: (size / 2).w, color: Colors.grey),
-          );
-        },
-      );
-    }
+    return NetworkImageWithLoader(
+      url: imageUrl ?? '',
+      width: size.w,
+      height: size.h,
+      fit: BoxFit.cover,
+    );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/courses/controllers/courses_controller.dart';
@@ -193,10 +194,9 @@ class CoursesView extends GetView<CoursesController> {
                     borderRadius: BorderRadius.circular(16.r),
                     child: Opacity(
                       opacity: 0.1,
-                      child: Image.network(
-                        webinar.thumbnail!,
+                      child: NetworkImageWithLoader(
+                        url: webinar.thumbnail!,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => const SizedBox(),
                       ),
                     ),
                   ),

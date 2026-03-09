@@ -1,5 +1,5 @@
 import 'dart:math' as math;
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
@@ -44,16 +44,9 @@ class _BookOpenPageState extends State<BookOpenPage>
         children: [
           /// BACKGROUND
           Positioned.fill(
-            child: Image.network(
-              AppConstant.bookBackground,
+            child: NetworkImageWithLoader(
+              url: AppConstant.bookBackground,
               fit: BoxFit.cover,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return const Center(child: CircularProgressIndicator());
-              },
-              errorBuilder: (context, error, stackTrace) {
-                return const Center(child: Icon(Icons.error));
-              },
             ),
           ),
 
@@ -112,7 +105,7 @@ class _BookOpenPageState extends State<BookOpenPage>
       height: bookHeight,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(28),
-        child: CachedNetworkImage(imageUrl: imageUrl, fit: BoxFit.contain),
+        child: NetworkImageWithLoader(url: imageUrl, fit: BoxFit.contain),
       ),
     );
   }
@@ -136,18 +129,11 @@ class _BookOpenPageState extends State<BookOpenPage>
             /// BOOK IMAGE
             ClipRRect(
               borderRadius: BorderRadius.circular(28),
-              child: Image.network(
-                AppConstant.book,
+              child: NetworkImageWithLoader(
+                url: AppConstant.book,
                 width: bookWidth,
                 height: bookHeight,
                 fit: BoxFit.contain,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return const Center(child: CircularProgressIndicator());
-                },
-                errorBuilder: (context, error, stackTrace) {
-                  return const Center(child: Icon(Icons.error));
-                },
               ),
             ),
 
@@ -216,7 +202,8 @@ class _BookOpenPageState extends State<BookOpenPage>
                   ),
                   const SizedBox(height: 12),
                   GestureDetector(
-                    onTap: () => UserMainController.pushInCurrentTab(AppRoutes.courses),
+                    onTap: () =>
+                        UserMainController.pushInCurrentTab(AppRoutes.courses),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 13,

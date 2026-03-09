@@ -9,6 +9,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../app_manager/network_image.dart';
+
 class AstrologerVoiceCallView extends StatelessWidget {
   const AstrologerVoiceCallView({Key? key}) : super(key: key);
 
@@ -26,9 +28,7 @@ class AstrologerVoiceCallView extends StatelessWidget {
             // Custom Header Implementation (Replaces CommonHeader)
             Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-              decoration: BoxDecoration(
-                gradient: AppColors.primaryGradient,
-              ),
+              decoration: BoxDecoration(gradient: AppColors.primaryGradient),
               child: SafeArea(
                 bottom: false,
                 child: Row(
@@ -70,7 +70,9 @@ class AstrologerVoiceCallView extends StatelessWidget {
                               children: [
                                 AutoTranslateText(
                                   controller.astrologer.displayName,
-                                  style: MyTextTheme.mediumBCB.copyWith(color: Colors.white),
+                                  style: MyTextTheme.mediumBCB.copyWith(
+                                    color: Colors.white,
+                                  ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -229,33 +231,7 @@ class AstrologerVoiceCallView extends StatelessWidget {
     }
 
     if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-      return Image.network(
-        imageUrl,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return Container(
-            color: Colors.grey.withValues(alpha: 0.3),
-            child: Center(
-              child: Icon(Icons.person, size: 200.w, color: Colors.grey),
-            ),
-          );
-        },
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Container(
-            color: Colors.black,
-            child: Center(
-              child: CircularProgressIndicator(
-                value: loadingProgress.expectedTotalBytes != null
-                    ? loadingProgress.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes!
-                    : null,
-                color: const Color(0xFFDFB343),
-              ),
-            ),
-          );
-        },
-      );
+      return NetworkImageWithLoader(url: imageUrl, fit: BoxFit.cover);
     } else {
       return Image.asset(
         imageUrl,
@@ -302,105 +278,106 @@ class AstrologerVoiceCallView extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           Spacing.h(8),
-          Obx(
-            () {
-              final connected = controller.isCallConnected.value;
-              final status = controller.callStatus.value;
-              return Container(
-                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 8.w,
-                      height: 8.w,
-                      decoration: BoxDecoration(
-                        color: connected ? AppColors.success : AppColors.templeGold,
-                        shape: BoxShape.circle,
-                      ),
+          Obx(() {
+            final connected = controller.isCallConnected.value;
+            final status = controller.callStatus.value;
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 8.w,
+                    height: 8.w,
+                    decoration: BoxDecoration(
+                      color: connected
+                          ? AppColors.success
+                          : AppColors.templeGold,
+                      shape: BoxShape.circle,
                     ),
-                    Spacing.w(8),
-                    AutoTranslateText(
-                      status,
-                      style: MyTextTheme.smallBCB.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12.sp,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-          Spacing.h(14),
-          Obx(
-            () {
-              if (!controller.isCallConnected.value) {
-                return Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 4.h),
-                      child: AutoTranslateText(
-                        '₹${controller.pricePerMinute.value.toStringAsFixed(0)}/min',
-                        style: MyTextTheme.smallBCB.copyWith(
-                          color: AppColors.templeGold,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-                      decoration: BoxDecoration(
-                        gradient: AppColors.orangeGradient,
-                        borderRadius: BorderRadius.circular(16.r),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.schedule, color: Colors.white, size: 18.w),
-                          Spacing.w(8),
-                          AutoTranslateText(
-                            'Waiting: ${controller.formattedRingingCountdown}',
-                            style: MyTextTheme.mediumBCB.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.sp,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                );
-              }
-              if (controller.callDuration.value == '00:00' ||
-                  controller.callDuration.value == '00:00:00') {
-                return const SizedBox.shrink();
-              }
-              return Container(
-                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
-                decoration: BoxDecoration(
-                  gradient: AppColors.orangeGradient,
-                  borderRadius: BorderRadius.circular(16.r),
-                ),
-                child: AutoTranslateText(
-                  controller.callDuration.value,
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22.sp,
                   ),
-                  textAlign: TextAlign.center,
-                ),
+                  Spacing.w(8),
+                  AutoTranslateText(
+                    status,
+                    style: MyTextTheme.smallBCB.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12.sp,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+          Spacing.h(14),
+          Obx(() {
+            if (!controller.isCallConnected.value) {
+              return Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4.h),
+                    child: AutoTranslateText(
+                      '₹${controller.pricePerMinute.value.toStringAsFixed(0)}/min',
+                      style: MyTextTheme.smallBCB.copyWith(
+                        color: AppColors.templeGold,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.w,
+                      vertical: 10.h,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: AppColors.orangeGradient,
+                      borderRadius: BorderRadius.circular(16.r),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.schedule, color: Colors.white, size: 18.w),
+                        Spacing.w(8),
+                        AutoTranslateText(
+                          'Waiting: ${controller.formattedRingingCountdown}',
+                          style: MyTextTheme.mediumBCB.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.sp,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               );
-            },
-          ),
+            }
+            if (controller.callDuration.value == '00:00' ||
+                controller.callDuration.value == '00:00:00') {
+              return const SizedBox.shrink();
+            }
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
+              decoration: BoxDecoration(
+                gradient: AppColors.orangeGradient,
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              child: AutoTranslateText(
+                controller.callDuration.value,
+                style: MyTextTheme.mediumBCB.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22.sp,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            );
+          }),
           Spacing.h(24),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,

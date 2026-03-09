@@ -1,13 +1,12 @@
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../app_manager/ext/hex_color_ext.dart';
 import '../../../widgets/auto_translate_text.dart';
-import 'ComingSoonPage.dart';
 import 'book_open_page.dart';
 
 class AstrologyReportWidget extends StatelessWidget {
@@ -42,27 +41,27 @@ class AstrologyReportWidget extends StatelessWidget {
                 children: [
                   _buildAstrologyReportCard(
                     imageUrl:
-                        'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/atharvaveda.jpeg',
+                        'https://d3c2un7ipdye89.cloudfront.net/Sacred+Library/atharvaveda.jpeg',
                     title: 'Atharvaveda',
                   ),
                   _buildAstrologyReportCard(
                     imageUrl:
-                        'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/jyotishVedang.jpeg',
+                        'https://d3c2un7ipdye89.cloudfront.net/Sacred+Library/jyotishVedang.jpeg',
                     title: 'Jyotish Vedang',
                   ),
                   _buildAstrologyReportCard(
                     imageUrl:
-                        'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/rigveda.jpeg',
+                        'https://d3c2un7ipdye89.cloudfront.net/Sacred+Library/rigveda.jpeg',
                     title: 'Rigveda',
                   ),
                   _buildAstrologyReportCard(
                     imageUrl:
-                        'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/samveda.jpeg',
+                        'https://d3c2un7ipdye89.cloudfront.net/Sacred+Library/samveda.jpeg',
                     title: 'Samveda',
                   ),
                   _buildAstrologyReportCard(
                     imageUrl:
-                        'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/yajurveda.jpeg',
+                        'https://d3c2un7ipdye89.cloudfront.net/Sacred+Library/yajurveda.jpeg',
                     title: 'Yajurveda',
                   ),
                 ],
@@ -96,20 +95,7 @@ class AstrologyReportWidget extends StatelessWidget {
             children: [
               Hero(
                 tag: imageUrl,
-                child: CachedNetworkImage(
-                  imageUrl: imageUrl,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    color: Colors.grey.withValues(alpha: 0.3),
-                    child: const Center(
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                  ),
-                  errorWidget: (context, url, error) => Container(
-                    color: Colors.grey.withValues(alpha: 0.3),
-                    child: const Icon(Icons.error_outline),
-                  ),
-                ),
+                child: NetworkImageWithLoader(url: imageUrl, fit: BoxFit.cover),
               ),
               Positioned(
                 bottom: 0,

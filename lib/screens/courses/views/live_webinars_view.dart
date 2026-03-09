@@ -9,6 +9,8 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:intl/intl.dart';
 
+import '../../../app_manager/network_image.dart';
+
 class LiveWebinarsView extends GetView<LiveWebinarsController> {
   const LiveWebinarsView({super.key});
 
@@ -414,18 +416,11 @@ class LiveWebinarsView extends GetView<LiveWebinarsController> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-                child: Image.network(
-                  webinar.thumbnail ??
-                      webinar.courseId?.thumbnail ??
-                      'https://via.placeholder.com/300x150?text=No+Image',
+                child: NetworkImageWithLoader(
+                  url: webinar.thumbnail ?? webinar.courseId?.thumbnail ?? '',
                   height: 160.h,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    height: 160.h,
-                    color: Colors.grey.shade300,
-                    child: Icon(Icons.broken_image, color: Colors.grey),
-                  ),
                 ),
               ),
               if (webinar.rsvpCount != null && webinar.rsvpCount! > 0)

@@ -1,5 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/all_astrologers_controller.dart';
@@ -735,36 +736,11 @@ class AllAstrologersView extends StatelessWidget {
     }
 
     if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-      return Image.network(
-        imageUrl,
+      return NetworkImageWithLoader(
+        url: imageUrl,
         width: size.w,
         height: size.h,
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return Container(
-            width: size.w,
-            height: size.h,
-            color: Colors.grey.withValues(alpha: 0.3),
-            child: Icon(Icons.person, size: (size / 2).w, color: Colors.grey),
-          );
-        },
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Container(
-            width: size.w,
-            height: size.h,
-            color: Colors.grey.withValues(alpha: 0.3),
-            child: Center(
-              child: CircularProgressIndicator(
-                value: loadingProgress.expectedTotalBytes != null
-                    ? loadingProgress.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes!
-                    : null,
-                color: const Color(0xFFDFB343),
-              ),
-            ),
-          );
-        },
       );
     } else {
       return Image.asset(

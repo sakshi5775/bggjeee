@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
@@ -322,44 +323,12 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
                   ),
                 ],
               ),
-              child: ClipOval(
-                child:
-                    (imagePath.startsWith('http://') ||
-                        imagePath.startsWith('https://'))
-                    ? Image.network(
-                        imagePath,
-                        width: 70.w,
-                        height: 70.w,
-                        fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        },
-                        errorBuilder: (_, __, ___) => Container(
-                          color: '#E8EEF6'.toColor(),
-                          child: Icon(
-                            Icons.person,
-                            size: 35.w,
-                            color: '#6C7A92'.toColor(),
-                          ),
-                        ),
-                      )
-                    : Image.asset(
-                        imagePath,
-                        width: 70.w,
-                        height: 70.w,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
-                          color: '#E8EEF6'.toColor(),
-                          child: Icon(
-                            Icons.person,
-                            size: 35.w,
-                            color: '#6C7A92'.toColor(),
-                          ),
-                        ),
-                      ),
+              child: NetworkImageWithLoader(
+                url: imagePath,
+                height: 70.w,
+                width: 70.w,
+                isCircular: true,
+                fit: BoxFit.cover,
               ),
             ),
             Spacing.h(8),

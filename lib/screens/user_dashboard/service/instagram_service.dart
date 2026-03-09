@@ -70,7 +70,7 @@ class InstagramService {
             'Daily Astrology Insights for a better life. #astrobharatai #astrology',
         mediaType: InstagramMediaType.IMAGE,
         mediaUrl:
-            'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/App/gemstone_card.png',
+            'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/App/gemstone_card.png',
         permalink: 'https://www.instagram.com/astrobharatai',
         timestamp: DateTime.now(),
       ),
@@ -79,7 +79,7 @@ class InstagramService {
         caption: 'Know your planetary positions today! #kundli #vedic',
         mediaType: InstagramMediaType.VIDEO,
         mediaUrl:
-            'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/App/guru_horoscope-4a9362.png',
+            'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/App/guru_horoscope-4a9362.png',
         permalink: 'https://www.instagram.com/astrobharatai',
         timestamp: DateTime.now().subtract(const Duration(days: 1)),
       ),
@@ -88,7 +88,7 @@ class InstagramService {
         caption: 'Weekly Horoscope: What do the stars say? #horoscope',
         mediaType: InstagramMediaType.IMAGE,
         mediaUrl:
-            'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/App/quote_background.png',
+            'https://d3c2un7ipdye89.cloudfront.net/AstroBharatAI+User+App/App/quote_background.png',
         permalink: 'https://www.instagram.com/astrobharatai',
         timestamp: DateTime.now().subtract(const Duration(days: 2)),
       ),

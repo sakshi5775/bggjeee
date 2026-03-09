@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:astrobharataiuser/widgets/common_header.dart';
 
+import '../network_image.dart';
+
 class FullScreenImageViewer extends StatelessWidget {
   final String imageUrl;
 
-  const FullScreenImageViewer({Key? key, required this.imageUrl})
-    : super(key: key);
+  const FullScreenImageViewer({super.key, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -28,12 +29,11 @@ class FullScreenImageViewer extends StatelessWidget {
               child: Center(
                 child: Hero(
                   tag: imageUrl,
-                  child: Image.network(
-                    imageUrl,
+                  child: NetworkImageWithLoader(
+                    url: imageUrl,
                     fit: BoxFit.contain,
                     width: double.infinity,
                     height: double.infinity,
-                    alignment: Alignment.center,
                   ),
                 ),
               ),
