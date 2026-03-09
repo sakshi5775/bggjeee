@@ -15,6 +15,7 @@ import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/astrologer_review_controller.dart';
 import 'package:astrobharataiuser/screens/astrology_services/widgets/astrologer_review_dialog.dart';
+import 'package:astrobharataiuser/content_moderation/moderation_helper.dart';
 import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 
 class AstrologerChatController extends BaseController
@@ -78,6 +79,11 @@ class AstrologerChatController extends BaseController
   Timer? _statusCheckTimer;
   Timer? _activeSessionStatusCheckTimer;
 
+  // 2-minute accept timeout (CREATED session) - running countdown
+  Timer? _acceptTimeoutTimer;
+  static const int _acceptTimeoutSeconds = 120;
+  final RxInt acceptTimeoutSecondsRemaining = 120.obs;
+
   // Messages
   final RxList<AstrologerChatMessage> messages = <AstrologerChatMessage>[].obs;
   final RxBool isLoadingMessages = false.obs;
@@ -97,6 +103,14 @@ class AstrologerChatController extends BaseController
 
   bool get astrologerOnlineStatus => _astrologer?.isOnline ?? false;
 
+  /// Effective online status: when CREATED use astrologer model; when ACTIVE use socket data
+  bool get effectiveOnlineStatus {
+    if (sessionStatus.value == 'CREATED') {
+      return astrologerOnlineStatus;
+    }
+    return isOtherPartyOnline.value;
+  }
+
   // UI state
   final RxBool isSendingMessage = false.obs;
   final RxBool showRatingDialog = false.obs;
@@ -105,17 +119,21 @@ class AstrologerChatController extends BaseController
   // Formatted timer string (mm:ss)
   // Formatted timer string (mm:ss)
   String get formattedTimer {
-    // If we have seconds remaining use that for precision
     int seconds = visualSecondsRemaining.value;
-
-    // If seconds is 0 but we have availableMinutes, convert
     if (seconds == 0 && availableMinutes.value > 0) {
       seconds = availableMinutes.value * 60;
     }
-
     final m = (seconds / 60).floor();
     final s = seconds % 60;
     return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
+  }
+
+  /// 2-minute accept wait countdown (mm:ss) - decreases until 0 then chat is cancelled
+  String get formattedAcceptTimeout {
+    final s = acceptTimeoutSecondsRemaining.value.clamp(0, _acceptTimeoutSeconds);
+    final m = (s / 60).floor();
+    final sec = s % 60;
+    return '${m.toString().padLeft(2, '0')}:${sec.toString().padLeft(2, '0')}';
   }
 
   // Session ending state
@@ -151,6 +169,7 @@ class AstrologerChatController extends BaseController
     _visualCountdownTimer?.cancel();
     _statusCheckTimer?.cancel();
     _activeSessionStatusCheckTimer?.cancel();
+    _acceptTimeoutTimer?.cancel();
     _typingTimer?.cancel();
     messageController.dispose();
     super.onClose();
@@ -356,12 +375,12 @@ class AstrologerChatController extends BaseController
         if (kDebugMode)
           print('Session is CREATED. Attempting to start/notify...');
         try {
-          // Wrap in try-catch because many backends handle auto-start, or /start might be for astrologer.
           await _chatService.startExistingSession(chatId.value);
         } catch (e) {
           if (kDebugMode) print('Non-fatal error in startExistingSession: $e');
         }
         _startStatusCheckTimer();
+        _startAcceptTimeoutTimer();
       } else if (sessionStatus.value == 'ACTIVE') {
         if (kDebugMode) print('Session is already ACTIVE. Resuming...');
         _handleSessionActive();
@@ -381,6 +400,10 @@ class AstrologerChatController extends BaseController
     final previousChatId = chatId.value;
     chatId.value = session.chatId;
     sessionStatus.value = session.status;
+
+    if (session.status == 'ACTIVE') {
+      _acceptTimeoutTimer?.cancel();
+    }
 
     // If chatId changed and socket is connected, join the new room
     if (previousChatId != chatId.value &&
@@ -554,6 +577,7 @@ class AstrologerChatController extends BaseController
 
       _socket!.on('chat_accepted', (data) {
         if (kDebugMode) print('Chat accepted: $data');
+        _acceptTimeoutTimer?.cancel();
         sessionStatus.value = 'ACTIVE';
         _handleSessionActive();
         _joinChatRoom();
@@ -1036,7 +1060,10 @@ class AstrologerChatController extends BaseController
           ),
           actions: [
             TextButton(
-              onPressed: () => _exitAfterChat(reason),
+              onPressed: () {
+                Get.back();
+                _exitAfterChat(reason);
+              },
               child: const Text('Maybe Later'),
             ),
             ElevatedButton(
@@ -1163,12 +1190,20 @@ class AstrologerChatController extends BaseController
       if (kDebugMode) print('Message is empty, returning');
       return;
     }
-    if (sessionStatus.value != 'ACTIVE' && sessionStatus.value != 'CREATED') {
+    // Content moderation: block send if any abusive word (with or without space)
+    final _moderationHelper = ModerationHelper(minWordLength: 2);
+    if (_moderationHelper.containsHarmfulWord(text)) {
+      showErrorMessage(message: 'Please avoid offensive language.');
+      return;
+    }
+    if (sessionStatus.value != 'ACTIVE') {
       if (kDebugMode)
         print(
-          'Session is not ACTIVE or CREATED (${sessionStatus.value}), cannot send',
+          'Session is not ACTIVE (${sessionStatus.value}), cannot send until astrologer accepts',
         );
-      showErrorMessage(message: 'Chat is not active');
+      showErrorMessage(
+        message: 'Please wait for astrologer to accept the chat.',
+      );
       return;
     }
 
@@ -1472,6 +1507,36 @@ class AstrologerChatController extends BaseController
     );
   }
 
+  void _startAcceptTimeoutTimer() {
+    _acceptTimeoutTimer?.cancel();
+    acceptTimeoutSecondsRemaining.value = _acceptTimeoutSeconds;
+    _acceptTimeoutTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (sessionStatus.value != 'CREATED') {
+        timer.cancel();
+        return;
+      }
+      final next = acceptTimeoutSecondsRemaining.value - 1;
+      acceptTimeoutSecondsRemaining.value = next.clamp(0, _acceptTimeoutSeconds);
+      if (next <= 0) {
+        timer.cancel();
+        _acceptTimeoutTimer = null;
+        acceptTimeoutSecondsRemaining.value = 0;
+        if (sessionStatus.value == 'CREATED') {
+          if (kDebugMode)
+            print('2-minute accept timeout - astrologer did not accept');
+          sessionStatus.value = 'CANCELLED';
+          _statusCheckTimer?.cancel();
+          final message = 'Astrologer did not accept the chat. Your request has been cancelled.';
+          Get.back();
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            showErrorMessage(message: message);
+          });
+        }
+        return;
+      }
+    });
+  }
+
   void _startActiveSessionStatusCheck() {
     _activeSessionStatusCheckTimer?.cancel();
     _activeSessionStatusCheckTimer = Timer.periodic(
@@ -1555,7 +1620,7 @@ class AstrologerChatController extends BaseController
               tag: astroId,
               permanent: false,
             );
-            await reviewController.loadMyReview(astroId);
+            await reviewController.loadMyReview(astroId, serviceType: 'CHAT');
             final existing = reviewController.myReview.value;
 
             AstrologerReviewDialog.showPrompt(
@@ -1563,6 +1628,7 @@ class AstrologerChatController extends BaseController
               astrologer: _astrologer!,
               serviceType: 'CHAT',
               existingReview: existing,
+              onMaybeLater: () => Get.back(),
             );
           } catch (e) {
             if (kDebugMode) print('Failed to preload review/follow: $e');

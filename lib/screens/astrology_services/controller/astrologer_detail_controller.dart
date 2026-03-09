@@ -39,9 +39,10 @@ class AstrologerDetailController extends GetxController {
       tag: astrologer.astrologerId,
       permanent: false,
     );
-    // Load reviews and my review
+    // Load reviews and my review (try VIDEO, AUDIO, CHAT so "Your review" shows if they have one for any)
     reviewController.loadReviews(astrologer.astrologerId);
-    reviewController.loadMyReview(astrologer.astrologerId);
+    reviewController.loadReviewStatistics(astrologer.astrologerId);
+    reviewController.loadMyReviewAnyServiceType(astrologer.astrologerId);
 
     // Load follow status and follower count
     loadFollowStatus();

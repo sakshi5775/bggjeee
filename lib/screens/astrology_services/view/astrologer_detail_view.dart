@@ -1,11 +1,8 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/services/share_service.dart';
-import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/astrologer_detail_controller.dart';
-import 'package:astrobharataiuser/screens/astrology_services/controller/booking_controller.dart'
-    show CallType;
 import 'package:astrobharataiuser/screens/astrology_services/widgets/astrologer_review_dialog.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -66,8 +63,8 @@ class AstrologerDetailView extends StatelessWidget {
                             Spacing.h(16),
 
                             // Content based on selected tab
-                            Obx(() => _buildTabContent(controller)),
-                            Spacing.h(50), // Space for bottom bar
+                            Obx(() => _buildTabContent(context, controller)),
+                            Spacing.h(5), // Space for bottom bar
                           ],
                         ),
                       ),
@@ -497,14 +494,14 @@ class AstrologerDetailView extends StatelessWidget {
     });
   }
 
-  Widget _buildTabContent(AstrologerDetailController controller) {
+  Widget _buildTabContent(BuildContext context, AstrologerDetailController controller) {
     switch (controller.selectedTab.value) {
       case 'About':
         return _buildAboutContent(controller);
       case 'Expertise':
         return _buildExpertiseContent(controller);
       case 'Reviews':
-        return _buildReviewsContent(controller);
+        return _buildReviewsContent(context, controller);
       default:
         return _buildAboutContent(controller);
     }
@@ -656,7 +653,7 @@ class AstrologerDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildReviewsContent(AstrologerDetailController controller) {
+  Widget _buildReviewsContent(BuildContext context, AstrologerDetailController controller) {
     final reviewController = controller.reviewController;
     final astrologer = controller.astrologer;
 
@@ -675,12 +672,12 @@ class AstrologerDetailView extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              AutoTranslateText(
-                '(${astrologer.totalRatings})',
+              Obx(() => AutoTranslateText(
+                '(${reviewController.reviewStatistics['overall']?['totalReviews'] ?? astrologer.totalRatings})',
                 style: MyTextTheme.smallBCN.copyWith(
                   color: const Color(0xFF666666),
                 ),
-              ),
+              )),
             ],
           ),
           Spacing.h(4),
@@ -692,8 +689,12 @@ class AstrologerDetailView extends StatelessWidget {
           ),
           Spacing.h(16),
 
-          // Rating Distribution
+          // Rating Distribution (from statistics API when available, else from reviews list)
           Obx(() {
+            final overall = reviewController.reviewStatistics['overall'];
+            if (overall != null && overall is Map) {
+              return _buildRatingDistributionFromStats(Map<String, dynamic>.from(overall));
+            }
             if (reviewController.reviews.isNotEmpty) {
               return _buildRatingDistribution(reviewController.reviews);
             }
@@ -702,54 +703,116 @@ class AstrologerDetailView extends StatelessWidget {
 
           Spacing.h(16),
 
-          // Write/Edit Review Button
+          // Your review (only when user already has one – write is only after chat/call/video)
           Builder(
             builder: (context) => Obx(() {
-              if (reviewController.myReview.value == null) {
-                return ElevatedButton.icon(
-                  onPressed: () =>
-                      _showReviewDialog(context, controller, astrologer),
-                  icon: Icon(Icons.edit, size: 16.w),
-                  label: AutoTranslateText(
-                    'Write a Review',
-                    style: MyTextTheme.smallBCB.copyWith(color: Colors.white),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.saffron,
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 10.h,
+              final myRev = reviewController.myReview.value;
+              if (myRev == null) return const SizedBox.shrink();
+
+              final date = myRev.updatedAt ?? myRev.createdAt;
+              final dateStr = '${date.day} ${_getMonthName(date.month)} ${date.year}';
+              final astrologerId = astrologer.astrologerId;
+              return Container(
+                padding: EdgeInsets.all(12.w),
+                decoration: BoxDecoration(
+                  color: AppColors.saffron.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(color: AppColors.saffron.withValues(alpha: 0.3)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        AutoTranslateText(
+                          'Your review',
+                          style: MyTextTheme.smallBCB.copyWith(
+                            color: AppColors.saffron,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        AutoTranslateText(
+                          dateStr,
+                          style: MyTextTheme.smallBCN.copyWith(
+                            color: const Color(0xFF999999),
+                          ),
+                        ),
+                      ],
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.r),
+                    Spacing.h(6),
+                    Row(
+                      children: List.generate(
+                        5,
+                        (i) => Icon(
+                          Icons.star,
+                          size: 14.w,
+                          color: i < myRev.rating ? AppColors.saffron : Colors.grey[300],
+                        ),
+                      ),
                     ),
-                    elevation: 0,
-                  ),
-                );
-              } else {
-                return ElevatedButton.icon(
-                  onPressed: () =>
-                      _showReviewDialog(context, controller, astrologer),
-                  icon: Icon(Icons.edit, size: 16.w),
-                  label: AutoTranslateText(
-                    'Edit Your Review',
-                    style: MyTextTheme.smallBCB.copyWith(color: Colors.white),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.saffron,
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 10.h,
+                    if (myRev.reviewText.isNotEmpty) ...[
+                      Spacing.h(6),
+                      AutoTranslateText(
+                        myRev.reviewText,
+                        style: MyTextTheme.smallBCN.copyWith(
+                          color: const Color(0xFF666666),
+                          height: 1.35,
+                        ),
+                      ),
+                    ],
+                    Spacing.h(10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton.icon(
+                          onPressed: () => _showReviewDialog(context, controller, astrologer, existingReview: myRev),
+                          icon: Icon(Icons.edit, size: 16.w, color: AppColors.saffron),
+                          label: AutoTranslateText(
+                            'Update',
+                            style: MyTextTheme.smallBCB.copyWith(color: AppColors.saffron),
+                          ),
+                        ),
+                        TextButton.icon(
+                          onPressed: () async {
+                            final confirm = await Get.dialog<bool>(
+                              AlertDialog(
+                                title: AutoTranslateText('Delete review?'),
+                                content: AutoTranslateText('This action cannot be undone.'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.of(context).pop(false),
+                                    child: AutoTranslateText('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.of(context).pop(true),
+                                    child: AutoTranslateText('Delete', style: TextStyle(color: Colors.red)),
+                                  ),
+                                ],
+                              ),
+                            );
+                            if (confirm == true) {
+                              final deleted = await reviewController.deleteReview(astrologerId, myRev.id);
+                              if (deleted) {
+                                await reviewController.loadMyReviewAnyServiceType(astrologerId);
+                                reviewController.loadReviews(astrologerId, refresh: true);
+                                if (context.mounted) {
+                                  Get.snackbar('', 'Review deleted.', snackPosition: SnackPosition.BOTTOM);
+                                }
+                              }
+                            }
+                          },
+                          icon: Icon(Icons.delete_outline, size: 16.w, color: Colors.red),
+                          label: AutoTranslateText(
+                            'Delete',
+                            style: MyTextTheme.smallBCN.copyWith(color: Colors.red),
+                          ),
+                        ),
+                      ],
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    elevation: 0,
-                  ),
-                );
-              }
+                  ],
+                ),
+              );
             }),
           ),
 
@@ -788,29 +851,22 @@ class AstrologerDetailView extends StatelessWidget {
                     .map(
                       (review) => Padding(
                         padding: EdgeInsets.only(bottom: 12.h),
-                        child: _buildReviewItem(review),
+                        child: _buildReviewItem(context, review, controller),
                       ),
                     ),
-                if (reviewController.reviews.length > 3)
-                  GestureDetector(
-                    onTap: () {
-                      // Load more reviews
-                      reviewController.loadReviews(
-                        controller.astrologer.astrologerId,
-                        refresh: false,
-                      );
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 8.h),
-                      child: AutoTranslateText(
-                        'See all reviews (${reviewController.reviews.length})',
-                        style: MyTextTheme.smallBCB.copyWith(
-                          color: AppColors.saffron,
-                          fontWeight: FontWeight.w600,
-                        ),
+                GestureDetector(
+                  onTap: () => _showAllReviewsSheet(context, controller),
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 8.h),
+                    child: Obx(() => AutoTranslateText(
+                      'See all reviews (${reviewController.totalReviewCount.value})',
+                      style: MyTextTheme.smallBCB.copyWith(
+                        color: AppColors.saffron,
+                        fontWeight: FontWeight.w600,
                       ),
-                    ),
+                    )),
                   ),
+                ),
               ],
             );
           }),
@@ -819,19 +875,29 @@ class AstrologerDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildRatingDistribution(List<AstrologerReview> reviews) {
-    // Calculate rating distribution
-    final Map<int, int> distribution = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
-    double totalRating = 0;
+  Widget _buildRatingDistributionFromStats(Map<String, dynamic> overall) {
+    final averageRating = (overall['averageRating'] as num?)?.toDouble() ?? 0.0;
+    final totalReviews = (overall['totalReviews'] as num?)?.toInt() ?? 0;
+    final dist = overall['distribution'] as Map<String, dynamic>? ?? {};
+    final distribution = {
+      5: (dist['star5'] as num?)?.toInt() ?? 0,
+      4: (dist['star4'] as num?)?.toInt() ?? 0,
+      3: (dist['star3'] as num?)?.toInt() ?? 0,
+      2: (dist['star2'] as num?)?.toInt() ?? 0,
+      1: (dist['star1'] as num?)?.toInt() ?? 0,
+    };
+    return _buildRatingDistributionBars(
+      distribution: distribution,
+      totalReviews: totalReviews,
+      averageRating: averageRating,
+    );
+  }
 
-    for (var review in reviews) {
-      distribution[review.rating] = (distribution[review.rating] ?? 0) + 1;
-      totalRating += review.rating;
-    }
-
-    final totalReviews = reviews.length;
-    final averageRating = totalReviews > 0 ? totalRating / totalReviews : 0.0;
-
+  Widget _buildRatingDistributionBars({
+    required Map<int, int> distribution,
+    required int totalReviews,
+    required double averageRating,
+  }) {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
@@ -867,7 +933,6 @@ class AstrologerDetailView extends StatelessWidget {
             final percentage = totalReviews > 0
                 ? (count / totalReviews * 100)
                 : 0.0;
-
             return Padding(
               padding: EdgeInsets.only(bottom: 6.h),
               child: Row(
@@ -910,104 +975,433 @@ class AstrologerDetailView extends StatelessWidget {
     );
   }
 
-  void _showReviewDialog(
+  Widget _buildRatingDistribution(List<AstrologerReview> reviews) {
+    final Map<int, int> distribution = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+    double totalRating = 0;
+    for (var review in reviews) {
+      distribution[review.rating] = (distribution[review.rating] ?? 0) + 1;
+      totalRating += review.rating;
+    }
+    final totalReviews = reviews.length;
+    final averageRating = totalReviews > 0 ? totalRating / totalReviews : 0.0;
+    return _buildRatingDistributionBars(
+      distribution: distribution,
+      totalReviews: totalReviews,
+      averageRating: averageRating,
+    );
+  }
+
+  void _showAllReviewsSheet(
     BuildContext context,
     AstrologerDetailController controller,
-    AstrologerModel astrologer,
   ) {
     final reviewController = controller.reviewController;
+    final astrologerId = controller.astrologer.astrologerId;
+    String selectedSort = 'recent';
+    String selectedServiceFilter = '--';
+    reviewController.loadReviews(astrologerId, refresh: true, limit: 20, sortBy: selectedSort, serviceTypeFilter: selectedServiceFilter == '--' ? null : selectedServiceFilter);
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setSheetState) {
+          void applySortFilter() {
+            reviewController.loadReviews(astrologerId, refresh: true, limit: 20, sortBy: selectedSort, serviceTypeFilter: selectedServiceFilter == '--' ? null : selectedServiceFilter);
+          }
+          return DraggableScrollableSheet(
+            initialChildSize: 0.7,
+            minChildSize: 0.4,
+            maxChildSize: 0.95,
+            builder: (_, scrollController) => Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.all(16.w),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    AutoTranslateText(
+                      'All Reviews',
+                      style: MyTextTheme.mediumBCB.copyWith(
+                        color: AppColors.saffron,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      icon: Icon(Icons.close, color: Colors.grey[600]),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: DropdownButtonFormField<String>(
+                        value: selectedSort,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          contentPadding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)),
+                        ),
+                        items: const [
+                          DropdownMenuItem(value: 'recent', child: Text('Recent')),
+                          DropdownMenuItem(value: 'helpful', child: Text('Helpful')),
+                          DropdownMenuItem(value: 'rating-high', child: Text('Rating high')),
+                          DropdownMenuItem(value: 'rating-low', child: Text('Rating low')),
+                        ],
+                        onChanged: (v) {
+                          if (v == null) return;
+                          selectedSort = v;
+                          setSheetState(() {});
+                          applySortFilter();
+                        },
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
+                    Expanded(
+                      child: DropdownButtonFormField<String>(
+                        value: selectedServiceFilter,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          contentPadding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)),
+                        ),
+                        items: const [
+                          DropdownMenuItem(value: '--', child: Text('All services')),
+                          DropdownMenuItem(value: 'CHAT', child: Text('Chat')),
+                          DropdownMenuItem(value: 'AUDIO', child: Text('Audio')),
+                          DropdownMenuItem(value: 'VIDEO', child: Text('Video')),
+                        ],
+                        onChanged: (v) {
+                          if (v == null) return;
+                          selectedServiceFilter = v;
+                          setSheetState(() {});
+                          applySortFilter();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Spacing.h(8),
+              Expanded(
+                child: Obx(() {
+                  if (reviewController.isLoadingReviews.value &&
+                      reviewController.reviews.isEmpty) {
+                    return const Center(
+                      child: CircularProgressIndicator(color: AppColors.saffron),
+                    );
+                  }
+                  if (reviewController.reviews.isEmpty) {
+                    return Center(
+                      child: AutoTranslateText(
+                        'No reviews yet.',
+                        style: MyTextTheme.smallBCN.copyWith(
+                          color: const Color(0xFF999999),
+                        ),
+                      ),
+                    );
+                  }
+                  return ListView.builder(
+                    controller: scrollController,
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    itemCount: reviewController.reviews.length +
+                        (reviewController.hasMoreReviews.value ? 1 : 0),
+                    itemBuilder: (_, index) {
+                      if (index == reviewController.reviews.length) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16.h),
+                          child: Center(
+                            child: reviewController.isLoadingReviews.value
+                                ? const CircularProgressIndicator(
+                                    color: AppColors.saffron)
+                                : TextButton(
+                                    onPressed: () {
+                                      reviewController.loadReviews(
+                                        astrologerId,
+                                        refresh: false,
+                                        limit: 20,
+                                        sortBy: selectedSort,
+                                        serviceTypeFilter: selectedServiceFilter == '--' ? null : selectedServiceFilter,
+                                      );
+                                    },
+                                    child: AutoTranslateText(
+                                      'Load more',
+                                      style: MyTextTheme.smallBCB.copyWith(
+                                        color: AppColors.saffron,
+                                      ),
+                                    ),
+                                  ),
+                        ),
+                      );
+                      }
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: 12.h),
+                        child: _buildReviewItem(
+                          ctx,
+                          reviewController.reviews[index],
+                          controller,
+                        ),
+                      );
+                    },
+                  );
+                }),
+              ),
+            ],
+          ),
+        ),
+      );
+        },
+      ),
+    );
+  }
+
+  Future<void> _showReviewDialog(
+    BuildContext context,
+    AstrologerDetailController controller,
+    AstrologerModel astrologer, {
+    AstrologerReview? existingReview,
+  }) async {
+    final reviewController = controller.reviewController;
+    if (existingReview != null) {
+      if (!context.mounted) return;
+      AstrologerReviewDialog.show(
+        context: context,
+        astrologerId: astrologer.astrologerId,
+        astrologer: astrologer,
+        serviceType: existingReview.serviceType,
+        existingReview: existingReview,
+      );
+      return;
+    }
+    await reviewController.loadMyReview(
+      astrologer.astrologerId,
+      serviceType: 'VIDEO',
+    );
+    if (!context.mounted) return;
     AstrologerReviewDialog.show(
       context: context,
       astrologerId: astrologer.astrologerId,
       astrologer: astrologer,
-      serviceType:
-          'VIDEO', // Default, can be changed based on last service used
+      serviceType: 'VIDEO',
       existingReview: reviewController.myReview.value,
     );
   }
 
-  Widget _buildReviewItem(AstrologerReview review) {
+  Widget _buildReviewItem(
+    BuildContext context,
+    AstrologerReview review,
+    AstrologerDetailController detailController,
+  ) {
     final userInfo = review.userDisplayInfo;
-    // Show maskedPhone instead of displayName
     final displayName =
         userInfo?.maskedPhone ?? userInfo?.displayName ?? 'Anonymous';
     final initials = userInfo?.userInitials ?? 'A';
     final date = review.updatedAt ?? review.createdAt;
     final dateStr = '${date.day} ${_getMonthName(date.month)} ${date.year}';
+    final reviewController = detailController.reviewController;
+    final astrologerId = detailController.astrologer.astrologerId;
+    final astrologer = detailController.astrologer;
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: 40.w,
-          height: 40.w,
-          decoration: BoxDecoration(
-            color: AppColors.saffron.withValues(alpha: 0.2),
-            shape: BoxShape.circle,
-          ),
-          child: Center(
-            child: AutoTranslateText(
-              initials,
-              style: MyTextTheme.smallBCB.copyWith(
-                color: AppColors.saffron,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-        SizedBox(width: 12.w),
-        Expanded(
-          child: Column(
+    return Obx(() {
+      final myReviewId = reviewController.myReview.value?.id;
+      final isMine = review.id == myReviewId;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: AutoTranslateText(
-                      displayName,
-                      style: MyTextTheme.smallBCB.copyWith(
-                        color: const Color(0xFF333333),
-                      ),
-                    ),
-                  ),
-                  AutoTranslateText(
-                    dateStr,
-                    style: MyTextTheme.smallBCN.copyWith(
-                      color: const Color(0xFF999999),
-                    ),
-                  ),
-                ],
-              ),
-              Spacing.h(4),
-              Row(
-                children: [
-                  ...List.generate(
-                    5,
-                    (index) => Icon(
-                      Icons.star,
-                      color: index < review.rating
-                          ? AppColors.saffron
-                          : Colors.grey[300]!,
-                      size: 14.w,
-                    ),
-                  ),
-                ],
-              ),
-              if (review.reviewText.isNotEmpty) ...[
-                Spacing.h(6),
-                AutoTranslateText(
-                  review.reviewText,
-                  style: MyTextTheme.smallBCN
-                      .copyWith(color: const Color(0xFF666666), height: 1.4)
-                      .merge(AppTypography.body2),
+              Container(
+                width: 40.w,
+                height: 40.w,
+                decoration: BoxDecoration(
+                  color: AppColors.saffron.withValues(alpha: 0.2),
+                  shape: BoxShape.circle,
                 ),
-              ],
+                child: Center(
+                  child: AutoTranslateText(
+                    initials,
+                    style: MyTextTheme.smallBCB.copyWith(
+                      color: AppColors.saffron,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: AutoTranslateText(
+                            displayName,
+                            style: MyTextTheme.smallBCB.copyWith(
+                              color: const Color(0xFF333333),
+                            ),
+                          ),
+                        ),
+                        AutoTranslateText(
+                          dateStr,
+                          style: MyTextTheme.smallBCN.copyWith(
+                            color: const Color(0xFF999999),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Spacing.h(4),
+                    Row(
+                      children: [
+                        ...List.generate(
+                          5,
+                          (index) => Icon(
+                            Icons.star,
+                            color: index < review.rating
+                                ? AppColors.saffron
+                                : Colors.grey[300]!,
+                            size: 14.w,
+                          ),
+                        ),
+                        if (review.serviceType.isNotEmpty) ...[
+                          SizedBox(width: 6.w),
+                          AutoTranslateText(
+                            ' • ${review.serviceType}',
+                            style: MyTextTheme.smallBCN.copyWith(
+                              color: const Color(0xFF999999),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    if (review.reviewText.isNotEmpty) ...[
+                      Spacing.h(6),
+                      AutoTranslateText(
+                        review.reviewText,
+                        style: MyTextTheme.smallBCN
+                            .copyWith(color: const Color(0xFF666666), height: 1.4)
+                            .merge(AppTypography.body2),
+                      ),
+                    ],
+                    Spacing.h(8),
+                    Row(
+                      children: [
+                        InkWell(
+                          onTap: () => reviewController.markReviewHelpful(astrologerId, review.id),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 4.w),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.thumb_up_outlined, size: 14.w, color: Colors.grey[600]),
+                                SizedBox(width: 4.w),
+                                AutoTranslateText(
+                                  'Helpful${review.helpfulCount > 0 ? ' (${review.helpfulCount})' : ''}',
+                                  style: MyTextTheme.smallBCN.copyWith(color: Colors.grey[600]),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 12.w),
+                        InkWell(
+                          onTap: () {
+                            reviewController.reportReview(astrologerId, review.id);
+                            Get.snackbar('Reported', 'Review reported. Our team will review it.', snackPosition: SnackPosition.BOTTOM);
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 4.w),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.flag_outlined, size: 14.w, color: Colors.grey[600]),
+                                SizedBox(width: 4.w),
+                                AutoTranslateText(
+                                  'Report',
+                                  style: MyTextTheme.smallBCN.copyWith(color: Colors.grey[600]),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        if (isMine) ...[
+                          SizedBox(width: 12.w),
+                          InkWell(
+                            onTap: () async {
+                              await reviewController.loadMyReview(astrologerId, serviceType: review.serviceType);
+                              if (!context.mounted) return;
+                              AstrologerReviewDialog.show(
+                                context: context,
+                                astrologerId: astrologerId,
+                                astrologer: astrologer,
+                                serviceType: review.serviceType,
+                                existingReview: reviewController.myReview.value,
+                              );
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 4.w),
+                              child: AutoTranslateText(
+                                'Edit',
+                                style: MyTextTheme.smallBCB.copyWith(color: AppColors.saffron),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          InkWell(
+                            onTap: () async {
+                              final confirm = await Get.dialog<bool>(
+                                AlertDialog(
+                                  title: const Text('Delete review?'),
+                                  content: const Text('This action cannot be undone.'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.of(context).pop(false),
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () => Navigator.of(context).pop(true),
+                                      child: Text('Delete', style: TextStyle(color: Colors.red)),
+                                    ),
+                                  ],
+                                ),
+                              );
+                              if (confirm == true) {
+                                final deleted = await reviewController.deleteReview(astrologerId, review.id);
+                                if (deleted && context.mounted) {
+                                  Get.snackbar('Done', 'Review deleted.', snackPosition: SnackPosition.BOTTOM);
+                                }
+                              }
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 4.w),
+                              child: AutoTranslateText(
+                                'Delete',
+                                style: MyTextTheme.smallBCN.copyWith(color: Colors.red),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 
   String _getMonthName(int month) {
@@ -1030,78 +1424,66 @@ class AstrologerDetailView extends StatelessWidget {
 
   Widget _buildBottomBar(AstrologerDetailController controller) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 8.h),
       decoration: BoxDecoration(
-        color: const Color(0xFFf8f0be), // Light cream background
+        color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 5,
+            offset: const Offset(0, -1),
           ),
         ],
       ),
       child: SafeArea(
+        top: false,
+        bottom: false,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Consultation Rate
+            // Row 1: Consultation price only
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  AutoTranslateText(
-                    'Consultation Rate: ',
-                    style: MyTextTheme.smallBCN
-                        .copyWith(color: const Color(0xFF666666))
-                        .merge(AppTypography.body2),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+              padding: EdgeInsets.only(bottom: 8.h),
+              child: Center(
+                child: AutoTranslateText(
+                  controller.getPrice(),
+                  style: MyTextTheme.mediumBCN.copyWith(
+                    color: const Color(0xFF5F2221),
+                    fontSize: 13.sp,
                   ),
-                  Flexible(
-                    child: AutoTranslateText(
-                      controller.getPrice(),
-                      style: MyTextTheme.mediumBCB.copyWith(
-                        color: const Color(0xFFDFB343),
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ],
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                ),
               ),
             ),
-            Spacing.h(12),
-            // Action Buttons - Always in one responsive row
+            // Row 2: Chat, Call, Video buttons
             Row(
               children: [
                 Expanded(
-                  child: _buildActionButton(
+                  child: _buildBarChip(
                     onPressed: () => controller.initiateChat(),
-                    backgroundColor: const Color(0xFFDFB343),
-                    icon: Icons.chat_bubble_outline,
+                    icon: Icons.chat_bubble_outline_rounded,
                     label: 'Chat',
+                    color: AppColors.templeGold,
                   ),
                 ),
-                Spacing.w(6),
+                SizedBox(width: 8.w),
                 Expanded(
-                  child: _buildActionButton(
+                  child: _buildBarChip(
                     onPressed: () => controller.initiateVoiceCall(),
-                    backgroundColor: const Color(0xFF5D1C21),
-                    icon: Icons.phone,
+                    icon: Icons.phone_rounded,
                     label: 'Call',
+                    color: AppColors.saffron,
                   ),
                 ),
-                Spacing.w(6),
+                SizedBox(width: 8.w),
                 Expanded(
-                  child: _buildActionButton(
+                  child: _buildBarChip(
                     onPressed: () => controller.initiateVideoCall(),
-                    backgroundColor: const Color(0xFF5D1C21),
-                    icon: Icons.videocam,
+                    icon: Icons.videocam_rounded,
                     label: 'Video',
+                    color: AppColors.saffron,
                   ),
                 ),
               ],
@@ -1112,40 +1494,43 @@ class AstrologerDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButton({
+  Widget _buildBarChip({
     required VoidCallback onPressed,
-    required Color backgroundColor,
     required IconData icon,
     required String label,
+    required Color color,
   }) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: backgroundColor,
-        padding: EdgeInsets.symmetric(vertical: 12.h),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-        elevation: 0,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: Colors.white, size: 16.w),
-          Spacing.w(4),
-          Flexible(
-            child: AutoTranslateText(
-              label,
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(10.r),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 9.h),
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(10.r),
           ),
-        ],
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, color: Colors.white, size: 17.w),
+              SizedBox(width: 5.w),
+              Flexible(
+                child: AutoTranslateText(
+                  label,
+                  style: MyTextTheme.smallBCB.copyWith(
+                    color: Colors.white,
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

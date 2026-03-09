@@ -36,6 +36,39 @@ class CallInitiationHelper {
       return;
     }
 
+    // Show charges confirmation: "Astrologer has these charges, do you want to proceed?"
+    final chatPrice = astrologer.chatPricePerMin ?? astrologer.chatPrice ?? 0.0;
+    final chargeText = chatPrice > 0
+        ? '₹${chatPrice.toStringAsFixed(0)}/min'
+        : 'As per plan';
+    final confirmed = await Get.dialog<bool>(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('Chat charges'),
+        content: Text(
+          '${astrologer.displayName} charges $chargeText for chat. Do you want to proceed?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('No'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFDFB343),
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Yes, Proceed'),
+          ),
+        ],
+      ),
+      barrierDismissible: false,
+    );
+    if (confirmed != true) {
+      return;
+    }
+
     try {
       // Direct start/check session
       AstrologerChatSession? sessionToUse;
@@ -85,13 +118,45 @@ class CallInitiationHelper {
 
   /// Initiate voice call directly (bypasses booking screen)
   static Future<void> initiateVoiceCall(AstrologerModel astrologer) async {
+    final context = Get.context;
+    if (context == null) return;
+
+    final pricePerMin = astrologer.voicePricePerMin ?? 0.0;
+    final chargeText = pricePerMin > 0
+        ? '₹${pricePerMin.toStringAsFixed(0)}/min'
+        : 'As per plan';
+
+    final confirmed = await Get.dialog<bool>(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('Voice call charges'),
+        content: Text(
+          '${astrologer.displayName} charges $chargeText for voice call. Do you want to proceed?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('No'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFDFB343),
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Yes, Proceed'),
+          ),
+        ],
+      ),
+      barrierDismissible: false,
+    );
+    if (confirmed != true) return;
+
     try {
-      // Call API to initiate call - durationMinutes is optional (not used for billing)
-      // Backend handles per-minute billing automatically
       final response = await _callService.initiateCall(
         astrologerId: astrologer.astrologerId,
         callType: 'VOICE',
-        durationMinutes: null, // Optional - backend handles per-minute billing
+        durationMinutes: null,
       );
 
       if (response == null || !response.success || response.data == null) {
@@ -105,28 +170,23 @@ class CallInitiationHelper {
         return;
       }
 
-      // Check wallet balance using availableMinutes from response
       final walletBalance = response.data!.walletBalance ?? 0.0;
       final availableMinutes = response.data!.availableMinutes ?? 0;
       final pricePerMinute = response.data!.pricePerMinute;
 
-      // Check if user has at least 1 minute worth of balance
       if (walletBalance < pricePerMinute || availableMinutes < 1) {
-        // Show wallet recharge dialog
         await Get.dialog(
           WalletRechargeDialog(
             currentBalance: walletBalance,
-            requiredBalance: pricePerMinute, // Minimum needed for 1 minute
+            requiredBalance: pricePerMinute,
             astrologerName: astrologer.displayName,
           ),
           barrierDismissible: false,
         );
-        // User may have recharged, try again
         await initiateVoiceCall(astrologer);
         return;
       }
 
-      // Wallet balance is sufficient, proceed with call
       Get.offNamed(
         '/astrologer-voice-call',
         arguments: {'astrologer': astrologer, 'callData': response.data},
@@ -154,13 +214,45 @@ class CallInitiationHelper {
 
   /// Initiate video call directly (bypasses booking screen)
   static Future<void> initiateVideoCall(AstrologerModel astrologer) async {
+    final context = Get.context;
+    if (context == null) return;
+
+    final pricePerMin = astrologer.videoPricePerMin ?? 0.0;
+    final chargeText = pricePerMin > 0
+        ? '₹${pricePerMin.toStringAsFixed(0)}/min'
+        : 'As per plan';
+
+    final confirmed = await Get.dialog<bool>(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('Video call charges'),
+        content: Text(
+          '${astrologer.displayName} charges $chargeText for video call. Do you want to proceed?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('No'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFDFB343),
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Yes, Proceed'),
+          ),
+        ],
+      ),
+      barrierDismissible: false,
+    );
+    if (confirmed != true) return;
+
     try {
-      // Call API to initiate call - durationMinutes is optional (not used for billing)
-      // Backend handles per-minute billing automatically
       final response = await _callService.initiateCall(
         astrologerId: astrologer.astrologerId,
         callType: 'VIDEO',
-        durationMinutes: null, // Optional - backend handles per-minute billing
+        durationMinutes: null,
       );
 
       if (response == null || !response.success || response.data == null) {
@@ -174,28 +266,23 @@ class CallInitiationHelper {
         return;
       }
 
-      // Check wallet balance using availableMinutes from response
       final walletBalance = response.data!.walletBalance ?? 0.0;
       final availableMinutes = response.data!.availableMinutes ?? 0;
       final pricePerMinute = response.data!.pricePerMinute;
 
-      // Check if user has at least 1 minute worth of balance
       if (walletBalance < pricePerMinute || availableMinutes < 1) {
-        // Show wallet recharge dialog
         await Get.dialog(
           WalletRechargeDialog(
             currentBalance: walletBalance,
-            requiredBalance: pricePerMinute, // Minimum needed for 1 minute
+            requiredBalance: pricePerMinute,
             astrologerName: astrologer.displayName,
           ),
           barrierDismissible: false,
         );
-        // User may have recharged, try again
         await initiateVideoCall(astrologer);
         return;
       }
 
-      // Wallet balance is sufficient, proceed with call
       Get.offNamed(
         '/astrologer-video-call',
         arguments: {'astrologer': astrologer, 'callData': response.data},

@@ -54,11 +54,11 @@ class GlobalNavController extends GetxController {
   // Sub-menu definitions
   final Map<int, List<Map<String, dynamic>>> subMenuItems = {
     1: [
-      // Consult
-      {'label': 'Chat', 'icon': Icons.chat_bubble_outline},
-      {'label': 'Call', 'icon': Icons.phone_outlined},
+      // Consult tab
+      {'label': 'Consult', 'icon': Icons.chat_bubble_outline},
       {'label': 'Astrostream', 'icon': Icons.live_tv_outlined},
-      {'label': 'Video Call', 'icon': Icons.videocam_outlined},
+      {'label': 'Remedies', 'icon': Icons.healing_outlined},
+      {'label': 'Services', 'icon': Icons.auto_awesome_outlined},
     ],
     2: [
       // Mandir
@@ -108,19 +108,17 @@ class GlobalNavController extends GetxController {
       activeSubMenuIndex.value = null;
       activeSubItemIndex.value = null;
     } else if (route == AppRoutes.allAstrologers) {
-      activeSubMenuIndex.value = 1; // Consult
-      if (args is Map) {
-        final avail = args['availability'];
-        if (avail == 'CHAT')
-          activeSubItemIndex.value = 0;
-        else if (avail == 'VOICE_CALL')
-          activeSubItemIndex.value = 1;
-        else if (avail == 'VIDEO_CALL')
-          activeSubItemIndex.value = 3;
-      }
+      activeSubMenuIndex.value = 1; // Consult (still on Consult submenu when in astrologers list)
+      activeSubItemIndex.value = 0; // Consult
     } else if (route == AppRoutes.liveAstrologers) {
       activeSubMenuIndex.value = 1; // Consult
-      activeSubItemIndex.value = 2; // Astrostream
+      activeSubItemIndex.value = 1; // Astrostream
+    } else if (route == AppRoutes.remedies) {
+      activeSubMenuIndex.value = 1; // Consult
+      activeSubItemIndex.value = 2; // Remedies
+    } else if (route == AppRoutes.allServices) {
+      activeSubMenuIndex.value = 1; // Consult
+      activeSubItemIndex.value = 3; // Services
     } else if (route == AppRoutes.eMandirWallpaper) {
       activeSubMenuIndex.value = 2; // Mandir
       activeSubItemIndex.value = 0; // Library
@@ -175,7 +173,7 @@ class GlobalNavController extends GetxController {
       // we might want a default sub-item if none selected.
       if (activeSubItemIndex.value == null) {
         if (index == 1)
-          activeSubItemIndex.value = 0; // Chat
+          activeSubItemIndex.value = 0; // Consult
         else if (index == 2)
           activeSubItemIndex.value = 1; // Temple
         else if (index == 3)
@@ -205,7 +203,8 @@ class GlobalNavController extends GetxController {
     // 1. DETERMINE DEFAULT ARGUMENTS FOR TAB ROOT
     Object? initialArgs;
     if (index == 1) {
-      initialArgs = {'availability': 'CHAT'};
+      // Consult: no availability filter = show Chat, Call, Video on each card
+      initialArgs = null;
     }
 
     // 2. SWITCH TAB WITH ARGUMENTS
@@ -261,26 +260,20 @@ class GlobalNavController extends GetxController {
 
   void _handleConsultSubItem(int subIndex) {
     if (subIndex == 0) {
-      // Chat
+      // Consult - AllAstrologersView with Chat, Call, Video on each card (like home slider)
       UserMainController.pushInCurrentTab(
         AppRoutes.allAstrologers,
-        arguments: {'availability': 'CHAT'},
+        arguments: null,
       );
     } else if (subIndex == 1) {
-      // Call
-      UserMainController.pushInCurrentTab(
-        AppRoutes.allAstrologers,
-        arguments: {'availability': 'VOICE_CALL'},
-      );
-    } else if (subIndex == 2) {
       // Astrostream
       UserMainController.pushInCurrentTab(AppRoutes.liveAstrologers);
+    } else if (subIndex == 2) {
+      // Remedies
+      UserMainController.pushInCurrentTab(AppRoutes.remedies);
     } else if (subIndex == 3) {
-      // Video Call
-      UserMainController.pushInCurrentTab(
-        AppRoutes.allAstrologers,
-        arguments: {'availability': 'VIDEO_CALL'},
-      );
+      // Services
+      UserMainController.pushInCurrentTab(AppRoutes.allServices);
     }
   }
 

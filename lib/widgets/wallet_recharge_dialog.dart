@@ -1,4 +1,3 @@
-﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/wallet/widgets/recharge_dialog.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -24,35 +23,30 @@ class WalletRechargeDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.transparent,
-      insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
+      insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.white, AppColors.cream],
-          ),
-          borderRadius: BorderRadius.circular(30.r),
+          gradient: AppColors.gradientBackground,
+          borderRadius: BorderRadius.circular(28.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
+              color: Colors.black.withValues(alpha: 0.2),
+              blurRadius: 24,
+              offset: const Offset(0, 12),
             ),
           ],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Header with gradient
             Container(
-              padding: EdgeInsets.all(24.w),
+              padding: EdgeInsets.fromLTRB(24.w, 20.h, 12.w, 20.h),
               decoration: BoxDecoration(
                 gradient: AppColors.primaryGradient,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
+                borderRadius:
+                    BorderRadius.vertical(top: Radius.circular(28.r)),
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
                     child: Column(
@@ -62,7 +56,7 @@ class WalletRechargeDialog extends StatelessWidget {
                           'Insufficient Balance',
                           style: TextStyle(
                             fontFamily: 'Poppins',
-                            fontSize: 22.sp,
+                            fontSize: 20.sp,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
                           ),
@@ -84,16 +78,12 @@ class WalletRechargeDialog extends StatelessWidget {
                     child: InkWell(
                       onTap: () => Get.back(),
                       borderRadius: BorderRadius.circular(20.r),
-                      child: Container(
+                      child: Padding(
                         padding: EdgeInsets.all(8.w),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          shape: BoxShape.circle,
-                        ),
                         child: Icon(
                           Icons.close_rounded,
                           color: Colors.white,
-                          size: 20.w,
+                          size: 24.w,
                         ),
                       ),
                     ),
@@ -101,26 +91,25 @@ class WalletRechargeDialog extends StatelessWidget {
                 ],
               ),
             ),
-
-            // Content
             Padding(
               padding: EdgeInsets.all(24.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Available Balance Card
                   Container(
                     padding: EdgeInsets.all(18.w),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          Colors.red.withValues(alpha: 0.1),
-                          Colors.red.withValues(alpha: 0.05),
+                          AppColors.error.withValues(alpha: 0.12),
+                          AppColors.error.withValues(alpha: 0.06),
                         ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
                       borderRadius: BorderRadius.circular(16.r),
                       border: Border.all(
-                        color: Colors.red.withValues(alpha: 0.3),
+                        color: AppColors.error.withValues(alpha: 0.35),
                         width: 1.5,
                       ),
                     ),
@@ -129,12 +118,12 @@ class WalletRechargeDialog extends StatelessWidget {
                         Container(
                           padding: EdgeInsets.all(12.w),
                           decoration: BoxDecoration(
-                            color: Colors.red.withValues(alpha: 0.2),
+                            color: AppColors.error.withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.account_balance_wallet_rounded,
-                            color: Colors.red,
+                            color: AppColors.error,
                             size: 24.w,
                           ),
                         ),
@@ -153,12 +142,12 @@ class WalletRechargeDialog extends StatelessWidget {
                               ),
                               Spacing.h(4),
                               AutoTranslateText(
-                                '₹${currentBalance.toStringAsFixed(1)}',
+                                '\u20B9${currentBalance.toStringAsFixed(1)}',
                                 style: TextStyle(
                                   fontFamily: 'Poppins',
-                                  fontSize: 24.sp,
+                                  fontSize: 22.sp,
                                   fontWeight: FontWeight.w700,
-                                  color: Colors.red,
+                                  color: AppColors.error,
                                 ),
                               ),
                             ],
@@ -167,22 +156,21 @@ class WalletRechargeDialog extends StatelessWidget {
                       ],
                     ),
                   ),
-
-                  Spacing.h(20),
-
-                  // Required Balance Card
+                  Spacing.h(16),
                   Container(
                     padding: EdgeInsets.all(18.w),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          AppColors.templeGold.withValues(alpha: 0.1),
-                          AppColors.templeGold.withValues(alpha: 0.05),
+                          AppColors.templeGold.withValues(alpha: 0.12),
+                          AppColors.templeGold.withValues(alpha: 0.06),
                         ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
                       borderRadius: BorderRadius.circular(16.r),
                       border: Border.all(
-                        color: AppColors.templeGold.withValues(alpha: 0.3),
+                        color: AppColors.templeGold.withValues(alpha: 0.35),
                         width: 1.5,
                       ),
                     ),
@@ -196,7 +184,7 @@ class WalletRechargeDialog extends StatelessWidget {
                           ),
                           child: Icon(
                             Icons.info_outline_rounded,
-                            color: AppColors.templeGold,
+                            color: AppColors.textColorMaroon,
                             size: 24.w,
                           ),
                         ),
@@ -215,12 +203,12 @@ class WalletRechargeDialog extends StatelessWidget {
                               ),
                               Spacing.h(4),
                               AutoTranslateText(
-                                '₹${requiredBalance.toStringAsFixed(1)}',
+                                '\u20B9${requiredBalance.toStringAsFixed(1)}',
                                 style: TextStyle(
                                   fontFamily: 'Poppins',
-                                  fontSize: 24.sp,
+                                  fontSize: 22.sp,
                                   fontWeight: FontWeight.w700,
-                                  color: '#68171E'.toColor(),
+                                  color: AppColors.textColorMaroon,
                                 ),
                               ),
                             ],
@@ -229,32 +217,33 @@ class WalletRechargeDialog extends StatelessWidget {
                       ],
                     ),
                   ),
-
-                  Spacing.h(20),
-
-                  // Message
+                  Spacing.h(18),
                   Container(
                     padding: EdgeInsets.all(16.w),
                     decoration: BoxDecoration(
-                      color: '#68171E'.toColor().withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(12.r),
+                      color: AppColors.textColorMaroon.withValues(alpha: 0.06),
+                      borderRadius: BorderRadius.circular(14.r),
+                      border: Border.all(
+                        color: AppColors.textColorMaroon.withValues(alpha: 0.12),
+                        width: 1,
+                      ),
                     ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Icon(
                           Icons.chat_bubble_outline_rounded,
-                          color: '#68171E'.toColor(),
+                          color: AppColors.textColorMaroon,
                           size: 20.w,
                         ),
                         Spacing.w(12),
                         Expanded(
                           child: AutoTranslateText(
-                            'Minimum wallet balance required to talk with $astrologerName is ₹${requiredBalance.toStringAsFixed(1)}. Please recharge your wallet.',
+                            'Minimum wallet balance required to talk with $astrologerName is \u20B9${requiredBalance.toStringAsFixed(1)}. Please recharge your wallet.',
                             style: TextStyle(
                               fontFamily: 'Poppins',
                               fontSize: 13.sp,
-                              color: '#68171E'.toColor(),
+                              color: AppColors.textColorMaroon,
                               height: 1.5,
                             ),
                           ),
@@ -262,40 +251,28 @@ class WalletRechargeDialog extends StatelessWidget {
                       ],
                     ),
                   ),
-
                   Spacing.h(24),
-
-                  // Action Buttons
                   Row(
                     children: [
                       Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16.r),
-                            border: Border.all(
-                              color: Colors.grey.withValues(alpha: 0.3),
-                              width: 1.5,
+                        child: OutlinedButton(
+                          onPressed: () => Get.back(),
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(
+                              color: Colors.grey.withValues(alpha: 0.5),
                             ),
-                          ),
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              onTap: () => Get.back(),
+                            shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16.r),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(vertical: 14.h),
-                                alignment: Alignment.center,
-                                child: AutoTranslateText(
-                                  'Cancel',
-                                  style: TextStyle(
-                                    fontFamily: 'Poppins',
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.grey[700],
-                                  ),
-                                ),
-                              ),
+                            ),
+                            padding: EdgeInsets.symmetric(vertical: 14.h),
+                          ),
+                          child: AutoTranslateText(
+                            'Cancel',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[700],
                             ),
                           ),
                         ),
@@ -340,7 +317,7 @@ class WalletRechargeDialog extends StatelessWidget {
                                       'Recharge Now',
                                       style: TextStyle(
                                         fontFamily: 'Poppins',
-                                        fontSize: 16.sp,
+                                        fontSize: 15.sp,
                                         fontWeight: FontWeight.w700,
                                         color: Colors.white,
                                         letterSpacing: 0.5,

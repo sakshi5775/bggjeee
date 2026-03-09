@@ -174,7 +174,10 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
       backgroundColor: Colors.transparent,
       insetPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: 520.w),
+        constraints: BoxConstraints(
+          maxWidth: 520.w,
+          maxHeight: MediaQuery.of(context).size.height * 0.94,
+        ),
         child: Container(
           decoration: BoxDecoration(
             gradient: AppColors.gradientBackground,

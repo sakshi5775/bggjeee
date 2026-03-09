@@ -424,6 +424,10 @@ class EndPoints {
   /// Astrologer Reviews
   static String astrologerReviews(String astrologerId) =>
       'astrologers/api/astrologers/$astrologerId/reviews';
+  static String astrologerReviewStatistics(String astrologerId) =>
+      'astrologers/api/astrologers/$astrologerId/reviews/statistics';
+  static String astrologerReviewMe(String astrologerId) =>
+      'astrologers/api/astrologers/$astrologerId/reviews/me';
   static String astrologerReviewById(String astrologerId, String reviewId) =>
       'astrologers/api/astrologers/$astrologerId/reviews/$reviewId';
   static String astrologerReviewHelpful(String astrologerId, String reviewId) =>

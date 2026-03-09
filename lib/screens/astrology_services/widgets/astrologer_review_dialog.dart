@@ -10,12 +10,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class AstrologerReviewDialog {
-  /// Show compact prompt asking if user wants to rate
+  /// Show compact prompt asking if user wants to rate.
+  /// [onMaybeLater] is called when user taps Maybe Later (after closing the dialog); use e.g. () => Get.back() to also go back from chat.
+  /// [onCloseAfterReview] is called when the full review dialog is closed (X, submit, delete); use to e.g. pop call screen.
   static void showPrompt({
     required BuildContext context,
     required AstrologerModel astrologer,
     required String serviceType,
     AstrologerReview? existingReview,
+    VoidCallback? onMaybeLater,
+    VoidCallback? onCloseAfterReview,
   }) {
     final isEditing = existingReview != null;
 
@@ -58,7 +62,10 @@ class AstrologerReviewDialog {
         ),
         actions: [
           TextButton(
-            onPressed: () => Get.back(),
+            onPressed: () {
+              Get.back();
+              onMaybeLater?.call();
+            },
             child: AutoTranslateText(
               'Maybe Later',
               style: MyTextTheme.smallBCN.copyWith(
@@ -77,6 +84,7 @@ class AstrologerReviewDialog {
                 astrologer: astrologer,
                 serviceType: serviceType,
                 existingReview: existingReview,
+                onClose: onCloseAfterReview,
               );
             },
             style: ElevatedButton.styleFrom(
@@ -110,7 +118,9 @@ class AstrologerReviewDialog {
     AstrologerReview? existingReview,
     bool isFollowing = false,
     VoidCallback? onFollow,
+    VoidCallback? onClose,
   }) {
+    final callerContext = context;
     final reviewTextController = TextEditingController();
     final rating = 5.obs;
     final isEditing = existingReview != null;
@@ -127,6 +137,11 @@ class AstrologerReviewDialog {
     if (isEditing) {
       reviewTextController.text = existingReview.reviewText;
       rating.value = existingReview.rating;
+    }
+
+    void closeReview() {
+      Get.back();
+      onClose?.call();
     }
 
     Get.dialog(
@@ -161,7 +176,7 @@ class AstrologerReviewDialog {
                         ),
                       ),
                       IconButton(
-                        onPressed: () => Get.back(),
+                        onPressed: closeReview,
                         icon: Icon(
                           Icons.close,
                           color: Colors.grey[600],
@@ -357,7 +372,7 @@ class AstrologerReviewDialog {
                                           existingReview.id,
                                         );
                                     if (success) {
-                                      Get.back();
+                                      closeReview();
                                     }
                                   },
                             style: OutlinedButton.styleFrom(
@@ -396,29 +411,39 @@ class AstrologerReviewDialog {
                                     errorMessage.value = '';
 
                                     try {
-                                      final success = isEditing
-                                          ? await controller.updateReview(
-                                              astrologerId,
-                                              existingReview!.id,
-                                              rating: rating.value,
-                                              reviewText: reviewTextController
-                                                  .text
-                                                  .trim(),
-                                            )
-                                          : await controller.createReview(
-                                              astrologerId,
-                                              rating: rating.value,
-                                              reviewText: reviewTextController
-                                                  .text
-                                                  .trim(),
+                                      if (isEditing) {
+                                        final success = await controller.updateReview(
+                                          astrologerId,
+                                          existingReview.id,
+                                          rating: rating.value,
+                                          reviewText: reviewTextController.text.trim(),
+                                          serviceType: existingReview.serviceType,
+                                        );
+                                        if (success) closeReview();
+                                      } else {
+                                        final result = await controller.createReview(
+                                          astrologerId,
+                                          rating: rating.value,
+                                          reviewText: reviewTextController.text.trim(),
+                                          serviceType: serviceType,
+                                        );
+                                        if (result?.success == true) {
+                                          closeReview();
+                                        } else if (result?.existingReviewForEdit != null && callerContext.mounted) {
+                                          closeReview();
+                                          final ctx = Get.context;
+                                          if (ctx != null) {
+                                            show(
+                                              context: ctx,
+                                              astrologerId: astrologerId,
+                                              astrologer: astrologer,
                                               serviceType: serviceType,
+                                              existingReview: result!.existingReviewForEdit,
                                             );
-
-                                      if (success) {
-                                        Get.back();
+                                          }
+                                        }
                                       }
                                     } catch (e) {
-                                      // Show the actual error message from API
                                       errorMessage.value = e
                                           .toString()
                                           .replaceFirst('Exception: ', '');
@@ -448,7 +473,7 @@ class AstrologerReviewDialog {
                                   )
                                 : AutoTranslateText(
                                     isEditing
-                                        ? 'Update Review'
+                                        ? 'Update'
                                         : 'Submit Review',
                                     style: MyTextTheme.mediumBCB.copyWith(
                                       color: Colors.white,

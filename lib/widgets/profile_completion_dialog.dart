@@ -239,7 +239,7 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
       child: Container(
         constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.9,
+          maxHeight: MediaQuery.of(context).size.height * 0.94,
         ),
         width: double.infinity,
         padding: EdgeInsets.all(24.w),

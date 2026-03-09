@@ -1,13 +1,18 @@
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_review_service.dart';
-import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_chat_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
+/// Result of createReview: when user already has a review we return this so UI can open edit without showing an error.
+class CreateReviewResult {
+  final bool success;
+  final AstrologerReview? existingReviewForEdit;
+  CreateReviewResult({required this.success, this.existingReviewForEdit});
+}
+
 class AstrologerReviewController extends BaseController {
   final AstrologerReviewService _reviewService = AstrologerReviewService();
-  final AstrologerChatService _chatService = AstrologerChatService();
 
   // Reviews
   final RxList<AstrologerReview> reviews = <AstrologerReview>[].obs;
@@ -15,8 +20,29 @@ class AstrologerReviewController extends BaseController {
   final RxBool isLoadingReviews = false.obs;
   final RxInt currentReviewPage = 1.obs;
   final RxBool hasMoreReviews = true.obs;
+  final RxInt totalReviewCount = 0.obs;
 
-  Future<void> loadReviews(String astrologerId, {bool refresh = true}) async {
+  // Review statistics (overall + byServiceType)
+  final RxMap<String, dynamic> reviewStatistics = <String, dynamic>{}.obs;
+
+  Future<void> loadReviewStatistics(String astrologerId) async {
+    try {
+      final data = await _reviewService.getReviewStatistics(astrologerId);
+      if (data != null) reviewStatistics.value = data;
+    } catch (e) {
+      debugPrint('Error loading review statistics: $e');
+    }
+  }
+
+  Future<void> loadReviews(
+    String astrologerId, {
+    bool refresh = true,
+    int page = 1,
+    int limit = 10,
+    String sortBy = 'recent',
+    int? ratingFilter,
+    String? serviceTypeFilter,
+  }) async {
     try {
       if (refresh) {
         currentReviewPage.value = 1;
@@ -24,22 +50,26 @@ class AstrologerReviewController extends BaseController {
         hasMoreReviews.value = true;
         isLoadingReviews.value = true;
       }
+      final pageToUse = refresh ? 1 : currentReviewPage.value;
 
       final response = await _reviewService.getReviews(
         astrologerId,
-        page: currentReviewPage.value,
-        limit: 10,
-        sortBy: 'recent',
+        page: pageToUse,
+        limit: limit,
+        sortBy: sortBy,
+        ratingFilter: ratingFilter,
+        serviceTypeFilter: serviceTypeFilter,
       );
 
       if (response != null) {
         if (refresh) {
           reviews.value = response.reviews;
+          currentReviewPage.value = 1;
         } else {
           reviews.addAll(response.reviews);
         }
-
         hasMoreReviews.value = response.pagination.hasNextPage;
+        totalReviewCount.value = response.pagination.totalReviews;
         if (response.pagination.hasNextPage) {
           currentReviewPage.value = response.pagination.currentPage + 1;
         }
@@ -51,31 +81,41 @@ class AstrologerReviewController extends BaseController {
     }
   }
 
-  Future<void> loadMyReview(String astrologerId) async {
+  /// Load the current user's review for this astrologer and [serviceType]. Use VIDEO, AUDIO, or CHAT depending on context.
+  Future<void> loadMyReview(String astrologerId, {String serviceType = 'VIDEO'}) async {
     try {
-      final review = await _reviewService.getMyReview(astrologerId);
+      final review = await _reviewService.getMyReview(astrologerId, serviceType: serviceType);
       myReview.value = review;
     } catch (e) {
       debugPrint('Error loading my review: $e');
     }
   }
 
-  Future<bool> createReview(
+  /// Load the user's review for this astrologer by trying VIDEO, then AUDIO, then CHAT. Use on profile load so "Your review" shows regardless of service type.
+  Future<void> loadMyReviewAnyServiceType(String astrologerId) async {
+    for (final serviceType in ['VIDEO', 'AUDIO', 'CHAT']) {
+      try {
+        final review = await _reviewService.getMyReview(astrologerId, serviceType: serviceType);
+        if (review != null) {
+          myReview.value = review;
+          return;
+        }
+      } catch (e) {
+        debugPrint('Error loading my review ($serviceType): $e');
+      }
+    }
+    myReview.value = null;
+  }
+
+  /// Returns [CreateReviewResult]. If user already has a review, returns success: false and existingReviewForEdit so UI can open edit without showing an error.
+  Future<CreateReviewResult?> createReview(
     String astrologerId, {
     required int rating,
     required String reviewText,
     required String serviceType, // VIDEO, AUDIO, CHAT
   }) async {
-    return await runWithLoading(
+    return await runWithLoading<CreateReviewResult>(
           () async {
-            debugPrint(
-              'AstrologerReviewController.createReview -> checking eligibility for $astrologerId',
-            );
-            await _ensureEligibleForReview(astrologerId);
-            debugPrint(
-              'AstrologerReviewController.createReview -> eligibility passed for $astrologerId',
-            );
-
             final result = await _reviewService.createReview(
               astrologerId,
               rating: rating,
@@ -84,88 +124,43 @@ class AstrologerReviewController extends BaseController {
             );
 
             if (result['success'] == true) {
-              // Reload reviews
               await Future.wait([
                 loadReviews(astrologerId, refresh: true),
-                loadMyReview(astrologerId),
+                loadMyReview(astrologerId, serviceType: serviceType),
               ]);
-              return true;
+              return CreateReviewResult(success: true);
             } else {
               String message = result['message'] ?? 'Failed to submit review';
-              if (message.toLowerCase().contains('already submitted') ||
-                  message.toLowerCase().contains('already reviewed')) {
-                message =
-                    'You have already submitted a review for this astrologer. Please update your existing review instead.';
+              final lower = message.toLowerCase();
+              if (lower.contains('already submitted') ||
+                  lower.contains('already reviewed') ||
+                  lower.contains('video service') ||
+                  lower.contains('audio service') ||
+                  lower.contains('chat service')) {
+                await loadMyReview(astrologerId, serviceType: serviceType);
+                if (myReview.value == null) {
+                  await loadMyReviewAnyServiceType(astrologerId);
+                }
+                return CreateReviewResult(
+                  success: false,
+                  existingReviewForEdit: myReview.value,
+                );
               }
-              throw message; // Throwing as string since runWithLoading handles it
+              throw message;
             }
           },
           showBusy: true,
           showError: true,
-        ) ??
-        false;
+        );
   }
 
-  /// Ensure the current user is eligible to create a review for [astrologerId].
-  /// Throws an [Exception] with a user-friendly message when not eligible.
-  Future<void> _ensureEligibleForReview(String astrologerId) async {
-    // Check if user has already submitted a review
-    await loadMyReview(astrologerId);
-    if (myReview.value != null) {
-      throw Exception(
-        'You have already submitted a review for this astrologer. Use the update option to modify your review.',
-      );
-    }
-
-    // Check session history to verify user had a conversation with this astrologer
-    try {
-      final history = await _chatService.getSessionHistory(page: 1, limit: 100);
-      final sessions = history['sessions'] as List?;
-      if (sessions == null || sessions.isEmpty) {
-        // Don't block review submission if history check fails - let backend validate
-        debugPrint(
-          'Warning: No session history found, but allowing review submission (backend will validate)',
-        );
-        return;
-      }
-
-      final bool hasConversation = sessions.any((s) {
-        try {
-          final session = s as dynamic;
-          final sid =
-              session.astrologerId?.toString() ??
-              session['astrologerId']?.toString();
-          final status =
-              session.status?.toString() ?? session['status']?.toString();
-          if (sid == null) return false;
-          // Consider sessions other than CREATED as valid conversations
-          return sid == astrologerId && (status != null && status != 'CREATED');
-        } catch (_) {
-          return false;
-        }
-      });
-
-      if (!hasConversation) {
-        // Don't block - let backend validate. This is just a pre-check.
-        debugPrint(
-          'Warning: No conversation found in local history, but allowing review submission (backend will validate)',
-        );
-        return;
-      }
-    } catch (e) {
-      // Don't block review submission if history check fails - let backend validate
-      debugPrint(
-        'Warning: Error checking session history: $e. Allowing review submission (backend will validate)',
-      );
-      // Don't throw - let the backend handle validation
-    }
-  }
-
+  /// [serviceType] must match the review's service type (VIDEO, AUDIO, or CHAT). Pass e.g. existingReview.serviceType from the dialog.
   Future<bool> updateReview(
     String astrologerId,
     String reviewId, {
     required int rating,
     required String reviewText,
+    required String serviceType, // VIDEO, AUDIO, CHAT
   }) async {
     return await runWithLoading(
           () async {
@@ -177,10 +172,9 @@ class AstrologerReviewController extends BaseController {
             );
 
             if (result['success'] == true) {
-              // Reload reviews
               await Future.wait([
                 loadReviews(astrologerId, refresh: true),
-                loadMyReview(astrologerId),
+                loadMyReview(astrologerId, serviceType: serviceType),
               ]);
               return true;
             } else {
@@ -212,11 +206,11 @@ class AstrologerReviewController extends BaseController {
     try {
       final result = await _reviewService.markHelpful(astrologerId, reviewId);
       if (result['success'] == true) {
-        // Update local review
         final index = reviews.indexWhere((r) => r.id == reviewId);
         if (index != -1) {
           final review = reviews[index];
-          final updatedReview = AstrologerReview(
+          final newCount = result['helpfulCount'] as int? ?? review.helpfulCount + 1;
+          reviews[index] = AstrologerReview(
             id: review.id,
             rating: review.rating,
             reviewText: review.reviewText,
@@ -224,16 +218,41 @@ class AstrologerReviewController extends BaseController {
             createdAt: review.createdAt,
             updatedAt: review.updatedAt,
             userDisplayInfo: review.userDisplayInfo,
-            helpfulCount:
-                result['helpfulCount'] as int? ?? review.helpfulCount + 1,
+            helpfulCount: newCount,
             reportedCount: review.reportedCount,
             status: review.status,
           );
-          reviews[index] = updatedReview;
         }
       }
     } catch (e) {
       debugPrint('Error marking review helpful: $e');
+    }
+  }
+
+  Future<void> reportReview(String astrologerId, String reviewId) async {
+    try {
+      final result = await _reviewService.reportReview(astrologerId, reviewId);
+      if (result['success'] == true) {
+        final index = reviews.indexWhere((r) => r.id == reviewId);
+        if (index != -1) {
+          final review = reviews[index];
+          final newCount = result['reportedCount'] as int? ?? review.reportedCount + 1;
+          reviews[index] = AstrologerReview(
+            id: review.id,
+            rating: review.rating,
+            reviewText: review.reviewText,
+            serviceType: review.serviceType,
+            createdAt: review.createdAt,
+            updatedAt: review.updatedAt,
+            userDisplayInfo: review.userDisplayInfo,
+            helpfulCount: review.helpfulCount,
+            reportedCount: newCount,
+            status: review.status,
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Error reporting review: $e');
     }
   }
 }
