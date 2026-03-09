@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -39,7 +40,8 @@ class MatchMakingFullKundliView extends StatelessWidget {
     final planetaryDetails =
         args['planetaryDetails'] as Map<String, dynamic>? ?? {};
     final formData = args['formData'] as Map<String, dynamic>?;
-    final chartStyle = (args['chartStyle'] as String?)?.toLowerCase() ?? 'north';
+    final chartStyle =
+        (args['chartStyle'] as String?)?.toLowerCase() ?? 'north';
 
     return Container(
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
@@ -439,38 +441,14 @@ class MatchMakingFullKundliView extends StatelessWidget {
                         left: isBoy ? null : 8.w,
                         right: isBoy ? 8.w : null,
                         top: 8.h,
-                        child: ClipOval(
-                          child: Image.network(
-                            isBoy
-                                ? AppConstant.kundliBoy
-                                : AppConstant.kundliGirl,
-                            width: 50.w,
-                            height: 50.w,
-                            fit: BoxFit.cover,
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            },
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                width: 50.w,
-                                height: 50.w,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: "#DFB343".toColor().withValues(
-                                    alpha: 0.2,
-                                  ),
-                                ),
-                                child: Icon(
-                                  Icons.person,
-                                  size: 25.w,
-                                  color: "#6F221E".toColor(),
-                                ),
-                              );
-                            },
-                          ),
+                        child: NetworkImageWithLoader(
+                          url: isBoy
+                              ? AppConstant.kundliBoy
+                              : AppConstant.kundliGirl,
+                          width: 50.w,
+                          height: 50.w,
+                          isCircular: true,
+                          fit: BoxFit.cover,
                         ),
                       ),
 
@@ -687,20 +665,33 @@ class _FullKundliLagnaChartState extends State<FullKundliLagnaChart> {
 
   Future<void> _fetchChart() async {
     final form = widget.formData;
-    final dob = (widget.isBoy ? form['boyDob'] : form['girlDob'] ?? '').toString().replaceAll('-', '/');
-    final tob = (widget.isBoy ? form['boyTob'] : form['girlTob'] ?? '12:00').toString();
+    final dob = (widget.isBoy ? form['boyDob'] : form['girlDob'] ?? '')
+        .toString()
+        .replaceAll('-', '/');
+    final tob = (widget.isBoy ? form['boyTob'] : form['girlTob'] ?? '12:00')
+        .toString();
     final tz = (form[widget.isBoy ? 'boyTz' : 'girlTz'] is num)
         ? (form[widget.isBoy ? 'boyTz' : 'girlTz'] as num).toDouble()
-        : double.tryParse(form[widget.isBoy ? 'boyTz' : 'girlTz']?.toString() ?? '') ?? 5.5;
+        : double.tryParse(
+                form[widget.isBoy ? 'boyTz' : 'girlTz']?.toString() ?? '',
+              ) ??
+              5.5;
     final lat = (form[widget.isBoy ? 'boyLat' : 'girlLat'] is num)
         ? (form[widget.isBoy ? 'boyLat' : 'girlLat'] as num).toDouble()
-        : double.tryParse(form[widget.isBoy ? 'boyLat' : 'girlLat']?.toString() ?? '') ?? 0.0;
+        : double.tryParse(
+                form[widget.isBoy ? 'boyLat' : 'girlLat']?.toString() ?? '',
+              ) ??
+              0.0;
     final lon = (form[widget.isBoy ? 'boyLon' : 'girlLon'] is num)
         ? (form[widget.isBoy ? 'boyLon' : 'girlLon'] as num).toDouble()
-        : double.tryParse(form[widget.isBoy ? 'boyLon' : 'girlLon']?.toString() ?? '') ?? 0.0;
+        : double.tryParse(
+                form[widget.isBoy ? 'boyLon' : 'girlLon']?.toString() ?? '',
+              ) ??
+              0.0;
     String lang = (form['lang'] ?? 'en').toString();
     if (lang.isEmpty) lang = 'en';
-    final style = ['north', 'south', 'east'].contains(widget.chartStyle.toLowerCase())
+    final style =
+        ['north', 'south', 'east'].contains(widget.chartStyle.toLowerCase())
         ? widget.chartStyle.toLowerCase()
         : 'north';
 
@@ -813,7 +804,10 @@ class _FullKundliLagnaChartState extends State<FullKundliLagnaChart> {
           child: Center(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                final chartSize = (constraints.maxWidth - 20.w).clamp(200.0, 400.w);
+                final chartSize = (constraints.maxWidth - 20.w).clamp(
+                  200.0,
+                  400.w,
+                );
                 return SizedBox(
                   width: chartSize,
                   height: chartSize,

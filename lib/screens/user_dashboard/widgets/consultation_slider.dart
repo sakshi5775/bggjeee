@@ -1,3 +1,4 @@
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/ConsultationSliderController.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -94,7 +95,7 @@ class ConsultationSlider extends StatelessWidget {
             ),
           ),
 
-          Container(
+          SizedBox(
             width: 120.w,
             height: double.infinity,
             child: ClipRRect(
@@ -105,17 +106,7 @@ class ConsultationSlider extends StatelessWidget {
               child:
                   (imagePath.startsWith('http://') ||
                       imagePath.startsWith('https://'))
-                  ? Image.network(
-                      imagePath,
-                      fit: BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Center(child: Icon(Icons.error));
-                      },
-                    )
+                  ? NetworkImageWithLoader(url: imagePath, fit: BoxFit.cover)
                   : Image.asset(imagePath, fit: BoxFit.cover),
             ),
           ),

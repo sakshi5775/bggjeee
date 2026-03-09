@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../app_manager/network_image.dart';
+
 class SpiritualPillarsGrid extends StatelessWidget {
   const SpiritualPillarsGrid({super.key});
 
@@ -105,27 +107,10 @@ class SpiritualPillarsGrid extends StatelessWidget {
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(16.r),
-                            child: pillar.image.isNotEmpty
-                                ? Image.network(
-                                    pillar.image,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Container(
-                                        color: Colors.grey[800],
-                                        child: const Icon(
-                                          Icons.broken_image,
-                                          color: Colors.white54,
-                                        ),
-                                      );
-                                    },
-                                  )
-                                : Container(
-                                    color: Colors.grey[800],
-                                    child: const Icon(
-                                      Icons.auto_awesome,
-                                      color: Colors.white54,
-                                    ),
-                                  ),
+                            child: NetworkImageWithLoader(
+                              url: pillar.image,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ),

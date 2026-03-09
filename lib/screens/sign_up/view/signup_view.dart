@@ -1,4 +1,5 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/sign_up/controller/signup_controller.dart';
@@ -23,31 +24,16 @@ class SignUpView extends BasePage<SignUpController> {
           child: Column(
             children: [
               // Ganesh Image Header (matching login page)
-              Container(
+              SizedBox(
                 width: double.infinity,
                 height: 350.h,
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
                     Positioned.fill(
-                      child: Image.network(
-                        AppConstant.cardConsultation,
+                      child: NetworkImageWithLoader(
+                        url: AppConstant.cardConsultation,
                         fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        },
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Center(
-                            child: Icon(
-                              Icons.error,
-                              size: 48,
-                              color: Colors.grey,
-                            ),
-                          );
-                        },
                       ),
                     ),
                     // Back button overlay

@@ -1,5 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 /// Uses form data from match making; no user input. Language from form; falls back to 'en' if API fails.
 class MatchMakingLagnaChartWidget extends StatefulWidget {
   final Map<String, dynamic> formData;
+
   /// Chart style: 'north', 'south', or 'east'
   final String chartStyle;
 
@@ -202,25 +204,16 @@ class _MatchMakingLagnaChartWidgetState
         AutoTranslateText(
           'Lagna Charts',
           style: MyTextTheme.largeBCB
-              .copyWith(
-                  color: '#68171E'.toColor(), fontWeight: FontWeight.bold)
+              .copyWith(color: '#68171E'.toColor(), fontWeight: FontWeight.bold)
               .merge(AppTypography.h2),
         ),
         Spacing.h(16),
         if (_boySvg != null && _boySvg!.isNotEmpty) ...[
-          _buildChartCard(
-            title: boyName,
-            svgData: _boySvg!,
-            isBoy: true,
-          ),
+          _buildChartCard(title: boyName, svgData: _boySvg!, isBoy: true),
           Spacing.h(20),
         ],
         if (_girlSvg != null && _girlSvg!.isNotEmpty)
-          _buildChartCard(
-            title: girlName,
-            svgData: _girlSvg!,
-            isBoy: false,
-          ),
+          _buildChartCard(title: girlName, svgData: _girlSvg!, isBoy: false),
       ],
     );
   }
@@ -253,18 +246,12 @@ class _MatchMakingLagnaChartWidgetState
         children: [
           Row(
             children: [
-              ClipOval(
-                child: Image.network(
-                  isBoy ? AppConstant.kundliBoy : AppConstant.kundliGirl,
-                  width: 36.w,
-                  height: 36.w,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Icon(
-                    Icons.person,
-                    size: 24.w,
-                    color: '#68171E'.toColor(),
-                  ),
-                ),
+              NetworkImageWithLoader(
+                url: isBoy ? AppConstant.kundliBoy : AppConstant.kundliGirl,
+                width: 36.w,
+                height: 36.w,
+                fit: BoxFit.cover,
+                isCircular: true,
               ),
               Spacing.w(8),
               AutoTranslateText(
@@ -278,7 +265,10 @@ class _MatchMakingLagnaChartWidgetState
           Spacing.h(8),
           LayoutBuilder(
             builder: (context, constraints) {
-              final chartSize = (constraints.maxWidth - 20.w).clamp(200.0, 400.w);
+              final chartSize = (constraints.maxWidth - 20.w).clamp(
+                200.0,
+                400.w,
+              );
               return Center(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.r),
@@ -312,4 +302,3 @@ class _MatchMakingLagnaChartWidgetState
     );
   }
 }
-

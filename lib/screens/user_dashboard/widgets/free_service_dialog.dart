@@ -1,18 +1,18 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class FreeServiceDialog extends StatelessWidget {
-  const FreeServiceDialog({Key? key}) : super(key: key);
+  const FreeServiceDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -45,16 +45,12 @@ class FreeServiceDialog extends StatelessWidget {
     return Stack(
       children: [
         // Background image
-        Container(
+        SizedBox(
           height: 280.h,
           width: double.infinity,
-          child: CachedNetworkImage(
-            imageUrl: AppConstant.freeservice,
+          child: NetworkImageWithLoader(
+            url: AppConstant.freeservice,
             fit: BoxFit.cover,
-            placeholder: (context, url) =>
-                const Center(child: CircularProgressIndicator()),
-            errorWidget: (context, url, error) =>
-                const Center(child: Icon(Icons.error)),
           ),
         ),
 
@@ -168,7 +164,9 @@ class FreeServiceDialog extends StatelessWidget {
               child: InkWell(
                 onTap: () {
                   Get.back(); // Close dialog
-                  UserMainController.pushInCurrentTab(AppRoutes.astrologyServices);
+                  UserMainController.pushInCurrentTab(
+                    AppRoutes.astrologyServices,
+                  );
                 },
                 borderRadius: BorderRadius.circular(16.r),
                 child: Center(

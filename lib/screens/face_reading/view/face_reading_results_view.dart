@@ -16,6 +16,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
+import '../../../app_manager/network_image.dart';
+
 class FaceReadingResultsView extends StatelessWidget {
   const FaceReadingResultsView({Key? key}) : super(key: key);
 
@@ -84,7 +86,9 @@ class FaceReadingResultsView extends StatelessWidget {
                       color: '#6F221E'.toColor(),
                       size: 22.w,
                     ),
-                    onPressed: () => UserMainController.pushInCurrentTab(AppRoutes.faceReadingHistory),
+                    onPressed: () => UserMainController.pushInCurrentTab(
+                      AppRoutes.faceReadingHistory,
+                    ),
                   ),
                 ],
               ),
@@ -155,27 +159,10 @@ class FaceReadingResultsView extends StatelessWidget {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10.r),
-              child: result.imageUrl != null
-                  ? Image.network(
-                      result.imageUrl!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
-                        color: '#FFF2E8'.toColor(),
-                        child: Icon(
-                          Icons.person,
-                          size: 50.w,
-                          color: "#F38B3B".toColor(),
-                        ),
-                      ),
-                    )
-                  : Container(
-                      color: '#FFF2E8'.toColor(),
-                      child: Icon(
-                        Icons.person,
-                        size: 50.w,
-                        color: "#F38B3B".toColor(),
-                      ),
-                    ),
+              child: NetworkImageWithLoader(
+                url: result.imageUrl!,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           Spacing.w(20),

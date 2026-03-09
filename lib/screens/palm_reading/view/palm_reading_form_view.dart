@@ -43,7 +43,7 @@ class PalmReadingFormView extends StatelessWidget {
 
                           // App Logo
                           SvgPicture.network(
-                            'https://astrobharatai.s3.ap-south-1.amazonaws.com/homepageVideos/Frame+1321314931.svg',
+                            'https://d3c2un7ipdye89.cloudfront.net/homepageVideos/Frame+1321314931.svg',
                             height: 48.h,
                             fit: BoxFit.contain,
                           ),
@@ -338,7 +338,9 @@ class PalmReadingFormView extends StatelessWidget {
     return Padding(
       padding: AppPaddings.symmetric(h: 16),
       child: TextButton(
-        onPressed: () => UserMainController.pushInCurrentTab(AppRoutes.palmReadingHandGender),
+        onPressed: () => UserMainController.pushInCurrentTab(
+          AppRoutes.palmReadingHandGender,
+        ),
         child: AutoTranslateText(
           'Skip',
           style: MyTextTheme.mediumBCB.copyWith(

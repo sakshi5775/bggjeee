@@ -1,5 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
@@ -131,7 +132,10 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
     return GestureDetector(
       onTap: () {
         if (puja.id != null && puja.id!.isNotEmpty) {
-          UserMainController.pushInCurrentTab(AppRoutes.pujaDetail, arguments: puja.id);
+          UserMainController.pushInCurrentTab(
+            AppRoutes.pujaDetail,
+            arguments: puja.id,
+          );
         }
       },
       child: Card(
@@ -165,32 +169,11 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12.r),
                           child: puja.image != null && puja.image!.isNotEmpty
-                              ? Image.network(
-                                  puja.image!,
+                              ? NetworkImageWithLoader(
+                                  url: puja.image!,
                                   width: isTablet ? 60.w : 100,
                                   height: isTablet ? 60.w : 100,
                                   fit: BoxFit.fill,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Container(
-                                      width: isTablet ? 60.w : 60,
-                                      height: isTablet ? 60.w : 42.w,
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            "#FFF8F0".toColor(),
-                                            "#FFE8D0".toColor(),
-                                          ],
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                        ),
-                                      ),
-                                      child: Icon(
-                                        Icons.auto_awesome,
-                                        color: AppColors.deepOrange,
-                                        size: isTablet ? 32.w : 24.w,
-                                      ),
-                                    );
-                                  },
                                 )
                               : Container(
                                   width: isTablet ? 60.w : 42.w,
@@ -365,7 +348,9 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                                       );
                                     } else {
                                       // Fallback to book puja page
-                                      UserMainController.pushInCurrentTab(AppRoutes.bookPuja);
+                                      UserMainController.pushInCurrentTab(
+                                        AppRoutes.bookPuja,
+                                      );
                                     }
                                   },
                                   child: Container(

@@ -1,3 +1,4 @@
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/data_model/course_model.dart';
 import 'package:astrobharataiuser/screens/courses/controllers/courses_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -371,21 +372,16 @@ class _PillarCourseCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // ── Thumbnail ──
-          if (course.thumbnail != null && course.thumbnail!.isNotEmpty)
-            ClipRRect(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-              child: AspectRatio(
-                aspectRatio: 16 / 7,
-                child: Image.network(
-                  course.thumbnail!,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) =>
-                      _placeholderBanner(rounded: false),
-                ),
+          ClipRRect(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+            child: AspectRatio(
+              aspectRatio: 16 / 7,
+              child: NetworkImageWithLoader(
+                url: course.thumbnail!,
+                fit: BoxFit.cover,
               ),
-            )
-          else
-            _placeholderBanner(rounded: true),
+            ),
+          ),
 
           // ── Body ──
           Padding(
@@ -591,21 +587,6 @@ class _PillarCourseCard extends StatelessWidget {
 }
 
 // ── Helpers ──────────────────────────────────────
-
-Widget _placeholderBanner({required bool rounded}) {
-  return Container(
-    height: 100,
-    decoration: BoxDecoration(
-      gradient: AppColors.orangeGradient,
-      borderRadius: rounded
-          ? const BorderRadius.vertical(top: Radius.circular(16))
-          : null,
-    ),
-    child: const Center(
-      child: Icon(Icons.school_outlined, size: 40, color: Colors.white),
-    ),
-  );
-}
 
 Widget _buildTag(String text, Color color) {
   return Container(

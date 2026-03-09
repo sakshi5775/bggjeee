@@ -8,7 +8,6 @@ import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class HistorySectionWidget extends BasePage<UserDashboardController> {
@@ -32,7 +31,9 @@ class HistorySectionWidget extends BasePage<UserDashboardController> {
                 ),
               ),
               GestureDetector(
-                onTap: () => UserMainController.pushInCurrentTab(AppRoutes.consultationHistory),
+                onTap: () => UserMainController.pushInCurrentTab(
+                  AppRoutes.consultationHistory,
+                ),
                 child: Padding(
                   padding: EdgeInsets.only(right: 6.w),
                   child: AutoTranslateText(
@@ -55,7 +56,8 @@ class HistorySectionWidget extends BasePage<UserDashboardController> {
 
   Widget _buildHistoryPlaceholderCard(BuildContext context) {
     return GestureDetector(
-      onTap: () => UserMainController.pushInCurrentTab(AppRoutes.consultationHistory),
+      onTap: () =>
+          UserMainController.pushInCurrentTab(AppRoutes.consultationHistory),
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),

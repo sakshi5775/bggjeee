@@ -480,16 +480,11 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                             height: iconSize,
                           )
                         : _isNetworkUrl(iconPath)
-                        ? Image.network(
-                            iconPath,
-                            width: iconSize,
+                        ? NetworkImageWithLoader(
+                            url: iconPath,
                             height: iconSize,
+                            width: iconSize,
                             fit: BoxFit.contain,
-                            errorBuilder: (_, __, ___) => Icon(
-                              Icons.star_outline,
-                              size: 40.h,
-                              color: maroon,
-                            ),
                           )
                         : Image.asset(
                             iconPath,
@@ -4788,10 +4783,12 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 SvgPicture.network(
-                                  'https://astrobharatai.s3.ap-south-1.amazonaws.com/homepageVideos/Frame+1321314931.svg',
+                                  'https://d3c2un7ipdye89.cloudfront.net/homepageVideos/Frame+1321314931.svg',
                                   height: 32.h,
                                   fit: BoxFit.contain,
                                   alignment: Alignment.centerLeft,
+                                  placeholderBuilder: (context) =>
+                                      const CircularProgressIndicator(),
                                 ),
                                 AutoTranslateText(
                                   'Stars Align, Destiny Divine',
@@ -5081,7 +5078,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Horoscope',
                     onTap: () {
                       Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(AppRoutes.horoscopeForm);
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.horoscopeForm,
+                      );
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -5616,21 +5615,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               shape: BoxShape.circle,
               border: Border.all(color: borderColor, width: 2.w),
             ),
-            child: ClipOval(
-              child: Image.network(
-                profilePicture ?? '',
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey[300],
-                    child: Icon(
-                      Icons.person,
-                      size: 35.w,
-                      color: Colors.grey[600],
-                    ),
-                  );
-                },
-              ),
+            child: NetworkImageWithLoader(
+              url: profilePicture ?? '',
+              fit: BoxFit.cover,
+              isCircular: true,
             ),
           ),
           Center(
@@ -5721,39 +5709,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               shape: BoxShape.circle,
               border: Border.all(color: Colors.red, width: 2.w),
             ),
-            child: ClipOval(
-              child: profilePicture.isNotEmpty
-                  ? CachedNetworkImage(
-                      imageUrl: profilePicture,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        color: Colors.grey[300],
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.deepOrange,
-                            strokeWidth: 2,
-                          ),
-                        ),
-                      ),
-                      errorWidget: (context, url, error) {
-                        return Container(
-                          color: Colors.grey[300],
-                          child: Icon(
-                            Icons.person,
-                            size: 35.h,
-                            color: Colors.grey[600],
-                          ),
-                        );
-                      },
-                    )
-                  : Container(
-                      color: Colors.grey[300],
-                      child: Icon(
-                        Icons.person,
-                        size: 35.h,
-                        color: Colors.grey[600],
-                      ),
-                    ),
+            child: NetworkImageWithLoader(
+              url: profilePicture,
+              fit: BoxFit.contain,
+              isCircular: true,
             ),
           ),
           Center(

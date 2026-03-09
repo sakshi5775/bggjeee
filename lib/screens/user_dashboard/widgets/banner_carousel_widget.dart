@@ -2,14 +2,13 @@ import 'dart:async';
 
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/banner_model.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -442,11 +441,8 @@ class _BannerCarouselWidgetState extends State<BannerCarouselWidget> {
 
   /// Build the appropriate media widget based on banner type
   Widget _buildMediaWidget(BannerItem banner) {
-    print('🎨 Rendering IMAGE widget (PNG/JPG/JPEG)');
-
     // Check if it's a video
     if (banner.isVideo) {
-      print('🎥 Rendering VIDEO widget');
       return _BannerVideoWidget(
         url: banner.mediaUrl,
         onVideoComplete: _onVideoComplete,
@@ -455,34 +451,15 @@ class _BannerCarouselWidgetState extends State<BannerCarouselWidget> {
 
     // Check if it's an SVG
     if (banner.isSvg) {
-      print('🖼️ Rendering SVG widget');
       return _BannerSvgWidget(url: banner.mediaUrl);
     }
 
     // Default: render as image (PNG, JPG, JPEG)
-    print('🖼️ Rendering IMAGE widget (PNG/JPG/JPEG)');
-    return CachedNetworkImage(
-      imageUrl: banner.mediaUrl,
+    return NetworkImageWithLoader(
+      url: banner.mediaUrl,
+      fit: BoxFit.fill,
       width: double.infinity,
       height: double.infinity,
-      fit: BoxFit.fill,
-      placeholder: (context, url) {
-        print('🖼️ Loading image: $url');
-        return const _BannerSkeletonShimmer();
-      },
-      errorWidget: (context, url, error) {
-        print('❌ Error loading banner image: $url - $error');
-        return Container(
-          color: "#6F221E".toColor().withValues(alpha: 0.1),
-          child: Center(
-            child: Icon(
-              Icons.image_not_supported,
-              color: "#6F221E".toColor(),
-              size: 40.w,
-            ),
-          ),
-        );
-      },
     );
   }
 }

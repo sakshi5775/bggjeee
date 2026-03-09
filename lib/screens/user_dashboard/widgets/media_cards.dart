@@ -1,10 +1,10 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/model/instagram_media_model.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/youtube_service.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -54,12 +54,10 @@ class YouTubeMediaCard extends StatelessWidget {
                     borderRadius: BorderRadius.vertical(
                       top: Radius.circular(12.r),
                     ),
-                    child: CachedNetworkImage(
-                      imageUrl: video.thumbnailUrl,
+                    child: NetworkImageWithLoader(
+                      url: video.thumbnailUrl,
                       width: double.infinity,
                       fit: BoxFit.cover,
-                      placeholder: (_, __) => _Placeholder(),
-                      errorWidget: (_, __, ___) => _Placeholder(),
                     ),
                   ),
                   _PlayButton(size: 28.w),
@@ -122,13 +120,11 @@ class YouTubeMediaCard extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8.r),
-                  child: CachedNetworkImage(
-                    imageUrl: video.thumbnailUrl,
+                  child: NetworkImageWithLoader(
+                    url: video.thumbnailUrl,
                     width: 120.w,
                     height: 70.h,
                     fit: BoxFit.cover,
-                    placeholder: (_, __) => _Placeholder(),
-                    errorWidget: (_, __, ___) => _Placeholder(),
                   ),
                 ),
                 _PlayButton(size: 24.w),
@@ -211,11 +207,9 @@ class InstagramMediaCard extends StatelessWidget {
                 Expanded(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12.r),
-                    child: CachedNetworkImage(
-                      imageUrl: media.thumbnailUrl ?? media.mediaUrl,
+                    child: NetworkImageWithLoader(
+                      url: media.thumbnailUrl ?? media.mediaUrl,
                       fit: BoxFit.cover,
-                      placeholder: (_, __) => _Placeholder(),
-                      errorWidget: (_, __, ___) => _Placeholder(),
                     ),
                   ),
                 ),
@@ -266,8 +260,9 @@ class InstagramMediaCard extends StatelessWidget {
                   color: Colors.white.withValues(alpha: 0.8),
                   borderRadius: BorderRadius.circular(6.r),
                 ),
-                child: Image.network(
-                  'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png',
+                child: NetworkImageWithLoader(
+                  url:
+                      'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png',
                   width: 14.w,
                   height: 14.w,
                 ),

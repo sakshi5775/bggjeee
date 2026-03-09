@@ -14,6 +14,8 @@ import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:intl/intl.dart';
 
+import '../../../app_manager/network_image.dart';
+
 class HandwritingAstrologyHistoryView extends StatefulWidget {
   const HandwritingAstrologyHistoryView({Key? key}) : super(key: key);
 
@@ -465,28 +467,10 @@ class _HandwritingAstrologyHistoryViewState
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10.r),
-                  child:
-                      reading.imageUrls != null && reading.imageUrls!.isNotEmpty
-                      ? Image.network(
-                          reading.imageUrls!.first,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Container(
-                            color: '#FFF2E8'.toColor(),
-                            child: Icon(
-                              Icons.edit_note,
-                              size: 40.w,
-                              color: '#EA632B'.toColor(),
-                            ),
-                          ),
-                        )
-                      : Container(
-                          color: '#FFF2E8'.toColor(),
-                          child: Icon(
-                            Icons.edit_note,
-                            size: 40.w,
-                            color: '#EA632B'.toColor(),
-                          ),
-                        ),
+                  child: NetworkImageWithLoader(
+                    url: reading.imageUrls!.first,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               Spacing.w(16),

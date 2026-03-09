@@ -17,6 +17,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
+import '../../../app_manager/network_image.dart';
 import '../../../utils/app_colors.dart';
 
 class AstrologyServicesView extends StatelessWidget {
@@ -585,7 +586,8 @@ class AstrologyServicesView extends StatelessWidget {
                   ],
                 ),
                 GestureDetector(
-                  onTap: () => UserMainController.pushInCurrentTab('/all-astrologers'),
+                  onTap: () =>
+                      UserMainController.pushInCurrentTab('/all-astrologers'),
                   child: AutoTranslateText(
                     'View All →',
                     style: MyTextTheme.mediumBCN.copyWith(
@@ -673,7 +675,10 @@ class AstrologyServicesView extends StatelessWidget {
                   ],
                 ),
                 GestureDetector(
-                  onTap: () => UserMainController.pushInCurrentTab('/all-astrologers', arguments: null),
+                  onTap: () => UserMainController.pushInCurrentTab(
+                    '/all-astrologers',
+                    arguments: null,
+                  ),
                   child: AutoTranslateText(
                     'View All →',
                     style: MyTextTheme.mediumBCN.copyWith(
@@ -785,7 +790,9 @@ class AstrologyServicesView extends StatelessWidget {
                   ],
                 ),
                 GestureDetector(
-                  onTap: () => UserMainController.pushInCurrentTab(AppRoutes.liveAstrologers),
+                  onTap: () => UserMainController.pushInCurrentTab(
+                    AppRoutes.liveAstrologers,
+                  ),
                   child: AutoTranslateText(
                     'View All →',
                     style: MyTextTheme.mediumBCN.copyWith(
@@ -862,8 +869,10 @@ class AstrologyServicesView extends StatelessWidget {
                   ],
                 ),
                 GestureDetector(
-                  onTap: () =>
-                      UserMainController.pushInCurrentTab('/all-astrologers', arguments: 'Vedic'),
+                  onTap: () => UserMainController.pushInCurrentTab(
+                    '/all-astrologers',
+                    arguments: 'Vedic',
+                  ),
                   child: AutoTranslateText(
                     'View All →',
                     style: MyTextTheme.mediumBCN.copyWith(
@@ -914,7 +923,10 @@ class AstrologyServicesView extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (astrologerModel != null) {
-          UserMainController.pushInCurrentTab('/astrologer-detail', arguments: astrologerModel);
+          UserMainController.pushInCurrentTab(
+            '/astrologer-detail',
+            arguments: astrologerModel,
+          );
         }
       },
       child: Container(
@@ -1326,36 +1338,11 @@ class AstrologyServicesView extends StatelessWidget {
 
     // Check if it's a network URL or asset path
     if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-      return Image.network(
-        imageUrl,
+      return NetworkImageWithLoader(
+        url: imageUrl,
         width: size.w,
         height: size.h,
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return Container(
-            width: size.w,
-            height: size.h,
-            color: Colors.grey.withValues(alpha: 0.3),
-            child: Icon(Icons.person, size: (size / 2).w, color: Colors.grey),
-          );
-        },
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Container(
-            width: size.w,
-            height: size.h,
-            color: Colors.grey.withValues(alpha: 0.3),
-            child: Center(
-              child: CircularProgressIndicator(
-                value: loadingProgress.expectedTotalBytes != null
-                    ? loadingProgress.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes!
-                    : null,
-                color: const Color(0xFFDFB343),
-              ),
-            ),
-          );
-        },
       );
     } else {
       // Asset image

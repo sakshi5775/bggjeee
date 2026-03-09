@@ -14,6 +14,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
+import '../../../app_manager/network_image.dart';
+
 class KidsSpecialistAstrologersWidget
     extends BasePage<UserDashboardController> {
   const KidsSpecialistAstrologersWidget({super.key});
@@ -190,37 +192,10 @@ class KidsSpecialistAstrologersWidget
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.white, width: 3.w),
                   ),
-                  child: ClipOval(
-                    child: imagePath.isNotEmpty
-                        ? CachedNetworkImage(
-                            imageUrl: imagePath,
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) => Container(
-                              color: Colors.grey[300],
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  color: AppColors.deepOrange,
-                                  strokeWidth: 2,
-                                ),
-                              ),
-                            ),
-                            errorWidget: (context, url, error) => Container(
-                              color: Colors.grey[300],
-                              child: Icon(
-                                Icons.person,
-                                size: 40.w,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          )
-                        : Container(
-                            color: Colors.grey[300],
-                            child: Icon(
-                              Icons.person,
-                              size: 40.w,
-                              color: Colors.grey[600],
-                            ),
-                          ),
+                  child: NetworkImageWithLoader(
+                    url: imagePath,
+                    fit: BoxFit.cover,
+                    isCircular: true,
                   ),
                 ),
                 // Online Status Indicator

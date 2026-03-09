@@ -5,6 +5,8 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../app_manager/network_image.dart';
+
 class PujaTempleSectionWidget extends StatelessWidget {
   const PujaTempleSectionWidget({super.key});
 
@@ -52,22 +54,11 @@ class PujaTempleSectionWidget extends StatelessWidget {
                   if (temple.image != null && temple.image!.isNotEmpty) ...[
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        temple.image!,
+                      child: NetworkImageWithLoader(
+                        url: temple.image!,
                         height: 150,
                         width: double.infinity,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            height: 150,
-                            color: Colors.grey[300],
-                            child: const Icon(
-                              Icons.temple_hindu,
-                              size: 50,
-                              color: Colors.grey,
-                            ),
-                          );
-                        },
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -83,7 +74,8 @@ class PujaTempleSectionWidget extends StatelessWidget {
                       ),
                     ),
                   // Temple description
-                  if (temple.description != null && temple.description!.isNotEmpty) ...[
+                  if (temple.description != null &&
+                      temple.description!.isNotEmpty) ...[
                     const SizedBox(height: 8),
                     AutoTranslateText(
                       temple.description!,
@@ -95,7 +87,8 @@ class PujaTempleSectionWidget extends StatelessWidget {
                     ),
                   ],
                   // Full address
-                  if (temple.fullAddress != null && temple.fullAddress!.isNotEmpty) ...[
+                  if (temple.fullAddress != null &&
+                      temple.fullAddress!.isNotEmpty) ...[
                     const SizedBox(height: 12),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,7 +126,8 @@ class PujaTempleSectionWidget extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (temple.location!.city != null && temple.location!.city!.isNotEmpty)
+                              if (temple.location!.city != null &&
+                                  temple.location!.city!.isNotEmpty)
                                 AutoTranslateText(
                                   temple.location!.city!,
                                   style: MyTextTheme.mediumBCN.copyWith(
@@ -141,7 +135,8 @@ class PujaTempleSectionWidget extends StatelessWidget {
                                     fontSize: 14,
                                   ),
                                 ),
-                              if (temple.location!.state != null && temple.location!.state!.isNotEmpty)
+                              if (temple.location!.state != null &&
+                                  temple.location!.state!.isNotEmpty)
                                 AutoTranslateText(
                                   temple.location!.state!,
                                   style: MyTextTheme.mediumBCN.copyWith(
@@ -149,7 +144,8 @@ class PujaTempleSectionWidget extends StatelessWidget {
                                     fontSize: 14,
                                   ),
                                 ),
-                              if (temple.location!.pincode != null && temple.location!.pincode!.isNotEmpty)
+                              if (temple.location!.pincode != null &&
+                                  temple.location!.pincode!.isNotEmpty)
                                 AutoTranslateText(
                                   temple.location!.pincode!,
                                   style: MyTextTheme.mediumBCN.copyWith(
@@ -157,7 +153,8 @@ class PujaTempleSectionWidget extends StatelessWidget {
                                     fontSize: 14,
                                   ),
                                 ),
-                              if (temple.location!.country != null && temple.location!.country!.isNotEmpty)
+                              if (temple.location!.country != null &&
+                                  temple.location!.country!.isNotEmpty)
                                 AutoTranslateText(
                                   temple.location!.country!,
                                   style: MyTextTheme.mediumBCN.copyWith(

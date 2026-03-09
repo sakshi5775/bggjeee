@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -33,10 +34,9 @@ class QuoteOfTheDayWidget extends BasePage<UserDashboardController> {
             child: Stack(
               children: [
                 Positioned.fill(
-                  child: Image.network(
-                    AppConstant.quoteOfTheDay,
+                  child: NetworkImageWithLoader(
+                    url: AppConstant.quoteOfTheDay,
                     fit: BoxFit.fitWidth,
-                    alignment: Alignment.topCenter,
                     width: imageWidth,
                   ),
                 ),

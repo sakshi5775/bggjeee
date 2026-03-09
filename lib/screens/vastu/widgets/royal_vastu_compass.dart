@@ -1,3 +1,4 @@
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -259,50 +260,11 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
         assetPath.startsWith('http://') || assetPath.startsWith('https://');
 
     if (isNetworkImage) {
-      return Image.network(
-        assetPath,
+      return NetworkImageWithLoader(
+        url: assetPath,
         width: size,
         height: size,
         fit: BoxFit.contain,
-        filterQuality: FilterQuality.high,
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Container(
-            width: size,
-            height: size,
-            child: Center(
-              child: CircularProgressIndicator(
-                value: loadingProgress.expectedTotalBytes != null
-                    ? loadingProgress.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes!
-                    : null,
-              ),
-            ),
-          );
-        },
-        errorBuilder: (context, error, stackTrace) {
-          // Fallback: Show placeholder if image not found
-          debugPrint('Failed to load compass image: $assetPath - $error');
-          return Container(
-            width: size,
-            height: size,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.grey.withValues(alpha: 0.1),
-              border: Border.all(
-                color: Colors.grey.withValues(alpha: 0.3),
-                width: 1,
-              ),
-            ),
-            child: Center(
-              child: Icon(
-                Icons.compass_calibration,
-                size: size * 0.3,
-                color: Colors.grey.withValues(alpha: 0.5),
-              ),
-            ),
-          );
-        },
       );
     } else {
       return Image.asset(
@@ -312,8 +274,6 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
         fit: BoxFit.contain,
         filterQuality: FilterQuality.high,
         errorBuilder: (context, error, stackTrace) {
-          // Fallback: Show placeholder if image not found
-          debugPrint('Failed to load compass image: $assetPath - $error');
           return Container(
             width: size,
             height: size,

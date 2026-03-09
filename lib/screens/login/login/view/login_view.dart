@@ -10,6 +10,8 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../app_manager/network_image.dart';
+
 class LoginView extends BasePage<LoginController> {
   const LoginView({super.key});
 
@@ -42,24 +44,9 @@ class LoginView extends BasePage<LoginController> {
                     children: [
                       /// 🔹 Main Image
                       Positioned.fill(
-                        child: Image.network(
-                          AppConstant.cardConsultation,
+                        child: NetworkImageWithLoader(
+                          url: AppConstant.cardConsultation,
                           fit: BoxFit.cover,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          },
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Center(
-                              child: Icon(
-                                Icons.error,
-                                size: 48,
-                                color: Colors.grey,
-                              ),
-                            );
-                          },
                         ),
                       ),
 

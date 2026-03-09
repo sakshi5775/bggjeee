@@ -23,8 +23,7 @@ import '../../../core/routes/app_routes.dart';
 class ConsultationHistoryView extends StatefulWidget {
   final bool showBackButton;
 
-  const ConsultationHistoryView({Key? key, this.showBackButton = true})
-    : super(key: key);
+  const ConsultationHistoryView({super.key, this.showBackButton = true});
 
   @override
   State<ConsultationHistoryView> createState() =>
@@ -113,7 +112,8 @@ class _ConsultationHistoryViewState extends State<ConsultationHistoryView>
 
                 customActions: [
                   GestureDetector(
-                    onTap: () => UserMainController.pushInCurrentTab(AppRoutes.wallet),
+                    onTap: () =>
+                        UserMainController.pushInCurrentTab(AppRoutes.wallet),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -143,7 +143,9 @@ class _ConsultationHistoryViewState extends State<ConsultationHistoryView>
                 indicatorColor: AppColors.deepOrange,
                 indicatorWeight: 3,
                 labelColor: '#3D0C11'.toColor(),
-                unselectedLabelColor: '#6F221E'.toColor().withValues(alpha: 0.6),
+                unselectedLabelColor: '#6F221E'.toColor().withValues(
+                  alpha: 0.6,
+                ),
                 labelStyle: MyTextTheme.mediumBCB.copyWith(
                   fontWeight: FontWeight.w600,
                   color: '#3D0C11'.toColor(),
@@ -239,7 +241,7 @@ class _ChatHistoryTab extends StatelessWidget {
   ) {
     final date = session.completedAt ?? session.createdAt;
     final statusColor = controller.getStatusColor(session.status);
-    
+
     // Format duration
     String durationText = 'N/A';
     if (session.elapsedSeconds != null && session.elapsedSeconds! > 0) {
@@ -251,7 +253,7 @@ class _ChatHistoryTab extends StatelessWidget {
         durationText = '${seconds}s';
       }
     }
-    
+
     // Format amount
     final amount = session.totalAmount ?? 0.0;
     final currency = session.billingConfig.currency;
@@ -394,10 +396,7 @@ class _ChatHistoryTab extends StatelessWidget {
           OutlinedButton.icon(
             onPressed: () => controller.viewChatHistory(session.chatId),
             icon: Icon(Icons.chat_bubble_outline, size: 16.w),
-            label: AutoTranslateText(
-              'View Chat',
-              style: AppTypography.label,
-            ),
+            label: AutoTranslateText('View Chat', style: AppTypography.label),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.orangeGradient.colors.first,
               side: BorderSide(

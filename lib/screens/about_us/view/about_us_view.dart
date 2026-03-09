@@ -1,3 +1,4 @@
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/app_manager/svg_assets.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -34,7 +35,8 @@ class AboutUsView extends StatelessWidget {
                       left: 16.w,
                       right: 16.w,
                       top: 16.h,
-                      bottom: 16.h + 70.h + MediaQuery.of(context).padding.bottom,
+                      bottom:
+                          16.h + 70.h + MediaQuery.of(context).padding.bottom,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -603,49 +605,49 @@ class AboutUsView extends StatelessWidget {
         'label': 'Face Reading',
         'route': AppRoutes.faceReading,
         'image':
-            'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/face2.jpeg',
+            'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/face2.jpeg',
       },
       {
         'label': 'Palm Reading',
         'route': AppRoutes.palmReading,
         'image':
-            'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/hand.jpeg',
+            'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/hand.jpeg',
       },
       {
         'label': 'Vastu Reading',
         'route': AppRoutes.vastuDashboard,
         'image':
-            'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/vastu.jpeg',
+            'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/vastu.jpeg',
       },
       {
         'label': 'Ramal Shastra',
         'route': AppRoutes.ramalShastra,
         'image':
-            'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/ramal.jpeg',
+            'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/ramal.jpeg',
       },
       {
         'label': 'Writing Astrology',
         'route': AppRoutes.handwritingAstrology,
         'image':
-            'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/writing.jpeg',
+            'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/writing.jpeg',
       },
       {
         'label': 'Prashna Kundli',
         'route': AppRoutes.prashnaKundali,
         'image':
-            'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/PrashanKundli.jpg',
+            'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/PrashanKundli.jpg',
       },
       {
         'label': 'Tarot Reading',
         'route': AppRoutes.tarotReading,
         'image':
-            'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/TarotReading.png',
+            'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/TarotReading.png',
       },
       {
         'label': 'Carrot Astrology',
         'route': AppRoutes.carrotAstrology,
         'image':
-            'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/carrotAstro.png',
+            'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/carrotAstro.png',
       },
     ];
 
@@ -742,24 +744,11 @@ class AboutUsView extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(isNetworkImage ? 10.r : 0),
-              child: Image.network(
-                iconUrl,
+              child: NetworkImageWithLoader(
+                url: iconUrl,
                 width: 36.w,
                 height: 36.w,
                 fit: isNetworkImage ? BoxFit.cover : BoxFit.contain,
-                errorBuilder: (_, __, ___) => Container(
-                  width: 36.w,
-                  height: 36.w,
-                  decoration: BoxDecoration(
-                    color: Colors.orange.shade50,
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Icon(
-                    Icons.auto_awesome,
-                    color: AppColors.deepOrange,
-                    size: 20.h,
-                  ),
-                ),
               ),
             ),
             SizedBox(width: 10.w),

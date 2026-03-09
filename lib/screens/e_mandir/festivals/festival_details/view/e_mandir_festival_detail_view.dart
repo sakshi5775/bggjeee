@@ -8,6 +8,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/core/services/share_service.dart';
 
+import '../../../../../app_manager/network_image.dart';
+
 class EMandirFestivalDetailView extends GetView<FestivalDetailController> {
   const EMandirFestivalDetailView({super.key});
 
@@ -74,16 +76,12 @@ class EMandirFestivalDetailView extends GetView<FestivalDetailController> {
                           tag: 'festival_image_${festival.id}',
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(16.r),
-                            child: festival.image.startsWith('http')
-                                ? Image.network(
-                                    festival.image,
-                                    width: double.infinity,
-                                    height: 220.h,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (_, __, ___) =>
-                                        _imagePlaceholder(),
-                                  )
-                                : _imagePlaceholder(),
+                            child: NetworkImageWithLoader(
+                              url: festival.image,
+                              width: double.infinity,
+                              height: 220.h,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
 
@@ -203,22 +201,6 @@ class EMandirFestivalDetailView extends GetView<FestivalDetailController> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _imagePlaceholder() {
-    return Container(
-      width: double.infinity,
-      height: 220.h,
-      decoration: BoxDecoration(
-        color: Colors.orange.shade50,
-        borderRadius: BorderRadius.circular(16.r),
-      ),
-      child: Icon(
-        Icons.temple_hindu_rounded,
-        size: 60.r,
-        color: Colors.orange.shade300,
       ),
     );
   }

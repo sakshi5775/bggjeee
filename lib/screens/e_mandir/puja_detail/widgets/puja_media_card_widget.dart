@@ -4,6 +4,8 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../app_manager/network_image.dart';
+
 class PujaMediaCardWidget extends StatelessWidget {
   const PujaMediaCardWidget({super.key});
 
@@ -35,29 +37,10 @@ class PujaMediaCardWidget extends StatelessWidget {
               // Background image
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: puja.image != null && puja.image!.isNotEmpty
-                    ? Image.network(
-                        puja.image!,
-                        fit: BoxFit.fill,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey[300],
-                            child: const Icon(
-                              Icons.image_not_supported,
-                              size: 50,
-                              color: Colors.grey,
-                            ),
-                          );
-                        },
-                      )
-                    : Container(
-                        color: Colors.grey[300],
-                        child: const Icon(
-                          Icons.image_not_supported,
-                          size: 50,
-                          color: Colors.grey,
-                        ),
-                      ),
+                child: NetworkImageWithLoader(
+                  url: puja.image!,
+                  fit: BoxFit.fill,
+                ),
               ),
             ],
           ),

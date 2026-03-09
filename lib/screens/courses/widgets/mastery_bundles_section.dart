@@ -1,4 +1,5 @@
-﻿import 'package:astrobharataiuser/core/value/dimension.dart';
+﻿import 'package:astrobharataiuser/app_manager/network_image.dart';
+import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/learning_journey_dialog.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -151,18 +152,11 @@ class MasteryBundlesSection extends StatelessWidget {
             // 1. Image at the top (Full Width)
             ClipRRect(
               borderRadius: BorderRadius.vertical(top: Radius.circular(15.r)),
-              child: Image.network(
-                image,
+              child: NetworkImageWithLoader(
+                url: image,
                 height: Get.width > 600 ? 220.h : 150.h,
-                width: double.infinity,
+                width: Get.width,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    height: 120.h,
-                    color: Colors.grey[300],
-                    child: const Center(child: Icon(Icons.image)),
-                  );
-                },
               ),
             ),
             Spacing.h(12),

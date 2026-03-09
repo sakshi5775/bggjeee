@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/onboarding/controller/onboarding_controller.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
@@ -295,23 +296,9 @@ class _BgImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Check if img is a URL (starts with http) or local asset
-    if (img.startsWith('http://') || img.startsWith('https://')) {
-      return SizedBox.expand(
-        child: Image.network(
-          img,
-          fit: BoxFit.cover,
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return const Center(child: CircularProgressIndicator());
-          },
-          errorBuilder: (context, error, stackTrace) {
-            return const Center(child: Icon(Icons.error));
-          },
-        ),
-      );
-    } else {
-      return SizedBox.expand(child: Image.asset(img, fit: BoxFit.cover));
-    }
+    return SizedBox.expand(
+      child: NetworkImageWithLoader(url: img, fit: BoxFit.cover),
+    );
   }
 }
 

@@ -3,6 +3,8 @@ import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../app_manager/network_image.dart';
+
 class ShopBannerCarouselWidget extends StatefulWidget {
   const ShopBannerCarouselWidget({super.key});
 
@@ -91,93 +93,18 @@ class _ShopBannerCarouselWidgetState extends State<ShopBannerCarouselWidget> {
               // Get the actual image index using modulo
               final imageIndex = index % actualItemCount;
               final imageUrl = _bannerImages[imageIndex];
-              final isNetworkImage =
-                  imageUrl.startsWith('http://') ||
-                  imageUrl.startsWith('https://');
 
               return Container(
                 margin: EdgeInsets.symmetric(horizontal: 0),
-                child: isNetworkImage
-                    ? Image.network(
-                        imageUrl,
-                        fit: BoxFit.fill,
-                        width: double.infinity,
-                        height: double.infinity,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Container(
-                            color: Colors.grey[200],
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                value:
-                                    loadingProgress.expectedTotalBytes != null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
-                                    : null,
-                              ),
-                            ),
-                          );
-                        },
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey[300],
-                            child: Icon(
-                              Icons.image,
-                              size: 50.w,
-                              color: Colors.grey[600],
-                            ),
-                          );
-                        },
-                      )
-                    : Image.asset(
-                        imageUrl,
-                        fit: BoxFit.fill,
-                        width: double.infinity,
-                        height: double.infinity,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey[300],
-                            child: Icon(
-                              Icons.image,
-                              size: 50.w,
-                              color: Colors.grey[600],
-                            ),
-                          );
-                        },
-                      ),
+                child: NetworkImageWithLoader(
+                  url: imageUrl,
+                  fit: BoxFit.fill,
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
               );
             },
           ),
-
-          // Page indicators - show 5 dots
-          // Positioned(
-          //   bottom: 8.55.h,
-          //   left: 0,
-          //   right: 0,
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.center,
-          //     children: List.generate(actualItemCount, (index) {
-          //       // Calculate which indicator should be active based on modulo
-          //       final activeIndex = _currentPage % actualItemCount;
-          //       return Container(
-          //         margin: EdgeInsets.symmetric(horizontal: 2.85.w),
-          //         width: 22.81.w,
-          //         height: 5.7.h,
-          //         decoration: BoxDecoration(
-          //           borderRadius: BorderRadius.circular(2.85.r),
-          //           gradient: activeIndex == index
-          //               ? LinearGradient(
-          //                   colors: ['#FF8C42'.toColor(), '#E63946'.toColor()],
-          //                 )
-          //               : null,
-          //           color: activeIndex == index
-          //               ? null
-          //               : Colors.white.withValues(alpha: 0.3),
-          //         ),
-          //       );
-          //     }),
-          //   ),
-          // ),
         ],
       ),
     );

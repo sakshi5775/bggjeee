@@ -1,5 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/palm_reading_model.dart';
 import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_history_controller.dart';
@@ -372,19 +373,10 @@ class PalmReadingHistoryView extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8.r),
-                child: item.imageUrl != null && item.imageUrl!.isNotEmpty
-                    ? Image.network(
-                        item.imageUrl!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Icon(
-                            Icons.pan_tool,
-                            size: 40.w,
-                            color: Colors.grey[400],
-                          );
-                        },
-                      )
-                    : Icon(Icons.pan_tool, size: 40.w, color: Colors.grey[400]),
+                child: NetworkImageWithLoader(
+                  url: item.imageUrl!,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             Spacing.w(16),

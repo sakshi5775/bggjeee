@@ -1,5 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -191,17 +192,9 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24.r),
-        child: Image.network(
-          AppConstant.vastu,
+        child: NetworkImageWithLoader(
+          url: AppConstant.vastu,
           fit: BoxFit.cover,
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return const Center(child: CircularProgressIndicator());
-          },
-          errorBuilder: (_, __, ___) => Container(
-            color: "#F38B3B".toColor(),
-            child: Icon(Icons.explore, size: 60.w, color: Colors.white),
-          ),
         ),
       ),
     );
@@ -238,7 +231,8 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
                     subtitle: category['subtitle'],
                     icon: category['icon'],
                     color: category['color'],
-                    onTap: () => UserMainController.pushInCurrentTab(category['route']),
+                    onTap: () =>
+                        UserMainController.pushInCurrentTab(category['route']),
                   ),
                 ),
               );

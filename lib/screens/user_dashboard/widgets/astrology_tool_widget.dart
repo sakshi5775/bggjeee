@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -19,56 +19,55 @@ class AstrologyToolWidget extends StatelessWidget {
       'label': 'Face Reading',
       'route': AppRoutes.faceReading,
       'image':
-          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/face2.jpeg',
+          'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/face2.jpeg',
       'pricingKey': 'face_reading',
     },
     {
       'label': 'Palm Reading',
       'route': AppRoutes.palmReading,
-      'image':
-          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/hand.jpeg',
+      'image': 'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/hand.jpeg',
       'pricingKey': 'palmistry',
     },
     {
       'label': 'Vastu Reading',
       'route': AppRoutes.vastuDashboard,
       'image':
-          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/vastu.jpeg',
+          'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/vastu.jpeg',
       'pricingKey': '',
     },
     {
       'label': 'Ramal Shastra',
       'route': AppRoutes.ramalShastra,
       'image':
-          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/ramal.jpeg',
+          'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/ramal.jpeg',
       'pricingKey': 'ramal_shastra',
     },
     {
       'label': 'Writing Astrology',
       'route': AppRoutes.handwritingAstrology,
       'image':
-          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/writing.jpeg',
+          'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/writing.jpeg',
       'pricingKey': 'handwriting_analysis',
     },
     {
       'label': 'Prashna Kundli',
       'route': AppRoutes.prashnaKundali,
       'image':
-          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/PrashanKundli.jpg',
+          'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/PrashanKundli.jpg',
       'pricingKey': 'prashna_kundali',
     },
     {
       'label': 'Tarot Reading',
       'route': AppRoutes.tarotReading,
       'image':
-          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/TarotReading.png',
+          'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/TarotReading.png',
       'pricingKey': '',
     },
     {
       'label': 'Carrot Astrology',
       'route': AppRoutes.carrotAstrology,
       'image':
-          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/carrotAstro.png',
+          'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/carrotAstro.png',
       'pricingKey': 'carrot_astrology',
     },
   ];
@@ -135,49 +134,7 @@ class AstrologyToolWidget extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    CachedNetworkImage(
-                      imageUrl: imageUrl,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Colors.grey.shade200,
-                              Colors.grey.shade300,
-                            ],
-                          ),
-                        ),
-                        child: Center(
-                          child: SizedBox(
-                            width: 20.w,
-                            height: 20.h,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(maroon),
-                            ),
-                          ),
-                        ),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              maroon.withValues(alpha: 0.1),
-                              maroon.withValues(alpha: 0.2),
-                            ],
-                          ),
-                        ),
-                        child: Icon(
-                          Icons.image_not_supported_outlined,
-                          size: 28.w,
-                          color: maroon.withValues(alpha: 0.5),
-                        ),
-                      ),
-                    ),
+                    NetworkImageWithLoader(url: imageUrl, fit: BoxFit.cover),
                     // Subtle gradient overlay for better text readability
                     Positioned(
                       bottom: 0,

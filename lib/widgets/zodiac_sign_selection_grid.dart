@@ -1,4 +1,5 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -92,42 +93,10 @@ class ZodiacSignSelectionGrid extends StatelessWidget {
                     : EdgeInsets.all(12.w),
                 child: Transform.scale(
                   scale: name.toLowerCase() == 'pisces' ? 1.45 : 1.0,
-                  child:
-                      (imagePath.startsWith('http://') ||
-                          imagePath.startsWith('https://'))
-                      ? Image.network(
-                          imagePath,
-                          fit: BoxFit.contain,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Center(
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  cardBorderColor ?? AppColors.deepOrange,
-                                ),
-                              ),
-                            );
-                          },
-                          errorBuilder: (context, error, stackTrace) {
-                            return Icon(
-                              Icons.star,
-                              size: 40.w,
-                              color: cardBorderColor ?? AppColors.deepOrange,
-                            );
-                          },
-                        )
-                      : Image.asset(
-                          imagePath,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Icon(
-                              Icons.star,
-                              size: 40.w,
-                              color: cardBorderColor ?? AppColors.deepOrange,
-                            );
-                          },
-                        ),
+                  child: NetworkImageWithLoader(
+                    url: imagePath,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
             ),

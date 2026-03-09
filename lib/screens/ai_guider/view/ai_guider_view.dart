@@ -498,7 +498,7 @@ class _AiGuiderViewState extends State<AiGuiderView>
     return Column(
       children: [
         SvgPicture.network(
-          'https://astrobharatai.s3.ap-south-1.amazonaws.com/homepageVideos/Frame+1321314931.svg',
+          'https://d3c2un7ipdye89.cloudfront.net/homepageVideos/Frame+1321314931.svg',
           height: 36.h,
           fit: BoxFit.contain,
         ),

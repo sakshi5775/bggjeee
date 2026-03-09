@@ -13,6 +13,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
+import '../../../app_manager/network_image.dart';
+
 class CoursesSectionWidget extends BasePage<UserDashboardController> {
   const CoursesSectionWidget({super.key});
 
@@ -133,7 +135,10 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
           );
         } catch (e) {
           // Fallback if controller not found
-          UserMainController.pushInCurrentTab(AppRoutes.courseDetail, arguments: course.id);
+          UserMainController.pushInCurrentTab(
+            AppRoutes.courseDetail,
+            arguments: course.id,
+          );
         }
       },
       child: SizedBox(
@@ -150,22 +155,12 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10.r),
-                    child: thumbnail.isNotEmpty
-                        ? CachedNetworkImage(
-                            imageUrl: thumbnail,
-                            width: cardWidth.w,
-                            height: thumbHeight.h,
-                            fit: BoxFit.cover,
-                            placeholder: (_, __) => _thumbnailPlaceholder(
-                              cardWidth.w,
-                              thumbHeight.h,
-                            ),
-                            errorWidget: (_, __, ___) => _thumbnailPlaceholder(
-                              cardWidth.w,
-                              thumbHeight.h,
-                            ),
-                          )
-                        : _thumbnailPlaceholder(cardWidth.w, thumbHeight.h),
+                    child: NetworkImageWithLoader(
+                      url: thumbnail,
+                      fit: BoxFit.cover,
+                      width: cardWidth.w,
+                      height: thumbHeight.h,
+                    ),
                   ),
                   Container(
                     width: 38.w,
@@ -205,31 +200,6 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _thumbnailPlaceholder(double w, double h) {
-    return Container(
-      width: w,
-      height: h,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.r),
-        gradient: LinearGradient(
-          colors: [
-            '#FCE5AA'.toColor(),
-            AppColors.deepOrange.withValues(alpha: 0.2),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Center(
-        child: Icon(
-          Icons.school_rounded,
-          size: 36.w,
-          color: AppColors.deepOrange.withValues(alpha: 0.6),
         ),
       ),
     );

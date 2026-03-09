@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:astrobharataiuser/core/services/share_service.dart';
 
+import '../../../../../app_manager/network_image.dart';
+
 class DailyThoughtsListWidget extends StatelessWidget {
   final List<DailyThoughtItem> dailyThoughts;
 
@@ -28,17 +30,9 @@ class DailyThoughtsListWidget extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.network(
-                      thought.imageUrl,
+                    NetworkImageWithLoader(
+                      url: thought.imageUrl,
                       fit: BoxFit.fill,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Colors.grey[200],
-                          child: const Center(
-                            child: Icon(Icons.error, color: Colors.grey),
-                          ),
-                        );
-                      },
                     ),
                     Positioned(
                       top: 12.h,

@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -143,36 +144,14 @@ class KundliChartWidget extends StatelessWidget {
                     left: isBoy ? null : 8.w,
                     right: isBoy ? 8.w : null,
                     top: 8.h,
-                    child: ClipOval(
-                      child: Image.network(
-                        isBoy ? AppConstant.kundliBoy : AppConstant.kundliGirl,
-                        width: 50.w,
-                        height: 50.w,
-                        fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        },
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            width: 50.w,
-                            height: 50.w,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: AppColors.deepOrange.withValues(
-                                alpha: 0.2,
-                              ),
-                            ),
-                            child: Icon(
-                              Icons.person,
-                              size: 25.w,
-                              color: '#68171E'.toColor(),
-                            ),
-                          );
-                        },
-                      ),
+                    child: NetworkImageWithLoader(
+                      url: isBoy
+                          ? AppConstant.kundliBoy
+                          : AppConstant.kundliGirl,
+                      width: 50.w,
+                      height: 50.w,
+                      fit: BoxFit.cover,
+                      isCircular: true,
                     ),
                   ),
 

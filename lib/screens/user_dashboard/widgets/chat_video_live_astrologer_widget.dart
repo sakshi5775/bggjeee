@@ -38,7 +38,9 @@ class AllAstrologerWidget extends BasePage<UserDashboardController> {
                   padding: EdgeInsets.only(right: 6.w),
                   child: GestureDetector(
                     onTap: () {
-                      UserMainController.pushInCurrentTab(AppRoutes.allAstrologers);
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.allAstrologers,
+                      );
                     },
                     child: AutoTranslateText(
                       "View All",
@@ -201,7 +203,9 @@ class ChatCallAstrologerWidget extends BasePage<UserDashboardController> {
                   padding: EdgeInsets.only(right: 6.w),
                   child: GestureDetector(
                     onTap: () {
-                      UserMainController.pushInCurrentTab(AppRoutes.allAstrologers);
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.allAstrologers,
+                      );
                     },
                     child: AutoTranslateText(
                       "View All",
@@ -264,33 +268,13 @@ class ChatCallAstrologerWidget extends BasePage<UserDashboardController> {
                                 //   fit: BoxFit.cover,
                                 //   isCircular: true,
                                 // ),
-                                Container(
+                                SizedBox(
                                   height: 60.w,
                                   width: 60.w,
-                                  child: ClipOval(
-                                    child: CachedNetworkImage(
-                                      imageUrl: astrologer.profilePicture ?? '',
-                                      fit: BoxFit.fill,
-                                      placeholder: (context, url) => Container(
-                                        color: Colors.grey[300],
-                                        child: Center(
-                                          child: CircularProgressIndicator(
-                                            color: AppColors.deepOrange,
-                                            strokeWidth: 2,
-                                          ),
-                                        ),
-                                      ),
-                                      errorWidget: (context, url, error) {
-                                        return Container(
-                                          color: Colors.grey[300],
-                                          child: Icon(
-                                            Icons.person,
-                                            size: 35.w,
-                                            color: Colors.grey[600],
-                                          ),
-                                        );
-                                      },
-                                    ),
+                                  child: NetworkImageWithLoader(
+                                    url: astrologer.profilePicture ?? '',
+                                    fit: BoxFit.fill,
+                                    isCircular: true,
                                   ),
                                 ),
                                 // Green dot indicator for online astrologers
