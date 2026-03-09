@@ -49,8 +49,8 @@ class UserMainController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Default initial arguments for better UX on first visit
-    _tabInitialArguments[1] = {'availability': 'CHAT'};
+    // Tab 1 (Consult): no availability filter = show all three (Chat, Call, Video) per card
+    _tabInitialArguments[1] = null;
     _tabInitialArguments[3] = {'isFeatured': true};
   }
 

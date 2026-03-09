@@ -12,12 +12,14 @@ class AppRoutes {
   static const String userDashboard = '/user-dashboard';
   static const String astrologyServices = '/astrology-services';
   static const String allAstrologers = '/all-astrologers';
+  static const String allServices = '/all-services';
   static const String astrologerDetail = '/astrologer-detail';
   static const String liveAstrologers = '/live-astrologers';
   static const String booking = '/booking';
   static const String chat = '/chat';
   static const String astrologerChat = '/astrologer-chat';
   static const String astrologerChatHistory = '/astrologer-chat-history';
+  static const String chatHistoryDetail = '/chat-history-detail';
   static const String consultationHistory = '/consultation-history';
 
   static const String allVideos = '/all-videos';

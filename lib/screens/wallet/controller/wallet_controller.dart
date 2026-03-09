@@ -1,15 +1,10 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
-import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/wallet_model.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/user_profile_service.dart';
 import 'package:astrobharataiuser/screens/wallet/service/wallet_service.dart';
 import 'package:astrobharataiuser/screens/wallet/service/wallet_razorpay_service.dart';
-import 'package:astrobharataiuser/utils/app_colors.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:astrobharataiuser/screens/wallet/widgets/wallet_success_dialog.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 
@@ -41,8 +36,11 @@ class WalletController extends BaseController {
   final RxInt total = 0.obs;
 
   // Filters
-  final RxString selectedStatus = ''.obs; // Empty means all statuses
-  final RxString sortOrder = 'NEWEST'.obs; // NEWEST, OLDEST
+  final RxString selectedStatus = ''.obs;
+  final RxString selectedType = ''.obs; // '', 'RECHARGE', 'DEDUCTION'
+  final Rx<DateTime?> dateFrom = Rx<DateTime?>(null);
+  final Rx<DateTime?> dateTo = Rx<DateTime?>(null);
+  final RxString sortOrder = 'NEWEST'.obs;
   final List<String> statusOptions = [
     '',
     'INITIATED',
@@ -51,6 +49,7 @@ class WalletController extends BaseController {
     'FAILED',
     'CANCELLED',
   ];
+  static const List<String> typeOptions = ['', 'RECHARGE', 'DEDUCTION'];
 
   // Recharge process
   final RxBool isInitiatingRecharge = false.obs;
@@ -148,115 +147,11 @@ class WalletController extends BaseController {
 
   void _showPaymentSuccessModal() {
     Get.dialog(
-      PopScope(
-        canPop: false, // Prevent back button from closing
-        child: Dialog(
-          backgroundColor: Colors.transparent,
-          insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.white, AppColors.cream],
-              ),
-              borderRadius: BorderRadius.circular(30.r),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.15),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Header with gradient
-                Container(
-                  padding: EdgeInsets.all(24.w),
-                  decoration: BoxDecoration(
-                    gradient: AppColors.primaryGradient,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(30.r),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: AutoTranslateText(
-                          'Recharge Successful',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize: 24.sp,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Content
-                Padding(
-                  padding: EdgeInsets.all(32.w),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Success Icon
-                      Container(
-                        width: 80.w,
-                        height: 80.w,
-                        decoration: BoxDecoration(
-                          color: AppColors.success.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.check_circle,
-                          color: AppColors.success,
-                          size: 50.w,
-                        ),
-                      ),
-                      Spacing.h(24),
-                      // Success Message
-                      AutoTranslateText(
-                        'Wallet Recharged Successfully!',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.w600,
-                          color: '#68171E'.toColor(),
-                        ),
-                      ),
-                      Spacing.h(12),
-                      AutoTranslateText(
-                        'Your wallet has been recharged successfully. You can now use the balance for purchases.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 14.sp,
-                          color: Colors.grey[600],
-                          height: 1.5,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+      const WalletRechargeSuccessDialog(),
       barrierDismissible: false,
     );
-
-    // Auto-close after 3 seconds
     Future.delayed(const Duration(seconds: 3), () {
-      if (Get.isDialogOpen == true) {
-        Get.back(); // Close success modal
-      }
+      if (Get.isDialogOpen == true) Get.back();
     });
   }
 
@@ -435,18 +330,48 @@ class WalletController extends BaseController {
     isLoadingMore.value = false;
   }
 
-  /// Filter by status
   void filterByStatus(String? status) {
     selectedStatus.value = status ?? '';
     _applyFilterAndPaginate();
   }
 
+  void filterByType(String? type) {
+    selectedType.value = type ?? '';
+    _applyFilterAndPaginate();
+  }
+
+  void setDateRange(DateTime? from, DateTime? to) {
+    dateFrom.value = from;
+    dateTo.value = to;
+    _applyFilterAndPaginate();
+  }
+
+  void clearDateFilter() {
+    dateFrom.value = null;
+    dateTo.value = null;
+    _applyFilterAndPaginate();
+  }
+
+  bool get hasActiveFilters =>
+      selectedStatus.value.isNotEmpty ||
+      selectedType.value.isNotEmpty ||
+      dateFrom.value != null ||
+      dateTo.value != null;
+
+  void clearAllFilters() {
+    selectedStatus.value = '';
+    selectedType.value = '';
+    dateFrom.value = null;
+    dateTo.value = null;
+    _applyFilterAndPaginate();
+  }
+
   /// Apply filter and reset pagination
   void _applyFilterAndPaginate() {
-    if (selectedStatus.value.isEmpty) {
-      _filteredTransactions = List.from(_allTransactions);
-    } else {
-      _filteredTransactions = _allTransactions.where((item) {
+    List<dynamic> list = List.from(_allTransactions);
+
+    if (selectedStatus.value.isNotEmpty) {
+      list = list.where((item) {
         String status = '';
         if (item is WalletRechargeHistoryItem) {
           status = item.status;
@@ -457,6 +382,39 @@ class WalletController extends BaseController {
       }).toList();
     }
 
+    if (selectedType.value.isNotEmpty) {
+      list = list.where((item) {
+        if (item is WalletTransaction) {
+          return item.type.toUpperCase() == selectedType.value.toUpperCase();
+        }
+        if (item is WalletRechargeHistoryItem) {
+          return selectedType.value.toUpperCase() == 'RECHARGE';
+        }
+        return false;
+      }).toList();
+    }
+
+    final from = dateFrom.value;
+    final to = dateTo.value;
+    if (from != null || to != null) {
+      list = list.where((item) {
+        DateTime? dt;
+        if (item is WalletTransaction) {
+          dt = item.createdAtDate;
+        } else if (item is WalletRechargeHistoryItem) {
+          dt = item.initiatedAtDate ?? item.createdAtDate;
+        }
+        if (dt == null) return false;
+        if (from != null && dt.isBefore(DateTime(from.year, from.month, from.day))) return false;
+        if (to != null) {
+          final endOfDay = DateTime(to.year, to.month, to.day, 23, 59, 59);
+          if (dt.isAfter(endOfDay)) return false;
+        }
+        return true;
+      }).toList();
+    }
+
+    _filteredTransactions = list;
     currentOffset.value = 0;
     combinedHistory.clear();
     _loadNextPage();

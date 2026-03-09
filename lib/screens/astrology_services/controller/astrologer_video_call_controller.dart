@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/screens/astrology_services/services/agora_call
 import 'package:astrobharataiuser/screens/astrology_services/services/call_service.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/call_service.dart'
     show ServiceNotEnabledException;
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/astrology_services/widgets/astrologer_review_dialog.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/astrologer_review_controller.dart';
 import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
@@ -44,7 +45,6 @@ class AstrologerVideoCallController extends BaseController {
   String? _token;
   String? _appId;
   int? _remoteUid;
-  int? _timeoutSeconds;
   int?
   _availableMinutes; // Max available minutes from wallet (for countdown UX)
   double? _walletBalance; // Current wallet balance (updated via WebSocket)
@@ -52,6 +52,8 @@ class AstrologerVideoCallController extends BaseController {
   Timer? _countdownTimer; // Timer for countdown
   Timer? _billingTimer; // Timer for manual billing calculation (fallback)
   Timer? _walletSyncTimer; // Timer for periodic wallet balance sync
+  Timer? _ringingCountdownTimer; // 2-min wait for astrologer to accept
+  final RxInt ringingSecondsRemaining = 120.obs;
   int _remainingSeconds = 0; // Remaining seconds based on availableMinutes
   bool _durationExpiredNotified = false;
   DateTime?
@@ -100,8 +102,7 @@ class AstrologerVideoCallController extends BaseController {
     } else if (args is AstrologerModel) {
       astrologer = args;
     } else {
-      // Handle error case
-      Get.back();
+      Get.offNamed(AppRoutes.userDashboard);
       return;
     }
 
@@ -566,30 +567,45 @@ class AstrologerVideoCallController extends BaseController {
           isRinging.value = false;
           break;
         case CallState.timeout:
-          callStatus.value = 'Busy';
+          callStatus.value = 'Not accepted';
           isLoading.value = false;
           isRinging.value = false;
-          Future.delayed(const Duration(seconds: 1), () => Get.back());
+          _cancelAllTimers();
+          Get.snackbar(
+            '',
+            'Astrologer did not accept the call.',
+            snackPosition: SnackPosition.BOTTOM,
+            duration: const Duration(seconds: 2),
+          );
+          try { Get.offNamed(AppRoutes.userDashboard); } catch (_) {}
           break;
         case CallState.notAnswered:
-          callStatus.value = 'Busy';
+          callStatus.value = 'Not accepted';
           isLoading.value = false;
           isRinging.value = false;
-          Future.delayed(const Duration(seconds: 1), () => Get.back());
+          _cancelAllTimers();
+          Get.snackbar(
+            '',
+            'Astrologer did not accept the call.',
+            snackPosition: SnackPosition.BOTTOM,
+            duration: const Duration(seconds: 2),
+          );
+          try { Get.offNamed(AppRoutes.userDashboard); } catch (_) {}
           break;
         case CallState.endedByRemote:
           callStatus.value = 'Call Ended';
           isLoading.value = false;
           isRinging.value = false;
-          Future.delayed(const Duration(seconds: 1), () {
-            endCall(); // Use endCall to show review prompt
+          Future.delayed(const Duration(milliseconds: 400), () {
+            endCall();
           });
           break;
       }
     };
 
     _agoraManager.onUserJoined = (uid) {
-      // Astrologer has joined - call is now connected
+      _ringingCountdownTimer?.cancel();
+      _ringingCountdownTimer = null;
       _remoteUid = uid;
       callStatus.value = 'Connected';
       isRinging.value = false;
@@ -721,10 +737,14 @@ class AstrologerVideoCallController extends BaseController {
       // Handle specific error messages
       if (error == 'Busy') {
         callStatus.value = 'Busy';
-        Future.delayed(const Duration(seconds: 1), () => Get.back());
+        Future.delayed(const Duration(seconds: 1), () {
+          try { Get.offNamed(AppRoutes.userDashboard); } catch (_) {}
+        });
       } else if (error == 'Call Ended') {
         callStatus.value = 'Call Ended';
-        Future.delayed(const Duration(seconds: 1), () => Get.back());
+        Future.delayed(const Duration(seconds: 1), () {
+          try { Get.offNamed(AppRoutes.userDashboard); } catch (_) {}
+        });
       } else {
         Get.snackbar(
           'Call Error',
@@ -759,7 +779,9 @@ class AstrologerVideoCallController extends BaseController {
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
-        Future.delayed(const Duration(seconds: 2), () => Get.back());
+        Future.delayed(const Duration(seconds: 2), () {
+          try { Get.offNamed(AppRoutes.userDashboard); } catch (_) {}
+        });
         return;
       }
 
@@ -775,7 +797,9 @@ class AstrologerVideoCallController extends BaseController {
         colorText: Colors.white,
         duration: const Duration(seconds: 4),
       );
-      Future.delayed(const Duration(seconds: 2), () => Get.back());
+      Future.delayed(const Duration(seconds: 2), () {
+        try { Get.offNamed(AppRoutes.userDashboard); } catch (_) {}
+      });
     } catch (e) {
       errorMessage.value = 'Error: ${e.toString()}';
       isLoading.value = false;
@@ -786,7 +810,9 @@ class AstrologerVideoCallController extends BaseController {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
-      Future.delayed(const Duration(seconds: 2), () => Get.back());
+      Future.delayed(const Duration(seconds: 2), () {
+        try { Get.offNamed(AppRoutes.userDashboard); } catch (_) {}
+      });
     }
   }
 
@@ -800,7 +826,6 @@ class AstrologerVideoCallController extends BaseController {
       _channelName = callData.channelName;
       _token = callData.token;
       _appId = callData.appId;
-      _timeoutSeconds = callData.timeoutSeconds;
       // Use availableMinutes for countdown (UX only - backend handles actual billing)
       // availableMinutes is preferred, fallback to durationMinutes if availableMinutes not provided
       _availableMinutes =
@@ -891,11 +916,11 @@ class AstrologerVideoCallController extends BaseController {
       // We'll join the call room later (only for billing) after astrologer joins
       _connectSocketForNotification();
 
-      // Initialize Agora
+      // Initialize Agora (2-minute accept timeout)
       final initialized = await _agoraManager.initialize(
         appId: _appId!,
         isVideoCall: true,
-        timeoutSeconds: _timeoutSeconds ?? 60,
+        timeoutSeconds: 120,
       );
 
       if (!initialized) {
@@ -908,7 +933,9 @@ class AstrologerVideoCallController extends BaseController {
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
-        Future.delayed(const Duration(seconds: 2), () => Get.back());
+        Future.delayed(const Duration(seconds: 2), () {
+          try { Get.offNamed(AppRoutes.userDashboard); } catch (_) {}
+        });
         return;
       }
 
@@ -955,11 +982,32 @@ class AstrologerVideoCallController extends BaseController {
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
-        Future.delayed(const Duration(seconds: 2), () => Get.back());
+        Future.delayed(const Duration(seconds: 2), () {
+          try { Get.offNamed(AppRoutes.userDashboard); } catch (_) {}
+        });
         return;
       }
 
-      // Sync states
+      isRinging.value = true;
+      ringingSecondsRemaining.value = 120;
+      _ringingCountdownTimer?.cancel();
+      _ringingCountdownTimer = Timer.periodic(const Duration(seconds: 1), (t) {
+        if (ringingSecondsRemaining.value <= 0) {
+          _ringingCountdownTimer?.cancel();
+          _ringingCountdownTimer = null;
+          _cancelAllTimers();
+          Get.snackbar(
+            '',
+            'Astrologer did not accept the call.',
+            snackPosition: SnackPosition.BOTTOM,
+            duration: const Duration(seconds: 2),
+          );
+          try { Get.offNamed(AppRoutes.userDashboard); } catch (_) {}
+          return;
+        }
+        ringingSecondsRemaining.value = ringingSecondsRemaining.value - 1;
+      });
+
       isMuted.value = _agoraManager.isMuted;
       isVideoOn.value = _agoraManager.isVideoEnabled;
       isSpeakerOn.value = _agoraManager.isSpeakerEnabled;
@@ -973,8 +1021,28 @@ class AstrologerVideoCallController extends BaseController {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
-      Future.delayed(const Duration(seconds: 2), () => Get.back());
+      Future.delayed(const Duration(seconds: 2), () {
+        try { Get.offNamed(AppRoutes.userDashboard); } catch (_) {}
+      });
     }
+  }
+
+  void _cancelAllTimers() {
+    _ringingCountdownTimer?.cancel();
+    _ringingCountdownTimer = null;
+    _countdownTimer?.cancel();
+    _countdownTimer = null;
+    _billingTimer?.cancel();
+    _billingTimer = null;
+    _walletSyncTimer?.cancel();
+    _walletSyncTimer = null;
+  }
+
+  String get formattedRingingCountdown {
+    final s = ringingSecondsRemaining.value.clamp(0, 120);
+    final m = s ~/ 60;
+    final sec = s % 60;
+    return '${m.toString().padLeft(2, '0')}:${sec.toString().padLeft(2, '0')}';
   }
 
   void _updateRemainingTime() {
@@ -1071,83 +1139,40 @@ class AstrologerVideoCallController extends BaseController {
     );
   }
 
+  void _popUntilOffCallScreen() {
+    try {
+      Get.offNamed(AppRoutes.userDashboard);
+    } catch (_) {}
+  }
+
   Future<void> endCall() async {
-    // Only show review prompt if call was connected
     final wasConnected = isCallConnected.value;
+    final callId = _callId;
+    final totalMins = totalMinutesBilled.value;
+    final amount = totalCost.value;
+    _cancelAllTimers();
 
-    // Stop all timers
-    _billingTimer?.cancel();
-    _walletSyncTimer?.cancel();
-
-    // Disconnect WebSocket first
-    await _disconnectSocket();
-
-    // IMPORTANT: Do NOT sync wallet balance after call ends
-    // The backend doesn't deduct money, so syncing would reset our local calculations
-    // Our client-side billing is the source of truth until backend implements deduction
-
-    // Calculate actual call duration and amount for backend billing
-    int? actualTotalMinutes;
-    double? actualTotalAmount;
-
-    if (_callStartTime != null && totalMinutesBilled.value > 0) {
-      // Use the actual minutes billed (calculated by our timer)
-      actualTotalMinutes = totalMinutesBilled.value;
-      actualTotalAmount = totalCost.value;
-
-      if (kDebugMode) {
-        print('═══════════════════════════════════════════════════════════');
-        print('💰 CALCULATED BILLING PARAMETERS FOR BACKEND (Video)');
-        print('   Total Minutes: $actualTotalMinutes');
-        print('   Total Amount: ₹$actualTotalAmount');
-        print('   Price Per Minute: ₹${pricePerMinute.value}');
-        print('═══════════════════════════════════════════════════════════');
-      }
+    _disconnectSocket();
+    if (callId != null) {
+      _callService.endCall(
+        callId: callId,
+        totalMinutes: totalMins > 0 ? totalMins : null,
+        totalAmount: amount > 0 ? amount : null,
+      ).catchError((e) {
+        debugPrint('End call API: $e');
+        return false;
+      });
     }
+    _agoraManager.leaveChannel().then((_) => _agoraManager.dispose()).catchError((e) {
+      debugPrint('Leave/dispose: $e');
+    });
 
-    // Call API to end the call with billing parameters
-    // NOTE: Backend currently ignores these parameters and doesn't deduct money
-    // We send them anyway for when backend implements proper billing
-    if (_callId != null) {
-      try {
-        await _callService.endCall(
-          callId: _callId!,
-          totalMinutes: actualTotalMinutes,
-          totalAmount: actualTotalAmount,
-        );
-        if (kDebugMode) {
-          print('═══════════════════════════════════════════════════════════');
-          print('✅ Video call ended via API with billing parameters');
-          print('💰 Total Cost sent to backend: ₹${actualTotalAmount ?? 0}');
-          print('💰 Minutes sent to backend: ${actualTotalMinutes ?? 0}');
-          print('💰 Local Total Cost: ₹${totalCost.value}');
-          print('💰 Final Balance (local): ₹${walletBalance.value}');
-          print('💰 Minutes Billed: ${totalMinutesBilled.value}');
-          print(
-            '⚠️  Backend does NOT deduct money - local balance is preserved',
-          );
-          print('═══════════════════════════════════════════════════════════');
-        }
+    try {
+      Get.offNamed(AppRoutes.userDashboard);
+    } catch (_) {}
 
-        // DO NOT sync wallet balance after call ends
-        // Backend doesn't deduct money, so syncing would reset our local calculations
-        // Comment out the sync calls:
-        // Future.delayed(const Duration(seconds: 1), () async {
-        //   await _syncWalletBalanceWithBackend();
-        // });
-      } catch (e) {
-        debugPrint('Error calling end call API: $e');
-        // Continue even if API call fails
-      }
-    }
-
-    await _agoraManager.leaveChannel();
-    await _agoraManager.dispose();
-    Get.back();
-
-    // Show review prompt after closing call screen
     if (wasConnected) {
-      Future.delayed(const Duration(milliseconds: 300), () {
+      Future.delayed(const Duration(milliseconds: 400), () {
         _showReviewPrompt();
       });
     }
@@ -1161,7 +1186,7 @@ class AstrologerVideoCallController extends BaseController {
         tag: astrologer.astrologerId,
         permanent: false,
       );
-      await reviewController.loadMyReview(astrologer.astrologerId);
+      await reviewController.loadMyReview(astrologer.astrologerId, serviceType: 'VIDEO');
       existingReview = reviewController.myReview.value;
     } catch (e) {
       if (kDebugMode) print('Failed to load existing review: $e');
@@ -1172,6 +1197,8 @@ class AstrologerVideoCallController extends BaseController {
       astrologer: astrologer,
       serviceType: 'VIDEO',
       existingReview: existingReview,
+      onMaybeLater: _popUntilOffCallScreen,
+      onCloseAfterReview: _popUntilOffCallScreen,
     );
   }
 
@@ -1187,9 +1214,7 @@ class AstrologerVideoCallController extends BaseController {
 
   @override
   void onClose() {
-    _countdownTimer?.cancel();
-    _billingTimer?.cancel();
-    _walletSyncTimer?.cancel();
+    _cancelAllTimers();
     _disconnectSocket();
     _agoraManager.dispose();
     super.onClose();

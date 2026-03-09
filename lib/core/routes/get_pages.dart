@@ -109,6 +109,7 @@ import 'package:astrobharataiuser/screens/live_astrologers/view/live_astrologers
 import 'package:astrobharataiuser/screens/astrology_services/view/booking_view.dart';
 import 'package:astrobharataiuser/screens/astrology_services/views/astrologer_chat_view.dart';
 import 'package:astrobharataiuser/screens/astrology_services/views/astrologer_chat_history_view.dart';
+import 'package:astrobharataiuser/screens/astrology_services/views/chat_history_detail_view.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/astrologer_voice_call_view.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/astrologer_video_call_view.dart';
 import 'package:astrobharataiuser/screens/ecommerce/view/ecommerce_home_view.dart';
@@ -219,6 +220,7 @@ import 'package:astrobharataiuser/binding/e_mandir_binding/all_festival_binding.
 import 'package:astrobharataiuser/screens/e_mandir/festivals/festival_details/view/e_mandir_festival_detail_view.dart';
 import 'package:astrobharataiuser/screens/e_mandir/festivals/all_festival/view/all_festival_view.dart';
 import 'package:astrobharataiuser/screens/about_us/view/about_us_view.dart';
+import 'package:astrobharataiuser/screens/services/view/all_services_view.dart';
 import 'package:astrobharataiuser/screens/numerology/view/numerology_view.dart';
 import 'package:astrobharataiuser/screens/numerology/view/numerology_form_view.dart';
 import 'package:astrobharataiuser/screens/numerology/view/numerology_features_view.dart';
@@ -467,6 +469,12 @@ class PageRoutes {
     GetPage(
       name: AppRoutes.astrologerChatHistory,
       page: () => const AstrologerChatHistoryView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.chatHistoryDetail,
+      page: () => const ChatHistoryDetailView(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),
@@ -1721,6 +1729,12 @@ class PageRoutes {
     GetPage(
       name: AppRoutes.aboutUs,
       page: () => const AboutUsView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.allServices,
+      page: () => const AllServicesView(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),
