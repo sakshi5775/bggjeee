@@ -70,7 +70,6 @@ class CarrotAstrologyResultsView extends StatelessWidget {
               showWallet: false,
               showLanguage: false,
               showCart: false,
-              showSearch: false,
               customActions: [
                 IconButton(
                   onPressed: () => _exportToPdf(result),

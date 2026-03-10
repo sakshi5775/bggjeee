@@ -19,7 +19,7 @@ class BookPujaHeaderWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Common Header
-        const CommonHeader(title: 'Book Your Pooja', showSearch: false),
+        const CommonHeader(title: 'Book Your Pooja'),
         // Search field
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),

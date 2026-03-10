@@ -183,6 +183,10 @@ class EndPoints {
   static String updateBirthChart(String userId) =>
       'users/api/users/birth-chart/$userId';
 
+  /// Delete user profile (account). Response: { success, message, data: { userId, timestamp } }
+  static String deleteUserProfile(String userId) =>
+      'users/api/users/internal/delete-profile/$userId';
+
   /// Navtara APIs
   static const String navtaraNakshatras = 'users/api/users/navtara/nakshatras';
   static const String navtaraAnalyze = 'users/api/users/navtara/analyze';

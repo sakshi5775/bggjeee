@@ -55,7 +55,6 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
                   color: const Color(0x666F221E),
                 ),
               ),
-              showSearch: false,
               showCart: false,
               showLanguage: false,
               showWallet: false,

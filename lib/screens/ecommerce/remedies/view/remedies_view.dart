@@ -40,7 +40,6 @@ class RemediesView extends BasePage<RemediesController> {
                 children: [
                   const CommonHeader(
                     title: 'Remedies & Store',
-                    showSearch: false, // We have a custom search bar below
                   ),
                   RemediesSearchBar(
                     controller: controller.searchController,

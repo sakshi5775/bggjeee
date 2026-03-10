@@ -58,7 +58,6 @@ class _ChatViewState extends State<ChatView> {
                     Get.back();
                   }
                 },
-                showSearch: false,
                 customActions: [
                   // End Session Button
                   Obx(() {

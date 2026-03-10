@@ -21,10 +21,14 @@ class AiChatView extends BasePage<AiChatController> {
   /// When true, header (logo, back, wallet, search) is hidden — e.g. when embedded below dashboard slider.
   final bool hideHeader;
 
+  /// When set, this widget is shown at the top of the scroll (banner), then the persona grid/list — same pattern as AllAstrologersView.
+  final Widget? bannerWidget;
+
   const AiChatView({
     super.key,
     this.showBackButton = true,
     this.hideHeader = false,
+    this.bannerWidget,
   });
 
   @override
@@ -43,9 +47,7 @@ class AiChatView extends BasePage<AiChatController> {
               if (!hideHeader)
                 CommonHeader(title: 'AI Chat', showBackButton: showBackButton),
 
-              // Category Filter Chips
-              // SizedBox(height: 16.h),
-              // const CategoryFilterChips(),
+              // View toggle row
               Align(
                 alignment: Alignment.topLeft,
                 child: Padding(
@@ -79,63 +81,296 @@ class AiChatView extends BasePage<AiChatController> {
 
               SizedBox(height: 16.h),
 
-              // Personas Grid
+              // Personas: with banner as first sliver, or plain list
               Expanded(
-                child: Obx(() {
-                  final filteredList = controller.filteredPersonas;
-
-                  if (controller.isLoading.value &&
-                      controller.personas.isEmpty) {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          AppColors.deepOrange,
-                        ),
-                      ),
-                    );
-                  }
-
-                  if (filteredList.isEmpty) {
-                    return EmptyStateWidget(
-                      isEmpty: controller.personas.isEmpty,
-                      hasFilter:
-                          controller.selectedCategory.value != null ||
-                          controller.searchQuery.value.isNotEmpty,
-                      onClearFilter: () {
-                        controller.clearFilter();
-                        controller.searchQuery.value = '';
-                        controller.searchController.clear();
-                      },
-                    );
-                  }
-
-                  return RefreshIndicator(
-                    onRefresh: controller.refresh,
-                    color: AppColors.deepOrange,
-                    child: Obx(
-                      () => NotificationListener<ScrollNotification>(
-                        onNotification: (ScrollNotification scrollInfo) {
-                          if (!controller.isLoadingMore.value &&
-                              controller.hasMoreData.value &&
-                              scrollInfo.metrics.pixels ==
-                                  scrollInfo.metrics.maxScrollExtent) {
-                            controller.loadMore();
-                          }
-                          return false;
-                        },
-                        child: controller.isGridView.value
-                            ? _buildGridView(context, filteredList, controller)
-                            : _buildListView(context, filteredList, controller),
-                      ),
-                    ),
-                  );
-                }),
+                child: bannerWidget != null
+                    ? _buildScrollWithBanner(context)
+                    : _buildContentWithoutBanner(context),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildContentWithoutBanner(BuildContext context) {
+    return Obx(() {
+      final filteredList = controller.filteredPersonas;
+
+      if (controller.isLoading.value && controller.personas.isEmpty) {
+        return Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(AppColors.deepOrange),
+          ),
+        );
+      }
+
+      if (filteredList.isEmpty) {
+        return EmptyStateWidget(
+          isEmpty: controller.personas.isEmpty,
+          hasFilter:
+              controller.selectedCategory.value != null ||
+              controller.searchQuery.value.isNotEmpty,
+          onClearFilter: () {
+            controller.clearFilter();
+            controller.searchQuery.value = '';
+            controller.searchController.clear();
+          },
+        );
+      }
+
+      return RefreshIndicator(
+        onRefresh: controller.refresh,
+        color: AppColors.deepOrange,
+        child: Obx(
+          () => NotificationListener<ScrollNotification>(
+            onNotification: (ScrollNotification scrollInfo) {
+              if (!controller.isLoadingMore.value &&
+                  controller.hasMoreData.value &&
+                  scrollInfo.metrics.pixels ==
+                      scrollInfo.metrics.maxScrollExtent) {
+                controller.loadMore();
+              }
+              return false;
+            },
+            child: controller.isGridView.value
+                ? _buildGridView(context, filteredList, controller)
+                : _buildListView(context, filteredList, controller),
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget _buildScrollWithBanner(BuildContext context) {
+    return RefreshIndicator(
+      onRefresh: controller.refresh,
+      color: AppColors.deepOrange,
+      child: Obx(() {
+        final filteredList = controller.filteredPersonas;
+
+        if (controller.isLoading.value && controller.personas.isEmpty) {
+          return CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverToBoxAdapter(child: bannerWidget),
+              SliverFillRemaining(
+                child: Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      AppColors.deepOrange,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        }
+
+        if (filteredList.isEmpty) {
+          return CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverToBoxAdapter(child: bannerWidget),
+              SliverFillRemaining(
+                child: EmptyStateWidget(
+                  isEmpty: controller.personas.isEmpty,
+                  hasFilter:
+                      controller.selectedCategory.value != null ||
+                      controller.searchQuery.value.isNotEmpty,
+                  onClearFilter: () {
+                    controller.clearFilter();
+                    controller.searchQuery.value = '';
+                    controller.searchController.clear();
+                  },
+                ),
+              ),
+            ],
+          );
+        }
+
+        return NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollInfo) {
+            if (!controller.isLoadingMore.value &&
+                controller.hasMoreData.value &&
+                scrollInfo.metrics.pixels >=
+                    scrollInfo.metrics.maxScrollExtent - 200) {
+              controller.loadMore();
+            }
+            return false;
+          },
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverToBoxAdapter(child: bannerWidget),
+              ..._buildContentSlivers(context, filteredList),
+              SliverPadding(
+                padding: EdgeInsets.only(
+                  bottom: hideHeader ? 80.h : 16.h,
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
+    );
+  }
+
+  List<Widget> _buildContentSlivers(
+    BuildContext context,
+    List<PersonaModel> filteredList,
+  ) {
+    return [
+      Obx(() {
+        if (controller.isGridView.value) {
+          return SliverPadding(
+            padding: EdgeInsets.only(
+              left: 16.w,
+              right: 16.w,
+              top: 8.h,
+            ),
+            sliver: SliverGrid(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 12.w,
+                mainAxisSpacing: 16.h,
+                childAspectRatio: 0.68,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  if (index == filteredList.length) {
+                    return controller.isLoadingMore.value
+                        ? Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppColors.deepOrange,
+                                ),
+                              ),
+                            ),
+                          )
+                        : const SizedBox.shrink();
+                  }
+                  return PersonaCard(
+                    persona: filteredList[index],
+                    onTap: () {
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.personaDetail,
+                        arguments: {
+                          'personaId': filteredList[index].id,
+                          'persona': filteredList[index],
+                        },
+                      );
+                    },
+                    onCallTap: () async {
+                      final persona = filteredList[index];
+                      final precheckService = ChatCallPrecheckService();
+                      final canProceed = await precheckService
+                          .checkBeforeProceeding(
+                        persona: persona,
+                        pricePerMinute: persona.pricePerMin,
+                        estimatedMinutes: 15,
+                      );
+                      if (canProceed) {
+                        UserMainController.pushInCurrentTab(
+                          AppRoutes.personaVoiceCall,
+                          arguments: {
+                            'personaId': persona.id,
+                            'persona': persona,
+                          },
+                        );
+                      }
+                    },
+                    onChatTap: () async {
+                      await _startChatWithPersona(
+                        context,
+                        filteredList[index],
+                      );
+                    },
+                  );
+                },
+                childCount: filteredList.length +
+                    (controller.hasMoreData.value ? 1 : 0),
+              ),
+            ),
+          );
+        }
+        return SliverPadding(
+          padding: EdgeInsets.only(
+            left: 16.w,
+            right: 16.w,
+            top: 8.h,
+          ),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                if (index == filteredList.length) {
+                  return controller.isLoadingMore.value
+                      ? Padding(
+                          padding: EdgeInsets.only(bottom: 12.h),
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppColors.deepOrange,
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      : const SizedBox.shrink();
+                }
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 12.h),
+                  child: PersonaListCard(
+                    persona: filteredList[index],
+                    onTap: () {
+                      UserMainController.pushInCurrentTab(
+                        AppRoutes.personaDetail,
+                        arguments: {
+                          'personaId': filteredList[index].id,
+                          'persona': filteredList[index],
+                        },
+                      );
+                    },
+                    onCallTap: () async {
+                      final persona = filteredList[index];
+                      final precheckService = ChatCallPrecheckService();
+                      final canProceed = await precheckService
+                          .checkBeforeProceeding(
+                        persona: persona,
+                        pricePerMinute: persona.pricePerMin,
+                        estimatedMinutes: 15,
+                      );
+                      if (canProceed) {
+                        UserMainController.pushInCurrentTab(
+                          AppRoutes.personaVoiceCall,
+                          arguments: {
+                            'personaId': persona.id,
+                            'persona': persona,
+                          },
+                        );
+                      }
+                    },
+                    onChatTap: () async {
+                      await _startChatWithPersona(
+                        context,
+                        filteredList[index],
+                      );
+                    },
+                  ),
+                );
+              },
+              childCount: filteredList.length +
+                  (controller.hasMoreData.value ? 1 : 0),
+            ),
+          ),
+        );
+      }),
+    ];
   }
 
   Widget _buildGridView(

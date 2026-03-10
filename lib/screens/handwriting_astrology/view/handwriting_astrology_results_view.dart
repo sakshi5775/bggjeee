@@ -33,7 +33,6 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
             preferredSize: Size.fromHeight(100.h),
             child: const CommonHeader(
               title: 'Handwriting Analysis',
-              showSearch: false,
               showCart: false,
               showLanguage: false,
               showWallet: false,
@@ -70,7 +69,6 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
                   color: const Color(0xFF5F2221).withValues(alpha: 0.7),
                 ),
               ),
-              showSearch: false,
               showCart: false,
               showLanguage: false,
               showWallet: false,
