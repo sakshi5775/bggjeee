@@ -836,19 +836,19 @@ class PersonaDetailView extends StatelessWidget {
                         child: _buildReviewItem(review, controller, persona.id),
                       ),
                     ),
-                if (controller.reviews.length > 3)
+                if (controller.reviews.length > 3 ||
+                    controller.totalReviewCount.value > 3)
                   GestureDetector(
-                    onTap: () {
-                      // TODO: Show all reviews page
-                      controller.loadReviews(persona.id, refresh: false);
-                    },
+                    onTap: () => _showAllReviewsSheet(context, controller, persona.id),
                     child: Padding(
                       padding: EdgeInsets.only(top: 8.h),
-                      child: AutoTranslateText(
-                        'See all reviews (${controller.reviews.length})',
-                        style: MyTextTheme.smallBCB.copyWith(
-                          color: AppColors.deepOrange,
-                          fontWeight: FontWeight.w600,
+                      child: Obx(
+                        () => AutoTranslateText(
+                          'See all reviews (${controller.totalReviewCount.value > 0 ? controller.totalReviewCount.value : controller.reviews.length})',
+                          style: MyTextTheme.smallBCB.copyWith(
+                            color: AppColors.deepOrange,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
@@ -933,6 +933,89 @@ class PersonaDetailView extends StatelessWidget {
             );
           }),
         ],
+      ),
+    );
+  }
+
+  void _showAllReviewsSheet(
+    BuildContext context,
+    PersonaDetailController controller,
+    String personaId,
+  ) {
+    controller.loadReviews(personaId, refresh: true);
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        minChildSize: 0.4,
+        maxChildSize: 0.95,
+        builder: (ctx, scrollController) => Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.all(16.w),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    AutoTranslateText(
+                      'All Reviews',
+                      style: MyTextTheme.largeBCB.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.close),
+                      onPressed: () => Navigator.of(ctx).pop(),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Obx(() {
+                  if (controller.isLoadingReviews.value &&
+                      controller.reviews.isEmpty) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  return ListView.builder(
+                    controller: scrollController,
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    itemCount: controller.reviews.length +
+                        (controller.hasMoreReviews.value ? 1 : 0),
+                    itemBuilder: (ctx, index) {
+                      if (index == controller.reviews.length) {
+                        controller.loadReviews(personaId, refresh: false);
+                        return Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16.h),
+                          child: Center(
+                            child: SizedBox(
+                              width: 24.w,
+                              height: 24.h,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          ),
+                        );
+                      }
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: 12.h),
+                        child: _buildReviewItem(
+                          controller.reviews[index],
+                          controller,
+                          personaId,
+                        ),
+                      );
+                    },
+                  );
+                }),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

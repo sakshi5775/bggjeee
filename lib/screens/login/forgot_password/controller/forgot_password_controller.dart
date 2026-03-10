@@ -55,6 +55,12 @@ class ForgotPasswordController extends BaseController {
     if (value.length < 6) {
       return 'Password must be at least 6 characters';
     }
+    final hasUpper = value.contains(RegExp(r'[A-Z]'));
+    final hasLower = value.contains(RegExp(r'[a-z]'));
+    final hasNumber = value.contains(RegExp(r'[0-9]'));
+    if (!hasUpper || !hasLower || !hasNumber) {
+      return 'Password must contain at least one uppercase letter, one lowercase letter, and one number';
+    }
     return null;
   }
 
@@ -147,16 +153,23 @@ class ForgotPasswordController extends BaseController {
 
     isLoading.value = true;
     try {
-      final success = await _service.resetPassword(
+      final result = await _service.resetPassword(
         emailController.text.trim(),
         otpController.text.trim(),
         passwordController.text.trim(),
         confirmPasswordController.text.trim(),
       );
+
+      final success = result['success'] as bool? ?? false;
+      final message = result['message'] as String? ?? '';
+      final errors = result['errors'] as List<dynamic>? ?? [];
+
       if (success) {
         Get.snackbar(
           'Success 🎉',
-          'Password changed successfully. Please login with new password.',
+          message.isNotEmpty
+              ? message
+              : 'Password changed successfully. Please login with new password.',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
           colorText: Colors.white,
@@ -166,7 +179,14 @@ class ForgotPasswordController extends BaseController {
         await Future.delayed(const Duration(seconds: 2));
         Get.offAllNamed(AppRoutes.login);
       } else {
-        showErrorMessage(message: 'Failed to reset password');
+        // Show validation errors from API (e.g. password rules)
+        final errorMessages = errors
+            .map((e) => e is Map ? (e['message'] as String? ?? '') : '')
+            .where((s) => s.isNotEmpty);
+        final displayMessage = errorMessages.isNotEmpty
+            ? errorMessages.join('\n')
+            : (message.isNotEmpty ? message : 'Failed to reset password');
+        showErrorMessage(message: displayMessage);
       }
     } catch (e) {
       showErrorMessage(message: 'Something went wrong');

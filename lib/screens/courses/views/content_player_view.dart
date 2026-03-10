@@ -1,4 +1,5 @@
 import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
@@ -34,10 +35,11 @@ class ContentPlayerView extends StatelessWidget {
           decoration: BoxDecoration(gradient: AppColors.gradientBackground),
           child: Column(
             children: [
-              const CommonHeader(
+              CommonHeader(
                 title: 'Error',
                 showDrawer: false,
                 showHome: true,
+                onBackTap: () => UserMainController.popCurrentTab(),
               ),
               Expanded(
                 child: Center(
@@ -94,7 +96,12 @@ class ContentPlayerView extends StatelessWidget {
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Column(
           children: [
-            CommonHeader(title: title, showDrawer: false, showHome: true),
+            CommonHeader(
+              title: title,
+              showDrawer: false,
+              showHome: true,
+              onBackTap: () => UserMainController.popCurrentTab(),
+            ),
             Expanded(
               child: Center(
                 child: Column(
@@ -155,7 +162,11 @@ class ContentPlayerView extends StatelessWidget {
           decoration: BoxDecoration(gradient: AppColors.gradientBackground),
           child: Column(
             children: [
-              CommonHeader(title: content.title, showDrawer: false),
+              CommonHeader(
+              title: content.title,
+              showDrawer: false,
+              onBackTap: () => UserMainController.popCurrentTab(),
+            ),
               Expanded(
                 child: Center(
                   child: Column(
@@ -482,7 +493,11 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
           decoration: BoxDecoration(gradient: AppColors.gradientBackground),
           child: Column(
             children: [
-              const CommonHeader(title: '', showDrawer: false),
+              CommonHeader(
+                title: '',
+                showDrawer: false,
+                onBackTap: () => UserMainController.popCurrentTab(),
+              ),
               const Expanded(child: Center(child: CircularProgressIndicator())),
             ],
           ),
@@ -496,7 +511,11 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
           decoration: BoxDecoration(gradient: AppColors.gradientBackground),
           child: Column(
             children: [
-              const CommonHeader(title: 'Error', showDrawer: false),
+              CommonHeader(
+                title: 'Error',
+                showDrawer: false,
+                onBackTap: () => UserMainController.popCurrentTab(),
+              ),
               Expanded(
                 child: Center(
                   child: Column(
@@ -535,7 +554,11 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
           decoration: BoxDecoration(gradient: AppColors.gradientBackground),
           child: Column(
             children: [
-              CommonHeader(title: content.title, showDrawer: false),
+              CommonHeader(
+              title: content.title,
+              showDrawer: false,
+              onBackTap: () => UserMainController.popCurrentTab(),
+            ),
               Expanded(
                 child: Center(
                   child: Column(
@@ -580,7 +603,11 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
           decoration: BoxDecoration(gradient: AppColors.gradientBackground),
           child: Column(
             children: [
-              CommonHeader(title: content.title, showDrawer: false),
+              CommonHeader(
+              title: content.title,
+              showDrawer: false,
+              onBackTap: () => UserMainController.popCurrentTab(),
+            ),
               Expanded(
                 child: Center(
                   child: Column(
@@ -625,6 +652,7 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
               title: content.title,
               showDrawer: false,
               showHome: true,
+              onBackTap: () => UserMainController.popCurrentTab(),
             ),
             Expanded(
               child: content.type == 'video'

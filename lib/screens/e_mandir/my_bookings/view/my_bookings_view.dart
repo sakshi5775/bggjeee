@@ -1,7 +1,9 @@
 import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/e_mandir/my_bookings/controller/my_bookings_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/my_bookings/widgets/booking_empty_widget.dart';
 import 'package:astrobharataiuser/screens/e_mandir/my_bookings/widgets/booking_list_card.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -45,7 +47,10 @@ class MyBookingsView extends BasePage<MyBookingsController> {
                 }
 
                 if (controller.bookings.isEmpty) {
-                  return BookingEmptyWidget(onBookNow: () => Get.back());
+                  return BookingEmptyWidget(
+                  onBookNow: () =>
+                      UserMainController.pushInCurrentTab(AppRoutes.bookPuja),
+                );
                 }
 
                 return RefreshIndicator(

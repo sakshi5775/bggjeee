@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AllVideosView extends BasePage<AllVideosController> {
@@ -35,7 +36,7 @@ class AllVideosView extends BasePage<AllVideosController> {
                   title: 'Media Hub',
                   showDrawer: false,
                   showHome: false,
-                  onBackTap: () => Get.back(),
+                  onBackTap: () => UserMainController.popCurrentTab(),
                   customActions: [
                     Obx(() {
                       if (controller.selectedTabIndex.value != 0) {

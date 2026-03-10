@@ -45,23 +45,25 @@ class YouTubeMediaCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(12.r),
-                    ),
-                    child: NetworkImageWithLoader(
+            ClipRRect(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(12.r),
+              ),
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Stack(
+                  alignment: Alignment.center,
+                  fit: StackFit.expand,
+                  children: [
+                    NetworkImageWithLoader(
                       url: video.thumbnailUrl,
                       width: double.infinity,
+                      height: double.infinity,
                       fit: BoxFit.cover,
                     ),
-                  ),
-                  _PlayButton(size: 28.w),
-                ],
+                    _PlayButton(size: 28.w),
+                  ],
+                ),
               ),
             ),
             Padding(
@@ -285,7 +287,7 @@ class _PlayButton extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: AppColors.deepOrange.withValues(alpha: 0.9),
+        color: Colors.transparent.withValues(alpha: 0.1),
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(

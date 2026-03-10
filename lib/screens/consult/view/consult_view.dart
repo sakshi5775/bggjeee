@@ -137,10 +137,12 @@ class ConsultView extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       child: Row(
         children: [
-          _buildSmallPill(
-            icon: Icons.swap_vert,
-            label: 'Sort by',
-            onTap: () => _showSortMenu(context, controller),
+          Obx(
+            () => _buildSmallPill(
+              icon: Icons.swap_vert,
+              label: controller.currentSortLabel,
+              onTap: () => _showSortMenu(context, controller),
+            ),
           ),
           SizedBox(width: 10.w),
           _buildSmallPill(

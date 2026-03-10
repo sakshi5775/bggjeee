@@ -46,10 +46,10 @@ class AllServicesView extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: 8.h),
+                      //  SizedBox(height: 8.h),
                         // Hero section
-                        _buildHeroSection(),
-                        SizedBox(height: 24.h),
+                        // _buildHeroSection(),
+                        // SizedBox(height: 24.h),
                         // Horoscopic Services
                         AutoTranslateText(
                           'Horoscopic Services',
@@ -72,6 +72,54 @@ class AllServicesView extends StatelessWidget {
                         SizedBox(height: 14.h),
                         _buildAstrologyToolsSection(),
                         SizedBox(height: 24.h),
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            gradient: AppColors.orangeGradient,
+                            borderRadius: BorderRadius.circular(14.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.deepOrange.withValues(alpha: 0.4),
+                                blurRadius: 12,
+                                offset: const Offset(0, 6),
+                              ),
+                            ],
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () {
+                                UserMainController.pushInCurrentTab(
+                                  AppRoutes.courses,
+                                );
+                              },
+                              borderRadius: BorderRadius.circular(14.r),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 20.w,
+                                  vertical: 16.h,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.school_outlined, size: 22, color: Colors.white),
+                                    SizedBox(width: 10.w),
+                                    AutoTranslateText(
+                                      'Learn Astrology',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 24.h),
                       ],
                     ),
                   ),
@@ -84,47 +132,47 @@ class AllServicesView extends StatelessWidget {
     );
   }
 
-  Widget _buildHeroSection() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(20.w),
-      decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
-        borderRadius: BorderRadius.circular(20.r),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.saffron.withValues(alpha: 0.3),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Icon(Icons.auto_awesome, color: AppColors.templeGold, size: 36),
-          SizedBox(height: 12.h),
-          AutoTranslateText(
-            'Your Complete Astrology Hub',
-            style: AppTypography.h2.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              height: 1.3,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 10.h),
-          AutoTranslateText(
-            'Explore horoscopic services and astrological tools—all in one place.',
-            style: AppTypography.body2.copyWith(
-              color: AppColors.cream,
-              height: 1.5,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildHeroSection() {
+  //   return Container(
+  //     width: double.infinity,
+  //     padding: EdgeInsets.all(20.w),
+  //     decoration: BoxDecoration(
+  //       gradient: AppColors.primaryGradient,
+  //       borderRadius: BorderRadius.circular(20.r),
+  //       boxShadow: [
+  //         BoxShadow(
+  //           color: AppColors.saffron.withValues(alpha: 0.3),
+  //           blurRadius: 16,
+  //           offset: const Offset(0, 6),
+  //         ),
+  //       ],
+  //     ),
+  //     child: Column(
+  //       children: [
+  //         Icon(Icons.auto_awesome, color: AppColors.templeGold, size: 36),
+  //         SizedBox(height: 12.h),
+  //         AutoTranslateText(
+  //           'Your Complete Astrology Hub',
+  //           style: AppTypography.h2.copyWith(
+  //             color: Colors.white,
+  //             fontWeight: FontWeight.bold,
+  //             height: 1.3,
+  //           ),
+  //           textAlign: TextAlign.center,
+  //         ),
+  //         SizedBox(height: 10.h),
+  //         AutoTranslateText(
+  //           'Explore horoscopic services and astrological tools—all in one place.',
+  //           style: AppTypography.body2.copyWith(
+  //             color: AppColors.cream,
+  //             height: 1.5,
+  //           ),
+  //           textAlign: TextAlign.center,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildHoroscopicServicesSection() {
     final horoscopeList = <Map<String, String>>[

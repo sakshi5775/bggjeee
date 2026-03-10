@@ -197,6 +197,14 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                 isLoading: controller.isLoadingPyramids,
                 categoryRx: controller.pyramidsCategory,
               ),
+              // Product based on zodiac (Rashi) Section
+              _buildCategorySection(
+                context,
+                title: 'Product based on zodiac',
+                products: controller.rashiProducts,
+                isLoading: controller.isLoadingRashi,
+                categoryRx: controller.rashiCategory,
+              ),
               SliverToBoxAdapter(child: Spacing.h(15.h)),
               // Best Sellers Section
               if (controller.topSellingProducts.isNotEmpty)
@@ -228,11 +236,12 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
               // 1. Why AstroBharat AI (FAQ) Section
               WhyShopWithUsWidget(),
 
-              // 2. Testimonials section – to be added here later
-              // (no widget yet; add testimonials sliver when ready)
-
-              // 3. Top 10 Categories Section
+              // 2. Top 10 Categories Section
               _buildTop10CategoriesSliver(),
+
+              SliverToBoxAdapter(child: Spacing.h(6.h)),
+              // 3. Testimonials (products with reviews from all categories)
+              _buildTestimonialsSliver(),
 
               SliverToBoxAdapter(child: Spacing.h(6.h)),
               // 4. Blogs & News Section (top 5 + View All)
@@ -424,6 +433,72 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
             } catch (_) {
               return SizedBox.shrink();
             }
+          }),
+          SizedBox(height: 8.h),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTestimonialsSliver() {
+    return SliverToBoxAdapter(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+            child: Text(
+              'Our Products',
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 18.sp,
+                color: _top10Maroon,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          Obx(() {
+            if (controller.isLoadingTestimonials.value &&
+                controller.testimonialProducts.isEmpty) {
+              return SizedBox(
+                height: 200.h,
+                child: Center(
+                  child: SizedBox(
+                    width: 28.w,
+                    height: 28.w,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: _top10Maroon,
+                    ),
+                  ),
+                ),
+              );
+            }
+            if (controller.testimonialProducts.isEmpty) {
+              return SizedBox.shrink();
+            }
+            return SizedBox(
+              height: 320.h,
+              child: ListView.separated(
+                controller: controller.testimonialScrollController,
+                scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.only(
+                  left: 16.w,
+                  right: 16.w,
+                  top: 8.h,
+                  bottom: 8.h,
+                ),
+                itemCount: controller.testimonialProducts.length,
+                separatorBuilder: (_, __) => SizedBox(width: 10.w),
+                itemBuilder: (context, index) {
+                  final product = controller.testimonialProducts[index];
+                  return FeaturedProductsWidget.buildFeaturedStyleCard(
+                    product,
+                    () => controller.navigateToProductDetail(product),
+                  );
+                },
+              ),
+            );
           }),
           SizedBox(height: 8.h),
         ],

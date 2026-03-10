@@ -44,9 +44,12 @@ class RoyalCompassController extends GetxController {
   StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
   StreamSubscription<GyroscopeEvent>? _gyroscopeSubscription;
 
-  // Throttle timer
-  Timer? _throttleTimer;
-  static const Duration _throttleDuration = Duration(milliseconds: 100);
+  // Throttle: time-based so updates actually run (max ~10/sec)
+  DateTime? _lastThrottleRun;
+  static const int _throttleMs = 100;
+  MagnetometerEvent? _latestMagnetometerEvent;
+  AccelerometerEvent? _latestAccelerometerEvent;
+  GyroscopeEvent? _latestGyroscopeEvent;
 
   // Pause state
   bool _isPaused = false;
@@ -89,9 +92,8 @@ class RoyalCompassController extends GetxController {
         ).listen(
           (MagnetometerEvent event) {
             if (!_isPaused && !_isLocked) {
-              _throttleUpdate(() {
-                _updateHeading(event);
-              });
+              _latestMagnetometerEvent = event;
+              _throttleUpdate(_applyLatestReadings);
             }
           },
           onError: (error) {
@@ -107,9 +109,8 @@ class RoyalCompassController extends GetxController {
         ).listen(
           (AccelerometerEvent event) {
             if (!_isPaused) {
-              _throttleUpdate(() {
-                _updateCalibration(event);
-              });
+              _latestAccelerometerEvent = event;
+              _throttleUpdate(_applyLatestReadings);
             }
           },
           onError: (error) {
@@ -125,9 +126,8 @@ class RoyalCompassController extends GetxController {
         ).listen(
           (GyroscopeEvent event) {
             if (!_isPaused) {
-              _throttleUpdate(() {
-                _updateTilt(event);
-              });
+              _latestGyroscopeEvent = event;
+              _throttleUpdate(_applyLatestReadings);
             }
           },
           onError: (error) {
@@ -135,6 +135,18 @@ class RoyalCompassController extends GetxController {
           },
           cancelOnError: false,
         );
+  }
+
+  void _applyLatestReadings() {
+    if (_latestMagnetometerEvent != null) {
+      _updateHeading(_latestMagnetometerEvent!);
+    }
+    if (_latestAccelerometerEvent != null) {
+      _updateCalibration(_latestAccelerometerEvent!);
+    }
+    if (_latestGyroscopeEvent != null) {
+      _updateTilt(_latestGyroscopeEvent!);
+    }
   }
 
   void _updateHeading(MagnetometerEvent event) {
@@ -215,8 +227,14 @@ class RoyalCompassController extends GetxController {
   }
 
   void _throttleUpdate(VoidCallback callback) {
-    _throttleTimer?.cancel();
-    _throttleTimer = Timer(_throttleDuration, callback);
+    if (_isPaused) return;
+    final now = DateTime.now();
+    if (_lastThrottleRun != null &&
+        now.difference(_lastThrottleRun!).inMilliseconds < _throttleMs) {
+      return;
+    }
+    _lastThrottleRun = now;
+    callback();
   }
 
   /// Lock current direction
@@ -297,7 +315,6 @@ class RoyalCompassController extends GetxController {
     _magnetometerSubscription?.pause();
     _accelerometerSubscription?.pause();
     _gyroscopeSubscription?.pause();
-    _throttleTimer?.cancel();
   }
 
   void resumeSensors() {
@@ -310,7 +327,6 @@ class RoyalCompassController extends GetxController {
   @override
   void onClose() {
     _isPaused = true;
-    _throttleTimer?.cancel();
     _magnetometerSubscription?.cancel();
     _accelerometerSubscription?.cancel();
     _gyroscopeSubscription?.cancel();

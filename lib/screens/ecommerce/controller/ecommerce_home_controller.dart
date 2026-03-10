@@ -95,16 +95,23 @@ class EcommerceHomeController extends BaseController {
   final purposes = <Map<String, String>>[].obs;
   final isLoadingPurposes = false.obs;
 
-  // Category sections: Rudraksha, Kits, Pyramids
+  // Category sections: Rudraksha, Kits, Pyramids, Rashi (Product based on zodiac)
   final rudrakshaProducts = <ProductModel>[].obs;
   final kitsProducts = <ProductModel>[].obs;
   final pyramidsProducts = <ProductModel>[].obs;
+  final rashiProducts = <ProductModel>[].obs;
   final rudrakshaCategory = Rxn<CategoryModel>();
   final kitsCategory = Rxn<CategoryModel>();
   final pyramidsCategory = Rxn<CategoryModel>();
+  final rashiCategory = Rxn<CategoryModel>();
   final isLoadingRudraksha = false.obs;
   final isLoadingKits = false.obs;
   final isLoadingPyramids = false.obs;
+  final isLoadingRashi = false.obs;
+
+  // Testimonials: products from all categories that have reviews
+  final testimonialProducts = <ProductModel>[].obs;
+  final isLoadingTestimonials = false.obs;
 
   // Banners
   final RxList<BannerItem> ecommerceBanners = <BannerItem>[].obs;
@@ -125,6 +132,10 @@ class EcommerceHomeController extends BaseController {
   Timer? _promotionalBannerTimer;
   final RxDouble promotionalBannerScrollPosition = 0.0.obs;
   bool promotionalBannerInitialized = false;
+
+  // Testimonials auto-scroll (card ~220.w + separator 10.w)
+  final ScrollController testimonialScrollController = ScrollController();
+  Timer? _testimonialScrollTimer;
 
   // Make timer accessible for checking if it's active
   Timer? get promotionalBannerTimer => _promotionalBannerTimer;
@@ -148,9 +159,41 @@ class EcommerceHomeController extends BaseController {
   void onClose() {
     _bannerTimer?.cancel();
     _promotionalBannerTimer?.cancel();
+    _testimonialScrollTimer?.cancel();
     bannerPageController.dispose();
     promotionalBannerScrollController.dispose();
+    testimonialScrollController.dispose();
     super.onClose();
+  }
+
+  void _startTestimonialAutoScroll() {
+    _testimonialScrollTimer?.cancel();
+    _testimonialScrollTimer = Timer.periodic(
+      const Duration(seconds: 3),
+      (timer) {
+        if (testimonialProducts.isEmpty || !testimonialScrollController.hasClients) {
+          return;
+        }
+        try {
+          final position = testimonialScrollController.position;
+          if (!position.hasContentDimensions || position.maxScrollExtent <= 0) return;
+          final maxScroll = position.maxScrollExtent;
+          final current = position.pixels;
+          // One card width + separator (~230 logical px at design width 393)
+          final step = 230.0 * (Get.mediaQuery.size.width / 393);
+          final next = current + step;
+          if (next >= maxScroll - 1) {
+            testimonialScrollController.jumpTo(0);
+          } else {
+            testimonialScrollController.animateTo(
+              next,
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeInOut,
+            );
+          }
+        } catch (_) {}
+      },
+    );
   }
 
   void _startBannerAutoScroll() {
@@ -239,8 +282,46 @@ class EcommerceHomeController extends BaseController {
       loadPurposes(),
       loadBlogs(),
     ]);
-    // Load Rudraksha, Kits, Pyramids after categories are available
+    // Load Rudraksha, Kits, Pyramids, Rashi after categories are available
     await loadCategorySectionProducts();
+    await loadTestimonialProducts();
+  }
+
+  /// Load products from all categories for the testimonial section.
+  /// Shows products from featured, top selling, and category sections (no filter by reviewCount,
+  /// since list APIs often don't return reviewCount; product detail page shows actual reviews).
+  Future<void> loadTestimonialProducts() async {
+    try {
+      isLoadingTestimonials.value = true;
+      testimonialProducts.clear();
+      final seenIds = <String>{};
+      final List<ProductModel> combined = [];
+
+      void addFrom(List<ProductModel> list) {
+        for (final p in list) {
+          final id = p.id ?? p.slug ?? '';
+          if (id.isEmpty || seenIds.contains(id)) continue;
+          seenIds.add(id);
+          combined.add(p);
+        }
+      }
+
+      addFrom(featuredProducts);
+      addFrom(topSellingProducts);
+      addFrom(rudrakshaProducts);
+      addFrom(kitsProducts);
+      addFrom(pyramidsProducts);
+      addFrom(rashiProducts);
+
+      testimonialProducts.addAll(combined.take(20));
+      if (testimonialProducts.isNotEmpty) {
+        Future.delayed(const Duration(milliseconds: 500), _startTestimonialAutoScroll);
+      }
+    } catch (e) {
+      print('Error loading testimonial products: $e');
+    } finally {
+      isLoadingTestimonials.value = false;
+    }
   }
 
   Future<void> loadBlogs() async {
@@ -285,6 +366,13 @@ class EcommerceHomeController extends BaseController {
         products: pyramidsProducts,
         isLoading: isLoadingPyramids,
         categoryOut: pyramidsCategory,
+      ),
+      _loadProductsForCategorySection(
+        nameOrSlug: 'rashi',
+        nameVariants: ['rashi', 'Rashi'],
+        products: rashiProducts,
+        isLoading: isLoadingRashi,
+        categoryOut: rashiCategory,
       ),
     ]);
   }

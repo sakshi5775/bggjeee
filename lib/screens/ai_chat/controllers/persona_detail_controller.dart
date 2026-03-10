@@ -19,6 +19,7 @@ class PersonaDetailController extends BaseController {
   final RxBool isLoadingReviews = false.obs;
   final RxInt currentReviewPage = 1.obs;
   final RxBool hasMoreReviews = true.obs;
+  final RxInt totalReviewCount = 0.obs;
 
   // Follow state
   final RxBool isFollowing = false.obs;
@@ -152,6 +153,7 @@ class PersonaDetailController extends BaseController {
       );
 
       if (response != null) {
+        totalReviewCount.value = response.pagination.total;
         if (refresh) {
           reviews.value = response.reviews;
         } else {
