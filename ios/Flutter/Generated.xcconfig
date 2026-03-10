@@ -1,6 +1,6 @@
 // This is a generated file; do not edit or check into version control.
-FLUTTER_ROOT=C:\flutter
-FLUTTER_APPLICATION_PATH=C:\Users\DELL\Videos\astro_user_app-astrobharatai_user\astro_user_app-astrobharatai_user
+FLUTTER_ROOT=C:\flutter_letest\flutter
+FLUTTER_APPLICATION_PATH=D:\2025 projects\astro_new_user_app\astro_user_app
 COCOAPODS_PARALLEL_CODE_SIGN=true
 FLUTTER_TARGET=lib\main.dart
 FLUTTER_BUILD_DIR=build
