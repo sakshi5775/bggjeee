@@ -110,6 +110,10 @@ class ProfileView extends GetView<ProfileController> {
                           _buildRecentOrders(),
                           SizedBox(height: 24.h),
                           _buildHelpSection(),
+                          if (LoginGuard.isLoggedIn) ...[
+                            SizedBox(height: 24.h),
+                            _buildDeleteAccountSection(),
+                          ],
                           SizedBox(height: 24.h),
                         ],
                       ),
@@ -938,6 +942,115 @@ class ProfileView extends GetView<ProfileController> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildDeleteAccountSection() {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.all(20.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AutoTranslateText(
+                  'Delete your account',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 18,
+                    color: AppColors.textColorMaroon,
+                  ),
+                ),
+                SizedBox(height: 8.h),
+                AutoTranslateText(
+                  'Permanently delete your account and all associated data. This action cannot be undone.',
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 14,
+                    height: 1.4,
+                  ),
+                ),
+                SizedBox(height: 20.h),
+                Obx(
+                  () => Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      gradient: AppColors.orangeGradient,
+                      borderRadius: BorderRadius.circular(14.r),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.deepOrange.withValues(alpha: 0.4),
+                          blurRadius: 12,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: controller.isDeletingAccount.value
+                            ? null
+                            : controller.onDeleteAccountTap,
+                        borderRadius: BorderRadius.circular(14.r),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20.w,
+                            vertical: 16.h,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (controller.isDeletingAccount.value)
+                                SizedBox(
+                                  height: 22,
+                                  width: 22,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              else
+                                Icon(
+                                  Icons.delete_outline,
+                                  size: 22,
+                                  color: Colors.white,
+                                ),
+                              SizedBox(width: 10.w),
+                              AutoTranslateText(
+                                'Delete my account',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

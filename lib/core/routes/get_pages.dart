@@ -103,6 +103,7 @@ import 'package:astrobharataiuser/screens/user_dashboard/view/report_pdf_view.da
 
 import 'package:astrobharataiuser/screens/astrology_services/view/astrology_services_view.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/all_astrologers_view.dart';
+import 'package:astrobharataiuser/screens/consult/view/consult_view.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/astrologer_detail_view.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/following_astrologers_view.dart';
 import 'package:astrobharataiuser/screens/live_astrologers/view/live_astrologers_view.dart';
@@ -119,6 +120,8 @@ import 'package:astrobharataiuser/screens/ecommerce/binding/product_list_binding
 import 'package:astrobharataiuser/screens/ecommerce/binding/product_detail_binding.dart';
 import 'package:astrobharataiuser/screens/ecommerce/view/search_view.dart';
 import 'package:astrobharataiuser/screens/ecommerce/binding/search_binding.dart';
+import 'package:astrobharataiuser/screens/global_search/view/global_search_view.dart';
+import 'package:astrobharataiuser/screens/global_search/binding/global_search_binding.dart';
 import 'package:astrobharataiuser/screens/ecommerce/view/cart_view.dart';
 import 'package:astrobharataiuser/screens/ecommerce/view/saved_items_view.dart';
 import 'package:astrobharataiuser/screens/ecommerce/view/wishlist_view.dart';
@@ -375,6 +378,13 @@ class PageRoutes {
       binding: SearchBinding(),
     ),
     GetPage(
+      name: AppRoutes.globalSearch,
+      page: () => const GlobalSearchView(),
+      transition: Transition.native,
+      transitionDuration: Duration(milliseconds: 250),
+      binding: GlobalSearchBinding(),
+    ),
+    GetPage(
       name: AppRoutes.login,
       page: () => const LoginView(),
       transition: Transition.upToDown,
@@ -425,6 +435,12 @@ class PageRoutes {
     GetPage(
       name: AppRoutes.liveAstrologers,
       page: () => const LiveAstrologersView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.consultHome,
+      page: () => const ConsultView(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),

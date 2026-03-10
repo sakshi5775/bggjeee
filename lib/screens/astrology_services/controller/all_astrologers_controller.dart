@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:astrobharataiuser/utils/call_initiation_helper.dart';
 
 import 'package:astrobharataiuser/data_model/banner_model.dart';
+import 'package:astrobharataiuser/screens/consult/controller/consult_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/banner_service.dart';
 
 class AllAstrologersController extends GetxController {
@@ -45,6 +46,14 @@ class AllAstrologersController extends GetxController {
   String? initialFilter;
   String? initialAvailability;
 
+  // Full API filters (from Consult "View all" or Get.arguments map)
+  final RxnString languageFilter = RxnString();
+  final RxDouble minRatingFilter = 0.0.obs;
+  final RxDouble maxPriceFilter = 0.0.obs;
+  final RxInt experienceFilter = 0.obs;
+  final RxString sortByFilter = 'rating'.obs;
+  final RxString searchFilter = ''.obs;
+
   AllAstrologersController({this.initialFilter, this.initialAvailability});
 
   final RxnString selectedAvailability = RxnString();
@@ -61,7 +70,7 @@ class AllAstrologersController extends GetxController {
       selectedAvailability.value = initialAvailability;
     }
 
-    // Check Get.arguments (from navigation)
+    // Check Get.arguments (from navigation e.g. Consult "View all")
     if (Get.arguments is Map) {
       final args = Get.arguments as Map;
       if (args.containsKey('availability')) {
@@ -70,10 +79,49 @@ class AllAstrologersController extends GetxController {
       if (args.containsKey('filter')) {
         selectedFilter.value = args['filter'] as String;
       }
+      if (args.containsKey('specialization')) {
+        final s = args['specialization']?.toString();
+        if (s != null && s.isNotEmpty) _mapSpecializationToFilter(s);
+      }
+      if (args.containsKey('astrologerCategory')) {
+        final c = args['astrologerCategory']?.toString();
+        if (c == 'CELEBRITY_ASTROLOGER') selectedFilter.value = 'Celebrity';
+        else if (c == 'KID_ASTROLOGER') selectedFilter.value = 'Kids';
+      }
+      if (args.containsKey('language')) {
+        languageFilter.value = args['language']?.toString();
+      }
+      if (args.containsKey('minRating')) {
+        final v = args['minRating'];
+        if (v != null) minRatingFilter.value = (v is num) ? v.toDouble() : double.tryParse(v.toString()) ?? 0;
+      }
+      if (args.containsKey('maxPrice')) {
+        final v = args['maxPrice'];
+        if (v != null) maxPriceFilter.value = (v is num) ? v.toDouble() : double.tryParse(v.toString()) ?? 0;
+      }
+      if (args.containsKey('experience')) {
+        final v = args['experience'];
+        if (v != null) experienceFilter.value = (v is num) ? v.toInt() : int.tryParse(v.toString()) ?? 0;
+      }
+      if (args.containsKey('sortBy')) {
+        sortByFilter.value = args['sortBy']?.toString() ?? 'rating';
+      }
+      if (args.containsKey('search')) {
+        searchFilter.value = args['search']?.toString() ?? '';
+      }
     }
 
     loadAstrologers();
     loadBanners();
+  }
+
+  void _mapSpecializationToFilter(String spec) {
+    final upper = spec.toUpperCase();
+    if (upper == 'TAROT') selectedFilter.value = 'Tarots';
+    else if (upper == 'PRASHNA') selectedFilter.value = 'Prashana';
+    else if (upper == 'VEDIC') selectedFilter.value = 'Vedic';
+    else if (upper == 'VASTU') selectedFilter.value = 'Vastu';
+    else selectedFilter.value = spec.length > 1 ? '${spec[0].toUpperCase()}${spec.substring(1).toLowerCase()}' : spec;
   }
 
   /// Call from view when user scrolls near bottom (NotificationListener).
@@ -95,23 +143,55 @@ class AllAstrologersController extends GetxController {
     errorMessage.value = '';
 
     try {
-      // Map filter to specialization or astrologer category
       String? specialization;
       String? astrologerCategory;
-      if (selectedFilter.value != 'All') {
-        if (selectedFilter.value == 'Celebrity') {
-          astrologerCategory = 'CELEBRITY_ASTROLOGER';
-        } else if (selectedFilter.value == 'Kids') {
-          astrologerCategory = 'KID_ASTROLOGER';
-        } else {
-          if (selectedFilter.value == 'Tarots') {
-            specialization = 'TAROT';
-          } else if (selectedFilter.value == 'Prashana') {
-            specialization = 'PRASHANA';
+      String? availability;
+      String? language;
+      double? minPrice;
+      double? maxPrice;
+      int? experience;
+      String? sortBy;
+      String? search;
+
+      if (Get.isRegistered<ConsultController>()) {
+        final c = Get.find<ConsultController>();
+        specialization = c.selectedSpecializations.isEmpty ? null : c.selectedSpecializations.join(',');
+        language = c.selectedLanguages.isEmpty ? null : c.selectedLanguages.join(',');
+        availability = c.availability.value == 'ALL' ? null : c.availability.value;
+        astrologerCategory = c.astrologerCategory.value == 'ALL' ? null : c.astrologerCategory.value;
+        minPrice = c.minPrice.value > 0 ? c.minPrice.value : null;
+        maxPrice = c.maxPrice.value > 0 ? c.maxPrice.value : null;
+        experience = c.minExperience.value > 0 ? c.minExperience.value : null;
+        sortBy = c.sortBy.value.isNotEmpty ? c.sortBy.value : null;
+        search = c.globalSearchQuery.value.trim().isEmpty ? null : c.globalSearchQuery.value.trim();
+      } else {
+        if (selectedFilter.value != 'All') {
+          if (selectedFilter.value == 'Celebrity') {
+            astrologerCategory = 'CELEBRITY_ASTROLOGER';
+          } else if (selectedFilter.value == 'Kids') {
+            astrologerCategory = 'KID_ASTROLOGER';
           } else {
-            specialization = selectedFilter.value.toUpperCase();
+            if (selectedFilter.value == 'Tarots') {
+              specialization = 'TAROT';
+            } else if (selectedFilter.value == 'Prashana') {
+              specialization = 'PRASHANA';
+            } else {
+              specialization = selectedFilter.value.toUpperCase();
+            }
           }
         }
+        availability =
+            (selectedAvailability.value == 'CHAT' ||
+                selectedAvailability.value == 'VOICE_CALL' ||
+                selectedAvailability.value == 'VIDEO_CALL')
+            ? 'ONLINE'
+            : selectedAvailability.value;
+        language = languageFilter.value;
+        minPrice = null;
+        maxPrice = maxPriceFilter.value > 0 ? maxPriceFilter.value : null;
+        experience = experienceFilter.value > 0 ? experienceFilter.value : null;
+        sortBy = sortByFilter.value.isNotEmpty ? sortByFilter.value : null;
+        search = searchFilter.value.isNotEmpty ? searchFilter.value : null;
       }
 
       final response = await _astrologerService.getAstrologers(
@@ -119,13 +199,15 @@ class AllAstrologersController extends GetxController {
         limit: limit.value,
         specialization: specialization,
         astrologerCategory: astrologerCategory,
-        // We still pass availability to API if it supports ONLINE status filtering
-        availability:
-            (selectedAvailability.value == 'CHAT' ||
-                selectedAvailability.value == 'VOICE_CALL' ||
-                selectedAvailability.value == 'VIDEO_CALL')
-            ? 'ONLINE'
-            : selectedAvailability.value,
+        availability: availability,
+        language: language,
+        minRating: null,
+        minPrice: minPrice,
+        maxPrice: maxPrice,
+        experience: experience,
+        sortBy: sortBy,
+        search: search,
+        useCache: false,
       );
 
       if (response != null) {
@@ -146,6 +228,25 @@ class AllAstrologersController extends GetxController {
               .toList();
         }
 
+        // CLIENT-SIDE price filter: include if any service price falls in [minPrice, maxPrice]
+        if (Get.isRegistered<ConsultController>()) {
+          final c = Get.find<ConsultController>();
+          final filterMin = c.minPrice.value > 0 ? c.minPrice.value : null;
+          final filterMax = c.maxPrice.value > 0 ? c.maxPrice.value : null;
+          if (filterMin != null || filterMax != null) {
+            filteredList = filteredList.where((a) {
+              final prices = _allPricesPerMin(a);
+              // If we have no price info, include so we don't show 0 (API may use different keys)
+              if (prices.isEmpty) return true;
+              final minP = prices.reduce((x, y) => x < y ? x : y);
+              final maxP = prices.reduce((x, y) => x > y ? x : y);
+              if (filterMin != null && maxP < filterMin) return false; // highest price below our min
+              if (filterMax != null && minP > filterMax) return false; // lowest price above our max
+              return true;
+            }).toList();
+          }
+        }
+
         if (refresh) {
           astrologers.value = filteredList;
         } else {
@@ -155,11 +256,24 @@ class AllAstrologersController extends GetxController {
         _initializeFollowStatus();
         hasMoreData.value = response.pagination.hasNextPage;
         currentPage.value = response.pagination.currentPage;
+        if (Get.isRegistered<ConsultController>()) {
+          final c = Get.find<ConsultController>();
+          final filterMin = c.minPrice.value > 0 ? c.minPrice.value : null;
+          final filterMax = c.maxPrice.value > 0 ? c.maxPrice.value : null;
+          if (filterMin != null || filterMax != null) {
+            c.astrologersTotalCount.value = astrologers.length;
+          } else {
+            c.astrologersTotalCount.value =
+                response.pagination.totalAstrologers;
+          }
+        }
       } else {
         errorMessage.value = 'Failed to load astrologers';
+        if (!refresh) hasMoreData.value = false;
       }
     } catch (e) {
       errorMessage.value = 'Error: ${e.toString()}';
+      if (!refresh) hasMoreData.value = false;
     } finally {
       isLoading.value = false;
     }
@@ -342,6 +456,15 @@ class AllAstrologersController extends GetxController {
     }
   }
 
+  /// All price-per-minute values (voice, chat, video) that are present and > 0.
+  List<double> _allPricesPerMin(AstrologerModel a) {
+    final list = <double>[];
+    if (a.voicePricePerMin != null && a.voicePricePerMin! > 0) list.add(a.voicePricePerMin!);
+    if (a.videoPricePerMin != null && a.videoPricePerMin! > 0) list.add(a.videoPricePerMin!);
+    if (a.chatPricePerMin != null && a.chatPricePerMin! > 0) list.add(a.chatPricePerMin!);
+    return list;
+  }
+
   /// Initialize follow status for loaded astrologers
   Future<void> _initializeFollowStatus() async {
     for (var astrologer in astrologers) {
@@ -364,4 +487,5 @@ class AllAstrologersController extends GetxController {
       }
     }
   }
+
 }

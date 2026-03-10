@@ -15,61 +15,58 @@ class AstrologyToolWidget extends StatelessWidget {
   AstrologyToolWidget({super.key});
 
   final List<Map<String, String>> _astrologyTools = [
-    {
-      'label': 'Face Reading',
-      'route': AppRoutes.faceReading,
-      'image':
-          'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/face2.jpeg',
-      'pricingKey': 'face_reading',
-    },
-    {
-      'label': 'Palm Reading',
-      'route': AppRoutes.palmReading,
-      'image': 'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/hand.jpeg',
-      'pricingKey': 'palmistry',
-    },
-    {
-      'label': 'Vastu Reading',
-      'route': AppRoutes.vastuDashboard,
-      'image':
-          'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/vastu.jpeg',
-      'pricingKey': '',
-    },
-    {
-      'label': 'Ramal Shastra',
-      'route': AppRoutes.ramalShastra,
-      'image':
-          'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/ramal.jpeg',
-      'pricingKey': 'ramal_shastra',
-    },
-    {
-      'label': 'Writing Astrology',
-      'route': AppRoutes.handwritingAstrology,
-      'image':
-          'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/writing.jpeg',
-      'pricingKey': 'handwriting_analysis',
-    },
-    {
-      'label': 'Prashna Kundli',
-      'route': AppRoutes.prashnaKundali,
-      'image':
-          'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/PrashanKundli.jpg',
-      'pricingKey': 'prashna_kundali',
-    },
-    {
-      'label': 'Tarot Reading',
-      'route': AppRoutes.tarotReading,
-      'image':
-          'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/TarotReading.png',
-      'pricingKey': '',
-    },
-    {
-      'label': 'Carrot Astrology',
-      'route': AppRoutes.carrotAstrology,
-      'image':
-          'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/carrotAstro.png',
-      'pricingKey': 'carrot_astrology',
-    },
+   
+      {
+        'label': 'Face Reading',
+        'route': AppRoutes.faceReading,
+        'image':
+            'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/face+reading1.jpeg',
+      },
+      {
+        'label': 'Palm Reading',
+        'route': AppRoutes.palmReading,
+        'image':
+            'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/palm+reading.jpeg',
+      },
+      {
+        'label': 'Vastu Reading',
+        'route': AppRoutes.vastuDashboard,
+        'image':
+            'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/vastu+3.jpeg',
+      },
+      {
+        'label': 'Ramal Shastra',
+        'route': AppRoutes.ramalShastra,
+        'image':
+            'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/ramal+shastra+4.jpeg',
+      },
+      {
+        'label': 'Writing Astrology',
+        'route': AppRoutes.handwritingAstrology,
+        'image':
+            'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/writing.jpeg',
+      },
+      {
+        'label': 'Prashna Kundli',
+        'route': AppRoutes.prashnaKundali,
+        'image':
+            'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/prashna+kundli.jpeg',
+      },
+      {
+        'label': 'Tarot Reading',
+        'route': AppRoutes.tarotReading,
+        'image':
+            'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/tarot+reading+6.jpeg',
+      },
+      {
+        'label': 'Carrot Astrology',
+        'route': AppRoutes.carrotAstrology,
+        'image':
+            'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/carrot+astrology.jpeg',
+      },
+    
+
+  
   ];
 
   @override

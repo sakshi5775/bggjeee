@@ -21,7 +21,8 @@ class SearchResponse {
     if (json['aggregations'] is Map<String, dynamic>) {
       aggregations = SearchAggregations.fromJson(json['aggregations'] as Map<String, dynamic>);
     }
-    query = json['query']?.toString();
+    query = json['query']?.toString() ??
+        (json['pagination'] is Map ? (json['pagination'] as Map)['query']?.toString() : null);
   }
 
   List<ProductModel> items = const [];

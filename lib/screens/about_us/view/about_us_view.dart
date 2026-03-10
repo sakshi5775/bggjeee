@@ -605,25 +605,25 @@ class AboutUsView extends StatelessWidget {
         'label': 'Face Reading',
         'route': AppRoutes.faceReading,
         'image':
-            'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/face2.jpeg',
+            'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/face+reading1.jpeg',
       },
       {
         'label': 'Palm Reading',
         'route': AppRoutes.palmReading,
         'image':
-            'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/hand.jpeg',
+            'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/palm+reading.jpeg',
       },
       {
         'label': 'Vastu Reading',
         'route': AppRoutes.vastuDashboard,
         'image':
-            'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/vastu.jpeg',
+            'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/vastu+3.jpeg',
       },
       {
         'label': 'Ramal Shastra',
         'route': AppRoutes.ramalShastra,
         'image':
-            'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/ramal.jpeg',
+            'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/ramal+shastra+4.jpeg',
       },
       {
         'label': 'Writing Astrology',
@@ -635,19 +635,19 @@ class AboutUsView extends StatelessWidget {
         'label': 'Prashna Kundli',
         'route': AppRoutes.prashnaKundali,
         'image':
-            'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/PrashanKundli.jpg',
+            'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/prashna+kundli.jpeg',
       },
       {
         'label': 'Tarot Reading',
         'route': AppRoutes.tarotReading,
         'image':
-            'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/TarotReading.png',
+            'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/tarot+reading+6.jpeg',
       },
       {
         'label': 'Carrot Astrology',
         'route': AppRoutes.carrotAstrology,
         'image':
-            'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/carrotAstro.png',
+            'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/carrot+astrology.jpeg',
       },
     ];
 

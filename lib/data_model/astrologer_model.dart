@@ -1,3 +1,16 @@
+/// Parse price-per-minute from JSON with multiple possible keys (camelCase, snake_case, etc.).
+double? _parsePricePerMinute(Map<String, dynamic> json) {
+  final v = json['pricePerMinute'] ?? json['price_per_minute'] ?? json['pricePerMin'] ?? json['price_per_min'] ?? json['price'];
+  return _parseNum(v);
+}
+
+double? _parseNum(dynamic v) {
+  if (v == null) return null;
+  if (v is num) return v.toDouble();
+  if (v is String) return double.tryParse(v);
+  return null;
+}
+
 class AstrologerModel {
   final String id;
   final String astrologerId;
@@ -176,9 +189,7 @@ class VoiceService {
       currency: json['currency'] as String? ?? 'INR',
       totalCalls: (json['totalCalls'] as num?)?.toInt() ?? 0,
       totalDuration: (json['totalDuration'] as num?)?.toInt() ?? 0,
-      pricePerMinute: json['pricePerMinute'] != null
-          ? (json['pricePerMinute'] as num).toDouble()
-          : null,
+      pricePerMinute: _parsePricePerMinute(json),
     );
   }
 }
@@ -204,9 +215,7 @@ class VideoService {
       currency: json['currency'] as String? ?? 'INR',
       totalCalls: (json['totalCalls'] as num?)?.toInt() ?? 0,
       totalDuration: (json['totalDuration'] as num?)?.toInt() ?? 0,
-      pricePerMinute: json['pricePerMinute'] != null
-          ? (json['pricePerMinute'] as num).toDouble()
-          : null,
+      pricePerMinute: _parsePricePerMinute(json),
     );
   }
 }
@@ -230,12 +239,8 @@ class ChatService {
       enabled: json['enabled'] as bool? ?? false,
       currency: json['currency'] as String? ?? 'INR',
       totalChats: (json['totalChats'] as num?)?.toInt() ?? 0,
-      // Support both pricePerMinute (new) and pricePerMessage (old) for backward compatibility
-      pricePerMinute: json['pricePerMinute'] != null
-          ? (json['pricePerMinute'] as num).toDouble()
-          : (json['pricePerMinute'] != null
-                ? (json['pricePerMinute'] as num).toDouble()
-                : null),
+      pricePerMinute: _parsePricePerMinute(json) ??
+          _parseNum(json['pricePerMessage']),
     );
   }
 }
@@ -373,9 +378,9 @@ class AstrologerResponse {
   AstrologerResponse({required this.astrologers, required this.pagination});
 
   factory AstrologerResponse.fromJson(Map<String, dynamic> json) {
-    final data = json['data'] as Map<String, dynamic>;
-    final astrologersList = data['astrologers'] as List<dynamic>;
-    final paginationData = data['pagination'] as Map<String, dynamic>;
+    final data = json['data'] as Map<String, dynamic>? ?? json;
+    final astrologersList = data['astrologers'] as List<dynamic>? ?? [];
+    final paginationData = data['pagination'] as Map<String, dynamic>? ?? {};
 
     return AstrologerResponse(
       astrologers: astrologersList
@@ -403,14 +408,21 @@ class AstrologerPagination {
     required this.hasPrevPage,
   });
 
+  /// Parses pagination from API. Accepts camelCase (currentPage, totalAstrologers)
+  /// or common variants (page, totalItems) for backend compatibility.
   factory AstrologerPagination.fromJson(Map<String, dynamic> json) {
+    int toInt(dynamic v) => (v is num) ? v.toInt() : int.tryParse(v?.toString() ?? '') ?? 0;
+    final page = toInt(json['currentPage'] ?? json['page']);
+    final total = toInt(json['totalAstrologers'] ?? json['totalItems'] ?? json['total_astrologers'] ?? json['total']);
+    final pages = toInt(json['totalPages'] ?? json['total_pages']);
+    final lim = toInt(json['limit']);
     return AstrologerPagination(
-      currentPage: (json['currentPage'] as num?)?.toInt() ?? 1,
-      totalPages: (json['totalPages'] as num?)?.toInt() ?? 1,
-      totalAstrologers: (json['totalAstrologers'] as num?)?.toInt() ?? 0,
-      limit: (json['limit'] as num?)?.toInt() ?? 20,
-      hasNextPage: json['hasNextPage'] as bool? ?? false,
-      hasPrevPage: json['hasPrevPage'] as bool? ?? false,
+      currentPage: page < 1 ? 1 : page,
+      totalPages: pages < 1 ? 1 : pages,
+      totalAstrologers: total,
+      limit: lim < 1 ? 20 : lim,
+      hasNextPage: json['hasNextPage'] as bool? ?? json['has_next_page'] as bool? ?? false,
+      hasPrevPage: json['hasPrevPage'] as bool? ?? json['has_prev_page'] as bool? ?? false,
     );
   }
 }

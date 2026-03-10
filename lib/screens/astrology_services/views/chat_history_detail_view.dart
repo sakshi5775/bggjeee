@@ -44,7 +44,6 @@ class ChatHistoryDetailView extends StatelessWidget {
                 showBackButton: true,
                 onBackTap: () => Get.back(),
                 showWallet: false,
-                showSearch: false,
               ),
               if (messages.isEmpty)
                 Expanded(

@@ -8,6 +8,7 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/routes/get_pages.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/all_astrologers_view.dart';
+import 'package:astrobharataiuser/screens/consult/view/consult_view.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/controller/virtual_darshan_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/view/virtual_darshan_view.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
@@ -35,7 +36,7 @@ class UserMainController extends GetxController {
   /// The initial / root route of each tab.
   final List<String> tabInitialRoutes = const [
     '/user-home',
-    AppRoutes.allAstrologers,
+    AppRoutes.consultHome,
     AppRoutes.virtualDarshan,
     AppRoutes.ecommerceHome,
     AppRoutes.courses,
@@ -164,6 +165,12 @@ class UserMainController extends GetxController {
     return navKey.currentState?.pushNamed<T>(route, arguments: arguments);
   }
 
+  /// Pop the current tab's stack to root (show tab root screen).
+  static void popCurrentTabToRoot() {
+    final ctrl = Get.find<UserMainController>();
+    ctrl.navigatorKeys[ctrl.currentIndex.value].currentState?.popUntil((r) => r.isFirst);
+  }
+
   // ─── Route Resolution ────────────────────────────────────
   /// Shared across all five tab navigators.
   /// Tries the tab-root routes first, falls back to PageRoutes.routes.
@@ -202,11 +209,28 @@ class UserMainController extends GetxController {
           page: () => const UserDashboardView(),
           binding: UserDashboardBinding(),
         );
+      case AppRoutes.consultHome:
+        return GetPageRoute(
+          settings: finalSettings,
+          page: () => const ConsultView(),
+        );
       case AppRoutes.allAstrologers:
         return GetPageRoute(
           settings: finalSettings,
-          page: () =>
-              const AllAstrologersView(hideHeader: false, showBackButton: true),
+          page: () {
+            final args = finalSettings.arguments;
+            final initialFilter = args is String
+                ? args
+                : args is Map<String, dynamic>
+                    ? args['filter'] as String?
+                    : null;
+            final availability = args is Map<String, dynamic> ? args['availability'] as String? : null;
+            return AllAstrologersView(
+              initialFilter: initialFilter,
+              hideHeader: false,
+              showBackButton: true,
+            );
+          },
         );
       case AppRoutes.virtualDarshan:
         return GetPageRoute(

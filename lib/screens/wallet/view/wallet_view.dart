@@ -76,7 +76,6 @@ class WalletView extends StatelessWidget {
         ),
       ),
       showBackButton: true,
-      onBackTap: () => Get.back(),
       showWallet: false,
     );
   }

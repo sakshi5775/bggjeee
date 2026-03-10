@@ -101,6 +101,8 @@ class ProfileController extends BaseController {
   final followingCount = 0.obs;
   final recentOrders = <OrderModel>[].obs;
 
+  final isDeletingAccount = false.obs;
+
   AuthService get _authService => Get.find<AuthService>();
 
   WishlistController? get wishlistController =>
@@ -884,6 +886,55 @@ class ProfileController extends BaseController {
 
     final logoutAll = result == 'all';
     await _authService.logout(logoutFromAllDevices: logoutAll);
+  }
+
+  /// Delete account: show confirmation, call API, then clear data and go to login.
+  Future<void> onDeleteAccountTap() async {
+    final confirmed = await Get.dialog<bool>(
+      AlertDialog(
+        title: const AutoTranslateText('Delete your account'),
+        content: const AutoTranslateText(
+          'Are you sure? This action cannot be undone. All your data will be permanently deleted.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(result: false),
+            child: const AutoTranslateText('No'),
+          ),
+          TextButton(
+            onPressed: () => Get.back(result: true),
+            child: const AutoTranslateText('Yes'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    final uid = userId;
+    if (uid == null || uid.isEmpty) {
+      showErrorMessage(message: 'Unable to identify account.');
+      return;
+    }
+
+    isDeletingAccount.value = true;
+    try {
+      final success = await _profileService.deleteProfile(uid);
+      if (success) {
+        showInfoMessage(
+          title: 'Account deleted',
+          message: 'Your account has been deleted successfully.',
+        );
+        UserData().removeUserData();
+      } else {
+        showErrorMessage(message: 'Failed to delete account. Please try again.');
+      }
+    } catch (e) {
+      showErrorMessage(
+        message: e.toString().replaceFirst('Exception: ', ''),
+      );
+    } finally {
+      isDeletingAccount.value = false;
+    }
   }
 
   String _formatDate(String? isoString) {

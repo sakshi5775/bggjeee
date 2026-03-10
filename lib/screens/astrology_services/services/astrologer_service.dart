@@ -8,29 +8,27 @@ import 'package:get/get.dart';
 class AstrologerService {
   final ApiRepository _apiRepository = Get.find();
 
-  /// Get astrologers with filtering and pagination
-  /// 
-  /// Filter Parameters:
-  /// - [specialization]: VEDIC, KP, NADI, NUMEROLOGY, TAROT, PALMISTRY, VASTU, GEMOLOGY, HORARY, PRASHNA
-  ///   Can be single value, comma-separated list, or multiple query params
-  /// - [language]: Filter by language spoken (e.g., "Hindi", "English")
-  ///   Can be single value, comma-separated list, or multiple query params
-  /// - [availability]: ONLINE, OFFLINE, BUSY, ON_BREAK
-  /// - [sortBy]: rating (default), experience, price_low, price_high, consultations
-  /// - [astrologerCategory]: KID_ASTROLOGER, CELEBRITY_ASTROLOGER, NORMAL
-  /// - [minRating]: Minimum average rating (number)
-  /// - [maxPrice]: Maximum voice call price per minute in INR (number)
-  /// - [experience]: Minimum years of experience (integer)
-  /// - [search]: Search by astrologer name (full name or display name)
-  /// - [page]: Page number for pagination (default: 1)
-  /// - [limit]: Number of astrologers per page, max 100 (default: 20)
-  /// - [useCache]: Whether to use cached data if available (default: true)
+  /// GET astrologers/public – list with filtering and pagination.
+  ///
+  /// API query params (align with backend; all optional except page/limit):
+  /// - page (int), limit (int)
+  /// - specialization: comma-separated e.g. VEDIC,KP,NADI,NUMEROLOGY,TAROT,PALMISTRY,VASTU,GEMOLOGY,HORARY,PRASHNA
+  /// - language: comma-separated e.g. en,hi (or language names per backend)
+  /// - availability: ONLINE | OFFLINE | BUSY | ON_BREAK
+  /// - sortBy: experience | price_low | price_high | consultations | rating
+  /// - astrologerCategory: ALL | NORMAL | KID_ASTROLOGER | CELEBRITY_ASTROLOGER
+  /// - minRating (number), minPrice (number, INR/min), maxPrice (number, INR/min)
+  /// - experience (int, min years)
+  /// - search (string, name)
+  ///
+  /// Response: { success, data: { astrologers: [], pagination: { currentPage, totalPages, totalAstrologers, limit, hasNextPage, hasPrevPage } } }
   Future<AstrologerResponse?> getAstrologers({
     int page = 1,
     int limit = 20,
     String? specialization,
     String? language,
     double? minRating,
+    double? minPrice,
     double? maxPrice,
     String? availability,
     int? experience,
@@ -44,6 +42,7 @@ class AstrologerService {
         specialization == null && 
         language == null && 
         minRating == null && 
+        minPrice == null &&
         maxPrice == null && 
         availability == null && 
         experience == null && 
@@ -66,6 +65,7 @@ class AstrologerService {
       specialization: specialization,
       language: language,
       minRating: minRating,
+      minPrice: minPrice,
       maxPrice: maxPrice,
       availability: availability,
       experience: experience,
@@ -82,6 +82,7 @@ class AstrologerService {
     String? specialization,
     String? language,
     double? minRating,
+    double? minPrice,
     double? maxPrice,
     String? availability,
     int? experience,
@@ -107,8 +108,18 @@ class AstrologerService {
         query['minRating'] = minRating.toString();
       }
 
-      if (maxPrice != null) {
-        query['maxPrice'] = maxPrice.toString();
+      if (minPrice != null && minPrice > 0) {
+        final val = minPrice.toInt().toString();
+        query['minPrice'] = val;
+        query['min_price'] = val;
+        query['price_min'] = val;
+      }
+
+      if (maxPrice != null && maxPrice > 0) {
+        final val = maxPrice.toInt().toString();
+        query['maxPrice'] = val;
+        query['max_price'] = val;
+        query['price_max'] = val;
       }
 
       if (availability != null && availability.isNotEmpty) {
@@ -145,6 +156,7 @@ class AstrologerService {
           if (specialization == null && 
               language == null && 
               minRating == null && 
+              minPrice == null &&
               maxPrice == null && 
               availability == null && 
               experience == null && 
@@ -165,6 +177,7 @@ class AstrologerService {
       if (specialization == null && 
           language == null && 
           minRating == null && 
+          minPrice == null &&
           maxPrice == null && 
           availability == null && 
           experience == null && 
@@ -186,6 +199,7 @@ class AstrologerService {
       if (specialization == null && 
           language == null && 
           minRating == null && 
+          minPrice == null &&
           maxPrice == null && 
           availability == null && 
           experience == null && 
@@ -199,6 +213,45 @@ class AstrologerService {
         }
       }
       
+      return null;
+    }
+  }
+
+  /// Top astrologers by period and sort.
+  /// [period]: all, daily, weekly, monthly
+  /// [sortBy]: all, rating, followers_gained, reviews_count
+  Future<List<AstrologerModel>?> getTopAstrologers({
+    int limit = 10,
+    String? period,
+    String? sortBy,
+  }) async {
+    try {
+      final query = <String, dynamic>{
+        'limit': limit.toString(),
+      };
+      if (period != null && period.isNotEmpty && period.toLowerCase() != 'all') {
+        query['period'] = period;
+      }
+      if (sortBy != null && sortBy.isNotEmpty && sortBy.toLowerCase() != 'all') {
+        query['sortBy'] = sortBy;
+      }
+      final response = await _apiRepository.getApi(
+        EndPoints.astrologersTop,
+        query: query,
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final body = response.body;
+        if (body['success'] == true && body['data'] != null) {
+          final data = body['data'] as Map<String, dynamic>;
+          final list = data['astrologers'] as List<dynamic>? ?? [];
+          return list
+              .map((e) => AstrologerModel.fromJson(e as Map<String, dynamic>))
+              .toList();
+        }
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Error fetching top astrologers: $e');
       return null;
     }
   }

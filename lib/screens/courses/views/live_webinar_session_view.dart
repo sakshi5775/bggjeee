@@ -83,7 +83,6 @@ class _LiveWebinarSessionViewContent extends StatelessWidget {
                 showWallet: false,
                 showLanguage: false,
                 showCart: false,
-                showSearch: false,
                 titleWidget: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
