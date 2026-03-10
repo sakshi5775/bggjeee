@@ -27,6 +27,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:hive_ce/hive.dart';
+import 'package:hive_ce_flutter/adapters.dart';
 import 'package:upgrader/upgrader.dart';
 // import 'package:astrobharataiuser/core/services/notification_service.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -47,6 +49,8 @@ void main() {
       // 1. Initialize bindings inside the same zone as runApp
       WidgetsFlutterBinding.ensureInitialized();
 
+      await Hive.initFlutter();
+      await Hive.openBox('api_cache'); // Global cache box
       // 2. Prevent zone-related bugs by ensuring consistency
       BindingBase.debugZoneErrorsAreFatal = true;
 
