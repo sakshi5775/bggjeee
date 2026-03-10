@@ -25,7 +25,7 @@ class AstrologerChatHistoryView extends StatelessWidget {
         backgroundColor: Colors.transparent,
         body: Column(
           children: [
-            const CommonHeader(title: 'Chat History', showSearch: false),
+            const CommonHeader(title: 'Chat History'),
             Expanded(
               child: Center(
                 child: ConstrainedBox(

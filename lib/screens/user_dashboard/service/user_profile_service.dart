@@ -118,4 +118,14 @@ class UserProfileService with ApiHelperMixin {
     throw response.body['message']?.toString() ??
         'Failed to update birth chart';
   }
+
+  /// Delete user profile (account). Returns true if success.
+  Future<bool> deleteProfile(String userId) async {
+    final response = await _apiRepository.deleteRequest(
+      EndPoints.deleteUserProfile(userId),
+      null,
+      useAuthHeader: true,
+    );
+    return response.body['success'] == true;
+  }
 }

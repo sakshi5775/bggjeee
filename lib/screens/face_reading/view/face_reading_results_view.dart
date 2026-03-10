@@ -34,7 +34,6 @@ class FaceReadingResultsView extends StatelessWidget {
             preferredSize: Size.fromHeight(100.h),
             child: const CommonHeader(
               title: 'Face Analysis',
-              showSearch: false,
               showCart: false,
               showLanguage: false,
               showWallet: false,

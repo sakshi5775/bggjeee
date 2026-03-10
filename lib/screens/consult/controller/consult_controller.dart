@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/data_model/banner_model.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/screens/ai_chat/services/ai_chat_service.dart';
+import 'package:astrobharataiuser/screens/astrology_services/controller/all_astrologers_controller.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/banner_service.dart';
 import 'package:get/get.dart';
@@ -29,6 +30,7 @@ class ConsultController extends GetxController {
   final RxString sortBy = 'experience'.obs;
   final RxString availability = 'ALL'.obs;
   final RxString astrologerCategory = 'ALL'.obs;
+  final RxDouble minPrice = 0.0.obs;
   final RxDouble maxPrice = 0.0.obs;
   final RxInt minExperience = 0.obs;
   final RxList<String> selectedSpecializations = <String>[].obs;
@@ -69,9 +71,31 @@ class ConsultController extends GetxController {
     FilterOption('CELEBRITY_ASTROLOGER', 'Celebrity'),
   ];
 
+  /// All 23 languages from app translation (assets/languages.json)
   static final List<FilterOption> languageOptions = [
-    FilterOption('ENGLISH', 'English'),
-    FilterOption('HINDI', 'Hindi'),
+    FilterOption('en', 'English'),
+    FilterOption('hi', 'Hindi'),
+    FilterOption('bn', 'Bengali'),
+    FilterOption('te', 'Telugu'),
+    FilterOption('mr', 'Marathi'),
+    FilterOption('ta', 'Tamil'),
+    FilterOption('gu', 'Gujarati'),
+    FilterOption('ur', 'Urdu'),
+    FilterOption('kn', 'Kannada'),
+    FilterOption('ml', 'Malayalam'),
+    FilterOption('or', 'Odia'),
+    FilterOption('pa', 'Punjabi'),
+    FilterOption('as', 'Assamese'),
+    FilterOption('mai', 'Maithili'),
+    FilterOption('bh', 'Bodo'),
+    FilterOption('ks', 'Kashmiri'),
+    FilterOption('kok', 'Konkani'),
+    FilterOption('ne', 'Nepali'),
+    FilterOption('sd', 'Sindhi'),
+    FilterOption('sa', 'Sanskrit'),
+    FilterOption('mni', 'Manipuri'),
+    FilterOption('sat', 'Santali'),
+    FilterOption('doi', 'Dogri'),
   ];
 
   // --- AI Astrologer ---
@@ -97,6 +121,9 @@ class ConsultController extends GetxController {
   final RxList<BannerItem> generalBanners = <BannerItem>[].obs;
   final RxBool bannersLoading = false.obs;
 
+  // --- Global search (Consult screen search bar) ---
+  final RxString globalSearchQuery = ''.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -104,6 +131,9 @@ class ConsultController extends GetxController {
     loadPersonaSlider();
     loadBanners();
     _aiChatService.getCategories().then((list) => aiCategories.value = list);
+    debounce(globalSearchQuery, (_) {
+      if (tabIndex.value == 0) refreshAstrologerList();
+    }, time: const Duration(milliseconds: 500));
   }
 
   @override
@@ -116,6 +146,7 @@ class ConsultController extends GetxController {
         selectedLanguages.isNotEmpty ||
         availability.value != 'ALL' ||
         astrologerCategory.value != 'ALL' ||
+        minPrice.value > 0 ||
         maxPrice.value > 0 ||
         minExperience.value > 0;
   }
@@ -137,6 +168,7 @@ class ConsultController extends GetxController {
         sortBy: sortBy.value,
         astrologerCategory:
             astrologerCategory.value == 'ALL' ? null : astrologerCategory.value,
+        minPrice: minPrice.value > 0 ? minPrice.value : null,
         maxPrice: maxPrice.value > 0 ? maxPrice.value : null,
         experience: minExperience.value > 0 ? minExperience.value : null,
         useCache: false,
@@ -236,9 +268,10 @@ class ConsultController extends GetxController {
     selectedLanguages.clear();
     availability.value = 'ALL';
     astrologerCategory.value = 'ALL';
+    minPrice.value = 0;
     maxPrice.value = 0;
     minExperience.value = 0;
-    loadAstrologerSlider();
+    refreshAstrologerList();
   }
 
   void clearAiFilters() {
@@ -247,12 +280,27 @@ class ConsultController extends GetxController {
     loadPersonaSlider();
   }
 
+  /// Price filter options (below X per min) - based on common astrologer pricing.
+  static final List<double> priceFilterOptions = [50, 100, 200, 500, 1000];
+
+  /// Experience filter options (X+ years).
+  static final List<int> experienceFilterOptions = [1, 3, 5, 10, 15];
+
   void applyAstrologerFiltersAndReload() {
-    loadAstrologerSlider();
+    if (Get.isRegistered<AllAstrologersController>(tag: 'consult_tab')) {
+      Get.find<AllAstrologersController>(tag: 'consult_tab').refresh();
+    }
   }
 
   void applyPersonaFiltersAndReload() {
     loadPersonaSlider();
+  }
+
+  /// Call when sort is changed for astrologer tab so embedded list refreshes.
+  void refreshAstrologerList() {
+    if (Get.isRegistered<AllAstrologersController>(tag: 'consult_tab')) {
+      Get.find<AllAstrologersController>(tag: 'consult_tab').refresh();
+    }
   }
 
   Map<String, dynamic> get astrologerFilterArgs {
@@ -268,6 +316,7 @@ class ConsultController extends GetxController {
     if (astrologerCategory.value != 'ALL') {
       map['astrologerCategory'] = astrologerCategory.value;
     }
+    if (minPrice.value > 0) map['minPrice'] = minPrice.value;
     if (maxPrice.value > 0) map['maxPrice'] = maxPrice.value;
     if (minExperience.value > 0) map['experience'] = minExperience.value;
     return map;
@@ -283,6 +332,17 @@ class ConsultController extends GetxController {
 
   void setTab(int index) {
     tabIndex.value = index;
+  }
+
+  /// AI personas filtered by global search (name/description). Use this in the AI tab list.
+  List<PersonaModel> get filteredPersonas {
+    final q = globalSearchQuery.value.trim().toLowerCase();
+    if (q.isEmpty) return sliderPersonas;
+    return sliderPersonas.where((p) {
+      final name = (p.displayName).toLowerCase();
+      final desc = (p.description).toLowerCase();
+      return name.contains(q) || desc.contains(q);
+    }).toList();
   }
 
   String get currentSortLabel {

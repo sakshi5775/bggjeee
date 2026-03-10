@@ -1,6 +1,5 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/services/share_service.dart';
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
@@ -144,7 +143,7 @@ class PersonaDetailView extends StatelessWidget {
                         Spacing.h(24),
                         // Ratings and Reviews
                         _buildRatingsSection(context, persona, controller),
-                        Spacing.h(100), // Space for bottom buttons
+                        Spacing.h(16), // Minimal space above bottom bar (global nav handled by bar padding)
                       ],
                     ),
                   ),
@@ -1481,7 +1480,7 @@ class PersonaDetailView extends StatelessWidget {
     PersonaDetailController controller,
   ) {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 12.h),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -1492,11 +1491,10 @@ class PersonaDetailView extends StatelessWidget {
           ),
         ],
       ),
-      child: SafeArea(
-        child: Row(
-          children: [
-            // Call button
-            Expanded(
+      child: Row(
+        children: [
+          // Call button
+          Expanded(
               child: GestureDetector(
                 onTap: () async {
                   if (controller.persona.value != null) {
@@ -1596,8 +1594,7 @@ class PersonaDetailView extends StatelessWidget {
                 ),
               ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }

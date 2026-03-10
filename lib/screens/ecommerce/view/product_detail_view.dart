@@ -129,7 +129,7 @@ class ProductDetailView extends StatelessWidget {
                         padding: EdgeInsets.symmetric(horizontal: 16.w),
                         child: _buildYouMayAlsoLike(context, controller),
                       ),
-                      SizedBox(height: 100.h), // Space for bottom bar
+                      SizedBox(height: 12.h), // Minimal space above bottom bar
                     ],
                   ),
                 );
@@ -148,7 +148,7 @@ class ProductDetailView extends StatelessWidget {
     ProductDetailController controller,
   ) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
       decoration: BoxDecoration(
         color: '#820B17'.toColor(),
         boxShadow: [
@@ -159,9 +159,7 @@ class ProductDetailView extends StatelessWidget {
           ),
         ],
       ),
-      child: SafeArea(
-        top: false,
-        child: Obx(() {
+      child: Obx(() {
           final outOfStock = controller.isOutOfStock;
 
           if (outOfStock) {
@@ -374,11 +372,9 @@ class ProductDetailView extends StatelessWidget {
                           ),
                   );
                 }),
-              ),
-            ],
+                      ),            ],
           );
         }),
-      ),
     );
   }
 

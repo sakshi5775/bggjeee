@@ -1,16 +1,16 @@
-import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/screens/ai_chat/controllers/ai_chat_controller.dart';
+import 'package:astrobharataiuser/screens/ai_chat/views/ai_chat_view.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/all_astrologers_view.dart';
 import 'package:astrobharataiuser/screens/consult/controller/consult_controller.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/banner_carousel_widget.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/screens/ai_chat/widgets/persona_card.dart';
 
 class ConsultView extends StatelessWidget {
   const ConsultView({super.key});
@@ -33,10 +33,10 @@ class ConsultView extends StatelessWidget {
                 showBackButton: true,
                 showWallet: true,
                 showCart: true,
-                showSearch: false,
               ),
               _buildTabBar(controller),
               _buildSortFilterPills(context, controller),
+              _buildSearchBar(controller),
               Expanded(
                 child: Obx(() {
                   if (controller.tabIndex.value == 0) {
@@ -45,7 +45,13 @@ class ConsultView extends StatelessWidget {
                       showFilterChips: false,
                     );
                   }
-                  return _buildAiAstrologerScroll(controller);
+                  if (!Get.isRegistered<AiChatController>()) {
+                    Get.put(AiChatController(), permanent: false);
+                  }
+                  return AiChatView(
+                    hideHeader: true,
+                    bannerWidget: _buildAiBanner(controller),
+                  );
                 }),
               ),
             ],
@@ -101,6 +107,31 @@ class ConsultView extends StatelessWidget {
     });
   }
 
+  Widget _buildSearchBar(ConsultController controller) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 8.h),
+      child: Container(
+        height: 44.h,
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.6),
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: const Color(0xFF5F2221).withOpacity(0.2)),
+        ),
+        child: TextField(
+          onChanged: (v) => controller.globalSearchQuery.value = v,
+          decoration: InputDecoration(
+            hintText: 'Search astrologers, AI astrologers...',
+            hintStyle: AppTypography.body2.copyWith(color: Colors.grey.shade600),
+            prefixIcon: Icon(Icons.search, size: 22.w, color: const Color(0xFF5F2221)),
+            border: InputBorder.none,
+            contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+          ),
+          style: AppTypography.body2.copyWith(color: const Color(0xFF5F2221)),
+        ),
+      ),
+    );
+  }
+
   Widget _buildSortFilterPills(BuildContext context, ConsultController controller) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
@@ -108,7 +139,7 @@ class ConsultView extends StatelessWidget {
         children: [
           _buildSmallPill(
             icon: Icons.swap_vert,
-            label: controller.currentSortLabel,
+            label: 'Sort by',
             onTap: () => _showSortMenu(context, controller),
           ),
           SizedBox(width: 10.w),
@@ -195,7 +226,7 @@ class ConsultView extends StatelessWidget {
                 onTap: () {
                   if (controller.tabIndex.value == 0) {
                     controller.sortBy.value = o.value;
-                    controller.loadAstrologerSlider();
+                    controller.refreshAstrologerList();
                   } else {
                     controller.aiSortBy.value = o.value;
                     controller.loadPersonaSlider();
@@ -210,93 +241,12 @@ class ConsultView extends StatelessWidget {
     );
   }
 
-  Widget _buildAiAstrologerScroll(ConsultController controller) {
+  Widget _buildAiBanner(ConsultController controller) {
     return Obx(() {
-      if (controller.personasLoading.value && controller.sliderPersonas.isEmpty) {
-        return const Center(child: CircularProgressIndicator(color: AppColors.templeGold));
-      }
-      return NotificationListener<ScrollNotification>(
-        onNotification: (ScrollNotification n) {
-          if (n is ScrollEndNotification || n is ScrollUpdateNotification) {
-            final m = n.metrics;
-            if (m.pixels >= m.maxScrollExtent - 200 && controller.hasMorePersonas.value && !controller.personasLoadingMore.value) {
-              controller.loadMorePersonas();
-            }
-          }
-          return false;
-        },
-        child: RefreshIndicator(
-          onRefresh: () => controller.loadPersonaSlider(),
-          color: AppColors.templeGold,
-          child: CustomScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            slivers: [
-              SliverToBoxAdapter(
-                child: Obx(() {
-                  if (controller.generalBanners.isEmpty) return SizedBox(height: 4.h);
-                  return Padding(
-                    padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 16.h),
-                    child: BannerCarouselWidget(banners: controller.generalBanners),
-                  );
-                }),
-              ),
-              if (controller.sliderPersonas.isEmpty && !controller.personasLoading.value)
-                SliverFillRemaining(
-                  child: Center(
-                    child: AutoTranslateText(
-                      'No AI astrologers found',
-                      style: AppTypography.body2.copyWith(color: Colors.grey),
-                    ),
-                  ),
-                )
-              else
-                SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  sliver: SliverGrid(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.72,
-                      crossAxisSpacing: 12.w,
-                      mainAxisSpacing: 12.h,
-                    ),
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        if (index == controller.sliderPersonas.length) {
-                          return controller.personasLoadingMore.value
-                              ? const Center(child: Padding(padding: EdgeInsets.all(16), child: CircularProgressIndicator(color: AppColors.templeGold)))
-                              : const SizedBox.shrink();
-                        }
-                        final p = controller.sliderPersonas[index];
-                        return Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12.r),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.06),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: PersonaCard(
-                            persona: p,
-                            onTap: () {
-                              UserMainController.pushInCurrentTab(
-                                AppRoutes.personaChat,
-                                arguments: {'persona': p},
-                              );
-                            },
-                          ),
-                        );
-                      },
-                      childCount: controller.sliderPersonas.length + (controller.hasMorePersonas.value ? 1 : 0),
-                    ),
-                  ),
-                ),
-              SliverPadding(padding: EdgeInsets.only(bottom: 80.h)),
-            ],
-          ),
-        ),
+      if (controller.generalBanners.isEmpty) return SizedBox(height: 4.h);
+      return Padding(
+        padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 16.h),
+        child: BannerCarouselWidget(banners: controller.generalBanners),
       );
     });
   }
@@ -317,6 +267,7 @@ class _ConsultFilterPageState extends State<_ConsultFilterPage> {
   String selectedCategory = 'Specialization';
   final TextEditingController searchController = TextEditingController();
   String searchQuery = '';
+  Timer? _filterDebounce;
 
   @override
   void initState() {
@@ -332,8 +283,20 @@ class _ConsultFilterPageState extends State<_ConsultFilterPage> {
     });
   }
 
+  void _onFilterChanged() {
+    _filterDebounce?.cancel();
+    _filterDebounce = Timer(const Duration(milliseconds: 500), () {
+      if (widget.isAstrologerTab) {
+        controller.refreshAstrologerList();
+      } else {
+        controller.loadPersonaSlider();
+      }
+    });
+  }
+
   @override
   void dispose() {
+    _filterDebounce?.cancel();
     searchController.dispose();
     super.dispose();
   }
@@ -372,7 +335,7 @@ class _ConsultFilterPageState extends State<_ConsultFilterPage> {
                 ],
               ),
             ),
-            _buildBottomBar(context),
+            Obx(() => _buildBottomBar(context)),
           ],
         ),
       ),
@@ -400,6 +363,8 @@ class _ConsultFilterPageState extends State<_ConsultFilterPage> {
           ),
           GestureDetector(
             onTap: () {
+              searchController.clear();
+              searchQuery = '';
               if (widget.isAstrologerTab) {
                 controller.clearAstrologerFilters();
               } else {
@@ -448,7 +413,7 @@ class _ConsultFilterPageState extends State<_ConsultFilterPage> {
 
   Widget _buildLeftColumn() {
     return Container(
-      width: 110.w,
+      width: 120.w,
       color: const Color(0xFFF5F5F5),
       child: ListView.builder(
         padding: EdgeInsets.zero,
@@ -538,12 +503,10 @@ class _ConsultFilterPageState extends State<_ConsultFilterPage> {
       );
     }
     if (selectedCategory == 'Price') {
-      final options = ['50', '100', '200', '500', '1000'];
-      return _buildPriceOptions(options);
+      return _buildPriceOptions(ConsultController.priceFilterOptions);
     }
     if (selectedCategory == 'Experience') {
-      final options = ['1', '3', '5', '10', '15'];
-      return _buildExperienceOptions(options);
+      return _buildExperienceOptions(ConsultController.experienceFilterOptions);
     }
     return const SizedBox.shrink();
   }
@@ -567,6 +530,7 @@ class _ConsultFilterPageState extends State<_ConsultFilterPage> {
         onChanged: (bool? v) {
           controller.aiFeatured.value = v ?? false;
           setState(() {});
+          _onFilterChanged();
         },
         title: AutoTranslateText('Featured only', style: AppTypography.body2),
         activeColor: AppColors.saffron,
@@ -600,6 +564,7 @@ class _ConsultFilterPageState extends State<_ConsultFilterPage> {
               if (checked == true) selected.add(v);
             }
             setState(() {});
+            _onFilterChanged();
           },
           title: AutoTranslateText(label, style: AppTypography.body2),
           activeColor: AppColors.saffron,
@@ -624,6 +589,7 @@ class _ConsultFilterPageState extends State<_ConsultFilterPage> {
         onChanged: (String? val) {
           selected.value = val ?? selected.value;
           setState(() {});
+          _onFilterChanged();
         },
         title: AutoTranslateText(label, style: AppTypography.body2),
         activeColor: AppColors.saffron,
@@ -632,19 +598,34 @@ class _ConsultFilterPageState extends State<_ConsultFilterPage> {
     return Column(children: tiles);
   }
 
-  Widget _buildPriceOptions(List<String> options) {
+  Widget _buildPriceOptions(List<double> options) {
     final List<Widget> children = <Widget>[];
     for (int i = 0; i < options.length; i++) {
-      final priceStr = options[i];
-      final price = double.tryParse(priceStr) ?? 0.0;
-      final isSelected = controller.maxPrice.value == price;
+      final price = options[i];
+      final isBelowSelected = controller.maxPrice.value == price;
       children.add(CheckboxListTile(
-        value: isSelected,
+        value: isBelowSelected,
         onChanged: (bool? v) {
           controller.maxPrice.value = v == true ? price : 0;
           setState(() {});
+          _onFilterChanged();
         },
-        title: AutoTranslateText('Rs $priceStr/min max', style: AppTypography.body2),
+        title: AutoTranslateText('Below Rs ${price.toInt()}/min', style: AppTypography.body2),
+        activeColor: AppColors.saffron,
+        controlAffinity: ListTileControlAffinity.leading,
+      ));
+    }
+    for (int i = 0; i < options.length; i++) {
+      final price = options[i];
+      final isAboveSelected = controller.minPrice.value == price;
+      children.add(CheckboxListTile(
+        value: isAboveSelected,
+        onChanged: (bool? v) {
+          controller.minPrice.value = v == true ? price : 0;
+          setState(() {});
+          _onFilterChanged();
+        },
+        title: AutoTranslateText('Above Rs ${price.toInt()}/min', style: AppTypography.body2),
         activeColor: AppColors.saffron,
         controlAffinity: ListTileControlAffinity.leading,
       ));
@@ -652,19 +633,19 @@ class _ConsultFilterPageState extends State<_ConsultFilterPage> {
     return Column(children: children);
   }
 
-  Widget _buildExperienceOptions(List<String> options) {
+  Widget _buildExperienceOptions(List<int> options) {
     final List<Widget> children = <Widget>[];
     for (int i = 0; i < options.length; i++) {
-      final expStr = options[i];
-      final exp = int.tryParse(expStr) ?? 0;
+      final exp = options[i];
       final isSelected = controller.minExperience.value == exp;
       children.add(CheckboxListTile(
         value: isSelected,
         onChanged: (bool? v) {
           controller.minExperience.value = v == true ? exp : 0;
           setState(() {});
+          _onFilterChanged();
         },
-        title: AutoTranslateText('$expStr+ years', style: AppTypography.body2),
+        title: AutoTranslateText('${exp}+ years', style: AppTypography.body2),
         activeColor: AppColors.saffron,
         controlAffinity: ListTileControlAffinity.leading,
       ));
@@ -675,12 +656,12 @@ class _ConsultFilterPageState extends State<_ConsultFilterPage> {
   Widget _buildBottomBar(BuildContext context) {
     final count = widget.isAstrologerTab
         ? controller.astrologersTotalCount.value
-        : controller.personasTotalCount.value;
+        : (Get.isRegistered<AiChatController>()
+            ? Get.find<AiChatController>().filteredPersonas.length
+            : controller.personasTotalCount.value);
     final label = widget.isAstrologerTab ? 'astrologers' : 'AI astrologers';
-    final bottomNavHeight = 64.0.h;
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
     return Container(
-      padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 12.h + bottomNavHeight + bottomPadding),
+      padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 10.h),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
