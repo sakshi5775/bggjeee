@@ -28,6 +28,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:hive_ce/hive.dart';
+import 'package:hive_ce_flutter/adapters.dart';
 import 'package:upgrader/upgrader.dart';
 // import 'package:astrobharataiuser/core/services/notification_service.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -39,7 +40,6 @@ import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:astrobharataiuser/core/controllers/global_nav_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/user_bottom_nav.dart';
-import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 
 List<Locale>? _cachedSupportedLocales;
 
