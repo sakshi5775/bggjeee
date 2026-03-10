@@ -17,6 +17,7 @@ import 'package:astrobharataiuser/screens/vastu/model/vastu_energy_model.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class ARVastuScreen extends StatefulWidget {
   final VastuRoomConfig? roomConfig;
@@ -232,12 +233,12 @@ class _ARVastuScreenState extends State<ARVastuScreen>
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Back/close
+              // Back (use tab navigator so we return to previous screen in same tab)
               _buildToggleButton(
-                icon: Icons.close,
+                icon: Icons.arrow_back,
                 isActive: false,
-                onTap: () => Get.back(),
-                tooltip: 'Close',
+                onTap: () => UserMainController.popCurrentTab(),
+                tooltip: 'Back',
               ),
               SizedBox(width: 10.w),
               // Controls row (condensed to keep everything at top)

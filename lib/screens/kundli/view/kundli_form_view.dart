@@ -648,51 +648,40 @@ class KundliFormView extends BasePage<KundliFormController> {
             ),
           ),
           Spacing.h(16),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                  child: _buildCompactField(
-                    controller: controller.nameController,
-                  focusNode: _nameFocusNode,
-                    hint: 'Full Name',
-                    icon: Icons.person_outline,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please enter full name';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              SizedBox(width: 10.w),
-              Expanded(
-                child: SizedBox(height: 50.h, child: _buildGenderDropdown()),
-              ),
-            ],
+          // Full Name - separate row
+          _buildCompactField(
+            controller: controller.nameController,
+            focusNode: _nameFocusNode,
+            hint: 'Full Name',
+            icon: Icons.person_outline,
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return 'Please enter full name';
+              }
+              return null;
+            },
           ),
           Spacing.h(12),
-          Row(
-            children: [
-              Expanded(
-                child: _buildCompactField(
-                  controller: controller.dateController,
-                  hint: 'DOB (dd/mm/yyyy)',
-                  icon: Icons.calendar_today,
-                  readOnly: true,
-                  onTap: () => _showDatePicker(),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please select date';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              SizedBox(width: 10.w),
-              Expanded(child: _buildTimeField()),
-            ],
+          // Gender - separate row
+          SizedBox(height: 50.h, child: _buildGenderDropdown()),
+          Spacing.h(12),
+          // DOB - separate row
+          _buildCompactField(
+            controller: controller.dateController,
+            hint: 'DOB (dd/mm/yyyy)',
+            icon: Icons.calendar_today,
+            readOnly: true,
+            onTap: () => _showDatePicker(),
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return 'Please select date';
+              }
+              return null;
+            },
           ),
+          Spacing.h(12),
+          // Time of Birth - separate row
+          _buildTimeField(),
           Spacing.h(6),
           Padding(
             padding: EdgeInsets.only(left: 4.w),

@@ -1,5 +1,7 @@
 import 'package:astrobharataiuser/screens/live_stream/controller/stream_reports_controller.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -30,32 +32,10 @@ class StreamReportsView extends StatelessWidget {
           child: Column(
             children: [
               // Header
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        Icons.arrow_back,
-                        color: const Color(0xFF5D2B1F),
-                        size: 24.sp,
-                      ),
-                      onPressed: () => Get.back(),
-                    ),
-                    SizedBox(width: 8.w),
-                    Expanded(
-                      child: AutoTranslateText(
-                        'My Reports',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: const Color(
-                            0xFF5D2B1F,
-                          ), // Dark brown/reddish-brown
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              CommonHeader(
+                title: 'My Reports',
+                showDrawer: false,
+                onBackTap: () => UserMainController.popCurrentTab(),
               ),
 
               // Content

@@ -63,99 +63,141 @@ class _RamalShastraCastingDotsViewState
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Column(
-          children: [
-            const CommonHeader(title: 'Ramal Shastra'),
-            Spacing.h(24),
-            AutoTranslateText(
-              'Tap Randomly on Screen',
-              style: MyTextTheme.veryLargeBCB
-                  .copyWith(
-                    color: '#3E2723'.toColor(),
-                    fontWeight: FontWeight.bold,
-                  )
-                  .merge(AppTypography.h1),
-            ),
-            Spacing.h(8),
-            AutoTranslateText(
-              'Tap ${currentTapIndex + 1} of 16',
-              style: MyTextTheme.mediumBCN.copyWith(color: '#666666'.toColor()),
-            ),
-            Spacing.h(32),
-            Expanded(
-              child: GestureDetector(
-                onTapDown: _onScreenTap,
-                child: Container(
-                  margin: EdgeInsets.all(16.w),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16.r),
-                    border: Border.all(color: '#F5D7B8'.toColor(), width: 2),
-                  ),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.brightness_1,
-                          size: 80.w,
-                          color: "#F38B3B".toColor(),
-                        ),
-                        Spacing.h(16),
-                        AutoTranslateText(
-                          'Tap Here',
-                          style: MyTextTheme.largeBCB.copyWith(
-                            color: '#3E2723'.toColor(),
-                            fontWeight: FontWeight.bold,
+        body: SafeArea(
+          child: Column(
+            children: [
+              const CommonHeader(title: 'Ramal Shastra'),
+              Spacing.h(12),
+              AutoTranslateText(
+                'Tap Randomly on Screen',
+                style: MyTextTheme.veryLargeBCB
+                    .copyWith(
+                      color: '#3E2723'.toColor(),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.sp,
+                    )
+                    .merge(AppTypography.h1),
+              ),
+              Spacing.h(4),
+              AutoTranslateText(
+                'Tap ${currentTapIndex + 1} of 16',
+                style: MyTextTheme.mediumBCN.copyWith(color: '#666666'.toColor()),
+              ),
+              Spacing.h(16),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.only(bottom: 24.h),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 220.h,
+                        child: GestureDetector(
+                          onTapDown: _onScreenTap,
+                          child: Container(
+                            margin: EdgeInsets.symmetric(horizontal: 16.w),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20.r),
+                              border: Border.all(
+                                color: '#F5D7B8'.toColor(),
+                                width: 2,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.06),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(20.w),
+                                    decoration: BoxDecoration(
+                                      color: "#F38B3B".toColor().withValues(alpha: 0.12),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Icons.touch_app_rounded,
+                                      size: 56.w,
+                                      color: "#F38B3B".toColor(),
+                                    ),
+                                  ),
+                                  Spacing.h(16),
+                                  AutoTranslateText(
+                                    'Tap Here',
+                                    style: MyTextTheme.largeBCB.copyWith(
+                                      color: '#3E2723'.toColor(),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18.sp,
+                                    ),
+                                  ),
+                                  Spacing.h(8),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                                    decoration: BoxDecoration(
+                                      color: '#F5F5F5'.toColor(),
+                                      borderRadius: BorderRadius.circular(20.r),
+                                    ),
+                                    child: AutoTranslateText(
+                                      'Tap Count: ${tapCounts[currentTapIndex]}',
+                                      style: MyTextTheme.mediumBCB.copyWith(
+                                        color: '#3E2723'.toColor(),
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
-                        Spacing.h(8),
-                        AutoTranslateText(
-                          'Tap Count: ${tapCounts[currentTapIndex]}',
-                          style: MyTextTheme.mediumBCN.copyWith(
-                            color: '#666666'.toColor(),
-                          ),
+                      ),
+                      Spacing.h(16),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(child: _buildDotGrid()),
+                            Spacing.w(12),
+                            ElevatedButton(
+                              onPressed: _confirmTap,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: tapCounts[currentTapIndex] > 0
+                                    ? '#4CAF50'.toColor()
+                                    : Colors.grey,
+                                foregroundColor: Colors.white,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 20.w,
+                                  vertical: 14.h,
+                                ),
+                                elevation: 2,
+                                shadowColor: Colors.black26,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                              ),
+                              child: AutoTranslateText(
+                                currentTapIndex < 15 ? 'Confirm' : 'Finish',
+                                style: MyTextTheme.mediumBCB.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(16.w),
-              child: Row(
-                children: [
-                  Expanded(child: _buildDotGrid()),
-                  Spacing.w(16),
-                  ElevatedButton(
-                    onPressed: _confirmTap,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: tapCounts[currentTapIndex] > 0
-                          ? '#4CAF50'.toColor()
-                          : Colors.grey,
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 24.w,
-                        vertical: 14.h,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                    ),
-                    child: AutoTranslateText(
-                      currentTapIndex < 15 ? 'Confirm' : 'Finish',
-                      style: MyTextTheme.mediumBCB.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Spacing.h(16),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -880,16 +880,21 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
                   ],
                 ),
                 Spacing.h(20),
-                // Rating
+                // Rating - wrap to prevent overflow
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Icon(Icons.star, color: "#F38B3B".toColor(), size: 24.w),
                     Spacing.w(8),
-                    AutoTranslateText(
-                      'Rating: $rating',
-                      style: MyTextTheme.largeBCB.copyWith(
-                        color: "#F38B3B".toColor(),
-                        fontWeight: FontWeight.bold,
+                    Expanded(
+                      child: AutoTranslateText(
+                        'Rating: $rating',
+                        style: MyTextTheme.largeBCB.copyWith(
+                          color: "#F38B3B".toColor(),
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: null,
+                        softWrap: true,
                       ),
                     ),
                   ],

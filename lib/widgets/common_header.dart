@@ -179,52 +179,58 @@ class CommonHeader extends StatelessWidget {
             padding: EdgeInsets.only(
               left: 10.w,
               right: 10.w,
-              bottom: 6.h,
-              top: 2.h,
+              bottom: 8.h,
+              top: 10.h,
             ),
-            child: Row(
-              children: [
-                // Back button (Navigator.canPop or explicit showBackButton)
-                if (showBackButton ?? Navigator.canPop(context))
-                  IconButton(
-                    onPressed:
-                        onBackTap ??
-                        () {
-                          // If we can pop within the current tab navigator, pop
-                          if (Navigator.canPop(context)) {
-                            Navigator.pop(context);
-                          } else {
-                            // At tab root → use central back handler (goes to previous tab)
-                            if (Get.isRegistered<UserMainController>()) {
-                              Get.find<UserMainController>()
-                                  .handleBackNavigation();
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: 48.h),
+              child: Row(
+                children: [
+                  // Back button (Navigator.canPop or explicit showBackButton)
+                  if (showBackButton ?? Navigator.canPop(context))
+                    IconButton(
+                      onPressed:
+                          onBackTap ??
+                          () {
+                            // If we can pop within the current tab navigator, pop
+                            if (Navigator.canPop(context)) {
+                              Navigator.pop(context);
+                            } else {
+                              // At tab root → use central back handler (goes to previous tab)
+                              if (Get.isRegistered<UserMainController>()) {
+                                Get.find<UserMainController>()
+                                    .handleBackNavigation();
+                              }
                             }
-                          }
-                        },
-                    style: IconButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      minimumSize: Size(36.w, 36.h),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          },
+                      style: IconButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: Size(40.w, 40.h),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      icon: Icon(
+                        Icons.arrow_back_ios_new,
+                        size: 22.w,
+                        color: '#6F221E'.toColor(),
+                      ),
                     ),
-                    icon: Icon(
-                      Icons.arrow_back_ios_new,
-                      size: 20.w,
-                      color: '#6F221E'.toColor(),
+                  // Title
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: titleWidget ??
+                          AutoTranslateText(
+                            title!,
+                            style: MyTextTheme.largeBCB.copyWith(
+                              color: '#6F221E'.toColor(),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18.sp,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                     ),
                   ),
-                // Title
-                Expanded(
-                  child:
-                      titleWidget ??
-                      AutoTranslateText(
-                        title!,
-                        style: MyTextTheme.largeBCB.copyWith(
-                          color: '#6F221E'.toColor(),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.sp,
-                        ),
-                      ),
-                ),
                 // Custom actions
                 if (customActions != null) ...customActions!,
                 // Home icon (always visible if showHome)
@@ -268,7 +274,8 @@ class CommonHeader extends StatelessWidget {
                       color: '#6F221E'.toColor(),
                     ),
                   ),
-              ],
+                ],
+              ),
             ),
           ),
           if (subtitle != null)

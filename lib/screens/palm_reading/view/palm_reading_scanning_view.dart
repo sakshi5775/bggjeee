@@ -3,8 +3,10 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/face_reading/widgets/scanner_overlay.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_controller.dart';
 import 'package:astrobharataiuser/screens/palm_reading/widgets/palm_reading_loading_widget.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -471,7 +473,11 @@ class _PalmReadingScanningViewState extends State<PalmReadingScanningView>
                       onPressed: () {
                         try {
                           controller.selectedPalmImage.value = null;
+                          controller.scanError.value = '';
                           Get.back();
+                          UserMainController.pushInCurrentTab(
+                            AppRoutes.palmReadingUpload,
+                          );
                         } catch (e) {
                           debugPrint('Error in reupload button: $e');
                         }

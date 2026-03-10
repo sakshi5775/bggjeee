@@ -273,7 +273,7 @@ class ChatCallAstrologerWidget extends BasePage<UserDashboardController> {
                                   width: 60.w,
                                   child: NetworkImageWithLoader(
                                     url: astrologer.profilePicture ?? '',
-                                    fit: BoxFit.fill,
+                                    fit: BoxFit.cover,
                                     isCircular: true,
                                   ),
                                 ),

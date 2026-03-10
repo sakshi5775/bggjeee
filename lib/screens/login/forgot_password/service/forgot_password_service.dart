@@ -45,7 +45,8 @@ class ForgotPasswordService {
     }
   }
 
-  Future<bool> resetPassword(
+  /// Returns map: { success: bool, message: String?, errors: List<{field, message}>? }
+  Future<Map<String, dynamic>> resetPassword(
     String identifier,
     String otp,
     String password,
@@ -59,12 +60,32 @@ class ForgotPasswordService {
         "confirmPassword": confirmPassword,
       }, useAuthHeader: false);
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return true;
+      final body = response.body;
+      if (body is! Map<String, dynamic>) {
+        return {'success': false, 'message': 'Invalid response from server'};
       }
-      return false;
+
+      final success = body['success'] as bool? ?? false;
+      final message = body['message'] as String? ?? '';
+      final errors = body['errors'] as List<dynamic>?;
+      final errorsList = errors
+          ?.map((e) => e is Map<String, dynamic>
+              ? {'field': e['field'] as String?, 'message': e['message'] as String?}
+              : null)
+          .whereType<Map<String, dynamic>>()
+          .toList();
+
+      return {
+        'success': success,
+        'message': message,
+        'errors': errorsList ?? [],
+      };
     } catch (e) {
-      return false;
+      return {
+        'success': false,
+        'message': e.toString(),
+        'errors': [],
+      };
     }
   }
 

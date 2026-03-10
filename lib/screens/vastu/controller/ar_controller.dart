@@ -76,10 +76,10 @@ class ARController extends GetxController {
     update(); // Trigger rebuild
   }
 
-  // Throttle for gyroscope
-  Timer? _gyroThrottleTimer;
+  // Throttle for gyroscope: time-based so updates actually run
+  DateTime? _lastGyroThrottleRun;
+  static const int _gyroThrottleMs = 100;
   Timer? _gyroSmoothTimer;
-  static const Duration _gyroThrottleDuration = Duration(milliseconds: 100);
   static const Duration _gyroSmoothDuration = Duration(milliseconds: 16); // ~60fps
   bool _isPaused = false;
 
@@ -89,14 +89,13 @@ class ARController extends GetxController {
     ).listen(
       (GyroscopeEvent event) {
         if (!_isPaused) {
-          _gyroThrottleTimer?.cancel();
-          _gyroThrottleTimer = Timer(_gyroThrottleDuration, () {
-            if (!_isPaused) {
-              // Update target rotation (dampened for smoothness)
-              _targetGyroRotation = event.z * 0.15; // Slightly more responsive
-              _startSmoothInterpolation();
-            }
-          });
+          final now = DateTime.now();
+          if (_lastGyroThrottleRun == null ||
+              now.difference(_lastGyroThrottleRun!).inMilliseconds >= _gyroThrottleMs) {
+            _lastGyroThrottleRun = now;
+            _targetGyroRotation = event.z * 0.15; // Dampened for smoothness
+            _startSmoothInterpolation();
+          }
         }
       },
       onError: (error) {
@@ -162,7 +161,6 @@ class ARController extends GetxController {
   void onClose() {
     _isPaused = true;
     _gyroscopeSubscription?.cancel();
-    _gyroThrottleTimer?.cancel();
     _gyroSmoothTimer?.cancel();
     
     // Safely dispose camera controller
@@ -178,7 +176,6 @@ class ARController extends GetxController {
     }
     
     _gyroscopeSubscription = null;
-    _gyroThrottleTimer = null;
     _gyroSmoothTimer = null;
     _isCameraInitialized = false;
     super.onClose();

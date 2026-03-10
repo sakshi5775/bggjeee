@@ -150,10 +150,14 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                       ? _buildHeaderSearchOverlay(context)
                       : const SizedBox.shrink(),
                 ),
-                Positioned(
-                  right: 1.w,
-                  bottom: 10.h,
-                  child: _buildCircularChatButton(),
+                Obx(
+                  () => controller.isAiGuiderDismissed.value
+                      ? const SizedBox.shrink()
+                      : Positioned(
+                          right: 1.w,
+                          bottom: 10.h,
+                          child: _buildCircularChatButton(),
+                        ),
                 ),
                 // Positioned(
                 //   left: 20.w,
@@ -3259,25 +3263,65 @@ class UserDashboardView extends BasePage<UserDashboardController> {
   }
 
   Widget _buildCircularChatButton() {
-    return GestureDetector(
-      onTap: () => UserMainController.pushInCurrentTab('/ai-guider'),
-      child: Container(
-        width: 70.w,
-        height: 70.h,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(
-            8.r,
-          ), // Rounded corners instead of circle
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        GestureDetector(
+          onTap: () => UserMainController.pushInCurrentTab('/ai-guider'),
+          child: Container(
+            width: 70.w,
+            height: 70.h,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.r),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.15),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Image.asset(
+              'assets/app/ai_astro_icon.png',
+              fit: BoxFit.contain,
+              width: 70.w,
+              height: 70.h,
+              errorBuilder: (_, __, ___) => Icon(
+                Icons.chat_bubble_outline,
+                color: Colors.white,
+                size: 28.w,
+              ),
+            ),
+          ),
         ),
-        child: Image.asset(
-          'assets/app/ai_astro_icon.png',
-          fit: BoxFit.contain,
-          width: 70.w,
-          height: 70.h,
-          errorBuilder: (_, __, ___) =>
-              Icon(Icons.chat_bubble_outline, color: Colors.white, size: 28.w),
+        Positioned(
+          top: -4.h,
+          right: -4.w,
+          child: GestureDetector(
+            onTap: () => controller.dismissAiGuider(),
+            child: Container(
+              width: 24.w,
+              height: 24.w,
+              decoration: BoxDecoration(
+                color: Colors.red.shade400,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.25),
+                    blurRadius: 4,
+                  ),
+                ],
+              ),
+              child: Icon(
+                Icons.close,
+                size: 14.w,
+                color: Colors.white,
+              ),
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 
@@ -5711,7 +5755,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             ),
             child: NetworkImageWithLoader(
               url: profilePicture,
-              fit: BoxFit.contain,
+              fit: BoxFit.cover,
               isCircular: true,
             ),
           ),

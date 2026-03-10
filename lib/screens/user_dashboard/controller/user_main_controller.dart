@@ -11,6 +11,7 @@ import 'package:astrobharataiuser/screens/astrology_services/view/all_astrologer
 import 'package:astrobharataiuser/screens/consult/view/consult_view.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/controller/virtual_darshan_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/view/virtual_darshan_view.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 
 import 'package:astrobharataiuser/screens/ecommerce/view/ecommerce_home_view.dart';
@@ -99,6 +100,11 @@ class UserMainController extends GetxController {
     _tabHistory.add(index);
     currentIndex.value = index;
 
+    // Show AI Guider again when user returns to Home (reload/refresh behavior)
+    if (index == 0 && Get.isRegistered<UserDashboardController>()) {
+      Get.find<UserDashboardController>().isAiGuiderDismissed.value = false;
+    }
+
     // Sync highlight in the global bottom bar
     if (Get.isRegistered<GlobalNavController>()) {
       Get.find<GlobalNavController>().syncFromTab(index);
@@ -163,6 +169,12 @@ class UserMainController extends GetxController {
     final ctrl = Get.find<UserMainController>();
     final navKey = ctrl.navigatorKeys[ctrl.currentIndex.value];
     return navKey.currentState?.pushNamed<T>(route, arguments: arguments);
+  }
+
+  /// Pop the current tab's stack by one route (e.g. back from AR Vastu to previous screen).
+  static void popCurrentTab() {
+    final ctrl = Get.find<UserMainController>();
+    ctrl.navigatorKeys[ctrl.currentIndex.value].currentState?.pop();
   }
 
   /// Pop the current tab's stack to root (show tab root screen).

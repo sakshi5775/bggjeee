@@ -41,11 +41,11 @@ class VastuReadingController extends GetxController {
   StreamSubscription<MagnetometerEvent>? _magnetometerSubscription;
   StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
 
-  // Throttle timer
-  Timer? _throttleTimer;
-  static const Duration _throttleDuration = Duration(
-    milliseconds: 100,
-  ); // Increased for better performance
+  // Throttle: time-based so we actually run (max ~10 updates/sec)
+  DateTime? _lastThrottleRun;
+  static const int _throttleMs = 100;
+  MagnetometerEvent? _latestMagnetometerEvent;
+  AccelerometerEvent? _latestAccelerometerEvent;
 
   // Pause state
   bool _isPaused = false;
@@ -79,9 +79,8 @@ class VastuReadingController extends GetxController {
         ).listen(
           (MagnetometerEvent event) {
             if (!_isPaused) {
-              _throttleUpdate(() {
-                _updateHeading(event);
-              });
+              _latestMagnetometerEvent = event;
+              _throttleUpdate(_applyLatestReadings);
             }
           },
           onError: (error) {
@@ -98,9 +97,8 @@ class VastuReadingController extends GetxController {
         ).listen(
           (AccelerometerEvent event) {
             if (!_isPaused) {
-              _throttleUpdate(() {
-                _updateCalibration(event);
-              });
+              _latestAccelerometerEvent = event;
+              _throttleUpdate(_applyLatestReadings);
             }
           },
           onError: (error) {
@@ -110,10 +108,19 @@ class VastuReadingController extends GetxController {
         );
   }
 
+  /// Apply latest sensor readings (called at most every _throttleMs)
+  void _applyLatestReadings() {
+    if (_latestMagnetometerEvent != null) {
+      _updateHeading(_latestMagnetometerEvent!);
+    }
+    if (_latestAccelerometerEvent != null) {
+      _updateCalibration(_latestAccelerometerEvent!);
+    }
+  }
+
   void pauseSensors() {
     if (_isPaused) return;
     _isPaused = true;
-    _throttleTimer?.cancel();
   }
 
   void resumeSensors() {
@@ -128,12 +135,13 @@ class VastuReadingController extends GetxController {
 
   void _throttleUpdate(VoidCallback callback) {
     if (_isPaused) return;
-    _throttleTimer?.cancel();
-    _throttleTimer = Timer(_throttleDuration, () {
-      if (!_isPaused) {
-        callback();
-      }
-    });
+    final now = DateTime.now();
+    if (_lastThrottleRun != null &&
+        now.difference(_lastThrottleRun!).inMilliseconds < _throttleMs) {
+      return; // Too soon; skip (next event will run with latest data)
+    }
+    _lastThrottleRun = now;
+    callback();
   }
 
   void _updateHeading(MagnetometerEvent event) {
@@ -639,10 +647,8 @@ class VastuReadingController extends GetxController {
     _isPaused = true;
     _magnetometerSubscription?.cancel();
     _accelerometerSubscription?.cancel();
-    _throttleTimer?.cancel();
     _magnetometerSubscription = null;
     _accelerometerSubscription = null;
-    _throttleTimer = null;
     super.onClose();
   }
 }

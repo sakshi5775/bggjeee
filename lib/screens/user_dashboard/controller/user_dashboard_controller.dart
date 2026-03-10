@@ -49,6 +49,10 @@ class UserDashboardController extends BaseController
   final Rx<UserRole> userRole = UserRole.user.obs;
   final RxBool showConsultationBanner = true.obs;
 
+  /// AI Guider floating button visibility. Close only hides for current session;
+  /// on reload/restart the button shows again (not persisted).
+  final RxBool isAiGuiderDismissed = false.obs;
+
   // Offline State
   final RxBool isOffline = false.obs;
   final RxBool hasCache = false.obs;
@@ -218,6 +222,10 @@ class UserDashboardController extends BaseController
   bool _isAnimating = false;
   bool _shouldAnimate = true;
   final ScrollController scrollController = ScrollController();
+
+  void dismissAiGuider() {
+    isAiGuiderDismissed.value = true;
+  }
 
   // Translation of UI strings
   Future<void> _translateUIStrings() async {
@@ -1081,6 +1089,8 @@ class UserDashboardController extends BaseController
   }
 
   Future<void> refreshDashboard() async {
+    // Show AI Guider again on refresh so it reappears after reload/refresh
+    isAiGuiderDismissed.value = false;
     // Localized offline check commented out as per global offline screen requirement
     /*
     final online = await NetworkService.instance.checkConnectivity();
