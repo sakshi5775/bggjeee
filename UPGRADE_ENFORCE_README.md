@@ -27,10 +27,17 @@ then the store lookup is failing. Common causes:
 
 ## What was changed
 
-1. **`lib/utils/app_constant.dart`**  
-   - `AppConstant.minAppVersion` – minimum version required. Update this when you release a new version (e.g. `'1.0.1'`).
+1. **Automatic version and minAppVersion**  
+   - **`scripts/bump_version.dart`** – Run before each release build (or use the Android build script which runs it automatically). It:
+     - Bumps **version name** in `pubspec.yaml` (e.g. 1.0.1 → 1.0.2)
+     - Bumps **version code** (e.g. 48 → 49)
+     - Regenerates **`lib/version.g.dart`** with `minAppVersion` = previous version (so users on the old version must update)
+   - **`lib/version.g.dart`** – Generated file; `AppConstant.minAppVersion` reads from here. Do not edit by hand.
 
-2. **`lib/main.dart`**  
+2. **`lib/utils/app_constant.dart`**  
+   - `AppConstant.minAppVersion` – comes from `version.g.dart` (auto-updated by the bump script).
+
+3. **`lib/main.dart`**  
    - Upgrader is configured with:
      - `minAppVersion` from `AppConstant`
      - `durationUntilAlertAgain: Duration.zero` so the dialog is not delayed
@@ -54,11 +61,13 @@ If this tag is missing, only the in-app `AppConstant.minAppVersion` is used (whi
 
 ## Checklist for each new release
 
-1. Bump version in `pubspec.yaml` (e.g. `1.0.0+6` → `1.0.1+7`).
-2. Set `AppConstant.minAppVersion` in `lib/utils/app_constant.dart` to the new version string (e.g. `'1.0.1'`).
+1. **Build** – Run the Android build script (e.g. `scripts/build_android_bundle.ps1`). It automatically:
+   - Runs `dart run scripts/bump_version.dart` (bumps version name + code in pubspec and updates `minAppVersion` in `version.g.dart`)
+   - Builds the app bundle.
+2. **Or manually**: From project root, run `dart run scripts/bump_version.dart`, then `flutter build appbundle --release ...`.
 3. In Play Store Console, add or update the description line:  
-   `[Minimum supported app version: 1.0.1]`  
-   (use the same version as in step 2).
-4. Build and upload the new build to the Play Store.
+   `[Minimum supported app version: X.Y.Z]`  
+   (use the **new** version that was just written to pubspec, e.g. 1.0.2).
+4. Upload the new build to the Play Store.
 
 After this, once the app is on a track where the store listing is public, users on older versions will see the update dialog and will not be able to proceed without updating.

@@ -18,6 +18,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart'
     show
         BindingBase,
+        debugPrint,
         defaultTargetPlatform,
         kDebugMode,
         kReleaseMode,
@@ -40,6 +41,28 @@ import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:astrobharataiuser/core/controllers/global_nav_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/user_bottom_nav.dart';
+
+/// Custom strings for the upgrade dialog.
+class CustomUpgraderMessages extends UpgraderMessages {
+  @override
+  String get title => "Update Available!";
+
+  @override
+  String get body =>
+      "A new version of the app is ready with improvements and bug fixes.";
+
+  @override
+  String get prompt => "Would you like to update now?";
+
+  @override
+  String get buttonTitleIgnore => "Skip this version";
+
+  @override
+  String get buttonTitleLater => "Remind Me Later";
+
+  @override
+  String get buttonTitleUpdate => "Update Now";
+}
 
 List<Locale>? _cachedSupportedLocales;
 
@@ -284,6 +307,32 @@ Locale _getSafeMaterialLocale(Locale locale) {
   return const Locale('en');
 }
 
+/// Navigator key used by GetMaterialApp and UpgradeAlert so the update dialog can display.
+final GlobalKey<NavigatorState> _rootNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'RootNavigator');
+
+/// Single Upgrader instance used throughout the app.
+/// Uses explicit Play Store URL so version parsing works with current store page design.
+final Upgrader appUpgrader = Upgrader(
+  minAppVersion: AppConstant.minAppVersion,
+  durationUntilAlertAgain: const Duration(days: 1),
+  debugDisplayAlways: false, // Set true only to test dialog without a real store update
+  debugLogging: kDebugMode,
+  messages: CustomUpgraderMessages(),
+  willDisplayUpgrade:
+      ({
+        required bool display,
+        String? installedVersion,
+        UpgraderVersionInfo? versionInfo,
+      }) {
+        if (kDebugMode) {
+          debugPrint('upgrader: willDisplayUpgrade → display=$display');
+          debugPrint('upgrader: installed=$installedVersion');
+          debugPrint('upgrader: store=${versionInfo?.appStoreVersion}');
+        }
+      },
+);
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -294,11 +343,6 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        // SystemChrome.setPreferredOrientations([
-        //   DeviceOrientation.portraitUp,
-        //   DeviceOrientation.portraitDown,
-        // ]);
-
         // Get supported locales for MaterialLocalizations (use cached value)
         final materialSupportedLocales = _getMaterialSupportedLocales(
           _cachedSupportedLocales ?? [const Locale('en')],
@@ -312,23 +356,16 @@ class MyApp extends StatelessWidget {
           GlobalWidgetsLocalizations.delegate, // WidgetsLocalizations
         ];
 
-        // Mandatory app update: users must update before proceeding (Play Store only).
-        final appUpgrader = Upgrader(
-          minAppVersion: AppConstant.minAppVersion,
-          durationUntilAlertAgain: Duration.zero,
-          debugLogging: kDebugMode,
-        );
-
-        // Use GetBuilder to rebuild when language changes (lightweight)
+        // UpgradeAlert wraps the app; uses same navigator as GetMaterialApp so dialog can show.
         return UpgradeAlert(
+          upgrader: appUpgrader,
+          navigatorKey: _rootNavigatorKey,
           dialogStyle: UpgradeDialogStyle.material,
           barrierDismissible: false,
           showIgnore: false,
-          showLater: false,
-          // Block back/dismiss when update is available or user is below min version
+          showLater: true,
           shouldPopScope: () =>
               !(appUpgrader.blocked() || appUpgrader.isUpdateAvailable()),
-          upgrader: appUpgrader,
           child: GetBuilder<LanguageControllerV2>(
             builder: (languageController) {
               // Get current locale from language controller
@@ -338,6 +375,7 @@ class MyApp extends StatelessWidget {
               final safeLocale = _getSafeMaterialLocale(locale);
 
               return GetMaterialApp(
+                navigatorKey: _rootNavigatorKey,
                 debugShowCheckedModeBanner: false,
                 localizationsDelegates: localizationsDelegates,
                 supportedLocales: materialSupportedLocales.isNotEmpty
