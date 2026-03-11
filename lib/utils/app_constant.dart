@@ -1,11 +1,5 @@
-import 'package:astrobharataiuser/version.g.dart';
-
 class AppConstant {
   AppConstant._();
-
-  /// Minimum app version required. Users below this version must update.
-  /// Auto-updated by scripts/bump_version.dart when you run it before each release build.
-  static const String minAppVersion = kMinAppVersion;
 
   /// Play Store listing URL for the app. Used by upgrader to fetch store version.
   /// With hl and gl for consistent version parsing across regions.
@@ -15,8 +9,7 @@ class AppConstant {
   // OneSignal App ID (from OneSignal Dashboard → Settings → Keys & IDs)
   static const String oneSignalAppId = '67ddfe0f-eadf-41fa-a1d2-7f9d35e8c766';
 
-  static const String s3BaseUrl =
-      'https://d3c2un7ipdye89.cloudfront.net';
+  static const String s3BaseUrl = 'https://d3c2un7ipdye89.cloudfront.net';
 
   static const String bottomHomeIcon =
       '$s3BaseUrl/Astro+Service/3D+Logos/Home+3d.png';
