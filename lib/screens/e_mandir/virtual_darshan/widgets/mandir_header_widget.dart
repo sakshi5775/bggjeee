@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:astrobharataiuser/app_manager/my_text_field.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
+import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/controller/virtual_darshan_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -16,12 +17,11 @@ import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 /// Decorative mandir-style header with god name, category list, arch, and bells.
-class MandirHeaderWidget extends StatelessWidget {
+class MandirHeaderWidget extends BasePage<VirtualDarshanController> {
   const MandirHeaderWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<VirtualDarshanController>();
     final divyaDarshanController = Get.put(DivyaDarshanController());
 
     return SizedBox(
@@ -284,13 +284,21 @@ class MandirHeaderWidget extends StatelessWidget {
                   itemCount: categories.length,
                   itemBuilder: (_, index) {
                     final god = categories[index];
-                    final isSelected = selectedIdx == index;
+                    final originalIndex = controller.godCategories.indexWhere(
+                      (g) => g.id == god.id,
+                    );
+                    final isSelected = selectedIdx == originalIndex;
                     final imageUrl = god.thumbnailImage ?? god.godImage;
 
                     return GestureDetector(
                       onTap: () {
                         Navigator.pop(context);
-                        controller.navigateToGod(index, god.id.toString());
+                        if (originalIndex != -1) {
+                          controller.navigateToGod(
+                            originalIndex,
+                            god.id.toString(),
+                          );
+                        }
                       },
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
