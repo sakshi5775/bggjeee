@@ -308,15 +308,16 @@ Locale _getSafeMaterialLocale(Locale locale) {
 }
 
 /// Navigator key used by GetMaterialApp and UpgradeAlert so the update dialog can display.
-final GlobalKey<NavigatorState> _rootNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'RootNavigator');
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'RootNavigator',
+);
 
 /// Single Upgrader instance used throughout the app.
 /// Uses explicit Play Store URL so version parsing works with current store page design.
 final Upgrader appUpgrader = Upgrader(
-
   durationUntilAlertAgain: const Duration(days: 1),
-  debugDisplayAlways: false, // Set true only to test dialog without a real store update
+  debugDisplayAlways:
+      false, // Set true only to test dialog without a real store update
   debugLogging: kDebugMode,
   messages: CustomUpgraderMessages(),
   willDisplayUpgrade:
