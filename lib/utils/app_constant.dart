@@ -1,11 +1,8 @@
-import 'package:astrobharataiuser/version.g.dart';
+
 
 class AppConstant {
   AppConstant._();
 
-  /// Minimum app version required. Users below this version must update.
-  /// Auto-updated by scripts/bump_version.dart when you run it before each release build.
-  static const String minAppVersion = kMinAppVersion;
 
   /// Play Store listing URL for the app. Used by upgrader to fetch store version.
   /// With hl and gl for consistent version parsing across regions.

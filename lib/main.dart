@@ -314,7 +314,7 @@ final GlobalKey<NavigatorState> _rootNavigatorKey =
 /// Single Upgrader instance used throughout the app.
 /// Uses explicit Play Store URL so version parsing works with current store page design.
 final Upgrader appUpgrader = Upgrader(
-  minAppVersion: AppConstant.minAppVersion,
+
   durationUntilAlertAgain: const Duration(days: 1),
   debugDisplayAlways: false, // Set true only to test dialog without a real store update
   debugLogging: kDebugMode,
