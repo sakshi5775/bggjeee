@@ -26,6 +26,12 @@ class CallInitiationHelper {
     final context = Get.context;
     if (context == null) return;
 
+    final canProceed = await _precheckService.checkBeforeProceeding(
+      astrologer: astrologer,
+      estimatedMinutes: 15,
+    );
+    if (!canProceed) return;
+
     final existingProfile = await _profileHelper.getUserProfile();
     final profileResult = await showPersonaChatProfileDialog(
       context,
@@ -121,6 +127,12 @@ class CallInitiationHelper {
     final context = Get.context;
     if (context == null) return;
 
+    final canProceed = await _precheckService.checkBeforeProceeding(
+      astrologer: astrologer,
+      estimatedMinutes: 15,
+    );
+    if (!canProceed) return;
+
     final pricePerMin = astrologer.voicePricePerMin ?? 0.0;
     final chargeText = pricePerMin > 0
         ? '₹${pricePerMin.toStringAsFixed(0)}/min'
@@ -183,7 +195,6 @@ class CallInitiationHelper {
           ),
           barrierDismissible: false,
         );
-        await initiateVoiceCall(astrologer);
         return;
       }
 
@@ -216,6 +227,12 @@ class CallInitiationHelper {
   static Future<void> initiateVideoCall(AstrologerModel astrologer) async {
     final context = Get.context;
     if (context == null) return;
+
+    final canProceed = await _precheckService.checkBeforeProceeding(
+      astrologer: astrologer,
+      estimatedMinutes: 15,
+    );
+    if (!canProceed) return;
 
     final pricePerMin = astrologer.videoPricePerMin ?? 0.0;
     final chargeText = pricePerMin > 0
@@ -279,7 +296,6 @@ class CallInitiationHelper {
           ),
           barrierDismissible: false,
         );
-        await initiateVideoCall(astrologer);
         return;
       }
 

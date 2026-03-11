@@ -1,6 +1,8 @@
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/app_manager/svg_assets.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
@@ -8,7 +10,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
+import 'package:get/get.dart';
 
 class AboutUsView extends StatelessWidget {
   const AboutUsView({super.key});
@@ -606,48 +608,56 @@ class AboutUsView extends StatelessWidget {
         'route': AppRoutes.faceReading,
         'image':
             'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/face+reading1.jpeg',
+        'pricingKey': 'face_reading',
       },
       {
         'label': 'Palm Reading',
         'route': AppRoutes.palmReading,
         'image':
             'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/palm+reading.jpeg',
+        'pricingKey': 'palmistry',
       },
       {
         'label': 'Vastu Reading',
         'route': AppRoutes.vastuDashboard,
         'image':
             'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/vastu+3.jpeg',
+        'pricingKey': 'vastu_reading',
       },
       {
         'label': 'Ramal Shastra',
         'route': AppRoutes.ramalShastra,
         'image':
             'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/ramal+shastra+4.jpeg',
+        'pricingKey': 'ramal_shastra',
       },
       {
         'label': 'Writing Astrology',
         'route': AppRoutes.handwritingAstrology,
         'image':
             'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/writing.jpeg',
+        'pricingKey': 'handwriting_analysis',
       },
       {
         'label': 'Prashna Kundli',
         'route': AppRoutes.prashnaKundali,
         'image':
             'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/prashna+kundli.jpeg',
+        'pricingKey': 'prashna_kundali',
       },
       {
         'label': 'Tarot Reading',
         'route': AppRoutes.tarotReading,
         'image':
             'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/tarot+reading+6.jpeg',
+        'pricingKey': 'tarot_reading',
       },
       {
         'label': 'Carrot Astrology',
         'route': AppRoutes.carrotAstrology,
         'image':
             'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/carrot+astrology.jpeg',
+        'pricingKey': 'carrot_astrology',
       },
     ];
 
@@ -708,6 +718,7 @@ class AboutUsView extends StatelessWidget {
                     route: s['route'] as String,
                     iconUrl: s['image'] as String,
                     isNetworkImage: true,
+                    pricingKey: s['pricingKey'],
                   ),
                 );
               }).toList(),
@@ -723,6 +734,7 @@ class AboutUsView extends StatelessWidget {
     required String route,
     required String iconUrl,
     required bool isNetworkImage,
+    String? pricingKey,
   }) {
     return GestureDetector(
       onTap: () => UserMainController.pushInCurrentTab(route),
@@ -753,20 +765,62 @@ class AboutUsView extends StatelessWidget {
             ),
             SizedBox(width: 10.w),
             Expanded(
-              child: AutoTranslateText(
-                label,
-                style: AppTypography.body2.copyWith(
-                  color: AppColors.textColorMaroon,
-                  fontWeight: FontWeight.w600,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AutoTranslateText(
+                    label,
+                    style: AppTypography.body2.copyWith(
+                      color: AppColors.textColorMaroon,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (pricingKey != null && pricingKey.isNotEmpty)
+                    _buildPriceTag(pricingKey),
+                ],
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildPriceTag(String pricingKey) {
+    if (!Get.isRegistered<AiPricingController>()) {
+      return const SizedBox.shrink();
+    }
+    return Obx(() {
+      final controller = Get.find<AiPricingController>();
+      final pricing = controller.getPricingFor(pricingKey);
+      if (pricing == null) return const SizedBox.shrink();
+      final price = controller.getDisplayPrice(pricingKey);
+      if (price.isEmpty) return const SizedBox.shrink();
+      return Padding(
+        padding: EdgeInsets.only(top: 4.h),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppColors.deepOrange, AppColors.saffron],
+            ),
+            borderRadius: BorderRadius.circular(6.r),
+          ),
+          child: Text(
+            price,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 10.sp,
+              fontWeight: FontWeight.w700,
+              fontFamily: 'Poppins',
+            ),
+          ),
+        ),
+      );
+    });
   }
 
   // ═══════════════════════════════════════════════════

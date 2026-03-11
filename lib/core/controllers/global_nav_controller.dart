@@ -15,12 +15,15 @@ class BottomNavItem {
 class GlobalNavController extends GetxController {
   final RxString currentRoute = ''.obs;
 
+  /// Routes where the global bottom nav is hidden (full-screen: live stream, call, chat, AI).
   final List<String> hiddenRoutes = [
     AppRoutes.chat,
+    AppRoutes.astrologerChat,
     AppRoutes.astrologerVoiceCall,
     AppRoutes.astrologerVideoCall,
     AppRoutes.personaChat,
     AppRoutes.personaVoiceCall,
+    AppRoutes.aichat,
     AppRoutes.onboarding,
     AppRoutes.login,
     AppRoutes.signup,
@@ -84,7 +87,10 @@ class GlobalNavController extends GetxController {
 
   bool get showBottomNav {
     final route = currentRoute.value;
-    return !hiddenRoutes.contains(route);
+    if (hiddenRoutes.contains(route)) return false;
+    // Live stream may be named by Get with runtimeType (e.g. LiveStreamView or /LiveStreamView)
+    if (route.contains('LiveStreamView')) return false;
+    return true;
   }
 
   void updateRoute(String route, {Object? args}) {

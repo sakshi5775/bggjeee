@@ -1,10 +1,12 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/core/services/insufficient_balance_helper.dart';
 import 'package:astrobharataiuser/data_model/banner_model.dart';
 import 'package:astrobharataiuser/data_model/report_model.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/banner_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/report_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/banner_carousel_widget.dart';
+import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -283,6 +285,22 @@ class _ReportsTabWidgetState extends State<ReportsTabWidget> {
       message: 'Please login to access reports',
     )) {
       return;
+    }
+
+    final requiredAmount = (report.priceOffer ?? 0).toDouble();
+    if (requiredAmount > 0) {
+      final balance = Get.isRegistered<WalletController>()
+          ? Get.find<WalletController>().walletBalance.value
+          : 0.0;
+      if (balance < requiredAmount) {
+        await InsufficientBalanceHelper.show(
+          currentBalance: balance,
+          requiredBalance: requiredAmount,
+          customMessage:
+              'Minimum wallet balance required to generate this report is \u20B9${requiredAmount.toStringAsFixed(0)}. Please recharge your wallet.',
+        );
+        return;
+      }
     }
 
     if (report.reportType == 'matching_pdf') {

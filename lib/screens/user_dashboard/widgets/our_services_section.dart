@@ -4,7 +4,9 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/core/services/insufficient_balance_helper.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
+import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/astrology_services_view.dart';
 import 'package:astrobharataiuser/screens/palm_reading/view/palm_reading_view.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
@@ -107,172 +109,116 @@ class OurServicesSection extends BasePage<UserDashboardController> {
 
     return GestureDetector(
       onTap: () {
-        // Normalize label by removing newlines and converting to lowercase
-        final normalizedLabel = label
-            .toLowerCase()
-            .replaceAll('\n', ' ')
-            .trim();
-
-        switch (normalizedLabel) {
-          case 'face reading':
-            _requireLogin(
-              () async =>
-                  UserMainController.pushInCurrentTab(AppRoutes.faceReading),
-              message: 'Login to start face reading.',
-            );
-            break;
-          case 'palm reading':
-            _requireLogin(
-              () async => Get.to(() => const PalmReadingView()),
-              message: 'Login to start palm reading.',
-            );
-            break;
-          case 'tarot reading':
-          case 'tarot card reading':
-            _requireLogin(
-              () async =>
-                  UserMainController.pushInCurrentTab(AppRoutes.tarotReading),
-              message: 'Login to explore tarot reading.',
-            );
-            break;
-          case 'consult':
-          case 'consult astrologer':
-            _requireLogin(
-              () async => Get.to(() => const AstrologyServicesView()),
-              message: 'Login to consult with astrologers.',
-            );
-            break;
-          case 'panchang':
-            _requireLogin(
-              () async =>
-                  UserMainController.pushInCurrentTab(AppRoutes.panchang),
-              message: 'Login to view Panchang.',
-            );
-            break;
-          case 'horoscope':
-          case 'check horoscope':
-            _requireLogin(
-              () async =>
-                  UserMainController.pushInCurrentTab(AppRoutes.horoscopeForm),
-              message: 'Login to check your horoscope.',
-            );
-            break;
-          case 'numerology':
-            _requireLogin(
-              () async =>
-                  UserMainController.pushInCurrentTab(AppRoutes.numerologyForm),
-              message: 'Login to try numerology.',
-            );
-            break;
-          case 'generate kundli':
-            _requireLogin(
-              () async =>
-                  UserMainController.pushInCurrentTab(AppRoutes.kundliForm),
-              message: 'Login to generate your Kundli.',
-            );
-            break;
-          case 'match making':
-            _requireLogin(
-              () async =>
-                  UserMainController.pushInCurrentTab(AppRoutes.matchMakingGif),
-              message: 'Login to start match making.',
-            );
-            break;
-          case 'writing astrology':
-            _requireLogin(
-              () async => UserMainController.pushInCurrentTab(
-                AppRoutes.handwritingAstrology,
-              ),
-              message: 'Login to use handwriting astrology.',
-            );
-            break;
-          case 'carrot astrology':
-            _requireLogin(
-              () async => UserMainController.pushInCurrentTab(
-                AppRoutes.carrotAstrology,
-              ),
-              message: 'Login to explore carrot astrology.',
-            );
-            break;
-          case 'vastu reading':
-            _requireLogin(
-              () async =>
-                  UserMainController.pushInCurrentTab(AppRoutes.vastuDashboard),
-              message: 'Login to explore Vastu services.',
-            );
-            break;
-          case 'prashna kundli':
-            _requireLogin(
-              () async =>
-                  UserMainController.pushInCurrentTab(AppRoutes.prashnaKundali),
-              message: 'Login to use Prashna Kundli.',
-            );
-            break;
-          case 'ramal shastra':
-            _requireLogin(
-              () async =>
-                  UserMainController.pushInCurrentTab(AppRoutes.ramalShastra),
-              message: 'Login to explore Ramal Shastra.',
-            );
-            break;
-          case 'life predictions':
-            _requireLogin(() async {
-              // Navigate to kundli form with target route for predictions
-              UserMainController.pushInCurrentTab(
-                AppRoutes.kundliForm,
-                arguments: {'targetRoute': AppRoutes.predictions},
-              );
-            }, message: 'Login to view Life Predictions.');
-            break;
-          case 'dosh':
-            _requireLogin(() async {
-              // Navigate to kundli form with target route for dosh
-              UserMainController.pushInCurrentTab(
-                AppRoutes.kundliForm,
-                arguments: {'targetRoute': AppRoutes.dosh},
-              );
-            }, message: 'Login to check Dosh.');
-            break;
-          case 'dasha':
-            _requireLogin(() async {
-              // Navigate to kundli form with target route for dasha
-              UserMainController.pushInCurrentTab(
-                AppRoutes.kundliForm,
-                arguments: {'targetRoute': AppRoutes.dasha},
-              );
-            }, message: 'Login to view Dasha.');
-            break;
-          case 'kp astrology':
-            _requireLogin(() async {
-              // Navigate to kundli form with target route for kp system
-              UserMainController.pushInCurrentTab(
-                AppRoutes.kundliForm,
-                arguments: {'targetRoute': AppRoutes.kpSystem},
-              );
-            }, message: 'Login to use KP Astrology.');
-            break;
-          case 'lal kitab':
-            _requireLogin(() async {
-              // Navigate to kundli form with target route for lal kitab
-              UserMainController.pushInCurrentTab(
-                AppRoutes.kundliForm,
-                arguments: {'targetRoute': AppRoutes.lalKitab},
-              );
-            }, message: 'Login to use Lal Kitab.');
-            break;
-          default:
-            // Check if label contains "kundli" (case insensitive)
-            if (normalizedLabel.contains('kundli')) {
-              _requireLogin(
-                () async =>
-                    UserMainController.pushInCurrentTab(AppRoutes.kundliForm),
-                message: 'Login to generate your Kundli.',
-              );
-            } else {
-              // If no match found, show coming soon
-              _requireLogin(() async => Get.to(() => const ComingSoonPage()));
+        _requireLogin(
+          () async {
+            if (pricingKey.isNotEmpty &&
+                Get.isRegistered<AiPricingController>()) {
+              final pricingCtrl = Get.find<AiPricingController>();
+              if (!pricingCtrl.hasSufficientBalance(pricingKey)) {
+                final pricing = pricingCtrl.getPricingFor(pricingKey);
+                final required = pricing?.priceOffer ?? 0.0;
+                final balance = Get.isRegistered<WalletController>()
+                    ? Get.find<WalletController>().walletBalance.value
+                    : 0.0;
+                await InsufficientBalanceHelper.show(
+                  currentBalance: balance,
+                  requiredBalance: required,
+                  contextName: label.replaceAll('\n', ' ').trim(),
+                );
+                return;
+              }
             }
-        }
+            final normalizedLabel = label
+                .toLowerCase()
+                .replaceAll('\n', ' ')
+                .trim();
+            switch (normalizedLabel) {
+              case 'face reading':
+                UserMainController.pushInCurrentTab(AppRoutes.faceReading);
+                break;
+              case 'palm reading':
+                Get.to(() => const PalmReadingView());
+                break;
+              case 'tarot reading':
+              case 'tarot card reading':
+                UserMainController.pushInCurrentTab(AppRoutes.tarotReading);
+                break;
+              case 'consult':
+              case 'consult astrologer':
+                Get.to(() => const AstrologyServicesView());
+                break;
+              case 'panchang':
+                UserMainController.pushInCurrentTab(AppRoutes.panchang);
+                break;
+              case 'horoscope':
+              case 'check horoscope':
+                UserMainController.pushInCurrentTab(AppRoutes.horoscopeForm);
+                break;
+              case 'numerology':
+                UserMainController.pushInCurrentTab(AppRoutes.numerologyForm);
+                break;
+              case 'generate kundli':
+                UserMainController.pushInCurrentTab(AppRoutes.kundliForm);
+                break;
+              case 'match making':
+                UserMainController.pushInCurrentTab(AppRoutes.matchMakingGif);
+                break;
+              case 'writing astrology':
+                UserMainController.pushInCurrentTab(
+                    AppRoutes.handwritingAstrology);
+                break;
+              case 'carrot astrology':
+                UserMainController.pushInCurrentTab(AppRoutes.carrotAstrology);
+                break;
+              case 'vastu reading':
+                UserMainController.pushInCurrentTab(AppRoutes.vastuDashboard);
+                break;
+              case 'prashna kundli':
+                UserMainController.pushInCurrentTab(AppRoutes.prashnaKundali);
+                break;
+              case 'ramal shastra':
+                UserMainController.pushInCurrentTab(AppRoutes.ramalShastra);
+                break;
+              case 'life predictions':
+                UserMainController.pushInCurrentTab(
+                  AppRoutes.kundliForm,
+                  arguments: {'targetRoute': AppRoutes.predictions},
+                );
+                break;
+              case 'dosh':
+                UserMainController.pushInCurrentTab(
+                  AppRoutes.kundliForm,
+                  arguments: {'targetRoute': AppRoutes.dosh},
+                );
+                break;
+              case 'dasha':
+                UserMainController.pushInCurrentTab(
+                  AppRoutes.kundliForm,
+                  arguments: {'targetRoute': AppRoutes.dasha},
+                );
+                break;
+              case 'kp astrology':
+                UserMainController.pushInCurrentTab(
+                  AppRoutes.kundliForm,
+                  arguments: {'targetRoute': AppRoutes.kpSystem},
+                );
+                break;
+              case 'lal kitab':
+                UserMainController.pushInCurrentTab(
+                  AppRoutes.kundliForm,
+                  arguments: {'targetRoute': AppRoutes.lalKitab},
+                );
+                break;
+              default:
+                if (normalizedLabel.contains('kundli')) {
+                  UserMainController.pushInCurrentTab(AppRoutes.kundliForm);
+                } else {
+                  Get.to(() => const ComingSoonPage());
+                }
+            }
+          },
+          message: 'Login to access this service.',
+        );
       },
       behavior: HitTestBehavior.opaque,
       child: Stack(

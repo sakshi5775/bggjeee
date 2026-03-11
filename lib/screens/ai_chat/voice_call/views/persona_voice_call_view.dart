@@ -1,4 +1,5 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/screens/ai_chat/voice_call/controllers/persona_voice_call_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -11,7 +12,7 @@ import 'package:get/get.dart';
 
 class VoiceCallView extends StatelessWidget {
   final PersonaModel persona;
-  final String platform; // web / android / ios
+  final String platform;
 
   const VoiceCallView({
     super.key,
@@ -29,261 +30,358 @@ class VoiceCallView extends StatelessWidget {
     });
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
+      backgroundColor: Colors.transparent,
+      body: Container(
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: 16.h),
-            _header(persona, controller),
-            SizedBox(height: 12.h),
-            _statusSection(controller),
-            const Spacer(),
-            _transcriptionSection(controller),
-            _aiResponseSection(controller),
-            const Spacer(),
-            _controls(controller),
-            SizedBox(height: 24.h),
+            // Header (same as astrologer voice call)
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              decoration: BoxDecoration(gradient: AppColors.primaryGradient),
+              child: SafeArea(
+                bottom: false,
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () => controller.cancelCall(),
+                    ),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 18.r,
+                            backgroundImage: persona.image != null &&
+                                    persona.image!.isNotEmpty
+                                ? CachedNetworkImageProvider(persona.image!)
+                                : null,
+                            child: persona.image == null ||
+                                    persona.image!.isEmpty
+                                ? const Icon(Icons.person, color: Colors.white)
+                                : null,
+                          ),
+                          Spacing.w(8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                AutoTranslateText(
+                                  persona.name,
+                                  style: MyTextTheme.mediumBCB
+                                      .copyWith(color: Colors.white),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Obx(
+                                  () => AutoTranslateText(
+                                    controller.connectionStatus.value,
+                                    style: MyTextTheme.smallBCN.copyWith(
+                                      fontSize: 10.sp,
+                                      color: AppColors.templeGold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox.shrink(),
+                  ],
+                ),
+              ),
+            ),
+            // Main content: background image + transcription/response + controls
+            Expanded(
+              child: Stack(
+                children: [
+                  _buildBackgroundImage(persona, controller),
+                  _buildTranscriptionAndResponse(controller),
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: SafeArea(
+                      top: false,
+                      child: _buildCallOverlay(controller),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _header(PersonaModel persona, VoiceCallController controller) {
-    return Column(
-      children: [
-        Obx(() {
-          final isRecording = controller.isRecording.value;
-          return Stack(
-            alignment: Alignment.center,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12.r),
-                child: SizedBox(
-                  height: 320.h,
-                  width: 1.sw,
-                  child: CachedNetworkImage(
-                    imageUrl: persona.image ?? '',
-                    fit: BoxFit.cover,
-                    errorWidget: (_, __, ___) => Container(
-                      color: const Color(0xFFFFF2E5),
-                      alignment: Alignment.center,
-                      child: Icon(
-                        Icons.person,
-                        size: 64.w,
-                        color: AppColors.saffron,
-                      ),
-                    ),
-                  ),
+  Widget _buildBackgroundImage(
+      PersonaModel persona, VoiceCallController controller) {
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          if (persona.image != null && persona.image!.isNotEmpty)
+            CachedNetworkImage(
+              imageUrl: persona.image!,
+              fit: BoxFit.cover,
+              errorWidget: (_, __, ___) => Container(
+                color: Colors.grey.withValues(alpha: 0.3),
+                child: Center(
+                  child: Icon(Icons.person, size: 120.w, color: Colors.grey),
                 ),
               ),
-              if (isRecording)
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.red.withValues(alpha: 0.3),
-                    shape: BoxShape.circle,
-                  ),
-                  padding: EdgeInsets.all(20.w),
-                  child: Icon(Icons.mic, size: 48.w, color: Colors.red),
-                ),
-            ],
-          );
-        }),
-        SizedBox(height: 12.h),
-        AutoTranslateText(
-          persona.name,
-          style: MyTextTheme.mediumBCB
-              .copyWith(fontWeight: FontWeight.w700, color: Colors.black87)
-              .merge(AppTypography.h2),
-        ),
-      ],
-    );
-  }
-
-  Widget _statusSection(VoiceCallController controller) {
-    return Obx(() {
-      // Only show time remaining, hide connection status
-      final timeText = controller.remainingSeconds.value == 600
-          ? 'Connecting...'
-          : 'Remaining Time: ${controller.formattedRemaining}';
-
-      return Column(
-        children: [
-          AutoTranslateText(
-            timeText,
-            style: MyTextTheme.mediumBCB
-                .copyWith(color: Colors.black87)
-                .merge(AppTypography.h3),
+            )
+          else
+            Container(
+              color: Colors.grey.withValues(alpha: 0.3),
+              child: Center(
+                child: Icon(Icons.person, size: 120.w, color: Colors.grey),
+              ),
+            ),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.primaryGradient.colors.first
+                      .withValues(alpha: 0.2),
+                  AppColors.primaryGradient.colors.last.withValues(alpha: 0.5),
+                ],
+              ),
+            ),
           ),
         ],
-      );
-    });
+      ),
+    );
   }
 
-  Widget _transcriptionSection(VoiceCallController controller) {
-    return Obx(() {
-      if (controller.transcription.value.isEmpty) {
-        return const SizedBox.shrink();
-      }
-      return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
-        child: Container(
-          padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(
-            color: const Color(0xFFE3F2FD),
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(Icons.mic, size: 16.w, color: Colors.blue),
-                  SizedBox(width: 8.w),
-                  AutoTranslateText(
-                    'You said:',
-                    style: MyTextTheme.smallBCB
-                        .copyWith(color: Colors.blue)
-                        .merge(AppTypography.body2),
-                  ),
-                ],
-              ),
-              SizedBox(height: 8.h),
-              AutoTranslateText(
-                controller.transcription.value,
-                style: MyTextTheme.mediumBCN
-                    .copyWith(color: Colors.black87)
-                    .merge(AppTypography.body1),
-              ),
-            ],
-          ),
-        ),
-      );
-    });
-  }
-
-  Widget _aiResponseSection(VoiceCallController controller) {
-    return Obx(() {
-      if (controller.aiResponse.value.isEmpty) {
-        return const SizedBox.shrink();
-      }
-      return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
-        child: Container(
-          padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(
-            color: const Color(0xFFE8F5E9),
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(Icons.smart_toy, size: 16.w, color: Colors.green),
-                  SizedBox(width: 8.w),
-                  AutoTranslateText(
-                    '${controller.persona.name}:',
-                    style: MyTextTheme.smallBCB
-                        .copyWith(color: Colors.green)
-                        .merge(AppTypography.body2),
-                  ),
-                  if (controller.isPlaying.value) ...[
-                    SizedBox(width: 8.w),
-                    SizedBox(
-                      width: 12.w,
-                      height: 12.w,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
-                      ),
+  Widget _buildTranscriptionAndResponse(VoiceCallController controller) {
+    return Align(
+      alignment: Alignment.center,
+      child: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Obx(() {
+              if (controller.transcription.value.isEmpty) return const SizedBox.shrink();
+              return Container(
+                padding: EdgeInsets.all(16.w),
+                margin: EdgeInsets.only(bottom: 12.h),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE3F2FD),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.mic, size: 16.w, color: Colors.blue),
+                        SizedBox(width: 8.w),
+                        AutoTranslateText(
+                          'You said:',
+                          style: MyTextTheme.smallBCB
+                              .copyWith(color: Colors.blue)
+                              .merge(AppTypography.body2),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8.h),
+                    AutoTranslateText(
+                      controller.transcription.value,
+                      style: MyTextTheme.mediumBCN
+                          .copyWith(color: Colors.black87)
+                          .merge(AppTypography.body1),
                     ),
                   ],
-                ],
-              ),
-              SizedBox(height: 8.h),
-              AutoTranslateText(
-                controller.aiResponse.value,
-                style: MyTextTheme.mediumBCN
-                    .copyWith(color: Colors.black87)
-                    .merge(AppTypography.body1),
-              ),
-            ],
-          ),
-        ),
-      );
-    });
-  }
-
-  Widget _controls(VoiceCallController controller) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24.w),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16.r),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 18,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Volume button (mute/unmute - placeholder)
-            _roundButton(
-              icon: Icons.volume_up,
-              bg: const Color(0xFFFFF2E5),
-              iconColor: AppColors.saffron,
-              onTap: () {
-                // TODO: Implement mute/unmute functionality
-              },
-            ),
-            // Microphone button (record/stop)
-            Obx(() {
-              final isRecording = controller.isRecording.value;
-              final isProcessing = controller.isProcessing.value;
-              return _roundButton(
-                icon: isRecording ? Icons.mic : Icons.mic_off,
-                bg: isRecording
-                    ? Colors.red
-                    : (isProcessing ? Colors.grey : const Color(0xFF1F1F1F)),
-                iconColor: Colors.white,
-                onTap: isProcessing ? null : () => controller.toggleRecording(),
+                ),
               );
             }),
-            // End call button
-            _roundButton(
-              icon: Icons.call_end,
-              bg: Colors.redAccent,
-              iconColor: Colors.white,
-              onTap: () => controller.cancelCall(),
-            ),
+            Obx(() {
+              if (controller.aiResponse.value.isEmpty) return const SizedBox.shrink();
+              return Container(
+                padding: EdgeInsets.all(16.w),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE8F5E9),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.smart_toy, size: 16.w, color: Colors.green),
+                        SizedBox(width: 8.w),
+                        AutoTranslateText(
+                          '${controller.persona.name}:',
+                          style: MyTextTheme.smallBCB
+                              .copyWith(color: Colors.green)
+                              .merge(AppTypography.body2),
+                        ),
+                        if (controller.isPlaying.value) ...[
+                          SizedBox(width: 8.w),
+                          SizedBox(
+                            width: 12.w,
+                            height: 12.w,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    SizedBox(height: 8.h),
+                    AutoTranslateText(
+                      controller.aiResponse.value,
+                      style: MyTextTheme.mediumBCN
+                          .copyWith(color: Colors.black87)
+                          .merge(AppTypography.body1),
+                    ),
+                  ],
+                ),
+              );
+            }),
           ],
         ),
       ),
     );
   }
 
-  Widget _roundButton({
+  Widget _buildCallOverlay(VoiceCallController controller) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 28.h),
+      decoration: BoxDecoration(
+        gradient: AppColors.primaryGradient,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(28.r),
+          topRight: Radius.circular(28.r),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 16,
+            offset: const Offset(0, -4),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AutoTranslateText(
+            controller.persona.name,
+            style: MyTextTheme.largeBCB.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 20.sp,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          Spacing.h(8),
+          Obx(() {
+            final status = controller.connectionStatus.value;
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 8.w,
+                    height: 8.w,
+                    decoration: BoxDecoration(
+                      color: status == 'Ready' || status == 'Connected'
+                          ? AppColors.success
+                          : AppColors.templeGold,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  Spacing.w(8),
+                  AutoTranslateText(
+                    'Remaining: ${controller.formattedRemaining}',
+                    style: MyTextTheme.smallBCB.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12.sp,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+          Spacing.h(24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Obx(
+                () => _buildCallButton(
+                  icon: Icons.volume_up,
+                  color: AppColors.templeGold,
+                  isActive: controller.isSpeakerOn.value,
+                  onTap: () => controller.toggleSpeaker(),
+                ),
+              ),
+              Obx(
+                () => _buildCallButton(
+                  icon: controller.isMuted.value ? Icons.mic_off : Icons.mic,
+                  color: AppColors.templeGold,
+                  isActive: !controller.isMuted.value,
+                  onTap: () => controller.toggleMute(),
+                ),
+              ),
+              _buildCallButton(
+                icon: Icons.call_end,
+                color: AppColors.error,
+                isActive: true,
+                onTap: () => controller.cancelCall(),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCallButton({
     required IconData icon,
-    required Color bg,
-    required Color iconColor,
-    required VoidCallback? onTap,
+    required Color color,
+    required bool isActive,
+    required VoidCallback onTap,
   }) {
-    return InkWell(
+    final isEnd = color == AppColors.error;
+    Color bgColor = isEnd
+        ? AppColors.error
+        : (isActive ? color : color.withValues(alpha: 0.5));
+
+    return GestureDetector(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(56.r),
       child: Container(
-        width: 64.w,
-        height: 64.w,
-        decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
-        child: Icon(icon, color: iconColor, size: 28.w),
+        width: 56.w,
+        height: 56.h,
+        decoration: BoxDecoration(
+          color: bgColor,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: bgColor.withValues(alpha: 0.4),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Icon(icon, color: Colors.white, size: 26.w),
       ),
     );
   }

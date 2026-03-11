@@ -31,12 +31,17 @@ class ChatCallPrecheckService {
           299.0;
       name = astrologer.displayName;
     } else if (persona != null) {
-      finalPricePerMinute = pricePerMinute ?? persona.pricePerMin ?? 299.0;
+      finalPricePerMinute = pricePerMinute ??
+          persona.chatPricePerMinute ??
+          persona.pricePerMin ??
+          299.0;
       name = persona.displayName;
     } else {
       finalPricePerMinute = pricePerMinute ?? 299.0;
       name = personaName ?? 'Astrologer';
     }
+    // Free service (0/min): allow without wallet check
+    if (finalPricePerMinute <= 0) return true;
     /* 
     // Check profile completeness (DISABLED AS PER USER REQUEST)
     final isProfileComplete = await _profileHelper.isProfileComplete();
@@ -76,6 +81,7 @@ class ChatCallPrecheckService {
     required String? name,
     int estimatedMinutes = 15,
   }) async {
+    if (pricePerMinute <= 0) return true;
     final requiredBalance = _profileHelper.getMinimumRequiredBalance(
       pricePerMinute,
       estimatedMinutes: estimatedMinutes,

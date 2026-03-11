@@ -1,6 +1,8 @@
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
@@ -8,6 +10,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 class AllServicesView extends StatelessWidget {
   const AllServicesView({super.key});
@@ -250,63 +253,72 @@ class AllServicesView extends StatelessWidget {
   }
 
   Widget _buildAstrologyToolsSection() {
+    // Same image URLs as user_dashboard astrology_tool_widget
     const faceUrl =
-        'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/face2.jpeg';
+        'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/face+reading1.jpeg';
     const palmUrl =
-        'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/hand.jpeg';
+        'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/palm+reading.jpeg';
     const vastuUrl =
-        'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/vastu.jpeg';
+        'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/vastu+3.jpeg';
     const ramalUrl =
-        'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/ramal.jpeg';
+        'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/ramal+shastra+4.jpeg';
     const writingUrl =
         'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/writing.jpeg';
     const prashnaUrl =
-        'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/PrashanKundli.jpg';
+        'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/prashna+kundli.jpeg';
     const tarotUrl =
-        'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/TarotReading.png';
+        'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/tarot+reading+6.jpeg';
     const carrotUrl =
-        'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/carrotAstro.png';
+        'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/carrot+astrology.jpeg';
 
     final toolsList = <Map<String, String>>[
       {
         'label': 'Face Reading',
         'route': AppRoutes.faceReading,
         'icon': faceUrl,
+        'pricingKey': 'face_reading',
       },
       {
         'label': 'Palm Reading',
         'route': AppRoutes.palmReading,
         'icon': palmUrl,
+        'pricingKey': 'palmistry',
       },
       {
         'label': 'Vastu Reading',
         'route': AppRoutes.vastuDashboard,
         'icon': vastuUrl,
+        'pricingKey': 'vastu_reading',
       },
       {
         'label': 'Ramal Shastra',
         'route': AppRoutes.ramalShastra,
         'icon': ramalUrl,
+        'pricingKey': 'ramal_shastra',
       },
       {
         'label': 'Writing Astrology',
         'route': AppRoutes.handwritingAstrology,
         'icon': writingUrl,
+        'pricingKey': 'handwriting_analysis',
       },
       {
         'label': 'Prashna Kundli',
         'route': AppRoutes.prashnaKundali,
         'icon': prashnaUrl,
+        'pricingKey': 'prashna_kundali',
       },
       {
         'label': 'Tarot Reading',
         'route': AppRoutes.tarotReading,
         'icon': tarotUrl,
+        'pricingKey': 'tarot_reading',
       },
       {
         'label': 'Carrot Astrology',
         'route': AppRoutes.carrotAstrology,
         'icon': carrotUrl,
+        'pricingKey': 'carrot_astrology',
       },
     ];
 
@@ -323,6 +335,7 @@ class AllServicesView extends StatelessWidget {
                 label: s['label']!,
                 route: s['route']!,
                 iconUrl: s['icon']!,
+                pricingKey: s['pricingKey'],
               ),
             );
           }).toList(),
@@ -335,6 +348,7 @@ class AllServicesView extends StatelessWidget {
     required String label,
     required String route,
     required String iconUrl,
+    String? pricingKey,
   }) {
     final isNetworkUrl = iconUrl.startsWith('http');
     return GestureDetector(
@@ -375,20 +389,62 @@ class AllServicesView extends StatelessWidget {
             ),
             SizedBox(width: 10.w),
             Expanded(
-              child: AutoTranslateText(
-                label,
-                style: AppTypography.body2.copyWith(
-                  color: AppColors.textColorMaroon,
-                  fontWeight: FontWeight.w600,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AutoTranslateText(
+                    label,
+                    style: AppTypography.body2.copyWith(
+                      color: AppColors.textColorMaroon,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (pricingKey != null && pricingKey.isNotEmpty)
+                    _buildPriceTag(pricingKey),
+                ],
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildPriceTag(String pricingKey) {
+    if (!Get.isRegistered<AiPricingController>()) {
+      return const SizedBox.shrink();
+    }
+    return Obx(() {
+      final controller = Get.find<AiPricingController>();
+      final pricing = controller.getPricingFor(pricingKey);
+      if (pricing == null) return const SizedBox.shrink();
+      final price = controller.getDisplayPrice(pricingKey);
+      if (price.isEmpty) return const SizedBox.shrink();
+      return Padding(
+        padding: EdgeInsets.only(top: 4.h),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: ['#FF6B35'.toColor(), '#F38B3B'.toColor()],
+            ),
+            borderRadius: BorderRadius.circular(6.r),
+          ),
+          child: Text(
+            price,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 10.sp,
+              fontWeight: FontWeight.w700,
+              fontFamily: 'Poppins',
+            ),
+          ),
+        ),
+      );
+    });
   }
 
   Widget _buildPlaceholderIcon() {

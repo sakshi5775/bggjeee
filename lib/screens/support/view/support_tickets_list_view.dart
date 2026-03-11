@@ -176,12 +176,24 @@ class SupportTicketsListView extends GetView<SupportTicketController> {
     );
   }
 
+  static String _statusDisplayLabel(String value) {
+    if (value == 'All') return value;
+    switch (value) {
+      case 'OPEN': return 'Open';
+      case 'UNDER_REVIEW': return 'Under Review';
+      case 'RESOLVED': return 'Resolved';
+      case 'CLOSED': return 'Closed';
+      default: return value;
+    }
+  }
+
   Widget _buildFilterDropdown({
     required String label,
     required String? value,
     required List<String> items,
     required Function(String?) onChanged,
   }) {
+    final isStatus = label == 'Status';
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w),
       decoration: BoxDecoration(
@@ -195,9 +207,15 @@ class SupportTicketsListView extends GetView<SupportTicketController> {
           isExpanded: true,
           hint: AutoTranslateText(label),
           items: items.map((item) {
+            final display = isStatus ? _statusDisplayLabel(item) : item;
             return DropdownMenuItem<String>(
               value: item,
-              child: AutoTranslateText(item, style: AppTypography.body1),
+              child: Text(
+                display,
+                style: AppTypography.body1,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             );
           }).toList(),
           onChanged: onChanged,

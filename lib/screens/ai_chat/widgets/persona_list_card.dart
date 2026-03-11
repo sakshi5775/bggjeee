@@ -149,21 +149,21 @@ class PersonaListCard extends StatelessWidget {
                           ],
                         ),
                         // Price
-                        AutoTranslateText(
-                          persona.price != null
-                              ? '₹${persona.price!.toStringAsFixed(0)}/min'
-                              : 'Coming soon',
-                          style: persona.price != null
-                              ? MyTextTheme.smallBCB
-                                    .copyWith(
-                                      color: AppColors.saffron,
-                                      fontWeight: FontWeight.bold,
-                                    )
-                                    .merge(AppTypography.body1)
-                              : MyTextTheme.smallBCN
-                                    .copyWith(color: const Color(0xFF999999))
-                                    .merge(AppTypography.body2),
-                        ),
+                        // AutoTranslateText(
+                        //   persona.price != null
+                        //       ? '₹${persona.price!.toStringAsFixed(0)}/min'
+                        //       : 'Coming soon',
+                        //   style: persona.price != null
+                        //       ? MyTextTheme.smallBCB
+                        //             .copyWith(
+                        //               color: AppColors.saffron,
+                        //               fontWeight: FontWeight.bold,
+                        //             )
+                        //             .merge(AppTypography.body1)
+                        //       : MyTextTheme.smallBCN
+                        //             .copyWith(color: const Color(0xFF999999))
+                        //             .merge(AppTypography.body2),
+                        // ),
                       ],
                     ),
                     SizedBox(height: 12.h),

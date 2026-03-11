@@ -6,18 +6,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-/// Dialog to show when wallet balance is insufficient
+/// Dialog to show when wallet balance is insufficient.
+/// Shown globally for any paid action; user cannot proceed without recharging.
 class WalletRechargeDialog extends StatelessWidget {
   final double currentBalance;
   final double requiredBalance;
-  final String astrologerName;
+  /// Optional e.g. astrologer/persona name. If null, generic message is shown.
+  final String? contextName;
+  /// Optional custom message. If null, uses contextName or generic text.
+  final String? customMessage;
+  /// Deprecated: use [contextName]. Kept for backward compatibility.
+  final String? astrologerName;
 
   const WalletRechargeDialog({
     super.key,
     required this.currentBalance,
     required this.requiredBalance,
-    required this.astrologerName,
+    this.contextName,
+    this.customMessage,
+    this.astrologerName,
   });
+
+  String get _message {
+    if (customMessage != null && customMessage!.isNotEmpty) return customMessage!;
+    final name = contextName ?? astrologerName;
+    if (name != null && name.isNotEmpty) {
+      return 'Minimum wallet balance required to talk with $name is \u20B9${requiredBalance.toStringAsFixed(1)}. Please recharge your wallet.';
+    }
+    return 'Insufficient wallet balance. Minimum required is \u20B9${requiredBalance.toStringAsFixed(1)}. Please recharge your wallet to continue.';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,21 +90,7 @@ class WalletRechargeDialog extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () => Get.back(),
-                      borderRadius: BorderRadius.circular(20.r),
-                      child: Padding(
-                        padding: EdgeInsets.all(8.w),
-                        child: Icon(
-                          Icons.close_rounded,
-                          color: Colors.white,
-                          size: 24.w,
-                        ),
-                      ),
-                    ),
-                  ),
+                  // No close (X) button - user must choose Recharge or Go Back
                 ],
               ),
             ),
@@ -232,14 +235,14 @@ class WalletRechargeDialog extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Icon(
-                          Icons.chat_bubble_outline_rounded,
+                          Icons.info_outline_rounded,
                           color: AppColors.textColorMaroon,
                           size: 20.w,
                         ),
                         Spacing.w(12),
                         Expanded(
                           child: AutoTranslateText(
-                            'Minimum wallet balance required to talk with $astrologerName is \u20B9${requiredBalance.toStringAsFixed(1)}. Please recharge your wallet.',
+                            _message,
                             style: TextStyle(
                               fontFamily: 'Poppins',
                               fontSize: 13.sp,
