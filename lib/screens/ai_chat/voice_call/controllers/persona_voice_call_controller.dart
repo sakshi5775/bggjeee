@@ -8,6 +8,7 @@ import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/services/language_service.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/screens/ai_chat/voice_call/services/persona_voice_call_service.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -84,6 +85,8 @@ class VoiceCallController extends BaseController {
   final RxString transcription = ''.obs;
   final RxString aiResponse = ''.obs;
   final RxString connectionStatus = 'Connecting...'.obs;
+  final RxBool isSpeakerOn = true.obs;
+  final RxBool isMuted = false.obs; // Mic muted (stops sending; recording paused)
 
   // Token tracking for deduction
   int? _lastResponseTotalTokens;
@@ -161,7 +164,7 @@ class VoiceCallController extends BaseController {
         } else {
           showErrorMessage(message: 'Unable to start call. Please try again.');
         }
-        Get.back();
+        UserMainController.popCurrentTab();
         return;
       }
       callId.value = data['callId']?.toString() ?? '';
@@ -175,7 +178,7 @@ class VoiceCallController extends BaseController {
     } catch (e) {
       setLoadingState(false);
       showErrorMessage(message: 'Failed to initiate call');
-      Get.back();
+      UserMainController.popCurrentTab();
     }
   }
 
@@ -874,6 +877,7 @@ class VoiceCallController extends BaseController {
   }
 
   Future<void> toggleRecording() async {
+    if (isMuted.value) return; // When muted, tap mic does nothing until unmute
     if (isRecording.value) {
       await stopRecording();
     } else {
@@ -881,8 +885,30 @@ class VoiceCallController extends BaseController {
     }
   }
 
+  /// Toggle speaker on/off (UI state; playback uses system default route).
+  void toggleSpeaker() {
+    isSpeakerOn.value = !isSpeakerOn.value;
+  }
+
+  /// Toggle mic mute (stops sending voice; recording paused).
+  void toggleMute() {
+    isMuted.value = !isMuted.value;
+    if (isMuted.value && isRecording.value) {
+      stopRecording();
+    } else if (!isMuted.value &&
+        !isRecording.value &&
+        !isProcessing.value &&
+        !isPlaying.value &&
+        _ws != null &&
+        _ws!.readyState == WebSocket.open) {
+      startRecording();
+    }
+  }
+
   Future<void> startRecording() async {
     try {
+      if (isMuted.value) return;
+
       // Check permission
       final hasPermission = await _audioRecorder.hasPermission();
       if (!hasPermission) {
@@ -1383,7 +1409,7 @@ class VoiceCallController extends BaseController {
 
     if (callId.isEmpty) {
       _cleanup();
-      Get.back(result: {'showReviewPrompt': true});
+      UserMainController.popCurrentTabWithResult({'showReviewPrompt': true});
       return;
     }
     try {
@@ -1393,7 +1419,7 @@ class VoiceCallController extends BaseController {
     if (auto) {
       showInfoMessage(message: 'Call ended automatically after 10 minutes.');
     }
-    Get.back(result: {'showReviewPrompt': true});
+    UserMainController.popCurrentTabWithResult({'showReviewPrompt': true});
   }
 
   void _cleanup() {

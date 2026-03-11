@@ -1,7 +1,7 @@
+import 'package:astrobharataiuser/core/services/insufficient_balance_helper.dart';
 import 'package:astrobharataiuser/data_model/ai_pricing_model.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/ai_pricing_service.dart';
 import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
-import 'package:astrobharataiuser/screens/wallet/view/wallet_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -79,73 +79,15 @@ class AiPricingController extends GetxController {
     return balance >= pricing.priceOffer;
   }
 
-  void showInsufficientBalancePopup(String key) {
+  /// Shows the global insufficient balance popup; user cannot proceed without recharging.
+  Future<void> showInsufficientBalancePopup(String key) async {
     final pricing = getPricingFor(key);
-    final needed = pricing?.priceOffer ?? 0;
+    final requiredBalance = pricing?.priceOffer ?? 0.0;
     final balance = _walletController.walletBalance.value;
-    final diff = needed - balance;
-
-    Get.dialog(
-      Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.account_balance_wallet_outlined,
-                color: Colors.red,
-                size: 48,
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                "Insufficient Balance",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                "You need ₹${diff.toStringAsFixed(0)} more to access this service.\nCurrent Wallet Balance: ₹${balance.toStringAsFixed(0)}",
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 14),
-              ),
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Get.back(),
-                      style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: const Text("Cancel"),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Get.back();
-                        Get.to(() => const WalletView());
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF6F221E),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: const Text("Recharge"),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+    await InsufficientBalanceHelper.show(
+      currentBalance: balance,
+      requiredBalance: requiredBalance,
+      contextName: pricing?.displayName,
     );
   }
 }

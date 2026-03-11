@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/screens/chat/controllers/chat_controller.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -55,7 +56,7 @@ class _ChatViewState extends State<ChatView> {
                     // Show review popup before going back
                     _showReviewPromptOnBack(controller);
                   } else {
-                    Get.back();
+                    UserMainController.popCurrentTab();
                   }
                 },
                 customActions: [
@@ -776,7 +777,10 @@ extension ChatViewReviewPrompt on _ChatViewState {
         ),
         actions: [
           TextButton(
-            onPressed: () => Get.back(),
+            onPressed: () {
+              Get.back(); // Close rating prompt dialog
+              UserMainController.popCurrentTab(); // Leave chat screen
+            },
             child: AutoTranslateText(
               'Maybe Later',
               style: MyTextTheme.smallBCN.copyWith(
@@ -787,9 +791,7 @@ extension ChatViewReviewPrompt on _ChatViewState {
           TextButton(
             onPressed: () {
               Get.back(); // Close prompt dialog
-              Get.back(
-                result: {'showReviewPrompt': true},
-              ); // Go back from chat with result
+              UserMainController.popCurrentTabWithResult({'showReviewPrompt': true});
             },
             child: AutoTranslateText(
               'Rate Now',
@@ -831,8 +833,7 @@ extension ChatViewReviewPrompt on _ChatViewState {
             onPressed: () {
               Get.back(); // Close prompt dialog
               controller.deleteConversation();
-              // Just go back, no rating
-              Get.back();
+              UserMainController.popCurrentTab(); // Leave chat screen
             },
             child: AutoTranslateText(
               'End Without Rating',
@@ -844,8 +845,7 @@ extension ChatViewReviewPrompt on _ChatViewState {
           ElevatedButton(
             onPressed: () {
               Get.back(); // Close prompt dialog
-              // Return result for review
-              Get.back(result: {'showReviewPrompt': true});
+              UserMainController.popCurrentTabWithResult({'showReviewPrompt': true});
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.saffron,

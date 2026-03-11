@@ -17,14 +17,18 @@ class AddressSelectionView extends BasePage<AddressSelectionController> {
 
   @override
   Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.paddingOf(context).bottom;
     return Container(
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Column(
-          children: [
-            // Header
-            CommonHeader(
+        body: SafeArea(
+          top: true,
+          bottom: false,
+          child: Column(
+            children: [
+              // Header
+              CommonHeader(
               title: 'Select Address',
               customActions: [
                 GestureDetector(
@@ -121,7 +125,12 @@ class AddressSelectionView extends BasePage<AddressSelectionController> {
                   color: const Color(0xFFF38B3B),
                   child: SingleChildScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
-                    padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 120.h),
+                    padding: EdgeInsets.fromLTRB(
+                      16.w,
+                      16.h,
+                      16.w,
+                      16.h + 88.h + bottomPadding,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -192,9 +201,10 @@ class AddressSelectionView extends BasePage<AddressSelectionController> {
                 );
               }),
             ),
-            // Bottom action bar
-            const AddressBottomBarWidget(),
-          ],
+              // Bottom action bar
+              const AddressBottomBarWidget(),
+            ],
+          ),
         ),
       ),
     );

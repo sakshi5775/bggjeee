@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
@@ -1316,9 +1316,10 @@ class LiveStreamController extends BaseController {
           WalletRechargeDialog(
             currentBalance: currentBalance,
             requiredBalance: gift.value.toDouble(),
-            astrologerName: astrologerName ?? 'Astrologer',
+            customMessage:
+                'Minimum wallet balance required to send this gift is \u20B9${gift.value.toStringAsFixed(0)}. Please recharge your wallet.',
           ),
-          barrierDismissible: true,
+          barrierDismissible: false,
         );
         return;
       }

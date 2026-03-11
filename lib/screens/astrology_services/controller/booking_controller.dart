@@ -186,18 +186,13 @@ class BookingController extends GetxController {
   }
 
   Future<void> confirmBooking() async {
-    // Check profile first
-    final isProfileComplete = await _profileHelper.isProfileComplete();
-    if (!isProfileComplete) {
-      await _precheckService.checkBeforeProceeding(
-        astrologer: astrologer,
-        pricePerMinute: getPricePerMinute(),
-        estimatedMinutes: selectedDuration.value,
-      );
-      // If we are in auto-start mode and this returns, we might need to go back or handle it.
-      // But checkBeforeProceeding usually handles navigation or dialogs.
-      return;
-    }
+    // Check wallet balance first for all paid actions - user cannot proceed without sufficient balance
+    final canProceed = await _precheckService.checkBeforeProceeding(
+      astrologer: astrologer,
+      pricePerMinute: getPricePerMinute(),
+      estimatedMinutes: selectedDuration.value,
+    );
+    if (!canProceed) return;
 
     // Handle chat session purchase - show profile dialog first
     if (callType == CallType.chat) {
@@ -250,17 +245,14 @@ class BookingController extends GetxController {
 
       // Check if user has at least 1 minute worth of balance
       if (walletBalance < pricePerMinute || availableMinutes < 1) {
-        // Show wallet recharge dialog
         await Get.dialog(
           WalletRechargeDialog(
             currentBalance: walletBalance,
-            requiredBalance: pricePerMinute, // Minimum needed for 1 minute
+            requiredBalance: pricePerMinute,
             astrologerName: astrologer.displayName,
           ),
           barrierDismissible: false,
         );
-        // User may have recharged, try again
-        await confirmBooking();
         return;
       }
 

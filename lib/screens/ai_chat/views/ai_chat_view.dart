@@ -45,11 +45,21 @@ class AiChatView extends BasePage<AiChatController> {
           child: Column(
             children: [
               if (!hideHeader)
-                CommonHeader(title: 'AI Chat', showBackButton: showBackButton),
+                CommonHeader(
+                  title: 'AI Chat',
+                  showBackButton: showBackButton,
+                  onBackTap: () {
+                    if (Navigator.of(context).canPop()) {
+                      Navigator.of(context).pop();
+                    } else if (Get.isRegistered<UserMainController>()) {
+                      Get.find<UserMainController>().handleBackNavigation();
+                    }
+                  },
+                ),
 
               // View toggle row
               Align(
-                alignment: Alignment.topLeft,
+                alignment: Alignment.topRight,
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: GestureDetector(
@@ -79,7 +89,7 @@ class AiChatView extends BasePage<AiChatController> {
                 ),
               ),
 
-              SizedBox(height: 16.h),
+              SizedBox(height: 1.h),
 
               // Personas: with banner as first sliver, or plain list
               Expanded(
@@ -270,7 +280,7 @@ class AiChatView extends BasePage<AiChatController> {
                       final canProceed = await precheckService
                           .checkBeforeProceeding(
                         persona: persona,
-                        pricePerMinute: persona.pricePerMin,
+                        pricePerMinute: persona.callPricePerMinute ?? persona.pricePerMin,
                         estimatedMinutes: 15,
                       );
                       if (canProceed) {
@@ -342,7 +352,7 @@ class AiChatView extends BasePage<AiChatController> {
                       final canProceed = await precheckService
                           .checkBeforeProceeding(
                         persona: persona,
-                        pricePerMinute: persona.pricePerMin,
+                        pricePerMinute: persona.callPricePerMinute ?? persona.pricePerMin,
                         estimatedMinutes: 15,
                       );
                       if (canProceed) {
@@ -427,7 +437,7 @@ class AiChatView extends BasePage<AiChatController> {
             final precheckService = ChatCallPrecheckService();
             final canProceed = await precheckService.checkBeforeProceeding(
               persona: persona,
-              pricePerMinute: persona.pricePerMin,
+              pricePerMinute: persona.chatPricePerMinute ?? persona.pricePerMin,
               estimatedMinutes: 15,
             );
             if (canProceed) {
@@ -495,7 +505,7 @@ class AiChatView extends BasePage<AiChatController> {
               final precheckService = ChatCallPrecheckService();
               final canProceed = await precheckService.checkBeforeProceeding(
                 persona: persona,
-                pricePerMinute: persona.pricePerMin,
+                pricePerMinute: persona.chatPricePerMinute ?? persona.pricePerMin,
                 estimatedMinutes: 15,
               );
               if (canProceed) {
@@ -521,7 +531,7 @@ class AiChatView extends BasePage<AiChatController> {
     final precheckService = ChatCallPrecheckService();
     final canProceed = await precheckService.checkBeforeProceeding(
       persona: persona,
-      pricePerMinute: persona.pricePerMin,
+      pricePerMinute: persona.chatPricePerMinute ?? persona.pricePerMin,
       estimatedMinutes: 15,
     );
     if (!canProceed) return;

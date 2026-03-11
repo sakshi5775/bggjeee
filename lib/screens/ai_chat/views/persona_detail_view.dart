@@ -527,23 +527,15 @@ class PersonaDetailView extends StatelessWidget {
                 Spacing.h(4),
                 Row(
                   children: [
-                    if (persona.pricePerMin == null || persona.pricePerMin == 0)
-                      AutoTranslateText(
-                        'Free',
-                        style: MyTextTheme.mediumBCB.copyWith(
-                          color: Colors.green,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )
-                    else ...[
-                      AutoTranslateText(
-                        '₹${persona.pricePerMin!.toInt()}/min',
-                        style: MyTextTheme.mediumBCB.copyWith(
-                          color: const Color(0xFF333333),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                    _priceChip(
+                      'Chat',
+                      persona.chatPricePerMinute ?? persona.pricePerMin,
+                    ),
+                    SizedBox(width: 8.w),
+                    _priceChip(
+                      'Call',
+                      persona.callPricePerMinute,
+                    ),
                   ],
                 ),
               ],
@@ -586,6 +578,29 @@ class PersonaDetailView extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _priceChip(String label, double? pricePerMin) {
+    final isFree = pricePerMin == null || pricePerMin == 0;
+    final text = isFree
+        ? 'Free'
+        : '₹${pricePerMin.toInt()}/min';
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        AutoTranslateText(
+          '$label: ',
+          style: MyTextTheme.smallBCN.copyWith(color: const Color(0xFF666666)),
+        ),
+        AutoTranslateText(
+          text,
+          style: MyTextTheme.mediumBCB.copyWith(
+            color: isFree ? Colors.green : const Color(0xFF333333),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 
@@ -1588,7 +1603,7 @@ class PersonaDetailView extends StatelessWidget {
                     final canProceed = await precheckService
                         .checkBeforeProceeding(
                           persona: persona,
-                          pricePerMinute: persona.pricePerMin,
+                          pricePerMinute: persona.callPricePerMinute ?? persona.pricePerMin,
                           estimatedMinutes: 15,
                         );
                     if (canProceed) {
@@ -1689,7 +1704,7 @@ class PersonaDetailView extends StatelessWidget {
     final precheckService = ChatCallPrecheckService();
     final canProceed = await precheckService.checkBeforeProceeding(
       persona: persona,
-      pricePerMinute: persona.pricePerMin,
+      pricePerMinute: persona.chatPricePerMinute ?? persona.pricePerMin,
       estimatedMinutes: 15,
     );
     if (!canProceed) return;

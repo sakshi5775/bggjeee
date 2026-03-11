@@ -27,17 +27,10 @@ then the store lookup is failing. Common causes:
 
 ## What was changed
 
-1. **Automatic version and minAppVersion**  
-   - **`scripts/bump_version.dart`** – Run before each release build (or use the Android build script which runs it automatically). It:
-     - Bumps **version name** in `pubspec.yaml` (e.g. 1.0.1 → 1.0.2)
-     - Bumps **version code** (e.g. 48 → 49)
-     - Regenerates **`lib/version.g.dart`** with `minAppVersion` = previous version (so users on the old version must update)
-   - **`lib/version.g.dart`** – Generated file; `AppConstant.minAppVersion` reads from here. Do not edit by hand.
+1. **`lib/utils/app_constant.dart`**  
+   - `AppConstant.minAppVersion` – minimum version required. Update this when you release a new version (e.g. `'1.0.1'`).
 
-2. **`lib/utils/app_constant.dart`**  
-   - `AppConstant.minAppVersion` – comes from `version.g.dart` (auto-updated by the bump script).
-
-3. **`lib/main.dart`**  
+2. **`lib/main.dart`**  
    - Upgrader is configured with:
      - `minAppVersion` from `AppConstant`
      - `durationUntilAlertAgain: Duration.zero` so the dialog is not delayed
@@ -59,15 +52,17 @@ Add this exact text to your app’s **Full description** or **Short description*
 
 If this tag is missing, only the in-app `AppConstant.minAppVersion` is used (which is shipped with the **new** build), so users on older builds may not see the force-update screen until you add the tag.
 
+## Why the update dialog does not show when only version code changes
+
+The upgrader package compares **version name** (e.g. `1.0.1`) only. It does **not** compare version code (the `+48` part). So if you upload build `1.0.1+49` and the previous was `1.0.1+48`, the store still shows version name `1.0.1` and the app will not see an update. You must **increment the version name** on each release (e.g. `1.0.1+48` → `1.0.2+49`).
+
 ## Checklist for each new release
 
-1. **Build** – Run the Android build script (e.g. `scripts/build_android_bundle.ps1`). It automatically:
-   - Runs `dart run scripts/bump_version.dart` (bumps version name + code in pubspec and updates `minAppVersion` in `version.g.dart`)
-   - Builds the app bundle.
-2. **Or manually**: From project root, run `dart run scripts/bump_version.dart`, then `flutter build appbundle --release ...`.
+1. Bump version in `pubspec.yaml`: **increase both** version name and build number (e.g. `1.0.1+48` → `1.0.2+49`). The version name must increase for the update prompt to appear.
+2. Set `AppConstant.minAppVersion` in `lib/utils/app_constant.dart` to the new version string when you want to force update (e.g. `'1.0.2'`). Leave at `'1.0.0'` if you don’t want to force.
 3. In Play Store Console, add or update the description line:  
-   `[Minimum supported app version: X.Y.Z]`  
-   (use the **new** version that was just written to pubspec, e.g. 1.0.2).
-4. Upload the new build to the Play Store.
+   `[Minimum supported app version: 1.0.2]`  
+   (use the same version as in step 2).
+4. Build and upload the new build to the Play Store.
 
 After this, once the app is on a track where the store listing is public, users on older versions will see the update dialog and will not be able to proceed without updating.

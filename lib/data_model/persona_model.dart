@@ -10,7 +10,12 @@ class PersonaModel {
   final double? rating;
   final int totalRatings;
   final double? price;
-  final double? pricePerMin; // Price per minute for consultation
+  /// Chat price per minute (from API pricing.chatPricePerMinute). 0 = free.
+  final double? chatPricePerMinute;
+  /// Call price per minute (from API pricing.callPricePerMinute). 0 = free.
+  final double? callPricePerMinute;
+  /// Alias for chatPricePerMinute for backward compatibility.
+  final double? pricePerMin;
   final List<String> languages;
   final int? followers; // Number of followers
   final int? experienceYears; // Years of experience
@@ -30,6 +35,8 @@ class PersonaModel {
     this.rating,
     this.totalRatings = 0,
     this.price,
+    this.chatPricePerMinute,
+    this.callPricePerMinute,
     this.pricePerMin,
     this.languages = const [],
     this.followers,
@@ -105,15 +112,20 @@ class PersonaModel {
     // Extract online status (will be added later in API, default to true)
     bool isOnline = basicInfo['isOnline'] as bool? ?? true;
 
-    // Extract price per minute from pricing object
-    double? pricePerMin;
-    if (pricing != null && pricing['chatPricePerMinute'] != null) {
-      pricePerMin = (pricing['chatPricePerMinute'] as num?)?.toDouble();
-    } else if (basicInfo['pricePerMin'] != null) {
-      pricePerMin = (basicInfo['pricePerMin'] as num?)?.toDouble();
-    } else if (basicInfo['consultationCharge'] != null) {
-      pricePerMin = (basicInfo['consultationCharge'] as num?)?.toDouble();
+    // Extract chat and call price per minute from API pricing object
+    double? chatPricePerMinute;
+    double? callPricePerMinute;
+    if (pricing != null) {
+      chatPricePerMinute = (pricing['chatPricePerMinute'] as num?)?.toDouble();
+      callPricePerMinute = (pricing['callPricePerMinute'] as num?)?.toDouble();
     }
+    if (chatPricePerMinute == null && basicInfo['pricePerMin'] != null) {
+      chatPricePerMinute = (basicInfo['pricePerMin'] as num?)?.toDouble();
+    }
+    if (chatPricePerMinute == null && basicInfo['consultationCharge'] != null) {
+      chatPricePerMinute = (basicInfo['consultationCharge'] as num?)?.toDouble();
+    }
+    final pricePerMin = chatPricePerMinute;
 
     // Extract review statistics
     PersonaReviewStatistics? reviewStatistics;
@@ -143,6 +155,8 @@ class PersonaModel {
       rating: rating,
       totalRatings: totalRatings,
       price: price,
+      chatPricePerMinute: chatPricePerMinute,
+      callPricePerMinute: callPricePerMinute,
       pricePerMin: pricePerMin,
       languages: languages,
       followers: followers ?? 0,

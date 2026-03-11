@@ -214,6 +214,7 @@ class ContentPlayerView extends StatelessWidget {
               title: content.title,
               showDrawer: false,
               showHome: true,
+              onBackTap: () => UserMainController.popCurrentTab(),
             ),
             Expanded(
               child: Center(

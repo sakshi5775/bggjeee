@@ -760,6 +760,12 @@ class VirtualDarshanController extends BaseController
       stopFlowerRain();
       isAartiActive.value = false;
     } else {
+      // When starting aarti thali, stop dhoop if it is running (mutual exclusion)
+      if (isDhupActive.value) {
+        dhupCircleController.reset();
+        dhupTransitionController.reverse();
+        isDhupActive.value = false;
+      }
       // Move thali up
       thaliTransitionController.forward().then((_) {
         // Start Aarti rotation once thali is in the center
@@ -987,6 +993,14 @@ class VirtualDarshanController extends BaseController
   /// Perform dhup animation: transition up → one full circle → transition back down.
   void performDhupAnimation() {
     if (isDhupActive.value) return;
+    // When starting dhoop, stop aarti thali if it is running (mutual exclusion)
+    if (aartiController.isAnimating || thaliTransitionController.value > 0.0) {
+      aartiController.reset();
+      thaliTransitionController.reverse();
+      audioPlayer.stop();
+      stopFlowerRain();
+      isAartiActive.value = false;
+    }
     isDhupActive.value = true;
 
     // Step 1: Move dhup from dock to circle position

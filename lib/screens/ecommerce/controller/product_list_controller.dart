@@ -356,7 +356,50 @@ class ProductListController extends BaseController {
 
   void onSortChanged(String sort) {
     sortBy.value = sort;
-    loadProducts(reset: true);
+    if (filterType.value != null) {
+      _applyClientSideSort();
+    } else {
+      loadProducts(reset: true);
+    }
+  }
+
+  void _applyClientSideSort() {
+    final list = List<ProductModel>.from(products);
+    switch (sortBy.value) {
+      case 'newest':
+        list.sort((a, b) {
+          final da = a.createdAt != null ? DateTime.tryParse(a.createdAt!) : null;
+          final db = b.createdAt != null ? DateTime.tryParse(b.createdAt!) : null;
+          if (da == null && db == null) return 0;
+          if (da == null) return 1;
+          if (db == null) return -1;
+          return db.compareTo(da);
+        });
+        break;
+      case 'lowToHigh':
+        list.sort((a, b) {
+          final pa = a.currentPrice ?? a.discountedPrice ?? a.basePrice ?? 0.0;
+          final pb = b.currentPrice ?? b.discountedPrice ?? b.basePrice ?? 0.0;
+          return pa.compareTo(pb);
+        });
+        break;
+      case 'highToLow':
+        list.sort((a, b) {
+          final pa = a.currentPrice ?? a.discountedPrice ?? a.basePrice ?? 0.0;
+          final pb = b.currentPrice ?? b.discountedPrice ?? b.basePrice ?? 0.0;
+          return pb.compareTo(pa);
+        });
+        break;
+      case 'popular':
+      default:
+        list.sort((a, b) {
+          final ra = a.reviewCount ?? 0;
+          final rb = b.reviewCount ?? 0;
+          return rb.compareTo(ra);
+        });
+        break;
+    }
+    products.assignAll(list);
   }
 
   void toggleView() {

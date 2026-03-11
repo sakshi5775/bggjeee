@@ -177,6 +177,12 @@ class UserMainController extends GetxController {
     ctrl.navigatorKeys[ctrl.currentIndex.value].currentState?.pop();
   }
 
+  /// Pop the current tab's stack by one route and pass [result] to the previous route.
+  static void popCurrentTabWithResult([dynamic result]) {
+    final ctrl = Get.find<UserMainController>();
+    ctrl.navigatorKeys[ctrl.currentIndex.value].currentState?.pop(result);
+  }
+
   /// Pop the current tab's stack to root (show tab root screen).
   static void popCurrentTabToRoot() {
     final ctrl = Get.find<UserMainController>();

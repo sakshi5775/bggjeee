@@ -195,14 +195,14 @@ class _ProductListViewState extends State<ProductListView> {
               );
             }),
           ),
-          SizedBox(width: 8.w),
-          GestureDetector(
-            onTap: () {
-              // Show filter options
-              _showFilterOptions(context, controller);
-            },
-            child: Icon(Icons.tune, size: 24.w, color: '#DD2914'.toColor()),
-          ),
+          // SizedBox(width: 8.w),
+          // GestureDetector(
+          //   onTap: () {
+          //     // Show filter options
+          //     _showFilterOptions(context, controller);
+          //   },
+          //   child: Icon(Icons.tune, size: 24.w, color: '#DD2914'.toColor()),
+          // ),
         ],
       ),
     );

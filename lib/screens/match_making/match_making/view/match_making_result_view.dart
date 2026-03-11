@@ -284,6 +284,18 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
     );
   }
 
+  static final List<String?> _tabPricingKeys = [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    'navtara', // Navtara tab shows price badge
+  ];
+
   Widget _buildMatchTabs() {
     final selectedIndex = _tabs.indexWhere((t) => t == _activeTab);
     final effectiveIndex = selectedIndex >= 0 ? selectedIndex : 0;
@@ -303,6 +315,7 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
           }
         }
       },
+      tabPricingKeys: _tabPricingKeys,
     );
   }
 

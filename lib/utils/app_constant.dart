@@ -1,18 +1,18 @@
-
-
 class AppConstant {
   AppConstant._();
 
-
-  /// Play Store listing URL for the app. Used by upgrader to fetch store version.
-  /// With hl and gl for consistent version parsing across regions.
-  static const String playStoreListingUrl =
-      'https://play.google.com/store/apps/details?id=com.astrobharatai.astrouser&hl=en&gl=IN';
+  /// Minimum app version required. Users below this version are forced to update.
+  /// Set this to the current release version name (same as in pubspec before the +).
+  /// Example: when you release version 1.0.2+49, set minAppVersion = '1.0.2' to force
+  /// everyone on 1.0.1 or lower to update. Keep at '1.0.0' if you don't want to force update.
+  /// Also add "[Minimum supported app version: X.Y.Z]" in Play Store description for old installs.
+  static const String minAppVersion = '1.0.0';
 
   // OneSignal App ID (from OneSignal Dashboard → Settings → Keys & IDs)
   static const String oneSignalAppId = '67ddfe0f-eadf-41fa-a1d2-7f9d35e8c766';
 
-  static const String s3BaseUrl = 'https://d3c2un7ipdye89.cloudfront.net';
+  static const String s3BaseUrl =
+      'https://d3c2un7ipdye89.cloudfront.net';
 
   static const String bottomHomeIcon =
       '$s3BaseUrl/Astro+Service/3D+Logos/Home+3d.png';

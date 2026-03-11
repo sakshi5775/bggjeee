@@ -1,4 +1,4 @@
-﻿import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -201,27 +201,10 @@ class PersonaCard extends StatelessWidget {
                               ),
                             ),
                             SizedBox(width: (4.w).clamp(2.w, 6.w)),
-                            // Price
+                            // Price from API (chat/call per min)
                             Flexible(
                               flex: 2,
-                              child: AutoTranslateText(
-                                persona.price != null
-                                    ? '₹${persona.price!.toStringAsFixed(0)}/min'
-                                    : 'Free',
-                                style: persona.price != null
-                                    ? MyTextTheme.smallBCB.copyWith(
-                                        color: AppColors.saffron,
-                                        fontSize: (11.sp).clamp(9.sp, 12.sp),
-                                        fontWeight: FontWeight.bold,
-                                      )
-                                    : MyTextTheme.smallBCN.copyWith(
-                                        color: const Color(0xFF999999),
-                                        fontSize: (9.sp).clamp(8.sp, 10.sp),
-                                      ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.right,
-                              ),
+                              child: _buildPriceText(persona),
                             ),
                           ],
                         ),
@@ -328,6 +311,39 @@ class PersonaCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildPriceText(PersonaModel persona) {
+    final chat = persona.chatPricePerMinute ?? persona.pricePerMin ?? persona.price;
+    final call = persona.callPricePerMinute;
+    final chatFree = chat == null || chat == 0;
+    final callFree = call == null || call == 0;
+    if (chatFree && callFree) {
+      return AutoTranslateText(
+        'Free',
+        style: MyTextTheme.smallBCN.copyWith(
+          color: const Color(0xFF999999),
+          fontSize: (9.sp).clamp(8.sp, 10.sp),
+        ),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        textAlign: TextAlign.right,
+      );
+    }
+    final parts = <String>[];
+    if (!chatFree) parts.add('Chat ₹${chat.toInt()}/min');
+    if (!callFree) parts.add('Call ₹${call.toInt()}/min');
+    return AutoTranslateText(
+      parts.join(' · '),
+      style: MyTextTheme.smallBCB.copyWith(
+        color: AppColors.saffron,
+        fontSize: (9.sp).clamp(8.sp, 10.sp),
+        fontWeight: FontWeight.bold,
+      ),
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      textAlign: TextAlign.right,
     );
   }
 }

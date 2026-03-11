@@ -428,6 +428,9 @@ class TranslationOverrides {
       'ur': 'انسٹاگرام',
       'ml': 'ഇൻസ്റ്റാഗ്രாம்',
     },
+    // Course type: academic Bachelor degree (not "unmarried")
+    'Bachelor': {'hi': 'स्नातक'},
+    'Bachelor Course': {'hi': 'स्नातक पाठ्यक्रम'},
   };
 
   /// Get override translation for a text and language

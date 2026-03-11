@@ -952,8 +952,6 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                     'Search products...',
                     style: TextStyle(color: AppColors.textSecondary),
                   ),
-                  Spacer(),
-                  Icon(Icons.tune, color: "#DD2914".toColor()),
                 ],
               ),
             ),
