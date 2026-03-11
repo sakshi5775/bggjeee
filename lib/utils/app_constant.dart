@@ -1,11 +1,16 @@
+import 'package:astrobharataiuser/version.g.dart';
+
 class AppConstant {
   AppConstant._();
 
-  /// Minimum app version required. Users below this version must update before using the app.
-  /// Update this when you release a new version (e.g. '1.0.1').
-  /// Also add "[Minimum supported app version: X.Y.Z]" to your Play Store app description
-  /// (full description or "What's New") so old installs get the minimum version from the store.
-  static const String minAppVersion = '1.0.0';
+  /// Minimum app version required. Users below this version must update.
+  /// Auto-updated by scripts/bump_version.dart when you run it before each release build.
+  static const String minAppVersion = kMinAppVersion;
+
+  /// Play Store listing URL for the app. Used by upgrader to fetch store version.
+  /// With hl and gl for consistent version parsing across regions.
+  static const String playStoreListingUrl =
+      'https://play.google.com/store/apps/details?id=com.astrobharatai.astrouser&hl=en&gl=IN';
 
   // OneSignal App ID (from OneSignal Dashboard → Settings → Keys & IDs)
   static const String oneSignalAppId = '67ddfe0f-eadf-41fa-a1d2-7f9d35e8c766';

@@ -1,9 +1,14 @@
 # Optimized Android Build Script (PowerShell)
 # Builds an App Bundle (AAB) for Play Store Submission
+# Auto-bumps version name (patch) + version code and updates minAppVersion before build.
 
 Write-Host "=========================================" -ForegroundColor Cyan
 Write-Host "Android Optimized Build Script" -ForegroundColor Cyan
 Write-Host "=========================================" -ForegroundColor Cyan
+
+# Bump version (version name + code) and regenerate minAppVersion for upgrader
+Write-Host "Bumping version and minAppVersion..." -ForegroundColor Yellow
+dart run scripts/bump_version.dart
 
 # Clean
 Write-Host "Cleaning previous builds..." -ForegroundColor Yellow
