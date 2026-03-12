@@ -14,6 +14,7 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:uuid/uuid.dart';
 import 'package:astrobharataiuser/screens/wallet/service/wallet_service.dart';
 import 'package:astrobharataiuser/widgets/wallet_recharge_dialog.dart';
+import 'package:astrobharataiuser/content_moderation/moderation_helper.dart';
 import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 
 class LiveStreamController extends BaseController {
@@ -1193,6 +1194,19 @@ class LiveStreamController extends BaseController {
         'Error',
         'Message cannot be empty',
         snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+    // Content moderation: block abusive words, phone numbers, and links
+    final moderationHelper = ModerationHelper(minWordLength: 2);
+    final blocked = moderationHelper.getBlockedContentResult(text);
+    if (blocked.blocked) {
+      Get.snackbar(
+        'Not allowed',
+        blocked.userMessage,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
       );
       return;
     }

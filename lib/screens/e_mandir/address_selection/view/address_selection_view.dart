@@ -22,6 +22,7 @@ class AddressSelectionView extends BasePage<AddressSelectionController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        endDrawer: const CommonEndDrawer(),
         body: SafeArea(
           top: true,
           bottom: false,

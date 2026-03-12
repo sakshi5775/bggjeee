@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/core/services/permission_service.dart';
 import 'package:astrobharataiuser/core/services/pdf_generator_service.dart';
 import 'package:astrobharataiuser/utils/error_ui_utils.dart';
@@ -149,95 +150,83 @@ class _ReportPdfViewState extends State<ReportPdfView> {
 
   @override
   Widget build(BuildContext context) {
+    final headerColor = '#6F221E'.toColor();
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: '#3D0C11'.toColor(),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Get.back(),
-        ),
-        title: AutoTranslateText(
-          title,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18.sp,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        actions: [
-          // Share Action
-          IconButton(
-            icon: const Icon(Icons.share, color: Colors.white),
-            onPressed: pdfBytes == null
-                ? null
-                : () async {
-                    final directory = await getTemporaryDirectory();
-                    final filePath = '${directory.path}/$fileName';
-
-                    final file = File(filePath);
-                    await file.writeAsBytes(pdfBytes!);
-
-                    await SharePlus.instance.share(
-                      ShareParams(files: [XFile(filePath)], text: title),
-                    );
-                  },
-            tooltip: 'Share PDF',
-          ),
-          // Print Action
-          IconButton(
-            icon: const Icon(Icons.print, color: Colors.white),
-            onPressed: pdfBytes == null
-                ? null
-                : () async {
-                    await Printing.layoutPdf(
-                      onLayout: (format) => pdfBytes!,
-                      name: fileName,
-                    );
-                  },
-            tooltip: 'Print PDF',
-          ),
-          // Download Action
-          if (_isDownloading)
-            const Center(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
-                child: SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                    strokeWidth: 2,
+      endDrawer: const CommonEndDrawer(),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CommonHeader(
+            title: title,
+            showBackButton: true,
+            onBackTap: () => Get.back(),
+            customActions: [
+              IconButton(
+                icon: Icon(Icons.share, color: headerColor, size: 22),
+                onPressed: pdfBytes == null
+                    ? null
+                    : () async {
+                        final directory = await getTemporaryDirectory();
+                        final filePath = '${directory.path}/$fileName';
+                        final file = File(filePath);
+                        await file.writeAsBytes(pdfBytes!);
+                        await SharePlus.instance.share(
+                          ShareParams(files: [XFile(filePath)], text: title),
+                        );
+                      },
+                tooltip: 'Share PDF',
+              ),
+              IconButton(
+                icon: Icon(Icons.print, color: headerColor, size: 22),
+                onPressed: pdfBytes == null
+                    ? null
+                    : () async {
+                        await Printing.layoutPdf(
+                          onLayout: (format) => pdfBytes!,
+                          name: fileName,
+                        );
+                      },
+                tooltip: 'Print PDF',
+              ),
+              if (_isDownloading)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      color: headerColor,
+                      strokeWidth: 2,
+                    ),
                   ),
+                )
+              else
+                IconButton(
+                  icon: Icon(Icons.file_download_rounded, color: headerColor, size: 22),
+                  onPressed: _downloadToDevice,
+                  tooltip: 'Download to device',
                 ),
+            ],
+          ),
+          Expanded(
+            child: _isLoading || pdfBytes == null
+            ? const Center(child: CircularProgressIndicator())
+            : PdfPreview(
+                build: (format) => pdfBytes!,
+                allowPrinting: false,
+                allowSharing: false,
+                canChangePageFormat: false,
+                canChangeOrientation: false,
+                canDebug: false,
+                maxPageWidth: 700,
+                pdfFileName: fileName,
+                loadingWidget: const Center(child: CircularProgressIndicator()),
+                actions: const [],
               ),
-            )
-          else
-            IconButton(
-              icon: const Icon(
-                Icons.file_download_rounded,
-                color: Colors.white,
-              ),
-              onPressed: _downloadToDevice,
-              tooltip: 'Download to device',
-            ),
+          ),
         ],
       ),
-      body: _isLoading || pdfBytes == null
-          ? const Center(child: CircularProgressIndicator())
-          : PdfPreview(
-              build: (format) => pdfBytes!,
-              allowPrinting: false, // Moved to AppBar
-              allowSharing: false, // Moved to AppBar
-              canChangePageFormat: false,
-              canChangeOrientation: false,
-              canDebug: false,
-              maxPageWidth: 700,
-              pdfFileName: fileName,
-              loadingWidget: const Center(child: CircularProgressIndicator()),
-              actions: const [], // Clear default actions
-            ),
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -17,21 +18,13 @@ class ChalisaView extends BasePage<ChalisaController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          title: AutoTranslateText(
-            controller.pageTitle,
-            style: TextStyle(
-              color: const Color(0xFF8B1925),
-              fontWeight: FontWeight.bold,
-              fontSize: 20.sp,
-            ),
-          ),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          iconTheme: const IconThemeData(color: Color(0xFF8B1925)),
-          centerTitle: true,
-        ),
-        body: Obx(() {
+        endDrawer: const CommonEndDrawer(),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CommonHeader(title: controller.pageTitle),
+            Expanded(
+              child: Obx(() {
           if (controller.isLoading.value) {
             return const Center(
               child: CircularProgressIndicator(color: Color(0xFFE3B341)),
@@ -84,6 +77,9 @@ class ChalisaView extends BasePage<ChalisaController> {
             },
           );
         }),
+            ),
+          ],
+        ),
       ),
     );
   }

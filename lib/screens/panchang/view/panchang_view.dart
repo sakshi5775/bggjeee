@@ -29,6 +29,7 @@ class PanchangView extends BasePage<PanchangController> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         drawer: UserDashboardView.buildDrawer(context),
+        endDrawer: const CommonEndDrawer(),
         body: Column(
           children: [
             if (!hideHeader) const CommonHeader(title: 'Panchang'),

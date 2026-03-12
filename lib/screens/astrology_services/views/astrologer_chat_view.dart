@@ -85,7 +85,6 @@ class _AstrologerChatViewState extends State<AstrologerChatView> {
             controller.onBackPressed();
           },
           child: SafeArea(
-            bottom: false,
             child: Column(
               children: [
                 // Header with gradient (no white)
@@ -336,13 +335,18 @@ class _AstrologerChatViewState extends State<AstrologerChatView> {
           );
         }
 
+        final showTyping = controller.isAstrologerTyping.value;
+        final itemCount = controller.messages.length + (showTyping ? 1 : 0);
         return ListView.builder(
           controller: scrollController,
-          itemCount: controller.messages.length,
+          itemCount: itemCount,
           padding: EdgeInsets.all(16.w),
           reverse: true,
           itemBuilder: (context, index) {
-            final message = controller.messages[index];
+            if (showTyping && index == 0) {
+              return _buildTypingIndicator();
+            }
+            final message = controller.messages[showTyping ? index - 1 : index];
             return _buildMessageBubble(
               message: message,
               isUser: message.isUser,
@@ -350,6 +354,42 @@ class _AstrologerChatViewState extends State<AstrologerChatView> {
           },
         );
       }),
+    );
+  }
+
+  Widget _buildTypingIndicator() {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        margin: EdgeInsets.only(bottom: 12.h),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(18.r),
+            topRight: Radius.circular(18.r),
+            bottomLeft: Radius.circular(4.r),
+            bottomRight: Radius.circular(18.r),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _TypingDot(delay: 0),
+            SizedBox(width: 6.w),
+            _TypingDot(delay: 200),
+            SizedBox(width: 6.w),
+            _TypingDot(delay: 400),
+          ],
+        ),
+      ),
     );
   }
 
@@ -575,6 +615,62 @@ class _AstrologerChatViewState extends State<AstrologerChatView> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _TypingDot extends StatefulWidget {
+  final int delay;
+
+  const _TypingDot({required this.delay});
+
+  @override
+  State<_TypingDot> createState() => _TypingDotState();
+}
+
+class _TypingDotState extends State<_TypingDot>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+    Future.delayed(Duration(milliseconds: widget.delay), () {
+      if (mounted) _controller.repeat(reverse: true);
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Opacity(
+          opacity: 0.3 + (_animation.value * 0.7),
+          child: Container(
+            width: 8.w,
+            height: 8.w,
+            decoration: BoxDecoration(
+              color: AppColors.saffron,
+              shape: BoxShape.circle,
+            ),
+          ),
+        );
+      },
     );
   }
 }

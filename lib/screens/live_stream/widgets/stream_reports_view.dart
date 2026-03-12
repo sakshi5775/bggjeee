@@ -17,6 +17,7 @@ class StreamReportsView extends StatelessWidget {
     final maxWidth = isMobile ? double.infinity : 600.w;
 
     return Scaffold(
+      endDrawer: const CommonEndDrawer(),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(

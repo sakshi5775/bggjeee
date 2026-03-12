@@ -200,6 +200,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             CommonHeader(
               showHome: false,
               showDrawer: false,
+              showEndDrawer: false, // This screen has its own left drawer; avoid two drawers
               onSearchTap: () => InlineSearchOverlay.show(context),
             ),
             _buildSlider(context),

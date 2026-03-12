@@ -20,7 +20,8 @@ class AstrologerVideoCallView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Container(
+      body: SafeArea(
+        child: Container(
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Column(
           children: [
@@ -28,9 +29,7 @@ class AstrologerVideoCallView extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               decoration: BoxDecoration(gradient: AppColors.primaryGradient),
-              child: SafeArea(
-                bottom: false,
-                child: Row(
+              child: Row(
                   children: [
                     IconButton(
                       icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -126,7 +125,6 @@ class AstrologerVideoCallView extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
 
             // Main Video Display Area
             Expanded(child: _buildVideoArea(controller)),
@@ -135,6 +133,7 @@ class AstrologerVideoCallView extends StatelessWidget {
             SafeArea(top: false, child: _buildFooter(controller)),
           ],
         ),
+      ),
       ),
     );
   }

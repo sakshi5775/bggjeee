@@ -180,11 +180,12 @@ class _SafeTextFieldState extends State<SafeTextField> {
     }
   }
 
-  void _showWarningAndNotify() {
+  void _showWarningAndNotify([String? message]) {
+    final text = message ?? widget.config.warningMessage;
     if (widget.showWarningSnackBar && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(widget.config.warningMessage),
+          content: Text(text),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -218,19 +219,22 @@ class _SafeTextFieldState extends State<SafeTextField> {
       decoration: effectiveDecoration,
       onChanged: (_) {}, // handled by listener
       onSubmitted: (value) {
-        // Validate FULL message so no abusive word is sent (with or without space)
+        // Validate FULL message: no abusive words, phone numbers, or links
         if (value.trim().isEmpty) {
           widget.onSubmitted?.call(value);
           return;
         }
-        if (_helper.containsHarmfulWord(value)) {
-          _internalUpdate = true;
-          final cleaned = _helper.maskHarmfulWords(value, widget.config.maskChar);
-          _controller.text = cleaned;
-          _controller.selection = TextSelection.collapsed(offset: cleaned.length);
-          _lastSafeText = cleaned;
-          _internalUpdate = false;
-          _showWarningAndNotify();
+        final blocked = _helper.getBlockedContentResult(value);
+        if (blocked.blocked) {
+          if (blocked.reason == BlockedContentType.abusive) {
+            _internalUpdate = true;
+            final cleaned = _helper.maskHarmfulWords(value, widget.config.maskChar);
+            _controller.text = cleaned;
+            _controller.selection = TextSelection.collapsed(offset: cleaned.length);
+            _lastSafeText = cleaned;
+            _internalUpdate = false;
+          }
+          _showWarningAndNotify(blocked.userMessage);
           return;
         }
         widget.onSubmitted?.call(value);

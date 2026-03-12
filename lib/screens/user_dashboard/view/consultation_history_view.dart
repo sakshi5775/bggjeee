@@ -102,6 +102,7 @@ class _ConsultationHistoryViewState extends State<ConsultationHistoryView>
       child: Scaffold(
         backgroundColor: Colors.transparent,
         drawer: UserDashboardView.buildDrawer(context),
+        endDrawer: const CommonEndDrawer(),
         body: SafeArea(
           bottom: false,
           child: Column(

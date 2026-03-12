@@ -74,46 +74,29 @@ class ForgotPasswordController extends BaseController {
     return null;
   }
 
+  /// POST /api/auth/forgot-password with identifier (email)
   Future<void> sendOtp() async {
     if (!emailFormKey.currentState!.validate()) return;
 
     isLoading.value = true;
     try {
-      final success = await _service.sendOtp(emailController.text.trim());
+      final result = await _service.sendForgotPasswordOtp(emailController.text.trim());
+      final success = result['success'] as bool? ?? false;
+      final message = result['message'] as String? ?? '';
+
       if (success) {
         Get.toNamed(AppRoutes.forgotPasswordOtp);
         Get.snackbar(
-          'OTP Sent',
-          'We have sent an OTP to your email: ${emailController.text}',
+          'Success',
+          message.isNotEmpty ? message : 'Password reset link has been sent to your email.',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
       } else {
-        Get.snackbar('Error', 'Failed to send OTP');
-      }
-    } catch (e) {
-      Get.snackbar('Error', 'Something went wrong');
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  Future<void> verifyOtp() async {
-    if (!otpFormKey.currentState!.validate()) return;
-
-    isLoading.value = true;
-    try {
-      final success = await _service.verifyOtp(
-        identifier: emailController.text.trim(),
-        otp: otpController.text.trim(),
-      );
-      if (success) {
-        Get.toNamed(AppRoutes.resetPassword);
-      } else {
         Get.snackbar(
-          'Invalid OTP',
-          'Please enter correct OTP',
+          'Error',
+          message.isNotEmpty ? message : 'Failed to send password reset.',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,
@@ -126,18 +109,34 @@ class ForgotPasswordController extends BaseController {
     }
   }
 
+  /// No API call: validate OTP and navigate to reset-password screen (OTP is submitted with new password).
+  Future<void> verifyOtp() async {
+    if (!otpFormKey.currentState!.validate()) return;
+    Get.toNamed(AppRoutes.resetPassword);
+  }
+
+  /// POST /api/auth/resend-password-otp with identifier (email)
   Future<void> resendOtp() async {
     isLoading.value = true;
     try {
-      final success = await _service.resendOtp(
-        identifier: emailController.text.trim(),
-      );
+      final result = await _service.resendPasswordOtp(emailController.text.trim());
+      final success = result['success'] as bool? ?? false;
+      final message = result['message'] as String? ?? '';
+
       if (success) {
         Get.snackbar(
-          'OTP Resent',
-          'We have resent the OTP to your email.',
+          'Success',
+          message.isNotEmpty ? message : 'Password reset OTP resent successfully.',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          message.isNotEmpty ? message : 'Failed to resend OTP',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
           colorText: Colors.white,
         );
       }

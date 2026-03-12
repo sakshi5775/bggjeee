@@ -24,6 +24,7 @@ class RemediesView extends BasePage<RemediesController> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         drawer: UserDashboardView.buildDrawer(context),
+        endDrawer: const CommonEndDrawer(),
         body: Column(
           children: [
             // Standard Sticky Header + Search Bar
@@ -38,9 +39,7 @@ class RemediesView extends BasePage<RemediesController> {
               ),
               child: Column(
                 children: [
-                  const CommonHeader(
-                    title: 'Remedies & Store',
-                  ),
+                  const CommonHeader(title: 'Remedies & Store'),
                   RemediesSearchBar(
                     controller: controller.searchController,
                     onChanged: controller.onSearchChanged,

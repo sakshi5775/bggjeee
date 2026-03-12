@@ -29,6 +29,7 @@ class WishlistView extends GetView<WishlistController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        endDrawer: const CommonEndDrawer(),
         body: Column(
           children: [
             CommonHeader(

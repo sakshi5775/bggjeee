@@ -31,7 +31,8 @@ class VoiceCallView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Container(
+      body: SafeArea(
+        child: Container(
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Column(
           children: [
@@ -39,9 +40,7 @@ class VoiceCallView extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               decoration: BoxDecoration(gradient: AppColors.primaryGradient),
-              child: SafeArea(
-                bottom: false,
-                child: Row(
+              child: Row(
                   children: [
                     IconButton(
                       icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -93,7 +92,6 @@ class VoiceCallView extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
             // Main content: background image + transcription/response + controls
             Expanded(
               child: Stack(
@@ -114,6 +112,7 @@ class VoiceCallView extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }

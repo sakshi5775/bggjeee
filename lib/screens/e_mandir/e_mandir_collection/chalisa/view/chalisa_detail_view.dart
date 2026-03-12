@@ -1,6 +1,7 @@
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,6 +18,7 @@ class ChalisaDetailView extends BasePage<ChalisaDetailController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        endDrawer: const CommonEndDrawer(),
         body: Obx(() {
           if (controller.isLoading.value) {
             return const Center(
@@ -36,107 +38,100 @@ class ChalisaDetailView extends BasePage<ChalisaDetailController> {
 
           return CustomScrollView(
             slivers: [
-              // Collapsible app bar with cover image
-              SliverAppBar(
-                expandedHeight: 260.h,
-                pinned: true,
-                backgroundColor: const Color(0xFF8B1925),
-                iconTheme: const IconThemeData(color: Colors.white),
-                flexibleSpace: FlexibleSpaceBar(
-                  title: Text(
-                    chalisa.title,
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      shadows: [Shadow(color: Colors.black54, blurRadius: 6)],
-                    ),
-                  ),
-                  background: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      CachedNetworkImage(
-                        imageUrl: chalisa.godCategory?.godImage ?? "",
-                        fit: BoxFit.cover,
-                        errorWidget: (_, __, ___) =>
-                            Container(color: const Color(0xFF8B1925)),
-                      ),
-                      // Gradient overlay
-                      DecoratedBox(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.transparent,
-                              const Color(0xFF8B1925).withValues(alpha: 0.7),
-                              const Color(0xFF8B1925),
-                            ],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            stops: const [0.3, 0.7, 1.0],
+              // Cover image section (below CommonHeader)
+              SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CommonHeader(title: chalisa.title),
+                    SizedBox(
+                      height: 260.h,
+                      width: double.infinity,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          CachedNetworkImage(
+                            imageUrl: chalisa.godCategory?.godImage ?? "",
+                            fit: BoxFit.cover,
+                            errorWidget: (_, __, ___) =>
+                                Container(color: const Color(0xFF8B1925)),
                           ),
-                        ),
-                      ),
-                      // God category info
-                      if (chalisa.godCategory != null)
-                        Positioned(
-                          bottom: 60.h,
-                          left: 16.w,
-                          child: Row(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: const Color(0xFFE3B341),
-                                    width: 2,
-                                  ),
-                                ),
-                                child: ClipOval(
-                                  child: CachedNetworkImage(
-                                    imageUrl: chalisa.godCategory!.godImage,
-                                    width: 36.r,
-                                    height: 36.r,
-                                    fit: BoxFit.cover,
-                                    errorWidget: (_, __, ___) => Container(
-                                      width: 36.r,
-                                      height: 36.r,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ),
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.transparent,
+                                  const Color(0xFF8B1925).withValues(alpha: 0.7),
+                                  const Color(0xFF8B1925),
+                                ],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                stops: const [0.3, 0.7, 1.0],
                               ),
-                              SizedBox(width: 10.w),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                            ),
+                          ),
+                          if (chalisa.godCategory != null)
+                            Positioned(
+                              bottom: 60.h,
+                              left: 16.w,
+                              child: Row(
                                 children: [
-                                  Text(
-                                    chalisa.godCategory!.godName,
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.bold,
-                                      color: const Color(0xFFE3B341),
-                                    ),
-                                  ),
-                                  if (chalisa.description.isNotEmpty)
-                                    SizedBox(
-                                      width: 200.w,
-                                      child: Text(
-                                        chalisa.description,
-                                        style: TextStyle(
-                                          fontSize: 11.sp,
-                                          color: Colors.white70,
-                                        ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: const Color(0xFFE3B341),
+                                        width: 2,
                                       ),
                                     ),
+                                    child: ClipOval(
+                                      child: CachedNetworkImage(
+                                        imageUrl: chalisa.godCategory!.godImage,
+                                        width: 36.r,
+                                        height: 36.r,
+                                        fit: BoxFit.cover,
+                                        errorWidget: (_, __, ___) => Container(
+                                          width: 36.r,
+                                          height: 36.r,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 10.w),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        chalisa.godCategory!.godName,
+                                        style: TextStyle(
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.bold,
+                                          color: const Color(0xFFE3B341),
+                                        ),
+                                      ),
+                                      if (chalisa.description.isNotEmpty)
+                                        SizedBox(
+                                          width: 200.w,
+                                          child: Text(
+                                            chalisa.description,
+                                            style: TextStyle(
+                                              fontSize: 11.sp,
+                                              color: Colors.white70,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                    ],
+                                  ),
                                 ],
                               ),
-                            ],
-                          ),
-                        ),
-                    ],
-                  ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
 

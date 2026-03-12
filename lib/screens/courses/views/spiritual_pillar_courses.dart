@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/screens/courses/controllers/courses_controller
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -25,29 +26,11 @@ class SpiritualPillarCoursesView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF9F5F0),
-      appBar: AppBar(
-        backgroundColor: AppColors.textColorMaroon,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () => Get.back(),
-          icon: const Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: Colors.white,
-            size: 20,
-          ),
-        ),
-        title: AutoTranslateText(
-          'Explore Courses',
-          style: AppTypography.h2.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        ),
-        centerTitle: true,
-      ),
+      endDrawer: const CommonEndDrawer(),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const CommonHeader(title: 'Explore Courses'),
           // ── Filter section ──
           _FilterSection(),
 

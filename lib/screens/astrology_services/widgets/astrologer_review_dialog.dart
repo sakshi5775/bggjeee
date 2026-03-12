@@ -1,4 +1,5 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/content_moderation/moderation_helper.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/astrologer_review_controller.dart';
@@ -404,6 +405,13 @@ class AstrologerReviewDialog {
                                         .isEmpty) {
                                       errorMessage.value =
                                           'Please share your experience in the review text';
+                                      return;
+                                    }
+                                    final reviewText = reviewTextController.text.trim();
+                                    final moderationHelper = ModerationHelper(minWordLength: 2);
+                                    final blocked = moderationHelper.getBlockedContentResult(reviewText);
+                                    if (blocked.blocked) {
+                                      errorMessage.value = blocked.userMessage;
                                       return;
                                     }
 

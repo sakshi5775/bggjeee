@@ -30,6 +30,7 @@ class KpSystemView extends BasePage<KpSystemController> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         drawer: UserDashboardView.buildDrawer(context),
+        endDrawer: const CommonEndDrawer(),
         body: Column(
           children: [
             const CommonHeader(title: 'KP System'),

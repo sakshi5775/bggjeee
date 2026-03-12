@@ -39,6 +39,7 @@ class AiChatView extends BasePage<AiChatController> {
           : BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        endDrawer: const CommonEndDrawer(),
         body: SafeArea(
           top: !hideHeader,
           bottom: false,

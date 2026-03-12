@@ -20,7 +20,8 @@ class AstrologerVoiceCallView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Container(
+      body: SafeArea(
+        child: Container(
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Column(
           children: [
@@ -29,9 +30,7 @@ class AstrologerVoiceCallView extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               decoration: BoxDecoration(gradient: AppColors.primaryGradient),
-              child: SafeArea(
-                bottom: false,
-                child: Row(
+              child: Row(
                   children: [
                     IconButton(
                       icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -128,7 +127,6 @@ class AstrologerVoiceCallView extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
             // Main content area
             Expanded(
               child: Stack(
@@ -190,6 +188,7 @@ class AstrologerVoiceCallView extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }

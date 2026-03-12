@@ -1,4 +1,4 @@
-﻿import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
@@ -106,7 +106,8 @@ class LiveStreamView extends StatelessWidget {
           );
 
           if (controller.isLoading.value) {
-            return Container(
+            return SafeArea(
+              child: Container(
               color: Colors.black,
               child: Center(
                 child: Column(
@@ -153,11 +154,13 @@ class LiveStreamView extends StatelessWidget {
                   ],
                 ),
               ),
+            ),
             );
           }
 
           if (controller.errorMessage.value.isNotEmpty) {
-            return Container(
+            return SafeArea(
+              child: Container(
               color: Colors.black,
               child: Center(
                 child: Column(
@@ -180,6 +183,7 @@ class LiveStreamView extends StatelessWidget {
                   ],
                 ),
               ),
+            ),
             );
           }
 
@@ -267,7 +271,8 @@ class LiveStreamView extends StatelessWidget {
           debugPrint(
             '✓ Showing Agora video for remoteUid: ${controller.remoteUid}',
           );
-          return Stack(
+          return SafeArea(
+            child: Stack(
             fit: StackFit.expand,
             children: [
               // Video feed
@@ -393,6 +398,7 @@ class LiveStreamView extends StatelessWidget {
                   ),
                 ),
             ],
+          ),
           );
         }
 
@@ -927,7 +933,9 @@ class LiveStreamView extends StatelessWidget {
       bottom: 0,
       left: 0,
       right: 0,
-      child: Container(
+      child: SafeArea(
+        top: false,
+        child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -1006,6 +1014,7 @@ class LiveStreamView extends StatelessWidget {
               ),
             ),
           ],
+        ),
         ),
       ),
     );
