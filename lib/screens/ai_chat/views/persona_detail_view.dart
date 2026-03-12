@@ -1,4 +1,5 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/content_moderation/moderation_helper.dart';
 import 'package:astrobharataiuser/core/services/share_service.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
@@ -79,6 +80,7 @@ class PersonaDetailView extends StatelessWidget {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        endDrawer: const CommonEndDrawer(),
         body: SafeArea(
           bottom: false,
           child: Obx(() {
@@ -1454,6 +1456,13 @@ class PersonaDetailView extends StatelessWidget {
                                         .isEmpty) {
                                       errorMessage.value =
                                           'Please share your experience in the review text';
+                                      return;
+                                    }
+                                    final reviewText = reviewTextController.text.trim();
+                                    final moderationHelper = ModerationHelper(minWordLength: 2);
+                                    final blocked = moderationHelper.getBlockedContentResult(reviewText);
+                                    if (blocked.blocked) {
+                                      errorMessage.value = blocked.userMessage;
                                       return;
                                     }
 

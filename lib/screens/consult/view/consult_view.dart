@@ -23,6 +23,7 @@ class ConsultView extends StatelessWidget {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        endDrawer: const CommonEndDrawer(),
         body: SafeArea(
           top: true,
           bottom: false,
@@ -326,7 +327,40 @@ class _ConsultFilterPageState extends State<_ConsultFilterPage> {
         bottom: false,
         child: Column(
           children: [
-            _buildAppBar(),
+            CommonHeader(
+              title: 'Filters',
+              showBackButton: true,
+              onBackTap: () => Navigator.of(context).pop(),
+              showWallet: false,
+              showCart: false,
+              showSearch: false,
+              showLanguage: false,
+              showHome: false,
+              customActions: [
+                GestureDetector(
+                  onTap: () {
+                    searchController.clear();
+                    searchQuery = '';
+                    if (widget.isAstrologerTab) {
+                      controller.clearAstrologerFilters();
+                    } else {
+                      controller.clearAiFilters();
+                    }
+                    setState(() {});
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+                    child: AutoTranslateText(
+                      'Clear Filters',
+                      style: AppTypography.body2.copyWith(
+                        color: const Color(0xFF5F2221).withOpacity(0.7),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
             _buildSearchBar(),
             Expanded(
               child: Row(
@@ -340,49 +374,6 @@ class _ConsultFilterPageState extends State<_ConsultFilterPage> {
             Obx(() => _buildBottomBar(context)),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildAppBar() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Navigator.of(context).pop(),
-            child: Icon(Icons.arrow_back_ios_new, size: 22.w, color: const Color(0xFF5F2221)),
-          ),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: AutoTranslateText(
-              'Filters',
-              style: AppTypography.h2.copyWith(
-                color: const Color(0xFF5F2221),
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-          GestureDetector(
-            onTap: () {
-              searchController.clear();
-              searchQuery = '';
-              if (widget.isAstrologerTab) {
-                controller.clearAstrologerFilters();
-              } else {
-                controller.clearAiFilters();
-              }
-              setState(() {});
-            },
-            child: AutoTranslateText(
-              'Clear Filters',
-              style: AppTypography.body2.copyWith(
-                color: const Color(0xFF5F2221).withOpacity(0.7),
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

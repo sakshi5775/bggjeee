@@ -131,6 +131,7 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
       child: Scaffold(
         backgroundColor: Colors.transparent,
         drawer: UserDashboardView.buildDrawer(context),
+        endDrawer: const CommonEndDrawer(),
         body: Padding(
           padding: EdgeInsets.only(
             top:

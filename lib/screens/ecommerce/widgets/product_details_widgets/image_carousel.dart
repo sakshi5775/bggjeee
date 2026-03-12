@@ -85,6 +85,7 @@ class ImageCarousel extends StatelessWidget {
                                 url: imageUrl,
                                 height: 350.h,
                                 width: double.infinity,
+                               // fit: BoxFit.contain,
                               )
                             : Container(
                                 color: AppColors.textSecondary.withValues(

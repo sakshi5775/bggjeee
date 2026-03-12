@@ -1,51 +1,57 @@
 import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
-import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:get/get.dart';
 
 import '../../../../apihelper/api_provider/end_points.dart';
 
+/// Response shape: { success: bool, message: String, data?: { message?, expiresIn?, otpExpiresIn? } }
+Map<String, dynamic> _parseAuthResponse(dynamic body) {
+  if (body is! Map<String, dynamic>) {
+    return {'success': false, 'message': 'Invalid response from server'};
+  }
+  final success = body['success'] as bool? ?? false;
+  String message = body['message'] as String? ?? '';
+  final data = body['data'] as Map<String, dynamic>?;
+  if (message.isEmpty && data != null && data['message'] != null) {
+    message = data['message'] as String? ?? message;
+  }
+  return {'success': success, 'message': message};
+}
+
 class ForgotPasswordService {
   final ApiRepository _apiRepository = ApiRepository(apiClient: Get.find());
 
-  Future<bool> sendOtp(String email) async {
+  /// POST /api/auth/forgot-password with { "identifier": "email" }
+  /// Returns { success: bool, message: String }
+  Future<Map<String, dynamic>> sendForgotPasswordOtp(String identifier) async {
     try {
-      var body = {"identifier": email};
       final response = await _apiRepository.postApi(
         EndPoints.sendForgotPasswordOtp,
+        {'identifier': identifier},
         useAuthHeader: false,
-        body,
       );
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return true;
-      }
-      return false;
+      return _parseAuthResponse(response.body);
     } catch (e) {
-      return false;
+      return {'success': false, 'message': e.toString().replaceFirst(RegExp(r'^Exception:?\s*'), '')};
     }
   }
 
-  /// Verify OTP and complete registration/login
-  Future<bool> verifyOtp({
-    required String identifier,
-    required String otp,
-  }) async {
+  /// POST /api/auth/resend-password-otp with { "identifier": "email" }
+  /// Returns { success: bool, message: String }
+  Future<Map<String, dynamic>> resendPasswordOtp(String identifier) async {
     try {
-      final response = await _apiRepository.postApi(EndPoints.verifyOtp, {
-        'identifier': identifier,
-        'otp': otp,
-        'userType': "User",
-      }, useAuthHeader: false);
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return true;
-      }
-      return false;
+      final response = await _apiRepository.postApi(
+        EndPoints.resendPasswordOtp,
+        {'identifier': identifier},
+        useAuthHeader: false,
+      );
+      return _parseAuthResponse(response.body);
     } catch (e) {
-      return false;
+      return {'success': false, 'message': e.toString().replaceFirst(RegExp(r'^Exception:?\s*'), '')};
     }
   }
 
-  /// Returns map: { success: bool, message: String?, errors: List<{field, message}>? }
+  /// POST /api/auth/reset-password with { otp, identifier, password, confirmPassword }
+  /// Returns { success: bool, message: String?, errors: List? }
   Future<Map<String, dynamic>> resetPassword(
     String identifier,
     String otp,
@@ -53,20 +59,28 @@ class ForgotPasswordService {
     String confirmPassword,
   ) async {
     try {
-      final response = await _apiRepository.postApi(EndPoints.resetPassword, {
-        "otp": otp,
-        "identifier": identifier,
-        "password": password,
-        "confirmPassword": confirmPassword,
-      }, useAuthHeader: false);
+      final response = await _apiRepository.postApi(
+        EndPoints.resetPassword,
+        {
+          'otp': otp,
+          'identifier': identifier,
+          'password': password,
+          'confirmPassword': confirmPassword,
+        },
+        useAuthHeader: false,
+      );
 
       final body = response.body;
       if (body is! Map<String, dynamic>) {
-        return {'success': false, 'message': 'Invalid response from server'};
+        return {'success': false, 'message': 'Invalid response from server', 'errors': <Map<String, dynamic>>[]};
       }
 
       final success = body['success'] as bool? ?? false;
-      final message = body['message'] as String? ?? '';
+      String message = body['message'] as String? ?? '';
+      final data = body['data'] as Map<String, dynamic>?;
+      if (message.isEmpty && data != null && data['message'] != null) {
+        message = data['message'] as String? ?? message;
+      }
       final errors = body['errors'] as List<dynamic>?;
       final errorsList = errors
           ?.map((e) => e is Map<String, dynamic>
@@ -83,27 +97,9 @@ class ForgotPasswordService {
     } catch (e) {
       return {
         'success': false,
-        'message': e.toString(),
-        'errors': [],
+        'message': e.toString().replaceFirst(RegExp(r'^Exception:?\s*'), ''),
+        'errors': <Map<String, dynamic>>[],
       };
-    }
-  }
-
-  /// Resend OTP
-  Future<bool> resendOtp({required String identifier}) async {
-    try {
-      final response = await _apiRepository.postApi(
-        EndPoints.resendPasswordOtp,
-        {'identifier': identifier},
-        useAuthHeader: false,
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return true;
-      }
-      return false;
-    } catch (e) {
-      return false;
     }
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:astrobharataiuser/content_moderation/moderation_helper.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/chat_model.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
@@ -110,6 +111,14 @@ class ChatController extends BaseController {
   Future<void> sendMessage() async {
     final messageText = messageController.text.trim();
     if (messageText.isEmpty || isLoading.value || isTyping.value) return;
+
+    // Content moderation: block abusive words, phone numbers, and links
+    final moderationHelper = ModerationHelper(minWordLength: 2);
+    final blocked = moderationHelper.getBlockedContentResult(messageText);
+    if (blocked.blocked) {
+      Get.snackbar('Not allowed', blocked.userMessage);
+      return;
+    }
 
     try {
       // Add user message immediately

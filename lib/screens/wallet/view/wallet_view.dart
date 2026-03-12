@@ -67,6 +67,7 @@ class WalletView extends StatelessWidget {
   Widget _buildHeader(BuildContext context) {
     return CommonHeader(
       title: 'Wallet',
+      showEndDrawer: false, // This screen uses left drawer (buildDrawer)
       subtitle: AutoTranslateText(
         'Manage balance and transactions',
         style: TextStyle(

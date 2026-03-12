@@ -39,6 +39,7 @@ class KundliResultView extends BasePage<KundliResultController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         drawer: UserDashboardView.buildDrawer(context),
+        endDrawer: const CommonEndDrawer(),
         backgroundColor: Colors.transparent,
         body: Column(
           children: [

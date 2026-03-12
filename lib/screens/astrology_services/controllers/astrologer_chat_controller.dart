@@ -1190,10 +1190,11 @@ class AstrologerChatController extends BaseController
       if (kDebugMode) print('Message is empty, returning');
       return;
     }
-    // Content moderation: block send if any abusive word (with or without space)
+    // Content moderation: block abusive words, phone numbers, and links
     final _moderationHelper = ModerationHelper(minWordLength: 2);
-    if (_moderationHelper.containsHarmfulWord(text)) {
-      showErrorMessage(message: 'Please avoid offensive language.');
+    final blocked = _moderationHelper.getBlockedContentResult(text);
+    if (blocked.blocked) {
+      showErrorMessage(message: blocked.userMessage);
       return;
     }
     if (sessionStatus.value != 'ACTIVE') {
@@ -1204,16 +1205,6 @@ class AstrologerChatController extends BaseController
       showErrorMessage(
         message: 'Please wait for astrologer to accept the chat.',
       );
-      return;
-    }
-
-    // LINK BLOCKING (CLIENT SIDE)
-    // Regex for basic URL detection
-    final urlRegExp = RegExp(
-      r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+',
-    );
-    if (urlRegExp.hasMatch(text)) {
-      showErrorMessage(message: 'Sharing links is not allowed');
       return;
     }
 

@@ -29,6 +29,7 @@ class ProductDetailView extends StatelessWidget {
     final controller = Get.find<ProductDetailController>();
 
     return Scaffold(
+      endDrawer: const CommonEndDrawer(),
       body: Container(
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Column(

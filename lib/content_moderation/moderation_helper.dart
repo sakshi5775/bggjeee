@@ -16,6 +16,33 @@ class ModerationResult {
   static const ModerationResult safe = ModerationResult(isHarmful: false);
 }
 
+/// Reason why content was blocked (abusive, phone number, or link).
+enum BlockedContentType { abusive, phoneNumber, link }
+
+/// Result of a full content check (abusive words + phone numbers + links).
+class BlockedContentResult {
+  const BlockedContentResult({this.blocked = false, this.reason});
+
+  final bool blocked;
+  final BlockedContentType? reason;
+
+  String get userMessage {
+    switch (reason) {
+      case BlockedContentType.abusive:
+        return 'Please avoid offensive language.';
+      case BlockedContentType.phoneNumber:
+        return 'Sharing phone numbers is not allowed.';
+      case BlockedContentType.link:
+        return 'Sharing links is not allowed.';
+      default:
+        return 'This content is not allowed.';
+    }
+  }
+
+  static const BlockedContentResult allowed =
+      BlockedContentResult(blocked: false);
+}
+
 /// Combines dictionary, regex, and normalization for real-time moderation.
 class ModerationHelper {
   ModerationHelper({
@@ -122,6 +149,55 @@ class ModerationHelper {
       }
     }
     return false;
+  }
+
+  // ─── Phone number blocking (all countries, 7–15 digits, optional + and separators) ───
+  static final RegExp _phoneCandidatePattern = RegExp(
+    r'\+?[\d][\d\s.\-()]{4,24}',
+    multiLine: false,
+  );
+
+  /// Returns true if [text] contains something that looks like a phone number
+  /// (7–15 digits, with optional + and spaces/dots/dashes/parentheses). Works for all countries.
+  bool containsPhoneNumber(String text) {
+    if (text.trim().isEmpty) return false;
+    for (final match in _phoneCandidatePattern.allMatches(text)) {
+      final candidate = match.group(0) ?? '';
+      final digitsOnly = candidate.replaceAll(RegExp(r'\D'), '');
+      final len = digitsOnly.length;
+      if (len >= 7 && len <= 15) return true;
+    }
+    return false;
+  }
+
+  // ─── Link/URL blocking ───
+  static final RegExp _linkPattern = RegExp(
+    r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+',
+    caseSensitive: false,
+  );
+
+  /// Returns true if [text] contains a URL/link.
+  bool containsLink(String text) {
+    if (text.trim().isEmpty) return false;
+    return _linkPattern.hasMatch(text);
+  }
+
+  /// One combined check for send/submit: abusive words, phone numbers, and links.
+  /// Use before sending chat messages, submitting reviews, etc.
+  /// Returns [BlockedContentResult.allowed] if content is allowed, otherwise blocked with [reason].
+  BlockedContentResult getBlockedContentResult(String text) {
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) return BlockedContentResult.allowed;
+    if (containsHarmfulWord(trimmed)) {
+      return BlockedContentResult(blocked: true, reason: BlockedContentType.abusive);
+    }
+    if (containsPhoneNumber(trimmed)) {
+      return BlockedContentResult(blocked: true, reason: BlockedContentType.phoneNumber);
+    }
+    if (containsLink(trimmed)) {
+      return BlockedContentResult(blocked: true, reason: BlockedContentType.link);
+    }
+    return BlockedContentResult.allowed;
   }
 
   /// Returns text with all harmful words masked. Used when blocking send.
