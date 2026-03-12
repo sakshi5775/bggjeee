@@ -95,7 +95,7 @@ class DevotionalLibraryController extends BaseController {
 
   String get selectedMusicCategory {
     final category = musicCategories[selectedMusicCategoryIndex.value];
-    return category == 'All' ? 'aarti' : category.toLowerCase();
+    return category == 'All' ? 'all' : category.toLowerCase();
   }
 
   Future<void> fetchTracks() async {
