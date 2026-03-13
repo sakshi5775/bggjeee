@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class KeyCourseModulesSection extends StatelessWidget {
-  const KeyCourseModulesSection({Key? key}) : super(key: key);
+  const KeyCourseModulesSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +59,6 @@ class KeyCourseModulesSection extends StatelessWidget {
     return Container(
       width: 180.w,
       height: 240.h,
-      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: const Color(0xFFFFF8E7), // Light beige
         borderRadius: BorderRadius.circular(16.r),
@@ -75,25 +74,19 @@ class KeyCourseModulesSection extends StatelessWidget {
         ],
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 80.w,
-            height: 80.w,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: ClipOval(
+          SizedBox(
+            width: double.infinity,
+            height: 120.h,
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16.r),
+                topRight: Radius.circular(16.r),
+              ),
               child: CachedNetworkImage(
                 imageUrl: image,
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
                 placeholder: (context, url) => Container(
                   color: Colors.grey[200],
                   child: const Center(
@@ -107,17 +100,24 @@ class KeyCourseModulesSection extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 24.h),
-          AutoTranslateText(
-            title,
-            textAlign: TextAlign.center,
-            style: AppTypography.body1.copyWith(
-              color: const Color(0xFF3E1212),
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              height: 1.4,
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.all(12.w),
+              child: Center(
+                child: AutoTranslateText(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: AppTypography.body1.copyWith(
+                    color: const Color(0xFF3E1212),
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w600,
+                    height: 1.3,
+                  ),
+                  maxLines: 4,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ),
-            maxLines: 4,
           ),
         ],
       ),

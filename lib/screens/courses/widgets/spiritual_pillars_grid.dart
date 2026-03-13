@@ -19,9 +19,7 @@ class SpiritualPillarsGrid extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
       width: Get.width,
-      decoration: const BoxDecoration(
-        color: Color(0xFF3E1212), // Dark Brown Background
-      ),
+      decoration: BoxDecoration(gradient: AppColors.primaryGradient),
       child: Column(
         children: [
           AutoTranslateText(

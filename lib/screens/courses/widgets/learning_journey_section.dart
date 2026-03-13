@@ -171,13 +171,7 @@ class _JourneyCard extends StatelessWidget {
             width: 148.w,
             padding: EdgeInsets.all(14.w),
             decoration: BoxDecoration(
-              gradient: isDark
-                  ? const LinearGradient(
-                      colors: [Color(0xFF4A1515), Color(0xFF2E0D0D)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    )
-                  : null,
+              gradient: isDark ? AppColors.primaryGradient : null,
               color: isDark ? null : Colors.white,
               borderRadius: BorderRadius.circular(18.r),
               border: Border.all(

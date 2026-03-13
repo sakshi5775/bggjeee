@@ -24,6 +24,7 @@ class CommonHeader extends StatelessWidget {
   final Widget? subtitle;
   final VoidCallback? onMenuTap;
   final bool showDrawer;
+
   /// When true (default), shows a menu icon on the right that opens [Scaffold.endDrawer].
   /// Set to false in screens that already have a drawer (e.g. UserDashboardView).
   final bool showEndDrawer;
@@ -66,7 +67,9 @@ class CommonHeader extends StatelessWidget {
     final size = HeaderLayoutConfig.headerIconSize;
     final tap = HeaderLayoutConfig.headerIconTapSize;
     final color = '#6F221E'.toColor();
-    final child = iconWidget ?? (icon != null ? Icon(icon, size: size.w, color: color) : null);
+    final child =
+        iconWidget ??
+        (icon != null ? Icon(icon, size: size.w, color: color) : null);
     if (child == null) return const SizedBox.shrink();
     return IconButton(
       onPressed: onPressed,
@@ -173,7 +176,8 @@ class CommonHeader extends StatelessWidget {
                   if (showSearch)
                     _headerIconBtn(
                       icon: Icons.search,
-                      onPressed: onSearchTap ??
+                      onPressed:
+                          onSearchTap ??
                           () => InlineSearchOverlay.show(context),
                       tooltip: 'Search',
                     ),
@@ -198,7 +202,7 @@ class CommonHeader extends StatelessWidget {
             padding: EdgeInsets.only(
               left: HeaderLayoutConfig.headerHorizontalPadding.w,
               right: HeaderLayoutConfig.headerHorizontalPadding.w,
-              bottom: 8.h,
+              bottom: 0.h,
               top: HeaderLayoutConfig.headerVerticalPadding.h,
             ),
             child: ConstrainedBox(
@@ -222,13 +226,16 @@ class CommonHeader extends StatelessWidget {
                               }
                             }
                           },
-                    style: IconButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      minimumSize: Size(HeaderLayoutConfig.headerIconTapSize.w, HeaderLayoutConfig.headerIconTapSize.h),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    icon: Icon(
-                      Icons.arrow_back_ios_new,
+                      style: IconButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: Size(
+                          HeaderLayoutConfig.headerIconTapSize.w,
+                          HeaderLayoutConfig.headerIconTapSize.h,
+                        ),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      icon: Icon(
+                        Icons.arrow_back_ios_new,
                         size: HeaderLayoutConfig.headerIconSize.w,
                         color: '#6F221E'.toColor(),
                       ),
@@ -237,7 +244,8 @@ class CommonHeader extends StatelessWidget {
                   Expanded(
                     child: Align(
                       alignment: Alignment.centerLeft,
-                      child: titleWidget ??
+                      child:
+                          titleWidget ??
                           AutoTranslateText(
                             title!,
                             style: MyTextTheme.largeBCB.copyWith(
@@ -250,49 +258,57 @@ class CommonHeader extends StatelessWidget {
                           ),
                     ),
                   ),
-                // Custom actions
-                if (customActions != null) ...customActions!,
-                // Home icon (always visible if showHome)
-                if (showHome)
-                  IconButton(
-                    onPressed: () {
-                      // Pop to root of current tab first
-                      Navigator.of(context).popUntil((route) => route.isFirst);
-                      // Then switch to Home tab
-                      if (Get.isRegistered<UserMainController>()) {
-                        Get.find<UserMainController>().changeTab(0);
-                      }
-                    },
-                    icon: Icon(
-                      Icons.home_outlined,
-                      size: HeaderLayoutConfig.headerIconSize.w,
-                      color: '#6F221E'.toColor(),
+                  // Custom actions
+                  if (customActions != null) ...customActions!,
+                  // Home icon (always visible if showHome)
+                  if (showHome)
+                    IconButton(
+                      onPressed: () {
+                        // Pop to root of current tab first
+                        Navigator.of(
+                          context,
+                        ).popUntil((route) => route.isFirst);
+                        // Then switch to Home tab
+                        if (Get.isRegistered<UserMainController>()) {
+                          Get.find<UserMainController>().changeTab(0);
+                        }
+                      },
+                      icon: Icon(
+                        Icons.home_outlined,
+                        size: HeaderLayoutConfig.headerIconSize.w,
+                        color: '#6F221E'.toColor(),
+                      ),
+                      style: IconButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: Size(
+                          HeaderLayoutConfig.headerIconTapSize.w,
+                          HeaderLayoutConfig.headerIconTapSize.h,
+                        ),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
                     ),
-                    style: IconButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      minimumSize: Size(HeaderLayoutConfig.headerIconTapSize.w, HeaderLayoutConfig.headerIconTapSize.h),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  // Drawer icon (if enabled - left drawer)
+                  if (showDrawer)
+                    IconButton(
+                      onPressed:
+                          onMenuTap ??
+                          () {
+                            Scaffold.of(context).openDrawer();
+                          },
+                      style: IconButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: Size(
+                          HeaderLayoutConfig.headerIconTapSize.w,
+                          HeaderLayoutConfig.headerIconTapSize.h,
+                        ),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      icon: Icon(
+                        Icons.menu_rounded,
+                        size: HeaderLayoutConfig.headerIconSize.w,
+                        color: '#6F221E'.toColor(),
+                      ),
                     ),
-                  ),
-                // Drawer icon (if enabled - left drawer)
-                if (showDrawer)
-                  IconButton(
-                    onPressed:
-                        onMenuTap ??
-                        () {
-                          Scaffold.of(context).openDrawer();
-                        },
-                    style: IconButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      minimumSize: Size(HeaderLayoutConfig.headerIconTapSize.w, HeaderLayoutConfig.headerIconTapSize.h),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    icon: Icon(
-                      Icons.menu_rounded,
-                      size: HeaderLayoutConfig.headerIconSize.w,
-                      color: '#6F221E'.toColor(),
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -300,9 +316,11 @@ class CommonHeader extends StatelessWidget {
           if (subtitle != null)
             Padding(
               padding: EdgeInsets.only(
-                left: Navigator.canPop(context) ? 56.w : HeaderLayoutConfig.bodyHorizontalPadding.w,
+                left: Navigator.canPop(context)
+                    ? 56.w
+                    : HeaderLayoutConfig.bodyHorizontalPadding.w,
                 right: HeaderLayoutConfig.bodyHorizontalPadding.w,
-                bottom: 8.h,
+                bottom: 6.h,
               ),
               child: subtitle!,
             ),
@@ -328,7 +346,9 @@ class CommonEndDrawer extends StatelessWidget {
     final color = '#6F221E'.toColor();
     final items = getDrawerMenuItemsForCurrentRoute();
     final width = MediaQuery.of(context).size.width;
-    final drawerWidth = width > 600 ? (width * 0.65).clamp(0.0, _drawerMaxWidth) : null;
+    final drawerWidth = width > 600
+        ? (width * 0.65).clamp(0.0, _drawerMaxWidth)
+        : null;
     return Drawer(
       width: drawerWidth,
       backgroundColor: const Color(0xFFFEF9F0),
@@ -364,7 +384,11 @@ class CommonEndDrawer extends StatelessWidget {
                           minimumSize: Size(36.w, 36.h),
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
-                        icon: Icon(Icons.close_rounded, color: color, size: 22.w),
+                        icon: Icon(
+                          Icons.close_rounded,
+                          color: color,
+                          size: 22.w,
+                        ),
                       ),
                     ],
                   ),
@@ -393,7 +417,11 @@ class CommonEndDrawer extends StatelessWidget {
     );
   }
 
-  static Widget _drawerTileFromItem(BuildContext context, DrawerMenuItem item, Color color) {
+  static Widget _drawerTileFromItem(
+    BuildContext context,
+    DrawerMenuItem item,
+    Color color,
+  ) {
     return Material(
       color: Colors.transparent,
       child: InkWell(

@@ -83,7 +83,7 @@ class WhyChooseUsSection extends StatelessWidget {
               12.w,
             ), // Compact padding
             decoration: BoxDecoration(
-              color: const Color(0xFF3E1212), // Dark Brown
+              gradient: AppColors.primaryGradient,
               borderRadius: BorderRadius.circular(20.r),
               boxShadow: [
                 BoxShadow(

@@ -13,7 +13,7 @@ class TrustedEducationSection extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
       padding: EdgeInsets.symmetric(vertical: 32.h, horizontal: 16.w),
       decoration: BoxDecoration(
-        color: const Color(0xFF3E1212),
+        gradient: AppColors.primaryGradient,
         borderRadius: BorderRadius.circular(24.r),
       ),
       child: Column(

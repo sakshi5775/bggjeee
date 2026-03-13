@@ -20,7 +20,7 @@ class PujaMediaCardWidget extends StatelessWidget {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Container(
-          height: 250,
+          height: 220,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             boxShadow: [

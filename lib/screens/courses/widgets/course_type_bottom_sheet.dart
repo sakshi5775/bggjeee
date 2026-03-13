@@ -83,14 +83,7 @@ class _CourseTypeSheet extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
             decoration: BoxDecoration(
               gradient: isDark
-                  ? LinearGradient(
-                      colors: [
-                        const Color(0xFF3E1212),
-                        AppColors.textColorMaroon,
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    )
+                  ? AppColors.primaryGradient
                   : AppColors.orangeGradient,
               borderRadius: BorderRadius.circular(16.r),
               boxShadow: [

@@ -117,7 +117,8 @@ class GlobalNavController extends GetxController {
       activeSubMenuIndex.value = 1;
       activeSubItemIndex.value = 0; // Consult
     } else if (route == AppRoutes.allAstrologers) {
-      activeSubMenuIndex.value = 1; // Consult (still on Consult submenu when in astrologers list)
+      activeSubMenuIndex.value =
+          1; // Consult (still on Consult submenu when in astrologers list)
       activeSubItemIndex.value = 0; // Consult
     } else if (route == AppRoutes.liveAstrologers) {
       activeSubMenuIndex.value = 1; // Consult

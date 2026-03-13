@@ -276,27 +276,34 @@ class _CartItemCard extends StatelessWidget {
                       SizedBox(height: 16.h),
                       // Quantity Selector
                       Container(
+                        height: 40.h,
+                        padding: EdgeInsets.symmetric(horizontal: 4.w),
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              AppColors.saffron.withValues(alpha: 0.1),
-                              AppColors.saffron.withValues(alpha: 0.05),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(25.r),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.05),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                           border: Border.all(
-                            color: AppColors.saffron.withValues(alpha: 0.3),
-                            width: 1.5,
+                            color: '#68171E'.toColor().withValues(alpha: 0.1),
+                            width: 1,
                           ),
                         ),
                         child: isProcessing
                             ? Center(
-                                child: SizedBox(
-                                  width: 20.w,
-                                  height: 20.h,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2.5,
-                                    color: AppColors.saffron,
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 40.w),
+                                  child: SizedBox(
+                                    width: 18.w,
+                                    height: 18.h,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: AppColors.saffron,
+                                    ),
                                   ),
                                 ),
                               )
@@ -304,13 +311,15 @@ class _CartItemCard extends StatelessWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   _QuantityButton(
-                                    icon: Icons.remove_rounded,
+                                    icon: quantity <= 1
+                                        ? Icons.delete_outline_rounded
+                                        : Icons.remove_rounded,
                                     onTap: quantity <= 1
                                         ? () => controller.removeItem(item)
                                         : () => controller.decrementItem(item),
                                     isRemove: quantity <= 1,
                                   ),
-                                  InkWell(
+                                  GestureDetector(
                                     onTap: isProcessing
                                         ? null
                                         : () => _showQuantityDialog(
@@ -323,23 +332,10 @@ class _CartItemCard extends StatelessWidget {
                                                   variantId: item.variantId,
                                                 ),
                                           ),
-                                    borderRadius: BorderRadius.circular(8.r),
                                     child: Container(
-                                      width: 50.w,
-                                      height: 36.h,
+                                      constraints: BoxConstraints(minWidth: 40.w),
+                                      padding: EdgeInsets.symmetric(horizontal: 8.w),
                                       alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(
-                                          8.r,
-                                        ),
-                                        border: Border.all(
-                                          color: AppColors.saffron.withOpacity(
-                                            0.3,
-                                          ),
-                                          width: 1,
-                                        ),
-                                        color: Colors.white,
-                                      ),
                                       child: AutoTranslateText(
                                         quantity.toString(),
                                         style: TextStyle(
@@ -422,30 +418,22 @@ class _QuantityButton extends StatelessWidget {
         onTap: enabled && onTap != null ? onTap : null,
         borderRadius: BorderRadius.circular(20.r),
         child: Container(
-          width: 36,
-          height: 36,
+          width: 32.w,
+          height: 32.w,
           decoration: BoxDecoration(
             color: enabled
                 ? (isRemove
-                      ? AppColors.sacredRed.withValues(alpha: 0.1)
-                      : AppColors.saffron.withValues(alpha: 0.15))
+                    ? AppColors.sacredRed.withValues(alpha: 0.1)
+                    : '#68171E'.toColor().withValues(alpha: 0.05))
                 : Colors.transparent,
             shape: BoxShape.circle,
-            border: enabled
-                ? Border.all(
-                    color: isRemove
-                        ? AppColors.sacredRed.withValues(alpha: 0.3)
-                        : AppColors.saffron.withValues(alpha: 0.4),
-                    width: 1.5,
-                  )
-                : null,
           ),
           child: Icon(
             icon,
-            size: 20.h,
+            size: 18.w,
             color: enabled
-                ? (isRemove ? AppColors.sacredRed : AppColors.saffron)
-                : AppColors.textSecondary.withValues(alpha: 0.3),
+                ? (isRemove ? AppColors.sacredRed : '#68171E'.toColor())
+                : Colors.grey.shade400,
           ),
         ),
       ),

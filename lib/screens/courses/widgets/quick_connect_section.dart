@@ -17,7 +17,7 @@ class QuickConnectSection extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
-        color: const Color(0xFF3E1212), // Dark Brown Background
+        gradient: AppColors.primaryGradient,
         borderRadius: BorderRadius.circular(24.r),
         boxShadow: [
           BoxShadow(
@@ -57,7 +57,8 @@ class QuickConnectSection extends StatelessWidget {
               const Color(0xFF4facfe),
               const Color(0xFF00f2fe),
             ], // Blue gradient
-            onTap: () => UserMainController.pushInCurrentTab(AppRoutes.allAstrologers),
+            onTap: () =>
+                UserMainController.pushInCurrentTab(AppRoutes.allAstrologers),
           ),
           SizedBox(height: 16.h),
           _buildConnectOption(
