@@ -18,6 +18,9 @@ import 'package:astrobharataiuser/utils/app_constant.dart';
 /// Standard Common Header for the application.
 /// Includes: Logo, Back button (if canPop), Home icon, Drawer icon, Wallet, Language, Cart, Search, End drawer (right menu).
 /// Set [showEndDrawer] to false when the screen already has its own drawer (e.g. user dashboard) to avoid two drawers.
+///
+/// For the menu icon to be clickable, the screen's [Scaffold] must have
+/// [endDrawer: const CommonEndDrawer()]. Otherwise the menu tap does nothing.
 class CommonHeader extends StatelessWidget {
   final String? title;
   final Widget? titleWidget;
@@ -344,7 +347,6 @@ class CommonEndDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = '#6F221E'.toColor();
-    final items = getDrawerMenuItemsForCurrentRoute();
     final width = MediaQuery.of(context).size.width;
     final drawerWidth = width > 600
         ? (width * 0.65).clamp(0.0, _drawerMaxWidth)
@@ -396,20 +398,23 @@ class CommonEndDrawer extends StatelessWidget {
               ),
             ),
             Divider(height: 1, color: color.withValues(alpha: 0.2)),
-            // Compact list
+            // Dynamic list: reactive to current route (Astrosage-style)
             Flexible(
-              child: ListView.builder(
-                padding: EdgeInsets.only(
-                  top: 4.h,
-                  bottom: 16.h + MediaQuery.of(context).padding.bottom,
-                  left: 4.w,
-                  right: 4.w,
-                ),
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  return _drawerTileFromItem(context, items[index], color);
-                },
-              ),
+              child: Obx(() {
+                final items = getDrawerMenuItemsForCurrentRoute();
+                return ListView.builder(
+                  padding: EdgeInsets.only(
+                    top: 4.h,
+                    bottom: 16.h + MediaQuery.of(context).padding.bottom,
+                    left: 4.w,
+                    right: 4.w,
+                  ),
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    return _drawerTileFromItem(context, items[index], color);
+                  },
+                );
+              }),
             ),
           ],
         ),

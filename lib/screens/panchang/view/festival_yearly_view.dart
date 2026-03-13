@@ -24,6 +24,7 @@ class FestivalYearlyView extends BasePage<FestivalYearlyController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        endDrawer: const CommonEndDrawer(),
         body: Obx(() {
           if (controller.isLoading.value &&
               controller.yearlyFestivalData.isEmpty) {

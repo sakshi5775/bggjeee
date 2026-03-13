@@ -25,6 +25,7 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        endDrawer: const CommonEndDrawer(),
         body: Obx(() {
           if (controller.isLoading.value && controller.calendarData.isEmpty) {
             return Center(

@@ -24,6 +24,7 @@ class DashaView extends BasePage<DashaController> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         drawer: UserDashboardView.buildDrawer(context),
+        endDrawer: const CommonEndDrawer(),
         body: Column(
           children: [
             const CommonHeader(title: 'Dasha'),

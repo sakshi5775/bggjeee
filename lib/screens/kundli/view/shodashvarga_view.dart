@@ -23,6 +23,7 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         drawer: UserDashboardView.buildDrawer(context),
+        endDrawer: const CommonEndDrawer(),
         body: Column(
           children: [
             const CommonHeader(title: 'Shodashvarga'),

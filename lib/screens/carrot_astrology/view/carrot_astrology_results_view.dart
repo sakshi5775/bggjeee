@@ -33,6 +33,7 @@ class CarrotAstrologyResultsView extends StatelessWidget {
     if (result == null) {
       return Scaffold(
         backgroundColor: '#F7EFBD'.toColor(),
+        endDrawer: const CommonEndDrawer(),
         body: SafeArea(
           child: Column(
             children: [
@@ -57,6 +58,7 @@ class CarrotAstrologyResultsView extends StatelessWidget {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        endDrawer: const CommonEndDrawer(),
         body: Column(
           children: [
             CommonHeader(

@@ -22,6 +22,7 @@ class GemstonesReportView extends BasePage<GemstonesReportController> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         drawer: UserDashboardView.buildDrawer(context),
+        endDrawer: const CommonEndDrawer(),
         body: Column(
           children: [
             const CommonHeader(title: 'Gemstones Report'),

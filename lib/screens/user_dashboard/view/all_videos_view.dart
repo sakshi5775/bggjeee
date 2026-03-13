@@ -29,6 +29,7 @@ class AllVideosView extends BasePage<AllVideosController> {
             : BoxDecoration(gradient: AppColors.gradientBackground),
         child: Scaffold(
           backgroundColor: Colors.transparent,
+          endDrawer: const CommonEndDrawer(),
           body: Column(
             children: [
               if (!hideHeader) ...[
