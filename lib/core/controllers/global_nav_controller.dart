@@ -169,9 +169,13 @@ class GlobalNavController extends GetxController {
     }
   }
 
-  void syncFromTab(int index) {
+  void syncFromTab(int index, {String? tabRootRoute}) {
     print('GlobalNav: syncFromTab → $index');
     _selectedIndex.value = index;
+    // Update currentRoute so drawer shows tab-relevant menu (dynamic side nav)
+    if (tabRootRoute != null && tabRootRoute.isNotEmpty) {
+      currentRoute.value = tabRootRoute;
+    }
 
     if (index == 0) {
       activeSubMenuIndex.value = null;

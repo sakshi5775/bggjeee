@@ -26,6 +26,7 @@ class MyLearningView extends BasePage<MyLearningController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        endDrawer: const CommonEndDrawer(),
         // bottomNavigationBar: _buildBottomNav(),
         body: SafeArea(
           child: Column(

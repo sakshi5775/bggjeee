@@ -1,3 +1,4 @@
+import 'package:astrobharataiuser/core/controllers/global_nav_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:flutter/material.dart';
@@ -81,6 +82,8 @@ String _moduleFromRoute(String route) {
   if (r.contains('support')) return 'support';
   // Wallet
   if (r.contains('wallet')) return 'wallet';
+  // Home / Dashboard (user-home, user-dashboard, root)
+  if (r.contains('user-home') || r.contains('user-dashboard') || r == '/' || r.isEmpty) return 'default';
   return 'default';
 }
 
@@ -254,10 +257,32 @@ List<DrawerMenuItem> _defaultMenuItems() {
   ];
 }
 
+/// Effective current route for drawer: uses [GlobalNavController.currentRoute]
+/// (updated by tab navigator) when available, then falls back to active tab's
+/// root route, then [Get.currentRoute]. Ensures drawer shows module-specific
+/// items for the visible page (Astrosage-style dynamic side nav).
+String getCurrentRouteForDrawer() {
+  if (Get.isRegistered<GlobalNavController>()) {
+    final r = Get.find<GlobalNavController>().currentRoute.value;
+    if (r.isNotEmpty) return r;
+  }
+  // Fallback: when inside tab shell, use current tab's root route so drawer
+  // shows tab-relevant menu instead of default/static list
+  if (Get.isRegistered<UserMainController>()) {
+    final ctrl = Get.find<UserMainController>();
+    final idx = ctrl.currentIndex.value;
+    if (idx >= 0 && idx < ctrl.tabInitialRoutes.length) {
+      return ctrl.tabInitialRoutes[idx];
+    }
+  }
+  return Get.currentRoute;
+}
+
 /// Returns the list of drawer menu items for the current route. Used by [CommonEndDrawer].
-/// Navigation-driven: call this with [Get.currentRoute] (or route from GetX routing).
+/// Navigation-driven: uses [getCurrentRouteForDrawer] when [route] is null so content
+/// matches the visible page (e.g. Consult → consult items, Kundli → kundli items).
 List<DrawerMenuItem> getDrawerMenuItemsForCurrentRoute([String? route]) {
-  final currentRoute = route ?? Get.currentRoute;
+  final currentRoute = route ?? getCurrentRouteForDrawer();
   final module = _moduleFromRoute(currentRoute);
   return _menuItemsForModule(module);
 }

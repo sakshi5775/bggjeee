@@ -29,6 +29,7 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Scaffold(
           backgroundColor: Colors.transparent,
+          endDrawer: const CommonEndDrawer(),
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(100.h),
             child: const CommonHeader(
@@ -59,6 +60,7 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        endDrawer: const CommonEndDrawer(),
         body: Column(
           children: [
             CommonHeader(

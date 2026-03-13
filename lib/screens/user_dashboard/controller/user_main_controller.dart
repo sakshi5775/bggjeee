@@ -105,9 +105,12 @@ class UserMainController extends GetxController {
       Get.find<UserDashboardController>().isAiGuiderDismissed.value = false;
     }
 
-    // Sync highlight in the global bottom bar
+    // Sync highlight in the global bottom bar and drawer route
     if (Get.isRegistered<GlobalNavController>()) {
-      Get.find<GlobalNavController>().syncFromTab(index);
+      Get.find<GlobalNavController>().syncFromTab(
+        index,
+        tabRootRoute: tabInitialRoutes[index],
+      );
     }
   }
 
@@ -136,7 +139,10 @@ class UserMainController extends GetxController {
       );
       currentIndex.value = previousTab;
       if (Get.isRegistered<GlobalNavController>()) {
-        Get.find<GlobalNavController>().syncFromTab(previousTab);
+        Get.find<GlobalNavController>().syncFromTab(
+          previousTab,
+          tabRootRoute: tabInitialRoutes[previousTab],
+        );
       }
       return true;
     }
@@ -147,7 +153,10 @@ class UserMainController extends GetxController {
       currentIndex.value = 0;
       _tabHistory.add(0);
       if (Get.isRegistered<GlobalNavController>()) {
-        Get.find<GlobalNavController>().syncFromTab(0);
+        Get.find<GlobalNavController>().syncFromTab(
+          0,
+          tabRootRoute: tabInitialRoutes[0],
+        );
       }
       return true;
     }

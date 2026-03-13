@@ -18,6 +18,7 @@ class DevotionalLibraryView extends GetView<DevotionalLibraryController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        endDrawer: const CommonEndDrawer(),
         body: Stack(
           children: [
             Column(

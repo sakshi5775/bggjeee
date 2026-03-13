@@ -24,6 +24,7 @@ class YearlyVratView extends BasePage<YearlyVratController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        endDrawer: const CommonEndDrawer(),
         body: Obx(() {
           if (controller.isLoading.value && controller.yearlyVratData.isEmpty) {
             return Center(

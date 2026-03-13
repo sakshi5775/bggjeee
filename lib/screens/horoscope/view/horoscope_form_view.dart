@@ -37,6 +37,7 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         drawer: UserDashboardView.buildDrawer(context),
+        endDrawer: const CommonEndDrawer(),
         body: Column(
           children: [
             if (!hideHeader) const CommonHeader(title: 'Horoscope'),
