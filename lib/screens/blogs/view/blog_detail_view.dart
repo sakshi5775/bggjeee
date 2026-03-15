@@ -126,7 +126,7 @@ class _BlogDetailViewState extends State<BlogDetailView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      endDrawer: const CommonEndDrawer(),
+      // endDrawer: const CommonEndDrawer(),
       body: Container(
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Column(

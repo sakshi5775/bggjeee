@@ -50,7 +50,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        endDrawer: const CommonEndDrawer(),
+        // endDrawer: const CommonEndDrawer(),
         body: Obx(
           () => CustomScrollView(
             slivers: [

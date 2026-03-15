@@ -37,10 +37,10 @@ class _CarrotAstrologyFormViewState extends State<CarrotAstrologyFormView> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        drawer: UserDashboardView.buildDrawer(context),
+        // drawer: UserDashboardView.buildDrawer(context),
         body: Column(
           children: [
-            const CommonHeader(title: 'Carrot Astrology'),
+            const CommonHeader(title: 'Carrot Astrology', showEndDrawer: false),
             Expanded(
               child: SingleChildScrollView(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 0.h),

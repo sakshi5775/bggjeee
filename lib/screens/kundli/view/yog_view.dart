@@ -15,10 +15,10 @@ class YogView extends BasePage<YogController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        drawer: UserDashboardView.buildDrawer(context),
+        // endDrawer: const CommonEndDrawer(),
         body: Column(
           children: [
-            const CommonHeader(title: 'Yog'),
+            const CommonHeader(title: 'Yog', showDrawer: true, showEndDrawer: false),
             Expanded(child: YogWidget(controller: controller)),
           ],
         ),

@@ -25,7 +25,7 @@ class MatchMakingFullKundliView extends StatelessWidget {
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Scaffold(
           backgroundColor: Colors.transparent,
-          endDrawer: const CommonEndDrawer(),
+          // endDrawer: const CommonEndDrawer(),
           body: Center(
             child: AutoTranslateText(
               'No data available',
@@ -48,7 +48,7 @@ class MatchMakingFullKundliView extends StatelessWidget {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        endDrawer: const CommonEndDrawer(),
+        // endDrawer: const CommonEndDrawer(),
         body: Column(
           children: [
             CommonHeader(title: '${isBoy ? 'Boy' : 'Girl'} Full Kundli'),

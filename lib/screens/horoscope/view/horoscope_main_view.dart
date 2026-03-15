@@ -34,8 +34,7 @@ class HoroscopeMainView extends StatelessWidget {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        drawer: UserDashboardView.buildDrawer(context),
-        endDrawer: const CommonEndDrawer(),
+        // endDrawer: const CommonEndDrawer(),
         body: Column(
           children: [
             // Shared Header

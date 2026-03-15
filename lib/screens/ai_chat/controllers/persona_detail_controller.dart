@@ -69,8 +69,35 @@ class PersonaDetailController extends BaseController {
   Future<void> loadPersonaDetail(String personaId) async {
     try {
       isLoading.value = true;
-      final loadedPersona = await _aiChatService.getPersonaById(personaId);
+      var loadedPersona = await _aiChatService.getPersonaById(personaId);
       if (loadedPersona != null) {
+        // Fetch Persona AI pricing from user-service (source of truth per doc)
+        final pricing = await _aiChatService.getPersonaPricing(personaId);
+        if (pricing != null) {
+          loadedPersona = PersonaModel(
+            id: loadedPersona.id,
+            displayName: loadedPersona.displayName,
+            name: loadedPersona.name,
+            image: loadedPersona.image,
+            description: loadedPersona.description,
+            category: loadedPersona.category,
+            tags: loadedPersona.tags,
+            specializations: loadedPersona.specializations,
+            rating: loadedPersona.rating,
+            totalRatings: loadedPersona.totalRatings,
+            price: loadedPersona.price,
+            chatPricePerMinute: pricing.effectiveChatPricePerMinute,
+            callPricePerMinute: pricing.effectiveCallPricePerMinute,
+            pricePerMin: pricing.effectiveChatPricePerMinute,
+            languages: loadedPersona.languages,
+            followers: loadedPersona.followers,
+            experienceYears: loadedPersona.experienceYears,
+            isOnline: loadedPersona.isOnline,
+            reviewStatistics: loadedPersona.reviewStatistics,
+            isFollowing: loadedPersona.isFollowing,
+          );
+        }
+
         // Get follow state from storage (since API doesn't return it)
         // If API returns isFollowing, use it; otherwise use storage
         final storedFollowState = _getFollowStateFromStorage(personaId);

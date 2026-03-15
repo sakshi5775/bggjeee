@@ -275,7 +275,16 @@ class PalmReadingController extends GetxController {
   }
 
   void onContinueFromForm() {
-    // Form fields are now optional, so we can continue even if not filled
+    if (!isFormValid.value) {
+      Get.snackbar(
+        'Validation Error',
+        'Please fill all required fields: Name, Date of Birth, and Language',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
+        colorText: Colors.white,
+      );
+      return;
+    }
     UserMainController.pushInCurrentTab(AppRoutes.palmReadingTime);
   }
 

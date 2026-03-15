@@ -98,7 +98,7 @@ class _AiGuiderViewState extends State<AiGuiderView>
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        endDrawer: const CommonEndDrawer(),
+        // endDrawer: const CommonEndDrawer(),
         body: Column(
           children: [
             if (!widget.hideHeader) const CommonHeader(title: 'AI Guide'),

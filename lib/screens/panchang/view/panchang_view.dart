@@ -13,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 
 class PanchangView extends BasePage<PanchangController> {
   final bool hideHeader;
@@ -28,8 +27,7 @@ class PanchangView extends BasePage<PanchangController> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        drawer: UserDashboardView.buildDrawer(context),
-        endDrawer: const CommonEndDrawer(),
+        // endDrawer: const CommonEndDrawer(),
         body: Column(
           children: [
             if (!hideHeader) const CommonHeader(title: 'Panchang'),

@@ -1,6 +1,7 @@
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
+import 'package:astrobharataiuser/services/deeplink_service.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/screens/panchang/service/panchang_service.dart';
 import 'package:flutter/foundation.dart';
@@ -242,7 +243,13 @@ class KundliResultController extends BaseController {
   final _panchangService = PanchangService();
 
   void _loadData() {
-    final arguments = Get.arguments as Map<String, dynamic>?;
+    Map<String, dynamic>? arguments = Get.arguments as Map<String, dynamic>?;
+    if (arguments == null || arguments['kundliData'] == null) {
+      arguments = DeepLinkHandler.lastPushedKundliArgs;
+      if (arguments != null) {
+        DeepLinkHandler.lastPushedKundliArgs = null;
+      }
+    }
     if (arguments != null) {
       kundliData.value = arguments['kundliData'] as Map<String, dynamic>?;
       formData.value = arguments['formData'] as Map<String, dynamic>?;
@@ -653,11 +660,12 @@ class KundliResultController extends BaseController {
 
     selectedTabIndex.value = index;
 
-    // Animate PageView to selected tab (use visible index)
+    // Animate PageView to selected tab (use visible index).
+    // Do not read pageController.page - multiple PageViews can attach to same controller and cause assertion.
     final visibleIdx = visibleTabIndices.indexOf(index);
     if (visibleIdx != -1 &&
         pageController.hasClients &&
-        pageController.page?.round() != visibleIdx) {
+        pageController.positions.length == 1) {
       pageController.animateToPage(
         visibleIdx,
         duration: const Duration(milliseconds: 300),
@@ -1832,7 +1840,7 @@ class KundliResultController extends BaseController {
         final visibleIdx = visibleTabIndices.indexOf(planetsIndex);
         if (visibleIdx != -1 &&
             pageController.hasClients &&
-            pageController.page?.round() != visibleIdx) {
+            pageController.positions.length == 1) {
           pageController.animateToPage(
             visibleIdx,
             duration: const Duration(milliseconds: 300),

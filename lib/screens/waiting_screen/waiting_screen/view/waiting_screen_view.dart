@@ -13,7 +13,7 @@ class WaitingScreenView extends BasePage<WaitingScreenController> {
     final size = MediaQuery.sizeOf(context);
     final imageSize = size.shortestSide * 0.9;
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.saffronmix,
       body: Container(
         width: double.infinity,
         height: double.infinity,

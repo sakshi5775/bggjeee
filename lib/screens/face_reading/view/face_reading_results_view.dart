@@ -30,7 +30,7 @@ class FaceReadingResultsView extends StatelessWidget {
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Scaffold(
           backgroundColor: Colors.transparent,
-          endDrawer: const CommonEndDrawer(),
+          // endDrawer: const CommonEndDrawer(),
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(100.h),
             child: const CommonHeader(
@@ -60,7 +60,7 @@ class FaceReadingResultsView extends StatelessWidget {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        endDrawer: const CommonEndDrawer(),
+        // endDrawer: const CommonEndDrawer(),
         body: SafeArea(
           child: Column(
             children: [

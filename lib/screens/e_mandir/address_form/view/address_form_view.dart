@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/address_form/controller/address_form_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,7 +21,7 @@ class AddressFormView extends BasePage<AddressFormController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        endDrawer: const CommonEndDrawer(),
+        // drawer: UserDashboardView.buildDrawer(context),
         body: Column(
           children: [
             // Header
@@ -29,6 +30,7 @@ class AddressFormView extends BasePage<AddressFormController> {
                 title: controller.isEditMode.value
                     ? 'Edit Address'
                     : 'Add New Address',
+                showEndDrawer: false,
               ),
             ),
             // Form content

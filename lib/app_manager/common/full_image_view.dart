@@ -12,7 +12,7 @@ class FullScreenImageViewer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer: const CommonEndDrawer(),
+      // endDrawer: const CommonEndDrawer(),
       body: Column(
         children: [
           const CommonHeader(title: 'Full Image'),

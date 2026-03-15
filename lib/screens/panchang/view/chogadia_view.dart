@@ -20,7 +20,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        endDrawer: const CommonEndDrawer(),
+        // endDrawer: const CommonEndDrawer(),
         body: Obx(() {
           if (controller.isLoading.value && controller.allChogadias.isEmpty) {
             return Center(

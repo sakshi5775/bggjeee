@@ -23,7 +23,7 @@ class CourseDetailView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      endDrawer: const CommonEndDrawer(),
+      // endDrawer: const CommonEndDrawer(),
       body: SafeArea(
         child: Obx(() {
           if (controller.isLoading.value &&

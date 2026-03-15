@@ -17,6 +17,7 @@ import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_vie
 import 'package:astrobharataiuser/screens/ecommerce/view/ecommerce_home_view.dart';
 import 'package:astrobharataiuser/screens/courses/views/courses_view.dart';
 
+import 'package:astrobharataiuser/services/deeplink_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -54,6 +55,13 @@ class UserMainController extends GetxController {
     // Tab 1 (Consult): no availability filter = show all three (Chat, Call, Video) per card
     _tabInitialArguments[1] = null;
     _tabInitialArguments[3] = {'isFeatured': true};
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    // Process pending kundli deeplink (e.g. app opened from astrologer app)
+    DeepLinkHandler.processPendingKundliDeeplink();
   }
 
   void changeTab(int index, {Object? arguments}) {

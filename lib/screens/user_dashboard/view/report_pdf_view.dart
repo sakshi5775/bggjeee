@@ -153,7 +153,7 @@ class _ReportPdfViewState extends State<ReportPdfView> {
     final headerColor = '#6F221E'.toColor();
     return Scaffold(
       backgroundColor: Colors.white,
-      endDrawer: const CommonEndDrawer(),
+      // endDrawer: const CommonEndDrawer(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

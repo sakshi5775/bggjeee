@@ -20,10 +20,10 @@ class TransitTodayView extends BasePage<TransitTodayController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        drawer: UserDashboardView.buildDrawer(context),
+        // endDrawer: const CommonEndDrawer(),
         body: Column(
           children: [
-            const CommonHeader(title: 'Transit Today'),
+            const CommonHeader(title: 'Transit Today', showDrawer: true, showEndDrawer: false),
             _buildTabs(),
             Expanded(
               child: PageView(

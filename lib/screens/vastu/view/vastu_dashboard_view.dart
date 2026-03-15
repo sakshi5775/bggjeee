@@ -130,8 +130,7 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        drawer: UserDashboardView.buildDrawer(context),
-        endDrawer: const CommonEndDrawer(),
+        // endDrawer: const CommonEndDrawer(),
         body: Padding(
           padding: EdgeInsets.only(
             top:

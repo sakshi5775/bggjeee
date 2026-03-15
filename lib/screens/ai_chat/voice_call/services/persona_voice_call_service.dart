@@ -1,10 +1,13 @@
 import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
 import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
+import 'package:astrobharataiuser/core/services/insufficient_wallet_exception.dart';
 import 'package:get/get.dart';
 
 class VoiceCallService {
   final ApiRepository _apiRepository = Get.find();
 
+  /// Initiates Persona AI voice call.
+  /// Throws [InsufficientWalletException] on 402 for recharge flow.
   Future<Map<String, dynamic>?> initiateCall({
     required String personaId,
     String platform = 'web',
@@ -14,8 +17,7 @@ class VoiceCallService {
       final body = <String, dynamic>{
         'platform': platform,
       };
-      
-      // Add language if provided
+
       if (language != null && language.isNotEmpty) {
         body['language'] = language;
       }
@@ -24,10 +26,25 @@ class VoiceCallService {
         EndPoints.voiceInitiate(personaId),
         body,
       );
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         return Map<String, dynamic>.from(response.body['data'] ?? {});
       }
-    } catch (_) {}
+
+      // 402: Insufficient wallet balance - parse and throw for recharge flow
+      if (response.statusCode == 402) {
+        final body = response.body;
+        final data = body is Map ? (body['data'] as Map<String, dynamic>?) : null;
+        throw InsufficientWalletException(
+          requiredAmount: (data?['requiredAmount'] as num?)?.toDouble() ?? 0,
+          currentBalance: (data?['currentBalance'] as num?)?.toDouble() ?? 0,
+          shortfall: (data?['shortfall'] as num?)?.toDouble() ?? 0,
+          message: (body is Map ? body['message']?.toString() : null),
+        );
+      }
+    } catch (e) {
+      if (e is InsufficientWalletException) rethrow;
+    }
     return null;
   }
 

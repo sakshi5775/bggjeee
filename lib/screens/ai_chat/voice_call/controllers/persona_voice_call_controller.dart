@@ -5,10 +5,12 @@ import 'dart:typed_data';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:astrobharataiuser/apihelper/api_provider/api_provider.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
+import 'package:astrobharataiuser/core/services/insufficient_wallet_exception.dart';
 import 'package:astrobharataiuser/core/services/language_service.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/screens/ai_chat/voice_call/services/persona_voice_call_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
+import 'package:astrobharataiuser/widgets/wallet_recharge_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -177,6 +179,19 @@ class VoiceCallController extends BaseController {
       await _tryConnectWs();
     } catch (e) {
       setLoadingState(false);
+      // 402: Insufficient wallet - show recharge dialog
+      if (e is InsufficientWalletException) {
+        await Get.dialog(
+          WalletRechargeDialog(
+            currentBalance: e.currentBalance,
+            requiredBalance: e.requiredAmount,
+            contextName: persona.displayName,
+            customMessage: e.message,
+          ),
+          barrierDismissible: false,
+        );
+        return;
+      }
       showErrorMessage(message: 'Failed to initiate call');
       UserMainController.popCurrentTab();
     }

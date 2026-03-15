@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:astrobharataiuser/controllers/global_chat_controller.dart';
+import 'package:astrobharataiuser/core/services/chat_minimize_manager.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/astrologer_chat_model.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
@@ -205,18 +206,24 @@ class AstrologerChatController extends BaseController
         session = await _chatService.getSession(initialChatId!);
 
         // CRITICAL: Always fetch astrologer when rejoining (even if _astrologer exists)
-        // This ensures we have the latest data and the UI updates correctly
-        if (session.astrologerId.isNotEmpty) {
+        // This ensures we have the latest data and the UI updates correctly.
+        // When API omits astrologerId (session.astrologerId == 'unknown'), use _astrologer from nav args.
+        final effectiveAstrologerId = (session.astrologerId.isEmpty ||
+                    session.astrologerId == 'unknown') &&
+                _astrologer != null
+            ? _astrologer!.astrologerId
+            : session.astrologerId;
+        if (effectiveAstrologerId.isNotEmpty) {
           // Check if we already have the correct astrologer
           final needsFetch =
               _astrologer == null ||
-              _astrologer!.astrologerId != session.astrologerId ||
-              _astrologer!.id != session.astrologerId;
+              _astrologer!.astrologerId != effectiveAstrologerId ||
+              _astrologer!.id != effectiveAstrologerId;
 
           if (needsFetch) {
             try {
               // Store astrologerId in local variable to avoid null issues in closures
-              final astrologerIdToFind = session.astrologerId;
+              final astrologerIdToFind = effectiveAstrologerId;
 
               if (kDebugMode)
                 print('🔍 Fetching astrologer for ID: $astrologerIdToFind');
@@ -1857,22 +1864,26 @@ class AstrologerChatController extends BaseController
 
   Future<void> onBackPressed() async {
     if (sessionStatus.value == 'ACTIVE' || sessionStatus.value == 'CREATED') {
-      final shouldEnd = await Get.dialog<bool>(
+      final choice = await Get.dialog<String>(
         AlertDialog(
-          title: const Text('End Chat?'),
+          title: const Text('Chat Options'),
           content: const Text(
-            'Do you want to end the chat session? Your balance will be updated.',
+            'Minimize chat to continue later or end the session.',
           ),
           actions: [
             TextButton(
-              onPressed: () => Get.back(result: false),
-              child: const Text('No'),
+              onPressed: () => Get.back(result: 'cancel'),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Get.back(result: 'minimize'),
+              child: const Text('Minimize'),
             ),
             ElevatedButton(
-              onPressed: () => Get.back(result: true),
+              onPressed: () => Get.back(result: 'end'),
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               child: const Text(
-                'Yes, End Chat',
+                'End Chat',
                 style: TextStyle(color: Colors.white),
               ),
             ),
@@ -1880,10 +1891,17 @@ class AstrologerChatController extends BaseController
         ),
       );
 
-      if (shouldEnd == true) {
+      if (choice == 'minimize' && Get.isRegistered<ChatMinimizeManager>()) {
+        Get.find<ChatMinimizeManager>().minimizeAstrologerChat(
+          astrologer: astrologer,
+          restoreState: {
+            'chatId': chatId.value,
+            'sessionStatus': sessionStatus.value,
+          },
+        );
+        Get.back();
+      } else if (choice == 'end') {
         await endChat();
-        // endChat will navigate back or update state
-        // If endChat doesn't navigate, do it here
         if (Get.currentRoute.contains('chat')) {
           Get.back();
         }

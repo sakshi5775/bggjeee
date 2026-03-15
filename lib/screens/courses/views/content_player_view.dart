@@ -31,7 +31,7 @@ class ContentPlayerView extends StatelessWidget {
 
     if (contentId == null) {
       return Scaffold(
-      endDrawer: const CommonEndDrawer(),
+      // endDrawer: const CommonEndDrawer(),
       body: Container(
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
           child: Column(
@@ -93,7 +93,7 @@ class ContentPlayerView extends StatelessWidget {
 
   Widget _buildLockedContentScreen(String title) {
     return Scaffold(
-      endDrawer: const CommonEndDrawer(),
+      // endDrawer: const CommonEndDrawer(),
       body: Container(
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Column(
@@ -160,7 +160,7 @@ class ContentPlayerView extends StatelessWidget {
     // Check access
     if (!canAccess && !content.isPreview) {
       return Scaffold(
-      endDrawer: const CommonEndDrawer(),
+      // endDrawer: const CommonEndDrawer(),
       body: Container(
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
           child: Column(
@@ -209,7 +209,7 @@ class ContentPlayerView extends StatelessWidget {
     }
 
     return Scaffold(
-      endDrawer: const CommonEndDrawer(),
+      // endDrawer: const CommonEndDrawer(),
       body: Container(
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Column(
@@ -494,7 +494,7 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Scaffold(
-      endDrawer: const CommonEndDrawer(),
+      // endDrawer: const CommonEndDrawer(),
       body: Container(
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
           child: Column(
@@ -513,7 +513,7 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
 
     if (_error != null || _content == null) {
       return Scaffold(
-      endDrawer: const CommonEndDrawer(),
+      // endDrawer: const CommonEndDrawer(),
       body: Container(
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
           child: Column(
@@ -557,7 +557,7 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
     // Check access
     if (!canAccess && !content.isPreview) {
       return Scaffold(
-      endDrawer: const CommonEndDrawer(),
+      // endDrawer: const CommonEndDrawer(),
       body: Container(
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
           child: Column(
@@ -607,7 +607,7 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
 
     if (url == null || url.isEmpty) {
       return Scaffold(
-      endDrawer: const CommonEndDrawer(),
+      // endDrawer: const CommonEndDrawer(),
       body: Container(
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
           child: Column(
@@ -653,7 +653,7 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
     }
 
     return Scaffold(
-      endDrawer: const CommonEndDrawer(),
+      // endDrawer: const CommonEndDrawer(),
       body: Container(
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Column(

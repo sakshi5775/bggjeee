@@ -17,10 +17,8 @@ import 'package:astrobharataiuser/utils/app_constant.dart';
 
 /// Standard Common Header for the application.
 /// Includes: Logo, Back button (if canPop), Home icon, Drawer icon, Wallet, Language, Cart, Search, End drawer (right menu).
-/// Set [showEndDrawer] to false when the screen already has its own drawer (e.g. user dashboard) to avoid two drawers.
-///
-/// For the menu icon to be clickable, the screen's [Scaffold] must have
-/// [endDrawer: const CommonEndDrawer()]. Otherwise the menu tap does nothing.
+/// Drawer rule (one drawer per screen): Form screens use left drawer only (drawer: UserDashboardView.buildDrawer)
+/// with [showEndDrawer: false]. All other screens use endDrawer only (endDrawer: const CommonEndDrawer()).
 class CommonHeader extends StatelessWidget {
   final String? title;
   final Widget? titleWidget;
@@ -184,16 +182,17 @@ class CommonHeader extends StatelessWidget {
                           () => InlineSearchOverlay.show(context),
                       tooltip: 'Search',
                     ),
-                  if (showEndDrawer)
-                    Builder(
-                      builder: (scaffoldContext) => _headerIconBtn(
-                        icon: Icons.menu_rounded,
-                        tooltip: 'Menu',
-                        onPressed: () {
-                          Scaffold.maybeOf(scaffoldContext)?.openEndDrawer();
-                        },
-                      ),
-                    ),
+                  // End drawer menu icon - commented out for now (drawer only on user_dashboard)
+                  // if (showEndDrawer)
+                  //   Builder(
+                  //     builder: (scaffoldContext) => _headerIconBtn(
+                  //       icon: Icons.menu_rounded,
+                  //       tooltip: 'Menu',
+                  //       onPressed: () {
+                  //         Scaffold.maybeOf(scaffoldContext)?.openEndDrawer();
+                  //       },
+                  //     ),
+                  //   ),
                 ],
               ),
             ],

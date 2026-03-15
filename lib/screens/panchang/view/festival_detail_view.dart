@@ -20,7 +20,7 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        endDrawer: const CommonEndDrawer(),
+        // endDrawer: const CommonEndDrawer(),
         body: Obx(() {
           if (controller.isLoading.value) {
             return Center(

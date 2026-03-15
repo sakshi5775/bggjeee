@@ -23,7 +23,7 @@ class NavtaraView extends BasePage<NavtaraController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        drawer: UserDashboardView.buildDrawer(context),
+        // endDrawer: const CommonEndDrawer(),
         body: Column(
           children: [
             const CommonHeader(title: 'Navtara'),

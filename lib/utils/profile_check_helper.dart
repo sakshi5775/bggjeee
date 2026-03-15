@@ -108,10 +108,13 @@ class ProfileCheckHelper {
     return balance >= requiredAmount;
   }
 
-  /// Get minimum wallet balance required for astrologer/persona
-  /// This can be customized based on astrologer/persona pricing
+  /// Get minimum wallet balance required for astrologer/persona.
+  /// - For Persona AI (estimatedMinutes=1): require pricePerMinute * 1 per doc.
+  /// - For astrologers: require 2x the estimated cost as buffer.
   double getMinimumRequiredBalance(double pricePerMinute, {int estimatedMinutes = 15}) {
-    // Require at least 2x the estimated cost as buffer
+    if (estimatedMinutes <= 1) {
+      return pricePerMinute * 1;
+    }
     return pricePerMinute * estimatedMinutes * 2;
   }
 }

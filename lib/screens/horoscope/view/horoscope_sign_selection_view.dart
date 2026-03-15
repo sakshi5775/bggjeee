@@ -22,10 +22,10 @@ class HoroscopeSignSelectionView extends StatelessWidget {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        drawer: UserDashboardView.buildDrawer(context),
+        // drawer: UserDashboardView.buildDrawer(context),
         body: Column(
           children: [
-            const CommonHeader(title: 'Daily Horoscope'),
+            const CommonHeader(title: 'Daily Horoscope', showEndDrawer: false),
             // Zodiac signs grid
             Expanded(
               child: SingleChildScrollView(

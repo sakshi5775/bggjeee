@@ -42,7 +42,7 @@ class TarotReadingView extends BasePage<TarotController> {
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Scaffold(
           backgroundColor: Colors.transparent,
-          endDrawer: const CommonEndDrawer(),
+          // endDrawer: const CommonEndDrawer(),
           body: Column(
             children: [
               // Fixed Header

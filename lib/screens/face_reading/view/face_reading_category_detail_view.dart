@@ -24,7 +24,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
     if (category == null || result == null) {
       return Scaffold(
         backgroundColor: '#F7EFBD'.toColor(),
-        endDrawer: const CommonEndDrawer(),
+        // endDrawer: const CommonEndDrawer(),
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(100.h),
           child: const CommonHeader(title: 'Category Detail'),
@@ -46,7 +46,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        endDrawer: const CommonEndDrawer(),
+        // endDrawer: const CommonEndDrawer(),
         body: Column(
           children: [
             CommonHeader(

@@ -23,7 +23,7 @@ class VastuDoshView extends StatelessWidget {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        drawer: UserDashboardView.buildDrawer(context),
+        // endDrawer: const CommonEndDrawer(),
         body: Padding(
           padding: EdgeInsets.only(
             top:

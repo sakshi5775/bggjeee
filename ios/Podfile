@@ -1,9 +1,7 @@
- 
-
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
- 
+
 platform :ios, '16.0'
- 
+
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 project 'Runner', {
@@ -16,15 +14,14 @@ project 'Runner', {
 def flutter_root
   generated_xcconfig_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
   unless File.exist?(generated_xcconfig_path)
-    raise "#{generated_xcconfig_path} must exist. If you're running pod install manually, make sure \`flutter pub get\` is executed first"
+    raise "#{generated_xcconfig_path} must exist. If you're running pod install manually, make sure `flutter pub get` is executed first"
   end
 
   File.foreach(generated_xcconfig_path) do |line|
     matches = line.match(/\AFLUTTER_ROOT=(.*)/)
     return matches[1].strip if matches
   end
-  
-  # If FLUTTER_ROOT not found, try to extract from environment or use default
+
   ENV['FLUTTER_ROOT'] || raise("FLUTTER_ROOT not found. Please run `flutter pub get` first")
 end
 
@@ -40,47 +37,43 @@ target 'Runner' do
 end
 
 post_install do |installer|
-  # Set deployment target for all targets
+
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
-    
+
     target.build_configurations.each do |config|
+
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
       config.build_settings['ENABLE_BITCODE'] = 'NO'
+
       config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
         '$(inherited)',
         'PERMISSION_NOTIFICATIONS=1',
       ]
-    end
-  end
-  
-  # Force iOS 16.0 on all pods - critical for ML Kit compatibility
-  installer.pods_project.build_configurations.each do |config|
-    config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
-  end
-  
-  # Also set it on pods_project level
-  installer.pods_project.targets.each do |target|
-    if target.respond_to?(:build_configurations)
-      target.build_configurations.each do |config|
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
-      end
+
     end
   end
 
-  # Fix: Suppress missing dSYM warnings for Agora AI frameworks (pre-built binaries with no dSYMs)
+
+  # Ensure all pods use same deployment target
+  installer.pods_project.build_configurations.each do |config|
+    config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
+  end
+
+  # Fix for Agora AI frameworks (missing dSYM)
   agora_ai_pods = [
     'AgoraAiEchoCancellation',
     'AgoraAiEchoCancellationLLExtension',
     'AgoraAiNoiseSuppression',
     'AgoraAiNoiseSuppressionLLExtension',
   ]
+
   installer.pods_project.targets.each do |target|
     if agora_ai_pods.any? { |pod| target.name.include?(pod) }
       target.build_configurations.each do |config|
-        # Use 'dwarf' instead of 'dwarf-with-dsym' since these frameworks have no dSYMs
         config.build_settings['DEBUG_INFORMATION_FORMAT'] = 'dwarf'
       end
     end
   end
+
 end

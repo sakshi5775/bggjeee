@@ -10,11 +10,13 @@ class ChatBinding extends Bindings {
     PersonaModel persona;
     UserProfileModel? chatProfile;
     String? languageCode;
+    Map<String, dynamic>? restoreState;
 
     if (args is Map<String, dynamic>) {
       persona = args['persona'] as PersonaModel;
       chatProfile = args['chatProfile'] as UserProfileModel?;
       languageCode = args['languageCode'] as String?;
+      restoreState = args['restoreState'] as Map<String, dynamic>?;
     } else {
       persona = args as PersonaModel;
     }
@@ -23,6 +25,7 @@ class ChatBinding extends Bindings {
           persona: persona,
           chatProfile: chatProfile,
           preferredLanguage: languageCode,
+          restoreState: restoreState,
         ));
   }
 }

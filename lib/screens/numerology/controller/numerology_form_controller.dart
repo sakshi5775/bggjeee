@@ -247,6 +247,26 @@ class NumerologyFormController extends BaseController {
   // Submit form and navigate to features page
   Future<void> submitForm() async {
     // Validate required fields
+    if (nameController.text.trim().isEmpty) {
+      Get.snackbar(
+        'Validation Error',
+        'Please enter your name',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
+        colorText: Colors.white,
+      );
+      return;
+    }
+    if (phoneController.text.trim().isEmpty) {
+      Get.snackbar(
+        'Validation Error',
+        'Please enter your phone number',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
+        colorText: Colors.white,
+      );
+      return;
+    }
     if (selectedDate.value == null) {
       Get.snackbar(
         'Validation Error',

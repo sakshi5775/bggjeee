@@ -24,7 +24,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # and users on 1.0.1 will see "Update available". If you only change +48 to +49 and
 # keep 1.0.1, the prompt will not show.
 
-version: 1.0.1+50
+version: 1.0.1+56
 
 
 environment:
@@ -111,6 +111,7 @@ dependencies:
   image_gallery_saver_plus: ^4.0.1
   hive_ce: ^2.19.3
   hive_ce_flutter: ^2.3.4
+  app_links: ^7.0.0
 dev_dependencies: 
   flutter_test:
     sdk: flutter

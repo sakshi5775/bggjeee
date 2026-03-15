@@ -51,7 +51,7 @@ class CoursesView extends GetView<CoursesController> {
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Scaffold(
           backgroundColor: Colors.transparent,
-          endDrawer: const CommonEndDrawer(),
+          // endDrawer: const CommonEndDrawer(),
           body: Column(
             children: [
               if (!hideHeader)

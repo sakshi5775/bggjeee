@@ -22,10 +22,10 @@ class DoshView extends BasePage<DoshController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        drawer: UserDashboardView.buildDrawer(context),
+        // endDrawer: const CommonEndDrawer(),
         body: Column(
           children: [
-            const CommonHeader(title: 'Dosh Report'),
+            const CommonHeader(title: 'Dosh Report', showDrawer: true, showEndDrawer: false),
             _buildTabs(),
             Expanded(
               child: PageView(

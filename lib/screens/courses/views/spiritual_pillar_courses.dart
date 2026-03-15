@@ -26,7 +26,7 @@ class SpiritualPillarCoursesView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF9F5F0),
-      endDrawer: const CommonEndDrawer(),
+      // endDrawer: const CommonEndDrawer(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

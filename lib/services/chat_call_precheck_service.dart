@@ -8,9 +8,12 @@ import 'package:get/get.dart';
 class ChatCallPrecheckService {
   final ProfileCheckHelper _profileHelper = ProfileCheckHelper();
 
-  /// Check profile and wallet before proceeding with chat/call
-  /// Returns true if all checks pass, false otherwise
-  /// Shows appropriate dialogs if checks fail
+  /// Check profile and wallet before proceeding with chat/call.
+  /// Returns true if all checks pass, false otherwise.
+  /// Shows appropriate dialogs if checks fail.
+  ///
+  /// For Persona AI (per doc): wallet check uses min 1 minute (1 message / 1 min call).
+  /// For astrologers: uses [estimatedMinutes] (default 15).
   Future<bool> checkBeforeProceeding({
     AstrologerModel? astrologer,
     PersonaModel? persona,
@@ -68,10 +71,12 @@ class ChatCallPrecheckService {
     */
 
     // Profile is complete, check wallet
+    // Persona AI: require min 1 min (1 message or 1 min call) per doc
+    final mins = persona != null ? 1 : estimatedMinutes;
     return await _checkWalletAndProceed(
       pricePerMinute: finalPricePerMinute,
       name: name,
-      estimatedMinutes: estimatedMinutes,
+      estimatedMinutes: mins,
     );
   }
 

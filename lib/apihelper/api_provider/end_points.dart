@@ -264,6 +264,11 @@ class EndPoints {
   static String personaAiUnfollow(String personaId) =>
       'astrologers/api/astrologers/persona-ai/$personaId/unfollow';
 
+  /// Persona AI Pricing (user-facing, from user-management-service)
+  /// GET /api/users/voice-persona/{personaId}/pricing
+  static String personaAiPricing(String personaId) =>
+      'users/api/users/voice-persona/$personaId/pricing';
+
   /// Persona AI Voice Call (User)
   static String voiceInitiate(String personaId) =>
       'users/api/users/voice/$personaId/initiate';
@@ -510,6 +515,9 @@ class EndPoints {
   // static const String chatSessionPurchase = 'chat/session/purchase'; // REMOVED
   static String chatSessionGet(String chatId) => 'chat/session/$chatId';
   static String chatSessionStart(String chatId) => 'chat/session/$chatId/start';
+  /// REST API on port 8000 (calls service). Use with default ApiRepository, not chat-tagged.
+  static String chatSessionStartRest(String chatId) =>
+      'calls/api/chat/session/$chatId/start';
   static String chatSessionEnd(String chatId) => 'chat/session/$chatId/end';
   static const String chatSessionsActive = 'chat/sessions/active';
   static const String chatSessionsHistory = 'chat/sessions/history';

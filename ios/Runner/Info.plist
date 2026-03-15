@@ -179,6 +179,18 @@
     <!-- OneSignal requires this for proper notification delivery -->
     <key>UIApplicationSupportsMultipleScenes</key>
     <true/>
-
+<key>CFBundleURLTypes</key>
+<array>
+    <dict>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>CFBundleURLName</key>
+        <string>com.astrobharatai.astrouser</string>
+        <key>CFBundleURLSchemes</key>
+        <array>
+            <string>astrouser</string>
+        </array>
+    </dict>
+</array>
 </dict>
 </plist>

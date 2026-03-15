@@ -60,7 +60,7 @@ class _NamasteHomeViewState extends State<NamasteHomeView>
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        endDrawer: const CommonEndDrawer(),
+        // endDrawer: const CommonEndDrawer(),
         body: SafeArea(
           top: !widget.hideHeader,
           bottom: false,

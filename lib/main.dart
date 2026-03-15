@@ -5,8 +5,11 @@ import 'package:astrobharataiuser/binding/waiting_screen_binding/waiting_screen_
 import 'package:astrobharataiuser/core/models/app_language_model.dart';
 import 'package:astrobharataiuser/core/localization/language_controller_v2.dart';
 import 'package:astrobharataiuser/core/services/custom_translation_service.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/routes/get_pages.dart';
+import 'package:astrobharataiuser/screens/waiting_screen/waiting_screen/view/waiting_screen_view.dart';
 import 'package:astrobharataiuser/firebase_options.dart';
+import 'package:astrobharataiuser/services/deeplink_service.dart';
 import 'package:astrobharataiuser/theme/app_theme.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -33,12 +36,14 @@ import 'package:upgrader/upgrader.dart';
 // import 'package:astrobharataiuser/core/services/notification_service.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:astrobharataiuser/apihelper/network_service/network_service.dart';
+import 'package:astrobharataiuser/widgets/floating_chat_bubble_overlay.dart';
 import 'package:astrobharataiuser/widgets/global_offline_screen.dart';
 import './apihelper/dependencies/dependencies.dart' as dep;
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:astrobharataiuser/core/controllers/global_nav_controller.dart';
+import 'package:astrobharataiuser/core/services/chat_minimize_manager.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/user_bottom_nav.dart';
 
 List<Locale>? _cachedSupportedLocales;
@@ -48,6 +53,7 @@ void main() {
     () async {
       // 1. Initialize bindings inside the same zone as runApp
       WidgetsFlutterBinding.ensureInitialized();
+      Get.put(DeepLinkHandler(), permanent: true);
 
       await Hive.initFlutter();
       await Hive.openBox('api_cache'); // Global cache box
@@ -387,6 +393,43 @@ class MyApp extends StatelessWidget {
                 initialRoute: PageRoutes.INITIAL,
                 initialBinding: WaitingScreenBinding(),
                 getPages: PageRoutes.routes,
+                // When app is cold-started by deeplink, platform may pass URI as initial route;
+                // GetX has no matching GetPage and PageRedirect.page throws. Force root so DeepLinkHandler can process the link.
+                onGenerateInitialRoutes: (String initialRoute) {
+                  // When cold-started via deeplink, platform passes URI; GetX has no matching GetPage and crashes.
+                  final isDeeplink = initialRoute.startsWith('astrouser://') ||
+                      (initialRoute.isNotEmpty && !initialRoute.startsWith('/'));
+                  final routeToUse =
+                      isDeeplink ? PageRoutes.INITIAL : initialRoute;
+                  final match = PageRoutes.routes.cast<GetPage>().firstWhereOrNull(
+                    (r) => r.name == routeToUse,
+                  );
+                  final page = match ??
+                      PageRoutes.routes.cast<GetPage>().firstWhereOrNull(
+                        (r) => r.name == PageRoutes.INITIAL,
+                      );
+                  if (page != null) {
+                    return [
+                      GetPageRoute(
+                        settings: RouteSettings(name: page.name),
+                        page: page.page,
+                        binding: page.binding,
+                      ),
+                    ];
+                  }
+                  return [
+                    GetPageRoute(
+                      settings: RouteSettings(name: PageRoutes.INITIAL),
+                      page: () => const WaitingScreenView(),
+                      binding: WaitingScreenBinding(),
+                    ),
+                  ];
+                },
+                unknownRoute: GetPage(
+                  name: AppRoutes.root,
+                  page: () => const WaitingScreenView(),
+                  binding: WaitingScreenBinding(),
+                ),
                 theme: AppTheme.lightTheme,
                 themeMode: ThemeMode.light,
                 navigatorObservers: [CrashlyticsNavigatorObserver()],
@@ -432,6 +475,9 @@ class MyApp extends StatelessWidget {
                                     }
                                     return const SizedBox.shrink();
                                   }),
+                                  // Floating chat bubble (minimized chat)
+                                  if (Get.isRegistered<ChatMinimizeManager>())
+                                    const FloatingChatBubbleOverlay(),
                                 ],
                               ),
                             ),

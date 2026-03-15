@@ -446,6 +446,17 @@ class CarrotAstrologyController extends GetxController {
       return;
     }
 
+    if (timeController.text.isEmpty) {
+      Get.snackbar(
+        'Validation Error',
+        'Please select your time of birth',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade700,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
     if (selectedLocation.value.isEmpty ||
         selectedLocation.value == 'Fetching Location...' ||
         selectedLocation.value == 'Select Location') {

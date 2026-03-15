@@ -15,10 +15,10 @@ class VarshphalView extends BasePage<VarshphalController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        drawer: UserDashboardView.buildDrawer(context),
+        // endDrawer: const CommonEndDrawer(),
         body: Column(
           children: [
-            const CommonHeader(title: 'Varshphal'),
+            const CommonHeader(title: 'Varshphal', showDrawer: true, showEndDrawer: false),
             Expanded(child: VarshphalContentWidget(controller: controller)),
           ],
         ),

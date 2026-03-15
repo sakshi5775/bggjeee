@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="launch_background">#FFFFFFFF</color>
+    <!-- Match WaitingScreenView / splash so no black screen when opening from deeplink -->
+    <color name="launch_background">#5D1C21</color>
     <color name="ic_launcher_background">#FFFFFF</color>
 </resources>

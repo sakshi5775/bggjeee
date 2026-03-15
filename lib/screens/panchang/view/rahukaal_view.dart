@@ -23,7 +23,7 @@ class RahukaalView extends BasePage<RahukaalController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        endDrawer: const CommonEndDrawer(),
+        // endDrawer: const CommonEndDrawer(),
         body: SingleChildScrollView(
           child: Column(
             children: [

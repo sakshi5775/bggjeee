@@ -28,11 +28,10 @@ class KundliFormView extends BasePage<KundliFormController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        drawer: UserDashboardView.buildDrawer(context),
-        endDrawer: const CommonEndDrawer(),
+        // drawer: UserDashboardView.buildDrawer(context),
         body: Column(
           children: [
-            const CommonHeader(title: 'Kundli'),
+            const CommonHeader(title: 'Kundli', showEndDrawer: false),
             // Tab Bar
             _buildTabBar(),
             // Tab Content

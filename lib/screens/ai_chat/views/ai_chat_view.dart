@@ -39,7 +39,7 @@ class AiChatView extends BasePage<AiChatController> {
           : BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        endDrawer: const CommonEndDrawer(),
+        // endDrawer: const CommonEndDrawer(),
         body: SafeArea(
           top: !hideHeader,
           bottom: false,
@@ -438,8 +438,8 @@ class AiChatView extends BasePage<AiChatController> {
             final precheckService = ChatCallPrecheckService();
             final canProceed = await precheckService.checkBeforeProceeding(
               persona: persona,
-              pricePerMinute: persona.chatPricePerMinute ?? persona.pricePerMin,
-              estimatedMinutes: 15,
+              pricePerMinute: persona.callPricePerMinute ?? persona.pricePerMin,
+              estimatedMinutes: 1,
             );
             if (canProceed) {
               UserMainController.pushInCurrentTab(

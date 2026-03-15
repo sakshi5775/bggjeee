@@ -1,22 +1,34 @@
 import 'dart:async';
 import 'package:astrobharataiuser/content_moderation/moderation_helper.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
+import 'package:astrobharataiuser/core/services/chat_balance_monitor.dart';
+import 'package:astrobharataiuser/core/services/chat_minimize_manager.dart';
+import 'package:astrobharataiuser/core/services/insufficient_wallet_exception.dart';
 import 'package:astrobharataiuser/data_model/chat_model.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/data_model/user_profile_model.dart';
+import 'package:astrobharataiuser/screens/ai_chat/services/ai_chat_service.dart';
 import 'package:astrobharataiuser/screens/chat/services/chat_service.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
+import 'package:astrobharataiuser/widgets/wallet_recharge_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ChatController extends BaseController {
   final ChatService _chatService = ChatService();
+  final AiChatService _aiChatService = AiChatService();
   final PersonaModel persona;
   final UserProfileModel? chatProfile;
   final String? preferredLanguage;
+  final Map<String, dynamic>? restoreState;
+
+  final ChatBalanceMonitor _balanceMonitor = ChatBalanceMonitor();
+
   ChatController({
     required this.persona,
     this.chatProfile,
     this.preferredLanguage,
+    this.restoreState,
   });
 
   // Messages
@@ -41,6 +53,10 @@ class ChatController extends BaseController {
   final RxString selectedTopic = ''.obs;
   final RxBool showTopicChips = false.obs;
 
+  // Pricing from voice-persona endpoint (visible to user)
+  final RxDouble chatPricePerMinute = 0.0.obs;
+  final RxDouble callPricePerMinute = 0.0.obs;
+
   // Listener function reference
   void _onMessageTextChanged() {
     messageText.value = messageController.text;
@@ -57,22 +73,82 @@ class ChatController extends BaseController {
   @override
   void onInit() {
     super.onInit();
-    // Listen to text field changes
     messageController.addListener(_onMessageTextChanged);
-    // Load conversation if conversationId exists
+    _applyRestoreState();
+  }
+
+  void _applyRestoreState() {
+    if (restoreState == null) return;
+    final convId = restoreState!['conversationId']?.toString();
+    final msgs = restoreState!['messages'] as List<dynamic>?;
+    if (convId != null && convId.isNotEmpty) conversationId.value = convId;
+    if (msgs != null && msgs.isNotEmpty) {
+      messages.value = msgs
+          .map((m) => ChatMessage(
+                id: (m['id'] ?? '').toString(),
+                role: (m['role'] ?? 'user').toString(),
+                content: (m['content'] ?? '').toString(),
+                timestamp: m['timestamp'] != null
+                    ? DateTime.tryParse(m['timestamp'].toString()) ?? DateTime.now()
+                    : DateTime.now(),
+                tokenCount: (m['tokenCount'] as num?)?.toInt(),
+              ))
+          .toList();
+    }
   }
 
   @override
   void onReady() {
     super.onReady();
-    // Send profile message automatically when chat starts (only if no existing conversation)
+    _loadPricing();
     if (conversationId.value.isEmpty && chatProfile != null) {
       _sendProfileMessageIfNeeded();
+    } else if (conversationId.value.isNotEmpty && chatPricePerMinute.value > 0) {
+      _startBalanceMonitor();
+    }
+  }
+
+  void _startBalanceMonitor() {
+    _balanceMonitor.start(
+      chatPricePerMinute: chatPricePerMinute.value,
+      onLowBalanceWarning: () {
+        showInfoMessage(
+          message: 'Your wallet balance is running low. Please recharge within 3 minutes to continue.',
+        );
+      },
+      onBalanceDepleted: () {
+        _balanceMonitor.stop();
+        showErrorMessage(
+          message: 'Insufficient balance. Chat ended. Please recharge to continue.',
+        );
+        if (Get.isRegistered<ChatMinimizeManager>()) {
+          Get.find<ChatMinimizeManager>().endChat();
+        }
+        UserMainController.popCurrentTab();
+      },
+    );
+  }
+
+  /// Fetch Persona AI pricing from user-service for display
+  Future<void> _loadPricing() async {
+    try {
+      final pricing = await _aiChatService.getPersonaPricing(persona.id);
+      if (pricing != null) {
+        chatPricePerMinute.value = pricing.effectiveChatPricePerMinute;
+        callPricePerMinute.value = pricing.effectiveCallPricePerMinute;
+      } else {
+        chatPricePerMinute.value = persona.chatPricePerMinute ?? persona.pricePerMin ?? 0;
+        callPricePerMinute.value = persona.callPricePerMinute ?? 0;
+      }
+    } catch (_) {
+      chatPricePerMinute.value = persona.chatPricePerMinute ?? persona.pricePerMin ?? 0;
+      callPricePerMinute.value = persona.callPricePerMinute ?? 0;
     }
   }
 
   @override
   void onClose() {
+    _balanceMonitor.stop();
     _typingTimer?.cancel();
     messageController.removeListener(_onMessageTextChanged);
     messageController.dispose();
@@ -152,6 +228,7 @@ class ChatController extends BaseController {
       // Update conversation ID - use the real conversationId from response for subsequent messages
       if (response.conversationId.isNotEmpty) {
         conversationId.value = response.conversationId;
+        if (chatPricePerMinute.value > 0) _startBalanceMonitor();
       }
 
       // Create assistant message placeholder (will be added after animation)

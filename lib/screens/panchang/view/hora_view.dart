@@ -19,7 +19,7 @@ class HoraView extends BasePage<HoraController> {
     return Container(
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
-        endDrawer: const CommonEndDrawer(),
+        // endDrawer: const CommonEndDrawer(),
         body: Obx(() {
           if (controller.isLoading.value && controller.horas.isEmpty) {
             return Center(

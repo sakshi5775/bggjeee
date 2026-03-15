@@ -1,9 +1,7 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
@@ -11,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class PalmReadingFormView extends StatelessWidget {
   const PalmReadingFormView({super.key});
@@ -28,7 +25,7 @@ class PalmReadingFormView extends StatelessWidget {
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Column(
           children: [
-            CommonHeader(title: 'Palm Reading'),
+            CommonHeader(title: 'Palm Reading', showEndDrawer: false),
             Expanded(
               child: SingleChildScrollView(
                 child: Center(
@@ -52,7 +49,7 @@ class PalmReadingFormView extends StatelessWidget {
 
                           // Instruction text
                           AutoTranslateText(
-                            'Enter your details (all fields are optional)',
+                            'Enter your details (all fields are required)',
                             style: MyTextTheme.mediumBCN.copyWith(
                               color: '#3E2723'.toColor(),
                             ),
@@ -68,11 +65,6 @@ class PalmReadingFormView extends StatelessWidget {
 
                           // Continue button
                           _buildContinueButton(context, controller),
-
-                          Spacing.h(16),
-
-                          // Skip button
-                          _buildSkipButton(context, controller),
                         ],
                       ),
                     ),
@@ -91,7 +83,7 @@ class PalmReadingFormView extends StatelessWidget {
       children: [
         // Name field
         _buildTextField(
-          label: 'Name',
+          label: 'Name *',
           hint: 'Enter your name',
           controller: controller.nameController,
           icon: Icons.person_outline,
@@ -226,7 +218,7 @@ class PalmReadingFormView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         AutoTranslateText(
-          'Language',
+          'Language *',
           style: MyTextTheme.mediumBCB.copyWith(color: const Color(0xFF5F2221)),
         ),
         Spacing.h(8),
@@ -288,65 +280,52 @@ class PalmReadingFormView extends StatelessWidget {
       padding: AppPaddings.symmetric(h: 16),
       child: SizedBox(
         width: double.infinity,
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: AppColors.orangeGradient,
-            borderRadius: BorderRadius.circular(12.r),
-            boxShadow: [
-              BoxShadow(
-                color: "#F38B3B".toColor().withValues(alpha: 0.35),
-                blurRadius: 6,
-                offset: const Offset(0, 3),
-              ),
-            ],
-          ),
-          child: ElevatedButton(
-            onPressed: () => controller.onContinueFromForm(),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              foregroundColor: Colors.white,
-              padding: AppPaddings.symmetric(v: 16, h: 24),
-              shape: RoundedRectangleBorder(
+        child: Obx(
+          () {
+            final valid = controller.isFormValid.value;
+            return Container(
+              decoration: BoxDecoration(
+                gradient: valid ? AppColors.orangeGradient : null,
+                color: valid ? null : Colors.grey.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(12.r),
+                boxShadow: valid
+                    ? [
+                        BoxShadow(
+                          color: "#F38B3B".toColor().withValues(alpha: 0.35),
+                          blurRadius: 6,
+                          offset: const Offset(0, 3),
+                        ),
+                      ]
+                    : null,
               ),
-              elevation: 0,
-              shadowColor: Colors.transparent,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AutoTranslateText(
-                  'CONTINUE',
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1,
+              child: ElevatedButton(
+                onPressed: () => controller.onContinueFromForm(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  foregroundColor: Colors.white,
+                  padding: AppPaddings.symmetric(v: 16, h: 24),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
+                  elevation: 0,
+                  shadowColor: Colors.transparent,
                 ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSkipButton(
-    BuildContext context,
-    PalmReadingController controller,
-  ) {
-    return Padding(
-      padding: AppPaddings.symmetric(h: 16),
-      child: TextButton(
-        onPressed: () => UserMainController.pushInCurrentTab(
-          AppRoutes.palmReadingHandGender,
-        ),
-        child: AutoTranslateText(
-          'Skip',
-          style: MyTextTheme.mediumBCB.copyWith(
-            color: "#F38B3B".toColor(),
-            fontWeight: FontWeight.w600,
-          ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AutoTranslateText(
+                      'CONTINUE',
+                      style: MyTextTheme.mediumBCB.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

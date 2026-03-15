@@ -1,6 +1,6 @@
-
 import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
 import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
+import 'package:astrobharataiuser/core/services/insufficient_wallet_exception.dart';
 import 'package:astrobharataiuser/data_model/chat_model.dart';
 import 'package:astrobharataiuser/data_model/user_profile_model.dart';
 import 'package:astrobharataiuser/utils/language_detector.dart';
@@ -113,8 +113,8 @@ class ChatService {
 
       final body = <String, dynamic>{
         'message': messageToSend,
+        'source': 'chat',
         // Only send language for new conversations (when conversationId is null/empty)
-        // For existing conversations, language is already set and cannot be changed
         if (conversationId == null || conversationId.isEmpty) 'language': language,
         if (conversationId != null && conversationId.isNotEmpty) 'conversationId': conversationId,
       };

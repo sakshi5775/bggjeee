@@ -21,7 +21,7 @@ class SupportTicketsListView extends GetView<SupportTicketController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        endDrawer: const CommonEndDrawer(),
+        // endDrawer: const CommonEndDrawer(),
         floatingActionButton: Container(
           decoration: BoxDecoration(
             gradient: AppColors.orangeGradient,

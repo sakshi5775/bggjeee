@@ -18,7 +18,7 @@ class ComingSoonPage extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
-        endDrawer: const CommonEndDrawer(),
+        // endDrawer: const CommonEndDrawer(),
         body: Column(
           children: [
             const CommonHeader(title: 'Coming Soon'),

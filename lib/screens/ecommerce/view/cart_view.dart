@@ -30,7 +30,7 @@ class CartView extends GetView<CartController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        endDrawer: const CommonEndDrawer(),
+        // endDrawer: const CommonEndDrawer(),
         body: Obx(() {
           if (controller.isLoading.value && controller.cart.value == null) {
             return Center(

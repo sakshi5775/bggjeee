@@ -22,7 +22,7 @@ class WalletView extends StatelessWidget {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        drawer: UserDashboardView.buildDrawer(context),
+        // endDrawer: const CommonEndDrawer(),
         body: SafeArea(
           bottom: false,
           child: Column(
@@ -67,7 +67,6 @@ class WalletView extends StatelessWidget {
   Widget _buildHeader(BuildContext context) {
     return CommonHeader(
       title: 'Wallet',
-      showEndDrawer: false, // This screen uses left drawer (buildDrawer)
       subtitle: AutoTranslateText(
         'Manage balance and transactions',
         style: TextStyle(

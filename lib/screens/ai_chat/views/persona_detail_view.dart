@@ -80,7 +80,7 @@ class PersonaDetailView extends StatelessWidget {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        endDrawer: const CommonEndDrawer(),
+        // endDrawer: const CommonEndDrawer(),
         body: SafeArea(
           bottom: false,
           child: Obx(() {

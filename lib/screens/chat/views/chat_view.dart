@@ -1,6 +1,8 @@
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/core/services/chat_minimize_manager.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/screens/chat/controllers/chat_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
@@ -21,40 +23,90 @@ class ChatView extends StatefulWidget {
   State<ChatView> createState() => _ChatViewState();
 }
 
-class _ChatViewState extends State<ChatView> {
+class _ChatViewState extends State<ChatView> with WidgetsBindingObserver {
   late final ScrollController scrollController;
 
   @override
   void initState() {
     super.initState();
     scrollController = ScrollController();
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     scrollController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+      _maybeMinimize();
+    }
+  }
+
+  void _maybeMinimize() {
+    final controller = Get.find<ChatController>();
+    if (controller.messages.isNotEmpty && controller.conversationId.value.isNotEmpty) {
+      if (Get.isRegistered<ChatMinimizeManager>()) {
+        Get.find<ChatMinimizeManager>().minimizePersonaChat(
+          persona: widget.persona,
+          chatProfile: controller.chatProfile,
+          preferredLanguage: controller.preferredLanguage,
+          conversationId: controller.conversationId.value,
+          messages: controller.messages,
+        );
+        UserMainController.popCurrentTab();
+      }
+    }
+  }
+
+  void _onBackTap(ChatController controller) {
+    if (controller.messages.isNotEmpty && controller.conversationId.value.isNotEmpty) {
+      if (Get.isRegistered<ChatMinimizeManager>()) {
+        Get.find<ChatMinimizeManager>().minimizePersonaChat(
+          persona: widget.persona,
+          chatProfile: controller.chatProfile,
+          preferredLanguage: controller.preferredLanguage,
+          conversationId: controller.conversationId.value,
+          messages: controller.messages,
+        );
+        UserMainController.popCurrentTab();
+        return;
+      }
+    }
+    UserMainController.popCurrentTab();
   }
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ChatController>();
 
-    return Container(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        if (controller.messages.isNotEmpty && controller.conversationId.value.isNotEmpty) {
+          _onBackTap(controller);
+        } else {
+          UserMainController.popCurrentTab();
+        }
+      },
+      child: Container(
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        endDrawer: const CommonEndDrawer(),
+        // endDrawer: const CommonEndDrawer(),
         body: SafeArea(
           child: Column(
             children: [
               // Standardized Header
               CommonHeader(
                 onBackTap: () {
-                  // Check if user has sent messages (has conversation)
                   if (controller.messages.isNotEmpty &&
                       controller.conversationId.value.isNotEmpty) {
-                    // Show review popup before going back
                     _showReviewPromptOnBack(controller);
                   } else {
                     UserMainController.popCurrentTab();
@@ -207,26 +259,56 @@ class _ChatViewState extends State<ChatView> {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          Row(
-                            children: [
-                              Container(
-                                width: 8.w,
-                                height: 8.w,
-                                decoration: const BoxDecoration(
-                                  color: Colors.green,
-                                  shape: BoxShape.circle,
+                          Obx(() {
+                            final chatPrice = controller.chatPricePerMinute.value;
+                            final callPrice = controller.callPricePerMinute.value;
+                            final chatFree = chatPrice <= 0;
+                            final callFree = callPrice <= 0;
+                            final pricingText = chatFree && callFree
+                                ? 'Free'
+                                : [
+                                    if (!chatFree) 'Chat ₹${chatPrice.toInt()}/min',
+                                    if (!callFree) 'Call ₹${callPrice.toInt()}/min',
+                                  ].join(' · ');
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 8.w,
+                                      height: 8.w,
+                                      decoration: const BoxDecoration(
+                                        color: Colors.green,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    SizedBox(width: 4.w),
+                                    AutoTranslateText(
+                                      "Online",
+                                      style: MyTextTheme.smallBCN.copyWith(
+                                        color: Colors.green,
+                                        fontSize: 12.sp,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              SizedBox(width: 4.w),
-                              AutoTranslateText(
-                                "Online",
-                                style: MyTextTheme.smallBCN.copyWith(
-                                  color: Colors.green,
-                                  fontSize: 12.sp,
-                                ),
-                              ),
-                            ],
-                          ),
+                                if (pricingText.isNotEmpty) ...[
+                                  SizedBox(height: 2.h),
+                                  AutoTranslateText(
+                                    pricingText,
+                                    style: MyTextTheme.smallBCN.copyWith(
+                                      color: const Color(0xFF666666),
+                                      fontSize: 11.sp,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ],
+                            );
+                          }),
                         ],
                       ),
                     ),
@@ -252,6 +334,7 @@ class _ChatViewState extends State<ChatView> {
           ),
         ),
       ),
+    ),
     );
   }
 
@@ -780,7 +863,16 @@ extension ChatViewReviewPrompt on _ChatViewState {
           TextButton(
             onPressed: () {
               Get.back(); // Close rating prompt dialog
-              UserMainController.popCurrentTab(); // Leave chat screen
+              if (Get.isRegistered<ChatMinimizeManager>()) {
+                Get.find<ChatMinimizeManager>().minimizePersonaChat(
+                  persona: widget.persona,
+                  chatProfile: controller.chatProfile,
+                  preferredLanguage: controller.preferredLanguage,
+                  conversationId: controller.conversationId.value,
+                  messages: controller.messages,
+                );
+              }
+              UserMainController.popCurrentTab();
             },
             child: AutoTranslateText(
               'Maybe Later',
@@ -792,7 +884,23 @@ extension ChatViewReviewPrompt on _ChatViewState {
           TextButton(
             onPressed: () {
               Get.back(); // Close prompt dialog
-              UserMainController.popCurrentTabWithResult({'showReviewPrompt': true});
+              if (Get.isRegistered<ChatMinimizeManager>()) {
+                Get.find<ChatMinimizeManager>().minimizePersonaChat(
+                  persona: widget.persona,
+                  chatProfile: controller.chatProfile,
+                  preferredLanguage: controller.preferredLanguage,
+                  conversationId: controller.conversationId.value,
+                  messages: controller.messages,
+                );
+              }
+              UserMainController.pushInCurrentTab(
+                AppRoutes.personaDetail,
+                arguments: {
+                  'personaId': widget.persona.id,
+                  'persona': widget.persona,
+                  'showReviewPrompt': true,
+                },
+              );
             },
             child: AutoTranslateText(
               'Rate Now',

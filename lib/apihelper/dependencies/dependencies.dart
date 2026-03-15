@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/controllers/global_chat_controller.dart';
+import 'package:astrobharataiuser/core/services/chat_minimize_manager.dart';
 import 'package:astrobharataiuser/services/global_free_service_manager.dart';
 import 'package:astrobharataiuser/core/services/notification_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
@@ -28,6 +29,7 @@ Future<void> init() async {
   Get.put(GlobalFreeServiceManager(), permanent: true);
   Get.put(GlobalChatController(), permanent: true);
   Get.put(AiPricingController(), permanent: true);
+  Get.put(ChatMinimizeManager(), permanent: true);
 
   // Register notification service (permanent across app lifecycle)
   // ⚠️ CRITICAL: Wrap in try-catch to prevent app crash if notification init fails

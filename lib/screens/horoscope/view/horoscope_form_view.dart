@@ -36,11 +36,10 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        drawer: UserDashboardView.buildDrawer(context),
-        endDrawer: const CommonEndDrawer(),
+        // drawer: UserDashboardView.buildDrawer(context),
         body: Column(
           children: [
-            if (!hideHeader) const CommonHeader(title: 'Horoscope'),
+            if (!hideHeader) const CommonHeader(title: 'Horoscope', showEndDrawer: false),
             Expanded(
               child: SingleChildScrollView(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 0.h),

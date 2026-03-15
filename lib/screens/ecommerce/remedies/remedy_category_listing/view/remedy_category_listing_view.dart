@@ -1,4 +1,4 @@
-﻿import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/app_manager/myButton.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/remedy_model.dart';
@@ -10,7 +10,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 
 class RemedyCategoryListingView
     extends BasePage<RemedyCategoryListingController> {
@@ -22,16 +21,10 @@ class RemedyCategoryListingView
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        drawer: UserDashboardView.buildDrawer(context),
+        // endDrawer: const CommonEndDrawer(),
         body: Column(
           children: [
-            CommonHeader(
-              title: 'Remedies',
-              showDrawer: true,
-              onMenuTap: () {
-                Scaffold.of(context).openDrawer();
-              },
-            ),
+            const CommonHeader(title: 'Remedies'),
 
             // Scrollable Content
             Expanded(

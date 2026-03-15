@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
 import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
+import 'package:astrobharataiuser/data_model/persona_ai_pricing_model.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -81,6 +82,25 @@ class AiChatService {
       debugPrint('Error fetching categories: $e');
       return [];
     }
+  }
+
+  /// Get Persona AI pricing from user-management-service.
+  /// Use for UI display and wallet pre-check.
+  Future<PersonaAIPricingModel?> getPersonaPricing(String personaId) async {
+    try {
+      final response = await _apiRepository.getApi(
+        EndPoints.personaAiPricing(personaId),
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.body['data'] as Map<String, dynamic>?;
+        if (data != null) {
+          return PersonaAIPricingModel.fromJson(data);
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching persona pricing: $e');
+    }
+    return null;
   }
 
   // Get single persona by ID

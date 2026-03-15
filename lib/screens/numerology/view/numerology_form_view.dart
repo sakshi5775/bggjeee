@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/numerology/controller/numerology_form_controller.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
@@ -23,10 +24,11 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        // drawer: UserDashboardView.buildDrawer(context),
         body: Column(
           children: [
             // Header
-            CommonHeader(title: 'Numerology'),
+            CommonHeader(title: 'Numerology', showEndDrawer: false),
             // Content
             Expanded(
               child: SingleChildScrollView(
@@ -76,10 +78,10 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
               ),
             ),
             Spacing.h(20),
-            // Name Field (Optional)
+            // Name Field
             _buildNameField(),
             Spacing.h(16),
-            // Phone Field (Optional)
+            // Phone Field
             _buildPhoneField(),
             Spacing.h(16),
             // Date of Birth Field
@@ -105,7 +107,7 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
             Icon(Icons.person, size: 18.w, color: "#6F221E".toColor()),
             Spacing.w(8),
             AutoTranslateText(
-              'Name (Optional)',
+              'Name *',
               style: MyTextTheme.mediumBCB.copyWith(
                 color: "#6F221E".toColor(),
                 fontWeight: FontWeight.w600,
@@ -147,7 +149,7 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
             Icon(Icons.phone, size: 18.w, color: "#6F221E".toColor()),
             Spacing.w(8),
             AutoTranslateText(
-              'Phone Number (Optional)',
+              'Phone Number *',
               style: MyTextTheme.mediumBCB.copyWith(
                 color: "#6F221E".toColor(),
                 fontWeight: FontWeight.w600,

@@ -102,7 +102,9 @@ class AstrologerChatService {
     }
   }
 
-  /// Start an existing CREATED session
+  /// Start an existing CREATED session (notify/activate so astrologer can accept).
+  /// Uses chat ApiRepository (port 8009) and path chat/session/{chatId}/start —
+  /// same server that created the session; port 8000 does not expose this route (404).
   Future<void> startExistingSession(String chatId) async {
     try {
       final response = await _apiRepository.postApi(

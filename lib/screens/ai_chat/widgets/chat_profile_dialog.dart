@@ -296,6 +296,12 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
                                 Icons.calendar_today_outlined,
                                 color: AppColors.deepOrange,
                               ),
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Please select date of birth';
+                                }
+                                return null;
+                              },
                             ),
                             _buildTextField(
                               label: 'Time of Birth',
@@ -308,6 +314,12 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
                                 Icons.access_time_outlined,
                                 color: AppColors.deepOrange,
                               ),
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Please select time of birth';
+                                }
+                                return null;
+                              },
                             ),
                           ],
                           spacing: 16,
@@ -324,6 +336,12 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
                                 Icons.location_on_outlined,
                                 color: AppColors.deepOrange,
                               ),
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Please enter place of birth';
+                                }
+                                return null;
+                              },
                             ),
                             _buildTextField(
                               label: 'Occupation',
@@ -334,6 +352,12 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
                                 Icons.work_outline,
                                 color: AppColors.deepOrange,
                               ),
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Please enter occupation';
+                                }
+                                return null;
+                              },
                             ),
                           ],
                           spacing: 16,
