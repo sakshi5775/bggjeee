@@ -9,6 +9,7 @@ import 'package:astrobharataiuser/screens/panchang/widgets/panchang_tool_button_
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/widgets/home_tab_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -35,7 +36,12 @@ class PanchangView extends BasePage<PanchangController> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Spacing.h(20),
+                    if (hideHeader)
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        child: const HomeTabBanner(category: 'general'),
+                      ),
+                    Spacing.h(hideHeader ? 12 : 20),
                     // Celestial Times Section
                     _buildCelestialTimesSection(),
 

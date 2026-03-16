@@ -17,6 +17,7 @@ import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_vie
 import 'package:astrobharataiuser/screens/ecommerce/view/ecommerce_home_view.dart';
 import 'package:astrobharataiuser/screens/courses/views/courses_view.dart';
 
+import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_chat_service.dart';
 import 'package:astrobharataiuser/services/deeplink_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -62,6 +63,13 @@ class UserMainController extends GetxController {
     super.onReady();
     // Process pending kundli deeplink (e.g. app opened from astrologer app)
     DeepLinkHandler.processPendingKundliDeeplink();
+    // When user reopens app after closing from RAM, cleanup orphaned chat sessions (CREATED >30min, PAUSED >30min).
+    // Skip when app was launched by kundli deeplink so deeplink flow is never affected.
+    final launchedByKundliDeeplink = Get.isRegistered<DeepLinkHandler>() &&
+        Get.find<DeepLinkHandler>().wasLaunchedByKundliDeeplink;
+    if (LoginGuard.isLoggedIn && !launchedByKundliDeeplink) {
+      AstrologerChatService.checkActiveSessionsAndCleanup(autoCleanup: true);
+    }
   }
 
   void changeTab(int index, {Object? arguments}) {

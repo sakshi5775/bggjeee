@@ -70,10 +70,20 @@ class AiPricingController extends GetxController {
     return '₹${pricing.priceOffer.toInt()}';
   }
 
+  /// Returns true only if a positive, non-zero price is configured for this key.
+  /// If pricing entry is missing or zero, we treat it as "not configured".
+  bool hasConfiguredPricing(String key) {
+    final pricing = getPricingFor(key);
+    if (pricing == null) return false;
+    return pricing.priceOffer > 0;
+  }
+
   bool hasSufficientBalance(String key) {
     final pricing = getPricingFor(key);
-    // If free, always sufficient
-    if (pricing == null || pricing.priceOffer <= 0) return true;
+    // If pricing entry is missing, treat as not configured (caller will show snackbar).
+    if (pricing == null) return false;
+    // Free or zero-priced services never require balance.
+    if (pricing.priceOffer <= 0) return true;
 
     final double balance = _walletController.walletBalance.value;
     return balance >= pricing.priceOffer;
@@ -82,12 +92,34 @@ class AiPricingController extends GetxController {
   /// Shows the global insufficient balance popup; user cannot proceed without recharging.
   Future<void> showInsufficientBalancePopup(String key) async {
     final pricing = getPricingFor(key);
-    final requiredBalance = pricing?.priceOffer ?? 0.0;
     final balance = _walletController.walletBalance.value;
+
+    // If pricing is missing, show a friendly snackbar instead of the
+    // generic insufficient-balance dialog.
+    if (pricing == null) {
+      final serviceName = key;
+      Get.snackbar(
+        'Pricing not set',
+        '$serviceName pricing is not configured yet. Please check again later.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 4),
+      );
+      return;
+    }
+
+    // Free/zero-priced services should never show insufficient balance.
+    if (pricing.priceOffer <= 0) {
+      return;
+    }
+
+    final requiredBalance = pricing.priceOffer;
+
     await InsufficientBalanceHelper.show(
       currentBalance: balance,
       requiredBalance: requiredBalance,
-      contextName: pricing?.displayName,
+      contextName: pricing.displayName,
     );
   }
 }

@@ -154,7 +154,7 @@ class AllAstrologersView extends StatelessWidget {
                         physics: const AlwaysScrollableScrollPhysics(),
                         slivers: [
                           SliverPadding(
-                            padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
+                            padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 0),
                             sliver: SliverToBoxAdapter(
                               child: Obx(() {
                                 final astroBanners = controller.astrologerBanners;
@@ -170,7 +170,7 @@ class AllAstrologersView extends StatelessWidget {
                                   return const SizedBox.shrink();
                                 }
                                 return Padding(
-                                  padding: EdgeInsets.only(bottom: 16.h),
+                                  padding: EdgeInsets.only(bottom: 12.h),
                                   child: BannerCarouselWidget(banners: banners),
                                 );
                               }),

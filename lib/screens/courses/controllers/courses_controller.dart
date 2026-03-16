@@ -268,8 +268,9 @@ class CoursesController extends BaseController
 
   // Perform search
   void _performSearch() {
-    searchQuery.value = searchController.text;
-    // Search will be triggered by onChanged in the view
+    searchQuery.value = searchController.text.trim();
+    // Trigger a fresh load from the courses API with the search query
+    loadCourses(refresh: true);
   }
 
   // Refresh

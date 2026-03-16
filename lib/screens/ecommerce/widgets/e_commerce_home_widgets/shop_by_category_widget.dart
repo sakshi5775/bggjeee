@@ -203,6 +203,7 @@ class ShopByCategoryWidget extends StatelessWidget {
                         url: category.image!,
                         width: 90.w,
                         height: 90.h,
+                        fit: BoxFit.cover,
                       )
                     : Container(
                         color: Colors.grey.withValues(alpha: 0.2),
@@ -234,19 +235,20 @@ class ShopByCategoryWidget extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 Spacing.h(5.52),
-                AutoTranslateText(
-                  '${category.productCount ?? 0} items',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400,
-                    fontSize: 11.04,
-                    color: '#6A7282'.toColor(),
-                    height: 1.0,
+                if ((category.productCount ?? 0) > 0)
+                  AutoTranslateText(
+                    '${category.productCount} items',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 11.04,
+                      color: '#6A7282'.toColor(),
+                      height: 1.0,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
               ],
             ),
           ],

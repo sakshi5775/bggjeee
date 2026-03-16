@@ -54,6 +54,7 @@ import '../widgets/our_services_carousel_widget.dart';
 import '../widgets/floating_astrologer_button.dart';
 import '../widgets/reports_tab_widget.dart';
 import '../widgets/horoscope_tab_widget.dart';
+import '../widgets/home_tab_banner.dart';
 // import '../widgets/quote_of_the_day_widget.dart';
 import '../widgets/history_section_widget.dart';
 
@@ -65,6 +66,7 @@ import '../../panchang/controller/panchang_controller.dart';
 import 'package:astrobharataiuser/screens/ai_chat/views/ai_chat_view.dart';
 import 'package:astrobharataiuser/screens/ai_chat/controllers/ai_chat_controller.dart';
 import 'package:astrobharataiuser/screens/courses/services/webinar_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UserDashboardView extends BasePage<UserDashboardController> {
   const UserDashboardView({super.key});
@@ -151,13 +153,25 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                       : const SizedBox.shrink(),
                 ),
                 Obx(
-                  () => controller.isAiGuiderDismissed.value
-                      ? const SizedBox.shrink()
-                      : Positioned(
-                          right: 1.w,
-                          bottom: 10.h,
-                          child: _buildCircularChatButton(),
-                        ),
+                  () {
+                    if (controller.isAiGuiderDismissed.value) {
+                      return const SizedBox.shrink();
+                    }
+                    final pos = controller.aiGuiderPosition.value;
+                    // Default position: bottom-right (original design)
+                    if (pos == null) {
+                      return Positioned(
+                        right: 1.w,
+                        bottom: 10.h,
+                        child: _buildCircularChatButton(),
+                      );
+                    }
+                    return Positioned(
+                      left: pos.dx,
+                      top: pos.dy,
+                      child: _buildCircularChatButton(),
+                    );
+                  },
                 ),
                 // Positioned(
                 //   left: 20.w,
@@ -336,7 +350,14 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         final h = MediaQuery.sizeOf(context).height;
         return SizedBox(
           height: (h - 240).clamp(400.0, h * 0.85),
-          child: const AiChatView(hideHeader: true, showBackButton: false),
+          child: AiChatView(
+            hideHeader: true,
+            showBackButton: false,
+            bannerWidget: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: const HomeTabBanner(category: 'general'),
+            ),
+          ),
         );
       }
 
@@ -3264,6 +3285,28 @@ class UserDashboardView extends BasePage<UserDashboardController> {
   }
 
   Widget _buildCircularChatButton() {
+    // Draggable & closable AI Guider button with original design.
+    // Position is controlled by the parent Positioned; here we only handle drag updates.
+    return Draggable<Offset>(
+      feedback: SizedBox(
+        width: 70.w,
+        height: 70.h,
+        child: _buildAiGuiderIcon(),
+      ),
+      childWhenDragging: const SizedBox.shrink(),
+      onDragEnd: (details) {
+        controller.aiGuiderPosition.value =
+            Offset(details.offset.dx, details.offset.dy);
+      },
+      child: SizedBox(
+        width: 70.w,
+        height: 70.h,
+        child: _buildAiGuiderIcon(),
+      ),
+    );
+  }
+
+  Widget _buildAiGuiderIcon() {
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -3301,8 +3344,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           child: GestureDetector(
             onTap: () => controller.dismissAiGuider(),
             child: Container(
-              width: 24.w,
-              height: 24.w,
+              width: 22.w,
+              height: 22.w,
               decoration: BoxDecoration(
                 color: Colors.red.shade400,
                 shape: BoxShape.circle,
@@ -3316,7 +3359,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               ),
               child: Icon(
                 Icons.close,
-                size: 14.w,
+                size: 13.w,
                 color: Colors.white,
               ),
             ),
@@ -4863,108 +4906,47 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   ],
                 ),
               ),
-              // Profile Card
-              // Container(
-              //   margin: AppPaddings.symmetric(h: 16),
-              //   padding: AppPaddings.all(16),
-              //   decoration: BoxDecoration(
-              //     color: Colors.white, // White card background
-              //     borderRadius: AppRadius.all(12),
-              //     boxShadow: [
-              //       BoxShadow(
-              //         color: Colors.black.withValues(alpha: 0.05),
-              //         blurRadius: 10,
-              //         offset: const Offset(0, 2),
-              //       ),
-              //     ],
-              //   ),
-              //   child: Column(
-              //     children: [
-              //       Row(
-              //         children: [
-              //           Obx(() {
-              //             final profilePic = controller
-              //                 ?.userProfile.value?.personalInfo?.profilePicture;
-              //             final url = profilePic ?? '';
-              //             if (url.isEmpty) {
-              //               return Container(
-              //                 width: 48.w,
-              //                 height: 48.w,
-              //                 decoration: BoxDecoration(
-              //                   shape: BoxShape.circle,
-              //                   color: "#6F221E".toColor().withValues(alpha: 0.2),
-              //                 ),
-              //                 child: Icon(
-              //                   Icons.person,
-              //                   color: "#6F221E".toColor(),
-              //                   size: 28.w,
-              //                 ),
-              //               );
-              //             }
-              //             return SizedBox(
-              //               width: 48.w,
-              //               height: 48.w,
-              //               child: NetworkImageWithLoader(
-              //                 url: url,
-              //                 width: 48.w,
-              //                 height: 48.w,
-              //                 isCircular: true,
-              //               ),
-              //             );
-              //           }),
-              //           Spacing.w(12),
-              //           Expanded(
-              //             child: Column(
-              //               crossAxisAlignment: CrossAxisAlignment.start,
-              //               children: [
-              //                 Obx(() {
-              //                   final name = controller
-              //                           ?.userProfile.value?.personalInfo?.fullName ??
-              //                       controller?.userName.value ??
-              //                       'User';
-              //                   return AutoTranslateText(
-              //                     name.isNotEmpty ? name : 'User',
-              //                     style: MyTextTheme.mediumBCB
-              //                         .copyWith(
-              //                           color: "#6F221E".toColor(),
-              //                           fontWeight: FontWeight.bold,
-              //                         )
-              //                         .merge(AppTypography.h3),
-              //                   );
-              //                 }),
-              //                 Spacing.h(4),
-              //               ],
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //       Spacing.h(16),
-              //       Row(
-              //         mainAxisAlignment: MainAxisAlignment.spaceAround,
-              //         children: [
-              //           // _buildStatItemStatic('12', 'Consults'),
-              //           // _buildStatItemStatic('4', 'Orders'),
-              //           Obx(() {
-              //             final walletController =
-              //                 Get.isRegistered<WalletController>()
-              //                 ? Get.find<WalletController>()
-              //                 : null;
-              //             final balance =
-              //                 walletController?.walletBalance.value ?? 0.0;
-              //             final formattedBalance = balance >= 1000
-              //                 ? '₹${(balance / 1000).toStringAsFixed(1)}K'
-              //                 : '₹${balance.toStringAsFixed(0)}';
-              //             return _buildStatItemStatic(
-              //               formattedBalance,
-              //               'Wallet',
-              //             );
-              //           }),
-              //         ],
-              //       ),
-              //     ],
-              //   ),
-              // ),
-              // Spacing.h(24),
+              // ACCOUNT section (profile + key account links) shown first
+              _buildDrawerSection(
+                context: context,
+                title: 'ACCOUNT',
+                children: [
+                  _buildDrawerWalletItem(context),
+                  _buildDrawerOrdersItem(context),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.person,
+                    label: 'Profile',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      UserMainController.pushInCurrentTab(AppRoutes.profile);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.star_rate,
+                    label: 'Rate App',
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                      const url =
+                          'https://play.google.com/store/apps/details?id=com.astrobharatai.astrouser&pcampaignid=web_share';
+                      final uri = Uri.parse(url);
+                      if (await canLaunchUrl(uri)) {
+                        await launchUrl(
+                          uri,
+                          mode: LaunchMode.externalApplication,
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
+              Spacing.h(24),
+              Divider(
+                color: const Color(0xFF5F2221).withValues(alpha: 0.2),
+                thickness: 1,
+              ),
+              Spacing.h(12),
               // EXPLORE Section
               _buildDrawerSection(
                 context: context,
@@ -5348,31 +5330,6 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                         AppRoutes.allAstrologers,
                         arguments: 'Kids',
                       );
-                    },
-                  ),
-                ],
-              ),
-              Spacing.h(24),
-              Divider(
-                color: const Color(0xFF5F2221).withValues(alpha: 0.2),
-                thickness: 1,
-              ),
-              Spacing.h(12),
-              // ACCOUNT Section
-              _buildDrawerSection(
-                context: context,
-                title: 'ACCOUNT',
-                children: [
-                  _buildDrawerWalletItem(context),
-                  _buildDrawerOrdersItem(context),
-
-                  _buildDrawerItemStatic(
-                    context: context,
-                    icon: Icons.person,
-                    label: 'Profile',
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      UserMainController.pushInCurrentTab(AppRoutes.profile);
                     },
                   ),
                 ],

@@ -8,10 +8,9 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/ai_guider/controller/ai_guider_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
@@ -98,46 +97,49 @@ class _AiGuiderViewState extends State<AiGuiderView>
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        // endDrawer: const CommonEndDrawer(),
         body: Column(
           children: [
-            if (!widget.hideHeader) const CommonHeader(title: 'AI Guide'),
+            if (!widget.hideHeader)
+              CommonHeader(
+                title: 'AI Parashar',
+                showSearch: true,
+              ),
             Expanded(
               child: FadeTransition(
                 opacity: _fadeAnimation,
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Spacing.h(8),
-                            _buildMainIcon(),
-                            Spacing.h(8),
-                            _buildTitle(),
-                            Spacing.h(4),
-                            _buildSubtitle(),
-                            Spacing.h(12),
-                            SlideTransition(
-                              position: _slideAnimation,
-                              child: _buildAnimationArea(controller),
-                            ),
-                            Spacing.h(12),
-                            _buildConversationArea(controller),
-                            Spacing.h(12),
-                            _buildServiceGrid(),
-                            Spacing.h(10),
-                            _buildCategoryFilters(),
-                            Spacing.h(14),
-                          ],
-                        ),
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.only(
+                    left: 16.w,
+                    right: 16.w,
+                    bottom: 16.h,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Spacing.h(8),
+                      _buildTitle(),
+                      Spacing.h(4),
+                      _buildSubtitle(),
+                      Spacing.h(12),
+                      SlideTransition(
+                        position: _slideAnimation,
+                        child: _buildAnimationArea(controller),
                       ),
-                    ),
-                    _buildInputArea(controller),
-                  ],
+                      Spacing.h(12),
+                      _buildConversationArea(controller),
+                      Spacing.h(12),
+                      _buildServiceGrid(),
+                      Spacing.h(10),
+                      _buildCategoryFilters(),
+                      Spacing.h(14),
+                    ],
+                  ),
                 ),
               ),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
+              child: _buildInputArea(controller),
             ),
           ],
         ),
@@ -145,92 +147,7 @@ class _AiGuiderViewState extends State<AiGuiderView>
     );
   }
 
-  Widget _buildHeader(AiGuiderController controller) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => controller.closeGuider(),
-            child: Container(
-              width: 36.w,
-              height: 36.w,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 3,
-                    offset: const Offset(0, 1),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.arrow_back,
-                color: '#3E2723'.toColor(),
-                size: 18.w,
-              ),
-            ),
-          ),
-          SizedBox(width: 8.w),
-          Obx(
-            () => GestureDetector(
-              onTap: () => controller.toggleSoundMuted(),
-              child: Container(
-                width: 36.w,
-                height: 36.w,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.08),
-                      blurRadius: 3,
-                      offset: const Offset(0, 1),
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  controller.isSoundMuted.value
-                      ? Icons.volume_off
-                      : Icons.volume_up,
-                  color: controller.isSoundMuted.value
-                      ? Colors.grey
-                      : '#FF6B35'.toColor(),
-                  size: 18.w,
-                ),
-              ),
-            ),
-          ),
-          Spacer(),
-          GestureDetector(
-            onTap: () => _showLanguageSelector(controller),
-            child: Container(
-              width: 36.w,
-              height: 36.w,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 3,
-                    offset: const Offset(0, 1),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.language,
-                color: '#FF6B35'.toColor(),
-                size: 18.w,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Global search bar removed; bottom input now handles global navigation.
 
   static const List<Map<String, dynamic>> _serviceItems = [
     {
@@ -294,7 +211,7 @@ class _AiGuiderViewState extends State<AiGuiderView>
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: EdgeInsets.only(bottom: 8.h),
+            padding: EdgeInsets.only(bottom: 0.h),
             child: AutoTranslateText(
               'Quick access',
               style: MyTextTheme.mediumBCB
@@ -498,21 +415,26 @@ class _AiGuiderViewState extends State<AiGuiderView>
   Widget _buildTitle() {
     return Column(
       children: [
-        SvgPicture.network(
-          'https://d3c2un7ipdye89.cloudfront.net/homepageVideos/Frame+1321314931.svg',
-          height: 36.h,
-          fit: BoxFit.contain,
-        ),
-        Spacing.h(4),
         AutoTranslateText(
-          'Guide',
+          'AI Parashar',
           style: MyTextTheme.largeBCB
               .copyWith(
                 color: AppColors.textPrimary,
-                fontWeight: FontWeight.w600,
-                fontSize: 14.sp,
+                fontWeight: FontWeight.w700,
+                fontSize: 16.sp,
               )
               .merge(AppTypography.h2),
+          textAlign: TextAlign.center,
+        ),
+        Spacing.h(2),
+        AutoTranslateText(
+          'Your Intelligent Astro Navigation Companion',
+          style: MyTextTheme.mediumBCN
+              .copyWith(
+                color: AppColors.textSecondary,
+                fontSize: 11.sp,
+              )
+              .merge(AppTypography.body1),
           textAlign: TextAlign.center,
         ),
       ],
@@ -873,6 +795,7 @@ class _AiGuiderViewState extends State<AiGuiderView>
                   vertical: 8.h,
                 ),
               ),
+              onChanged: controller.onInputChanged,
               onSubmitted: (value) {
                 if (value.trim().isNotEmpty) {
                   controller.submitTextQuery(value);

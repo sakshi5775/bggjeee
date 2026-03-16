@@ -456,6 +456,7 @@ class _ProductListViewState extends State<ProductListView> {
                         url: imageUrl,
                         width: 90.w,
                         height: 90.w,
+                        fit: BoxFit.cover,
                       )
                     : Container(
                         color: Colors.grey[200],
@@ -577,9 +578,11 @@ class _ProductListViewState extends State<ProductListView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Product Image
-            Container(
+            SizedBox(
               width: double.infinity,
+              height: 124.76.h,
               child: Stack(
+                fit: StackFit.expand,
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10.28.r),

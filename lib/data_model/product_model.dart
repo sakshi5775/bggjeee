@@ -141,8 +141,48 @@ class ProductModel {
       basePrice = json['basePrice']?.toDouble();
       discountedPrice = json['discountedPrice']?.toDouble();
       discountPercentage = json['discountPercentage']?.toDouble();
-      currentPrice = json['currentPrice']?.toDouble() ?? 
-                     (discountedPrice ?? basePrice);
+      currentPrice =
+          json['currentPrice']?.toDouble() ?? (discountedPrice ?? basePrice);
+
+      // Some list APIs return price only inside a nested `pricing` object.
+      // Normalize so list views and detail views show consistent non-zero prices.
+      if (json['pricing'] is Map<String, dynamic>) {
+        final pricing = json['pricing'] as Map<String, dynamic>;
+        final double? pricingMrp =
+            pricing['mrp'] != null ? (pricing['mrp'] as num).toDouble() : null;
+        final double? pricingCalculated = pricing['calculatedPrice'] != null
+            ? (pricing['calculatedPrice'] as num).toDouble()
+            : null;
+
+        // Prefer not to override explicit basePrice/currentPrice unless they are null or zero.
+        if ((basePrice == null || basePrice == 0) &&
+            (pricingMrp != null && pricingMrp > 0)) {
+          basePrice = pricingMrp;
+        } else if ((basePrice == null || basePrice == 0) &&
+            (pricingCalculated != null && pricingCalculated > 0)) {
+          basePrice = pricingCalculated;
+        }
+
+        if ((currentPrice == null || currentPrice == 0) &&
+            (pricingCalculated != null && pricingCalculated > 0)) {
+          currentPrice = pricingCalculated;
+        } else if ((currentPrice == null || currentPrice == 0) &&
+            (pricingMrp != null && pricingMrp > 0)) {
+          currentPrice = pricingMrp;
+        }
+      }
+
+      // If discountPercentage is missing but we have basePrice/currentPrice,
+      // compute it so list cards can still show the badge correctly.
+      if ((discountPercentage == null || discountPercentage == 0) &&
+          basePrice != null &&
+          basePrice! > 0 &&
+          currentPrice != null &&
+          currentPrice! > 0 &&
+          currentPrice! < basePrice!) {
+        discountPercentage =
+            ((basePrice! - currentPrice!) / basePrice! * 100).toDouble();
+      }
       taxRate = json['taxRate']?.toDouble();
       hasVariants = json['hasVariants'] is bool ? json['hasVariants'] : null;
       if (json['specifications'] != null && json['specifications'] is Map) {

@@ -138,7 +138,7 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildBannersSection(),
-          SizedBox(height: 8),
+          SizedBox(height: 8.h),
           _buildGrid(controller),
           SizedBox(height: 80.h),
         ],
@@ -149,7 +149,7 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
   Widget _buildBannersSection() {
     if (_loadingBanners && _banners.isEmpty) {
       return SizedBox(
-        height: 110.h,
+        height: 135.h,
         child: Center(
           child: SizedBox(
             width: 24.w,

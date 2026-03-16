@@ -123,6 +123,27 @@ class AstrologerChatService {
     }
   }
 
+  /// Call when app reopens after being closed from RAM. Checks active/paused/pending sessions and
+  /// with [autoCleanup] true cleans up: CREATED >30min pending, PAUSED >30min inactive.
+  /// Uses main ApiRepository (port 8000, calls service). Fire-and-forget; safe to call from onReady.
+  static Future<void> checkActiveSessionsAndCleanup({bool autoCleanup = true}) async {
+    try {
+      final repo = Get.find<ApiRepository>();
+      await repo.getApi(
+        EndPoints.chatSessionsCheckActive,
+        query: {'autoCleanup': autoCleanup.toString()},
+        useAuthHeader: true,
+      );
+      if (kDebugMode) {
+        print('ChatSessionCleanup: check-active?autoCleanup=$autoCleanup completed');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('ChatSessionCleanup: check-active failed (non-fatal): $e');
+      }
+    }
+  }
+
   /// Get chat session details
   Future<AstrologerChatSession> getSession(String chatId) async {
     try {

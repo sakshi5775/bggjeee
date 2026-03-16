@@ -12,6 +12,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/widgets/home_tab_banner.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AllVideosView extends BasePage<AllVideosController> {
@@ -71,6 +72,11 @@ class AllVideosView extends BasePage<AllVideosController> {
                 ),
                 SizedBox(height: 4.h),
               ],
+              if (hideHeader)
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: const HomeTabBanner(category: 'general'),
+                ),
               _buildTabBar(),
               SizedBox(height: 12.h),
               Expanded(

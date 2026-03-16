@@ -153,6 +153,7 @@ class _CartItemCard extends StatelessWidget {
                                 url: imageUrl,
                                 height: 110.h,
                                 width: 110.w,
+                                fit: BoxFit.cover,
                               )
                             : Container(
                                 height: 110.h,

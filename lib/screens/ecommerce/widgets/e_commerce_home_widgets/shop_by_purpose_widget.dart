@@ -101,15 +101,45 @@ class ShopByPurposeWidget extends StatelessWidget {
                 );
               }
 
+              final visiblePurposes = controller.purposes
+                  .where((p) => (p['title'] ?? '').toLowerCase() != 'rashi')
+                  .toList();
+
+              if (visiblePurposes.isEmpty) {
+                return SizedBox(
+                  height: 180.h,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.inventory_2_outlined,
+                          size: 48.w,
+                          color: AppColors.textSecondary,
+                        ),
+                        Spacing.h(12),
+                        AutoTranslateText(
+                          'No purposes available',
+                          style: TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 14.sp,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+
               return SizedBox(
                 height: 180.h,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 8.h, bottom: 8.h),
-                  itemCount: controller.purposes.length,
+                  itemCount: visiblePurposes.length,
                   separatorBuilder: (context, index) => Spacing.w(12.w),
                   itemBuilder: (context, index) {
-                    final purpose = controller.purposes[index];
+                    final purpose = visiblePurposes[index];
                     return _buildPurposeCard(purpose, context, index);
                   },
                 ),
@@ -157,6 +187,7 @@ class ShopByPurposeWidget extends StatelessWidget {
                       url: purpose['image']!,
                       width: double.infinity,
                       height: double.infinity,
+                      fit: BoxFit.cover,
                     )
                   : Container(
                       color: Colors.grey.withValues(alpha: 0.3),

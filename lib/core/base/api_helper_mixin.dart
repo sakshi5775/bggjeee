@@ -15,8 +15,10 @@ mixin ApiHelperMixin {
 
   /// Legacy alias for backward compatibility.
   void showErrorMessage({String? title, required dynamic message}) {
+    // Normalize certain backend messages for better UX
+    final normalized = _normalizeErrorMessage(message);
     // Forward to centralized handler
-    _handleErrorGlobally(message);
+    _handleErrorGlobally(normalized);
   }
 
   /// Legacy alias for backward compatibility.
@@ -78,6 +80,18 @@ mixin ApiHelperMixin {
         showWarningSnackbar(e);
       }
     }
+  }
+
+  /// Maps raw backend / exception messages to more user-friendly variants.
+  dynamic _normalizeErrorMessage(dynamic message) {
+    if (message is String) {
+      final lower = message.toLowerCase().trim();
+      if (lower == 'insufficient stock available' ||
+          lower.contains('insufficient stock available')) {
+        return 'Out of stock';
+      }
+    }
+    return message;
   }
 
   /// Executes an async task with loading state and standardized error handling.
