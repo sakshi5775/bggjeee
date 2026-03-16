@@ -1370,13 +1370,13 @@ class PageRoutes {
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),
-    GetPage(
-      name: AppRoutes.kundliResult,
-      page: () => const KundliResultView(),
-      binding: KundliResultBinding(),
-      transition: Transition.rightToLeft,
-      transitionDuration: Duration(milliseconds: 300),
-    ),
+      GetPage(
+        name: AppRoutes.kundliResult,
+        page: () => const KundliResultView(),
+        binding: KundliResultBinding(),
+        transition: Transition.rightToLeft,
+        transitionDuration: Duration(milliseconds: 300),
+      ),
     GetPage(
       name: AppRoutes.shodashvarga,
       page: () => const ShodashvargaView(),
