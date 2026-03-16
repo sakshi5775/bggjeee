@@ -87,13 +87,13 @@ class _ReportsTabWidgetState extends State<ReportsTabWidget> {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildBannersSection(),
-            SizedBox(height: 16.h),
+            SizedBox(height: 12.h),
             if (_loadingReports && _reports.isEmpty)
               _buildShimmerLoader()
             else if (_reports.isEmpty)
@@ -120,7 +120,7 @@ class _ReportsTabWidgetState extends State<ReportsTabWidget> {
   Widget _buildBannersSection() {
     if (_loadingBanners && _banners.isEmpty) {
       return SizedBox(
-        height: 100.h,
+        height: 135.h,
         child: Center(
           child: CircularProgressIndicator(
             color: "#6F221E".toColor(),
@@ -287,20 +287,57 @@ class _ReportsTabWidgetState extends State<ReportsTabWidget> {
       return;
     }
 
-    final requiredAmount = (report.priceOffer ?? 0).toDouble();
-    if (requiredAmount > 0) {
-      final balance = Get.isRegistered<WalletController>()
-          ? Get.find<WalletController>().walletBalance.value
-          : 0.0;
-      if (balance < requiredAmount) {
-        await InsufficientBalanceHelper.show(
-          currentBalance: balance,
-          requiredBalance: requiredAmount,
-          customMessage:
-              'Minimum wallet balance required to generate this report is \u20B9${requiredAmount.toStringAsFixed(0)}. Please recharge your wallet.',
+    final int? rawPrice = report.priceOffer;
+
+    // If pricing is not configured (null / N/A), do not allow generation and
+    // show a clear message instead of an odd insufficient-balance popup.
+    if (rawPrice == null) {
+      final name = report.displayName ?? 'This report';
+      Get.snackbar(
+        'Pricing not set',
+        '$name pricing is not configured yet. Please check again later.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 4),
+      );
+      return;
+    }
+
+    // Free or zero-priced reports: no balance checks or dialogs/snackbars.
+    final requiredAmount = rawPrice.toDouble();
+    if (requiredAmount <= 0) {
+      // Navigate directly to the appropriate form.
+      if (report.reportType == 'matching_pdf') {
+        UserMainController.pushInCurrentTab(
+          AppRoutes.matchMakingForm,
+          arguments: {'generatePdf': true, 'reportKey': report.key},
         );
-        return;
+      } else {
+        UserMainController.pushInCurrentTab(
+          AppRoutes.kundliForm,
+          arguments: {
+            'generatePdf': true,
+            'reportKey': report.key,
+            'reportType': report.reportType,
+            'variant': report.variant,
+          },
+        );
       }
+      return;
+    }
+
+    final balance = Get.isRegistered<WalletController>()
+        ? Get.find<WalletController>().walletBalance.value
+        : 0.0;
+    if (balance < requiredAmount) {
+      await InsufficientBalanceHelper.show(
+        currentBalance: balance,
+        requiredBalance: requiredAmount,
+        customMessage:
+            'Minimum wallet balance required to generate this report is \u20B9${requiredAmount.toStringAsFixed(0)}. Please recharge your wallet.',
+      );
+      return;
     }
 
     if (report.reportType == 'matching_pdf') {

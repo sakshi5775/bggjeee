@@ -152,6 +152,10 @@ class UserDashboardController extends BaseController
   final RxList<PersonaModel> aiAstrologersPersonas = <PersonaModel>[].obs;
   final RxBool isLoadingAiAstrologers = false.obs;
 
+  /// Floating AI Parashar button position (draggable).
+  /// When null, uses default bottom-right position; resets on app restart.
+  final Rx<Offset?> aiGuiderPosition = Rx<Offset?>(null);
+
   // Vedic Kundli Astrologers
   final RxList<AstrologerModel> vedicAstrologers = <AstrologerModel>[].obs;
   final RxBool isLoadingVedicAstrologers = false.obs;

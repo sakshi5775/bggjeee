@@ -3,6 +3,10 @@ import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/services/language_service.dart';
 import 'package:astrobharataiuser/screens/ai_guider/service/ai_guider_service.dart';
+import 'package:astrobharataiuser/screens/global_search/service/global_search_service.dart';
+import 'package:astrobharataiuser/data_model/global_search_model.dart';
+import 'package:astrobharataiuser/core/services/login_guard.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:astrobharataiuser/utils/language_detector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -15,6 +19,7 @@ enum AiGuiderState { idle, listening, thinking, speaking, interrupted }
 
 class AiGuiderController extends BaseController {
   final AiGuiderService _aiGuiderService = Get.find<AiGuiderService>();
+  final GlobalSearchService _globalSearchService = GlobalSearchService();
 
   // State management
   final Rx<AiGuiderState> currentState = AiGuiderState.idle.obs;
@@ -51,6 +56,10 @@ class AiGuiderController extends BaseController {
   // Sound: muted by default so no voice on opening the page
   final RxBool isSoundMuted = true.obs;
 
+  // Global search loading state
+  final RxBool isGlobalSearching = false.obs;
+  Timer? _suggestionDebounce;
+
   @override
   void onInit() {
     super.onInit();
@@ -85,6 +94,7 @@ class AiGuiderController extends BaseController {
     _stopTTS();
     _stopListening();
     _listeningTimer?.cancel();
+    _suggestionDebounce?.cancel();
     super.onClose();
   }
 
@@ -279,33 +289,33 @@ class AiGuiderController extends BaseController {
     // Welcome messages for different languages
     final Map<String, String> welcomeMessages = {
       'hi':
-          'Namaskar  aap AstroBharat AI Guide se baat kar rahe hain. Aap kya jaanana chahte hain?',
+          'Namaskar  aap AI Parashar Guide se baat kar rahe hain. Aap kya jaanana chahte hain?',
       'en':
-          'Namaskar  You are talking to AstroBharat AI Guide. What would you like to know?',
+          'Namaskar  You are talking to AI Parashar Guide. What would you like to know?',
       'bn':
-          'à¦¨à¦®à¦¸à§à¦•à¦¾à¦°  à¦†à¦ªà¦¨à¦¿ AstroBharat AI Guide à¦à¦° à¦¸à¦¾à¦¥à§‡ à¦•à¦¥à¦¾ à¦¬à¦²à¦›à§‡à¦¨à¥¤ à¦†à¦ªà¦¨à¦¿ à¦•à§€ à¦œà¦¾à¦¨à¦¤à§‡ à¦šà¦¾à¦¨?',
+          'à¦¨à¦®à¦¸à§à¦•à¦¾à¦°  à¦†à¦ªà¦¨à¦¿ AI Parashar Guide à¦à¦° à¦¸à¦¾à¦¥à§‡ à¦•à¦¥à¦¾ à¦¬à¦²à¦›à§‡à¦¨à¥¤ à¦†à¦ªà¦¨à¦¿ à¦•à§€ à¦œà¦¾à¦¨à¦¤à§‡ à¦šà¦¾à¦¨?',
       'te':
-          'à°¨à°®à°¸à±à°•à°¾à°°à°‚  à°®à±€à°°à± AstroBharat AI Guide à°¤à±‹ à°®à°¾à°Ÿà±à°²à°¾à°¡à±à°¤à±à°¨à±à°¨à°¾à°°à±. à°®à±€à°°à± à°à°®à°¿ à°¤à±†à°²à±à°¸à±à°•à±‹à°µà°¾à°²à°¨à±à°•à±à°‚à°Ÿà±à°¨à±à°¨à°¾à°°à±?',
+          'à°¨à°®à°¸à±à°•à°¾à°°à°‚  à°®à±€à°°à± AI Parashar Guide à°¤à±‹ à°®à°¾à°Ÿà±à°²à°¾à°¡à±à°¤à±à°¨à±à°¨à°¾à°°à±. à°®à±€à°°à± à°à°®à°¿ à°¤à±†à°²à±à°¸à±à°•à±‹à°µà°¾à°²à°¨à±à°•à±à°‚à°Ÿà±à°¨à±à°¨à°¾à°°à±?',
       'mr':
-          'à¤¨à¤®à¤¸à¥à¤•à¤¾à¤°  à¤¤à¥à¤®à¥à¤¹à¥€ AstroBharat AI Guide à¤¶à¥€ à¤¬à¥‹à¤²à¤¤ à¤†à¤¹à¤¾à¤¤. à¤¤à¥à¤®à¥à¤¹à¤¾à¤²à¤¾ à¤•à¤¾à¤¯ à¤œà¤¾à¤£à¥‚à¤¨ à¤˜à¥à¤¯à¤¾à¤¯à¤šà¥‡ à¤†à¤¹à¥‡?',
+          'à¤¨à¤®à¤¸à¥à¤•à¤¾à¤°  à¤¤à¥à¤®à¥à¤¹à¥€ AI Parashar Guide à¤¶à¥€ à¤¬à¥‹à¤²à¤¤ à¤†à¤¹à¤¾à¤¤. à¤¤à¥à¤®à¥à¤¹à¤¾à¤²à¤¾ à¤•à¤¾à¤¯ à¤œà¤¾à¤£à¥‚à¤¨ à¤˜à¥à¤¯à¤¾à¤¯à¤šà¥‡ à¤†à¤¹à¥‡?',
       'ta':
-          'à®µà®£à®•à¯à®•à®®à¯  à®¨à¯€à®™à¯à®•à®³à¯ AstroBharat AI Guide à®‰à®Ÿà®©à¯ à®ªà¯‡à®šà¯à®•à®¿à®±à¯€à®°à¯à®•à®³à¯. à®¨à¯€à®™à¯à®•à®³à¯ à®Žà®©à¯à®© à®…à®±à®¿à®¯ à®µà®¿à®°à¯à®®à¯à®ªà¯à®•à®¿à®±à¯€à®°à¯à®•à®³à¯?',
+          'à®µà®£à®•à¯à®•à®®à¯  à®¨à¯€à®™à¯à®•à®³à¯ AI Parashar Guide à®‰à®Ÿà®©à¯ à®ªà¯‡à®šà¯à®•à®¿à®±à¯€à®°à¯à®•à®³à¯. à®¨à¯€à®™à¯à®•à®³à¯ à®Žà®©à¯à®© à®…à®±à®¿à®¯ à®µà®¿à®°à¯à®®à¯à®ªà¯à®•à®¿à®±à¯€à®°à¯à®•à®³à¯?',
       'gu':
-          'àª¨àª®àª¸à«àª•àª¾àª°  àª¤àª®à«‡ AstroBharat AI Guide àª¸àª¾àª¥à«‡ àªµàª¾àª¤ àª•àª°à«€ àª°àª¹à«àª¯àª¾ àª›à«‹. àª¤àª®à«‡ àª¶à«àª‚ àªœàª¾àª£àªµàª¾ àª®àª¾àª‚àª—à«‹ àª›à«‹?',
+          'àª¨àª®àª¸à«àª•àª¾àª°  àª¤àª®à«‡ AI Parashar Guide àª¸àª¾àª¥à«‡ àªµàª¾àª¤ àª•àª°à«€ àª°àª¹à«àª¯àª¾ àª›à«‹. àª¤àª®à«‡ àª¶à«àª‚ àªœàª¾àª£àªµàª¾ àª®àª¾àª‚àª—à«‹ àª›à«‹?',
       'ur':
-          'Ø³Ù„Ø§Ù…  Ø¢Ù¾ AstroBharat AI Guide Ø³Û’ Ø¨Ø§Øª Ú©Ø± Ø±ÛÛ’ ÛÛŒÚºÛ” Ø¢Ù¾ Ú©ÛŒØ§ Ø¬Ø§Ù†Ù†Ø§ Ú†Ø§ÛØªÛ’ ÛÛŒÚºØŸ',
+          'Ø³Ù„Ø§Ù…  Ø¢Ù¾ AI Parashar Guide Ø³Û’ Ø¨Ø§Øª Ú©Ø± Ø±ÛÛ’ ÛÛŒÚºÛ” Ø¢Ù¾ Ú©ÛŒØ§ Ø¬Ø§Ù†Ù†Ø§ Ú†Ø§ÛØªÛ’ ÛÛŒÚºØŸ',
       'kn':
-          'à²¨à²®à²¸à³à²•à²¾à²°  à²¨à³€à²µà³ AstroBharat AI Guide à²¨à³Šà²‚à²¦à²¿à²—à³† à²®à²¾à²¤à²¨à²¾à²¡à³à²¤à³à²¤à²¿à²¦à³à²¦à³€à²°à²¿. à²¨à³€à²µà³ à²à²¨à³ à²¤à²¿à²³à²¿à²¯à²²à³ à²¬à²¯à²¸à³à²¤à³à²¤à³€à²°à²¿?',
+          'à²¨à²®à²¸à³à²•à²¾à²°  à²¨à³€à²µà³ AI Parashar Guide à²¨à³Šà²‚à²¦à²¿à²—à³† à²®à²¾à²¤à²¨à²¾à²¡à³à²¤à³à²¤à²¿à²¦à³à²¦à³€à²°à²¿. à²¨à³€à²µà³ à²à²¨à³ à²¤à²¿à²³à²¿à²¯à²²à³ à²¬à²¯à²¸à³à²¤à³à²¤à³€à²°à²¿?',
       'ml':
-          'à´¨à´®à´¸àµà´•à´¾à´°à´‚  à´¨à´¿à´™àµà´™àµ¾ AstroBharat AI Guide-à´¨àµ‹à´Ÿàµ à´¸à´‚à´¸à´¾à´°à´¿à´•àµà´•àµà´¨àµà´¨àµ. à´¨à´¿à´™àµà´™àµ¾à´•àµà´•àµ à´Žà´¨àµà´¤àµ à´…à´±à´¿à´¯à´£à´‚?',
+          'à´¨à´®à´¸àµà´•à´¾à´°à´‚  à´¨à´¿à´™àµà´™àµ¾ AI Parashar Guide-à´¨àµ‹à´Ÿàµ à´¸à´‚à´¸à´¾à´°à´¿à´•àµà´•àµà´¨àµà´¨àµ. à´¨à´¿à´™àµà´™àµ¾à´•àµà´•àµ à´Žà´¨àµà´¤àµ à´…à´±à´¿à´¯à´£à´‚?',
       'or':
-          'à¬¨à¬®à¬¸à­à¬•à¬¾à¬°  à¬†à¬ªà¬£ AstroBharat AI Guide à¬¸à¬¹à¬¿à¬¤ à¬•à¬¹à­à¬›à¬¨à­à¬¤à¬¿à¥¤ à¬†à¬ªà¬£ à¬•à¬£ à¬œà¬¾à¬£à¬¿à¬¬à¬¾à¬•à­ à¬šà¬¾à¬¹à­à¬à¬›à¬¨à­à¬¤à¬¿?',
+          'à¬¨à¬®à¬¸à­à¬•à¬¾à¬°  à¬†à¬ªà¬£ AI Parashar Guide à¬¸à¬¹à¬¿à¬¤ à¬•à¬¹à­à¬›à¬¨à­à¬¤à¬¿à¥¤ à¬†à¬ªà¬£ à¬•à¬£ à¬œà¬¾à¬£à¬¿à¬¬à¬¾à¬•à­ à¬šà¬¾à¬¹à­à¬à¬›à¬¨à­à¬¤à¬¿?',
       'pa':
-          'à¨¸à¨¤ à¨¸à©à¨°à©€ à¨…à¨•à¨¾à¨²  à¨¤à©à¨¸à©€à¨‚ AstroBharat AI Guide à¨¨à¨¾à¨² à¨—à©±à¨² à¨•à¨° à¨°à¨¹à©‡ à¨¹à©‹à¥¤ à¨¤à©à¨¸à©€à¨‚ à¨•à©€ à¨œà¨¾à¨£à¨¨à¨¾ à¨šà¨¾à¨¹à©à©°à¨¦à©‡ à¨¹à©‹?',
+          'à¨¸à¨¤ à¨¸à©à¨°à©€ à¨…à¨•à¨¾à¨²  à¨¤à©à¨¸à©€à¨‚ AI Parashar Guide à¨¨à¨¾à¨² à¨—à©±à¨² à¨•à¨° à¨°à¨¹à©‡ à¨¹à©‹à¥¤ à¨¤à©à¨¸à©€à¨‚ à¨•à©€ à¨œà¨¾à¨£à¨¨à¨¾ à¨šà¨¾à¨¹à©à©°à¨¦à©‡ à¨¹à©‹?',
       'as':
-          'à¦¨à¦®à¦¸à§à¦•à¦¾à§°  à¦†à¦ªà§à¦¨à¦¿ AstroBharat AI Guide à§° à¦¸à§ˆà¦¤à§‡ à¦•à¦¥à¦¾ à¦ªà¦¾à¦¤à¦¿à¦›à§‡à¥¤ à¦†à¦ªà§à¦¨à¦¿ à¦•à¦¿ à¦œà¦¾à¦¨à¦¿à¦¬ à¦¬à¦¿à¦šà¦¾à§°à§‡?',
+          'à¦¨à¦®à¦¸à§à¦•à¦¾à§°  à¦†à¦ªà§à¦¨à¦¿ AI Parashar Guide à§° à¦¸à§ˆà¦¤à§‡ à¦•à¦¥à¦¾ à¦ªà¦¾à¦¤à¦¿à¦›à§‡à¥¤ à¦†à¦ªà§à¦¨à¦¿ à¦•à¦¿ à¦œà¦¾à¦¨à¦¿à¦¬ à¦¬à¦¿à¦šà¦¾à§°à§‡?',
       'ne':
-          'à¤¨à¤®à¤¸à¥à¤¤à¥‡  à¤¤à¤ªà¤¾à¤ˆà¤‚ AstroBharat AI Guide à¤¸à¤‚à¤— à¤•à¥à¤°à¤¾ à¤—à¤°à¥à¤¦à¥ˆ à¤¹à¥à¤¨à¥à¤¹à¥à¤¨à¥à¤›à¥¤ à¤¤à¤ªà¤¾à¤ˆà¤‚ à¤•à¥‡ à¤œà¤¾à¤¨à¥à¤¨ à¤šà¤¾à¤¹à¤¨à¥à¤¹à¥à¤¨à¥à¤›?',
+          'à¤¨à¤®à¤¸à¥à¤¤à¥‡  à¤¤à¤ªà¤¾à¤ˆà¤‚ AI Parashar Guide à¤¸à¤‚à¤— à¤•à¥à¤°à¤¾ à¤—à¤°à¥à¤¦à¥ˆ à¤¹à¥à¤¨à¥à¤¹à¥à¤¨à¥à¤›à¥¤ à¤¤à¤ªà¤¾à¤ˆà¤‚ à¤•à¥‡ à¤œà¤¾à¤¨à¥à¤¨ à¤šà¤¾à¤¹à¤¨à¥à¤¹à¥à¤¨à¥à¤›?',
     };
 
     return welcomeMessages[lang] ?? welcomeMessages['en']!;
@@ -881,10 +891,14 @@ class AiGuiderController extends BaseController {
       case 'USER_DASHBOARD':
       case 'DASHBOARD':
       case 'HOME':
-        debugPrint(
-          'AI Guider: Navigating to Dashboard: ${AppRoutes.userDashboard}',
-        );
-        UserMainController.pushInCurrentTab(AppRoutes.userDashboard);
+        debugPrint('AI Guider: Navigating to Dashboard (Home tab)');
+        if (Get.isRegistered<UserMainController>()) {
+          final main = Get.find<UserMainController>();
+          main.changeTab(0);
+        }
+        if (Get.context != null && Navigator.canPop(Get.context!)) {
+          Navigator.of(Get.context!).pop();
+        }
         break;
       default:
         debugPrint('AI Guider: Unknown page value: $page');
@@ -893,9 +907,70 @@ class AiGuiderController extends BaseController {
   }
 
   /// Submit text query
-  void submitTextQuery(String query) {
-    if (query.trim().isEmpty) return;
-    _processQuery(query.trim());
+  /// 1) Try global search and navigate to best match.
+  /// 2) If no relevant result, fall back to AI guider response.
+  Future<void> submitTextQuery(String query) async {
+    final trimmed = query.trim();
+    if (trimmed.isEmpty) return;
+    final navigated = await _tryGlobalSearch(trimmed);
+    if (!navigated) {
+      await _processQuery(trimmed);
+    }
+  }
+
+  /// Handle text changes to provide live suggestions (like Google).
+  void onInputChanged(String value) {
+    _suggestionDebounce?.cancel();
+    final q = value.trim();
+    if (q.isEmpty) {
+      suggestions.clear();
+      return;
+    }
+    _suggestionDebounce = Timer(const Duration(milliseconds: 300), () {
+      _updateSuggestions(q);
+    });
+  }
+
+  Future<void> _updateSuggestions(String query) async {
+    try {
+      final GlobalSearchResponse response =
+          await _globalSearchService.search(query);
+      final List<String> newSuggestions = [];
+
+      // Prefer app pages for clean navigation labels
+      final appPageSection = response.nonEmptySections.firstWhere(
+        (s) => s.type == GlobalSearchResultType.appPage,
+        orElse: () => GlobalSearchSection(
+          type: GlobalSearchResultType.appPage,
+          items: const [],
+        ),
+      );
+      for (final item in appPageSection.items) {
+        if (!newSuggestions.contains(item.title)) {
+          newSuggestions.add(item.title);
+        }
+        if (newSuggestions.length >= 6) break;
+      }
+
+      // If still few suggestions, fill from other sections' titles
+      if (newSuggestions.length < 6) {
+        for (final section in response.nonEmptySections) {
+          for (final item in section.items) {
+            if (!newSuggestions.contains(item.title)) {
+              newSuggestions.add(item.title);
+            }
+            if (newSuggestions.length >= 6) break;
+          }
+          if (newSuggestions.length >= 6) break;
+        }
+      }
+
+      suggestions
+        ..clear()
+        ..addAll(newSuggestions);
+    } catch (e) {
+      debugPrint('AI Guider suggestions error: $e');
+    }
   }
 
   /// Toggle listening
@@ -917,5 +992,62 @@ class AiGuiderController extends BaseController {
     _stopTTS();
     _stopListening();
     Get.back();
+  }
+
+  /// Try global search and navigate to the best matching result.
+  /// Returns true if navigation occurred, false otherwise.
+  Future<bool> _tryGlobalSearch(String query) async {
+    final q = query.trim();
+    if (q.isEmpty) return false;
+
+    // Special-case: "reports" → open Reports tab on dashboard
+    final lower = q.toLowerCase();
+    if (lower.contains('report')) {
+      if (Get.isRegistered<UserMainController>()) {
+        final main = Get.find<UserMainController>();
+        main.changeTab(0); // Home tab
+      }
+      if (Get.isRegistered<UserDashboardController>()) {
+        final dash = Get.find<UserDashboardController>();
+        dash.selectedSliderIndex.value = 1; // Reports tab
+      }
+      if (Get.context != null && Navigator.canPop(Get.context!)) {
+        Navigator.of(Get.context!).pop();
+      }
+      return true;
+    }
+    isGlobalSearching.value = true;
+    try {
+      final GlobalSearchResponse response =
+          await _globalSearchService.search(q);
+      final sections = response.nonEmptySections;
+      if (sections.isEmpty) {
+        return false;
+      }
+      final GlobalSearchSection firstSection = sections.first;
+      final GlobalSearchResultItem firstItem = firstSection.items.first;
+
+      if (firstItem.requiresAuth && LoginGuard.isGuest) {
+        final didLogin = await LoginGuard.ensureLoggedIn(
+          message: 'Please login to access this feature.',
+          onLoginSuccess: () => UserMainController.pushInCurrentTab(
+            firstItem.route,
+            arguments: firstItem.arguments,
+          ),
+        );
+        if (!didLogin) return false;
+      }
+
+      UserMainController.pushInCurrentTab(
+        firstItem.route,
+        arguments: firstItem.arguments,
+      );
+      return true;
+    } catch (e) {
+      debugPrint('AI Guider global search error: $e');
+      return false;
+    } finally {
+      isGlobalSearching.value = false;
+    }
   }
 }

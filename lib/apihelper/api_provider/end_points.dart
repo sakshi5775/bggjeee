@@ -520,6 +520,8 @@ class EndPoints {
       'calls/api/chat/session/$chatId/start';
   static String chatSessionEnd(String chatId) => 'chat/session/$chatId/end';
   static const String chatSessionsActive = 'chat/sessions/active';
+  /// Check active/paused/pending sessions; use query autoCleanup=true to cleanup orphaned sessions on app reopen.
+  static const String chatSessionsCheckActive = 'calls/api/chat/sessions/check-active';
   static const String chatSessionsHistory = 'chat/sessions/history';
   static String chatSessionMessages(String chatId) =>
       'chat/session/$chatId/messages';

@@ -2,17 +2,13 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/svg_assets.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
-import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
-import 'package:astrobharataiuser/core/services/insufficient_balance_helper.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
-import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/astrology_services_view.dart';
 import 'package:astrobharataiuser/screens/palm_reading/view/palm_reading_view.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/ComingSoonPage.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:flutter/material.dart';
@@ -115,15 +111,10 @@ class OurServicesSection extends BasePage<UserDashboardController> {
                 Get.isRegistered<AiPricingController>()) {
               final pricingCtrl = Get.find<AiPricingController>();
               if (!pricingCtrl.hasSufficientBalance(pricingKey)) {
-                final pricing = pricingCtrl.getPricingFor(pricingKey);
-                final required = pricing?.priceOffer ?? 0.0;
-                final balance = Get.isRegistered<WalletController>()
-                    ? Get.find<WalletController>().walletBalance.value
-                    : 0.0;
-                await InsufficientBalanceHelper.show(
-                  currentBalance: balance,
-                  requiredBalance: required,
-                  contextName: label.replaceAll('\n', ' ').trim(),
+                // Let AiPricingController decide whether to show an
+                // insufficient-balance dialog or a "pricing not set" snackbar.
+                await pricingCtrl.showInsufficientBalancePopup(
+                  pricingKey,
                 );
                 return;
               }

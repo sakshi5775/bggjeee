@@ -66,40 +66,41 @@ class CoursesView extends GetView<CoursesController> {
                               .findAncestorStateOfType<ScaffoldState>();
                           scaffoldState?.openDrawer();
                         },
-                  customActions: [
-                    IconButton(
-                      onPressed: () {
-                        UserMainController.pushInCurrentTab(
-                          AppRoutes.myLearning,
-                        );
-                      },
-                      icon: Icon(
-                        Icons.school,
-                        color: const Color(0xFF6F221E),
-                        size: 24.w,
-                      ),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      tooltip: 'My Learning',
-                    ),
-                    SizedBox(width: 8.w),
-                    IconButton(
-                      onPressed: () {
-                        UserMainController.pushInCurrentTab(
-                          AppRoutes.liveWebinars,
-                        );
-                      },
-                      icon: Icon(
-                        Icons.video_library,
-                        color: const Color(0xFF6F221E),
-                        size: 24.w,
-                      ),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      tooltip: 'Webinar',
-                    ),
-                    SizedBox(width: 8.w),
-                  ],
+                  // My Learning / Live Now header actions temporarily disabled as requested.
+                  // customActions: [
+                  //   IconButton(
+                  //     onPressed: () {
+                  //       UserMainController.pushInCurrentTab(
+                  //         AppRoutes.myLearning,
+                  //       );
+                  //     },
+                  //     icon: Icon(
+                  //       Icons.school,
+                  //       color: const Color(0xFF6F221E),
+                  //       size: 24.w,
+                  //     ),
+                  //     padding: EdgeInsets.zero,
+                  //     constraints: const BoxConstraints(),
+                  //     tooltip: 'My Learning',
+                  //   ),
+                  //   SizedBox(width: 8.w),
+                  //   IconButton(
+                  //     onPressed: () {
+                  //       UserMainController.pushInCurrentTab(
+                  //         AppRoutes.liveWebinars,
+                  //       );
+                  //     },
+                  //     icon: Icon(
+                  //       Icons.video_library,
+                  //       color: const Color(0xFF6F221E),
+                  //       size: 24.w,
+                  //     ),
+                  //     padding: EdgeInsets.zero,
+                  //     constraints: const BoxConstraints(),
+                  //     tooltip: 'Webinar',
+                  //   ),
+                  //   SizedBox(width: 8.w),
+                  // ],
                 ),
 
               // Main Content
@@ -107,21 +108,104 @@ class CoursesView extends GetView<CoursesController> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      // Add Common Slider
+                      // Search bar + Courses/Webinars tabs in a single tight row
                       if (!hideHeader)
-                        Obx(
-                          () => CommonTabSlider(
-                            tabs: const ['Courses', 'Webinars'],
-                            selectedIndex: controller.selectedCategory.value,
-                            onTabSelected: (index) {
-                              if (index == 1) {
-                                UserMainController.pushInCurrentTab(
-                                  AppRoutes.liveWebinars,
-                                );
-                              } else {
-                                controller.selectedCategory.value = index;
-                              }
-                            },
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: 16.w,
+                            right: 16.w,
+                            top: 12.h,
+                            bottom: 1.h, // only 1px visual gap below
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              // Search bar (inline, uses courses API via controller.searchController)
+                              Expanded(
+                                flex: 3,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.05,
+                                        ),
+                                        blurRadius: 6,
+                                        offset: const Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 10.w,
+                                    vertical: 6.h,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.search,
+                                        color: AppColors.deepOrangemix,
+                                        size: 18.w,
+                                      ),
+                                      SizedBox(width: 6.w),
+                                      Expanded(
+                                        child: TextField(
+                                          controller:
+                                              controller.searchController,
+                                          textInputAction:
+                                              TextInputAction.search,
+                                          onSubmitted: (_) =>
+                                              controller.loadCourses(
+                                            refresh: true,
+                                          ),
+                                          decoration: InputDecoration(
+                                            isDense: true,
+                                            hintText:
+                                                'Search courses, webinars...',
+                                            hintStyle: AppTypography.body2
+                                                .copyWith(
+                                              color: AppColors.textSecondary
+                                                  .withValues(alpha: 0.75),
+                                            ),
+                                            border: InputBorder.none,
+                                            enabledBorder: InputBorder.none,
+                                            focusedBorder: InputBorder.none,
+                                            contentPadding:
+                                                EdgeInsets.zero,
+                                          ),
+                                          style: AppTypography.body2.copyWith(
+                                            color: AppColors.textPrimary,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 8.w),
+                              // Courses / Webinars tabs
+                              Expanded(
+                                flex: 2,
+                                child: Obx(
+                                  () => CommonTabSlider(
+                                    tabs: const ['Courses', 'Webinars'],
+                                    selectedIndex:
+                                        controller.selectedCategory.value,
+                                    onTabSelected: (index) {
+                                      if (index == 1) {
+                                        UserMainController.pushInCurrentTab(
+                                          AppRoutes.liveWebinars,
+                                        );
+                                      } else {
+                                        controller.selectedCategory.value =
+                                            index;
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
 

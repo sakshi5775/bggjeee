@@ -113,9 +113,8 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                   if (controller.isLoadingCategories.value) {
                     return const SizedBox.shrink();
                   }
-
                   final tabs = [
-                    'All',
+                    'Digital Mart',
                     ...controller.allCategories.map((c) => c.name ?? 'Unknown'),
                   ];
                   // Determine selected index
@@ -157,6 +156,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                   return const ShopBannerCarouselWidget();
                 }),
               ),
+              SliverToBoxAdapter(child: Spacing.h(10.h)),
               // Promotional Banner (News ticker style)
               SliverToBoxAdapter(child: PromotionalBannerWidget()),
 
@@ -185,7 +185,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
               // Kits Section
               _buildCategorySection(
                 context,
-                title: 'Kits',
+                title: 'Dosh Kits',
                 products: controller.kitsProducts,
                 isLoading: controller.isLoadingKits,
                 categoryRx: controller.kitsCategory,
@@ -198,14 +198,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                 isLoading: controller.isLoadingPyramids,
                 categoryRx: controller.pyramidsCategory,
               ),
-              // Product based on zodiac (Rashi) Section
-              _buildCategorySection(
-                context,
-                title: 'Product based on zodiac',
-                products: controller.rashiProducts,
-                isLoading: controller.isLoadingRashi,
-                categoryRx: controller.rashiCategory,
-              ),
+              // Product based on zodiac (Rashi) Section - temporarily disabled as per requirement
               SliverToBoxAdapter(child: Spacing.h(15.h)),
               // Best Sellers Section
               if (controller.topSellingProducts.isNotEmpty)
@@ -247,6 +240,15 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
               SliverToBoxAdapter(child: Spacing.h(6.h)),
               // 4. Blogs & News Section (top 5 + View All)
               _buildBlogsSliver(),
+
+              // Labh Kit section (after Blogs & News)
+              _buildCategorySection(
+                context,
+                title: 'Labh Kit',
+                products: controller.labhKitProducts,
+                isLoading: controller.isLoadingLabhKit,
+                categoryRx: controller.labhKitCategory,
+              ),
 
               SliverToBoxAdapter(child: Spacing.h(6.h)),
               // 5. Contact Support Section
@@ -1941,6 +1943,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                           url: category.image!,
                           height: double.infinity,
                           width: double.infinity,
+                          fit: BoxFit.cover,
                         ),
                       )
                     : Container(

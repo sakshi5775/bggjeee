@@ -7,10 +7,8 @@ import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_co
 import '../../../app_manager/ext/hex_color_ext.dart';
 import '../../../app_manager/my_text_theme.dart';
 import '../../../core/routes/app_routes.dart';
-import '../../../core/services/insufficient_balance_helper.dart';
 import '../../../core/services/login_guard.dart';
 import '../../../widgets/auto_translate_text.dart';
-import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
 import '../controller/ai_pricing_controller.dart';
 
 class AstrologyToolWidget extends StatelessWidget {
@@ -123,15 +121,10 @@ class AstrologyToolWidget extends StatelessWidget {
             if (pricingKey.isNotEmpty && Get.isRegistered<AiPricingController>()) {
               final pricingCtrl = Get.find<AiPricingController>();
               if (!pricingCtrl.hasSufficientBalance(pricingKey)) {
-                final pricing = pricingCtrl.getPricingFor(pricingKey);
-                final required = pricing?.priceOffer ?? 0.0;
-                final balance = Get.isRegistered<WalletController>()
-                    ? Get.find<WalletController>().walletBalance.value
-                    : 0.0;
-                await InsufficientBalanceHelper.show(
-                  currentBalance: balance,
-                  requiredBalance: required,
-                  contextName: label,
+                // Centralised handling: either insufficient balance dialog
+                // or "pricing not set" snackbar.
+                await pricingCtrl.showInsufficientBalancePopup(
+                  pricingKey,
                 );
                 return;
               }

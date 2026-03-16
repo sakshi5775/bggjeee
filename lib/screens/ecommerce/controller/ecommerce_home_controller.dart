@@ -109,6 +109,11 @@ class EcommerceHomeController extends BaseController {
   final isLoadingPyramids = false.obs;
   final isLoadingRashi = false.obs;
 
+  // Labh Kit section
+  final labhKitProducts = <ProductModel>[].obs;
+  final labhKitCategory = Rxn<CategoryModel>();
+  final isLoadingLabhKit = false.obs;
+
   // Testimonials: products from all categories that have reviews
   final testimonialProducts = <ProductModel>[].obs;
   final isLoadingTestimonials = false.obs;
@@ -354,15 +359,17 @@ class EcommerceHomeController extends BaseController {
         categoryOut: rudrakshaCategory,
       ),
       _loadProductsForCategorySection(
-        nameOrSlug: 'kits',
-        nameVariants: ['kits', 'Kits', 'kit'],
+        // Map Kits section to Dosh Kits root category
+        nameOrSlug: 'dosh-kits',
+        nameVariants: ['Dosh Kits', 'dosh-kits'],
         products: kitsProducts,
         isLoading: isLoadingKits,
         categoryOut: kitsCategory,
       ),
       _loadProductsForCategorySection(
-        nameOrSlug: 'pyramids',
-        nameVariants: ['pyramids', 'Pyramids', 'pyramid', 'Pyramid'],
+        // Pyramid root category
+        nameOrSlug: 'pyramid',
+        nameVariants: ['Pyramid', 'pyramid'],
         products: pyramidsProducts,
         isLoading: isLoadingPyramids,
         categoryOut: pyramidsCategory,
@@ -373,6 +380,14 @@ class EcommerceHomeController extends BaseController {
         products: rashiProducts,
         isLoading: isLoadingRashi,
         categoryOut: rashiCategory,
+      ),
+      _loadProductsForCategorySection(
+        // Labh Kit root category
+        nameOrSlug: 'labh-ki',
+        nameVariants: ['Labh Kit', 'labh kit', 'labh-ki'],
+        products: labhKitProducts,
+        isLoading: isLoadingLabhKit,
+        categoryOut: labhKitCategory,
       ),
     ]);
   }
