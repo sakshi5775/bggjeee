@@ -11,7 +11,7 @@ import 'package:astrobharataiuser/widgets/wallet_recharge_dialog.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/ai_chat/widgets/chat_profile_dialog.dart';
 import 'package:astrobharataiuser/data_model/user_profile_model.dart';
-
+import 'package:astrobharataiuser/core/services/analytics_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -260,12 +260,20 @@ class BookingController extends GetxController {
       // Pass call data to call screen
       switch (callType) {
         case CallType.voice:
+          AnalyticsService().logBookService(
+            serviceName: 'Voice Call',
+            price: getTotal(),
+          );
           Get.offNamed(
             '/astrologer-voice-call',
             arguments: {'astrologer': astrologer, 'callData': response.data},
           );
           break;
         case CallType.video:
+          AnalyticsService().logBookService(
+            serviceName: 'Video Call',
+            price: getTotal(),
+          );
           Get.offNamed(
             '/astrologer-video-call',
             arguments: {'astrologer': astrologer, 'callData': response.data},
@@ -324,9 +332,14 @@ class BookingController extends GetxController {
       }
 
       if (sessionToUse == null) {
-        // Start new session
         sessionToUse = await _chatService.startSession(astrologer.astrologerId);
       }
+
+      // Log Analytics
+      AnalyticsService().logBookService(
+        serviceName: 'Chat Session',
+        price: getTotal(),
+      );
 
       // Navigate to chat
       Get.offNamed(

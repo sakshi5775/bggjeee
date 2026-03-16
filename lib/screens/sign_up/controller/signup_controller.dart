@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/otp/service/otp_service.dart';
 import 'package:astrobharataiuser/screens/sign_up/service/signup_service.dart';
+import 'package:astrobharataiuser/core/services/analytics_service.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -86,6 +87,8 @@ class SignUpController extends BaseController {
       );
 
       if (signUpModel != null) {
+        AnalyticsService().logSignUp('Phone/Email');
+        
         String identifier = phone;
         if (signUpModel.otpSentTo?.email == true &&
             signUpModel.otpSentTo?.phone != true) {

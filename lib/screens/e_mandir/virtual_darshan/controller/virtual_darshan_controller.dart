@@ -22,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
+import 'package:astrobharataiuser/core/services/analytics_service.dart';
 
 import '../../../../data_model/e_mandir_dataModels/e_mandir_home_model.dart';
 
@@ -525,6 +526,12 @@ class VirtualDarshanController extends BaseController
         getAllPunyaWallet();
         handleOfferingSelection(item);
 
+        // Log Analytics
+        AnalyticsService().logVirtualDarshanAction(
+          actionType: 'offering',
+          itemName: item.name,
+        );
+
         // If flower/garland was selected, start a brief flower rain animation
         final slug = currentCategorySlug;
         if (slug == 'flowers' || slug == 'garland') {
@@ -607,6 +614,13 @@ class VirtualDarshanController extends BaseController
       if (success) {
         getAllPunyaWallet();
         startItemRainBurst(context, imageUrl: bhog.thumbnail);
+        
+        // Log Analytics
+        AnalyticsService().logVirtualDarshanAction(
+          actionType: 'special_bhog',
+          itemName: bhog.bhogName,
+        );
+
         showSuccessMessage(message: "${bhog.bhogName} offered successfully!");
       } else {
         showHowToEarnPunyaDialog(context);
@@ -981,6 +995,12 @@ class VirtualDarshanController extends BaseController
       shankhPlayer
           .play(UrlSource(AppConstant.shankhMp3))
           .then((_) {
+            // Log Analytics
+            AnalyticsService().logVirtualDarshanAction(
+              actionType: 'instrument',
+              itemName: 'Shankh',
+            );
+
             // Earn coin when shankh plays
             earnCoin('shankh_blow');
           })

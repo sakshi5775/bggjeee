@@ -15,6 +15,7 @@ import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -45,6 +46,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:astrobharataiuser/core/controllers/global_nav_controller.dart';
 import 'package:astrobharataiuser/core/services/chat_minimize_manager.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/user_bottom_nav.dart';
+import 'package:astrobharataiuser/core/services/analytics_service.dart';
 
 List<Locale>? _cachedSupportedLocales;
 
@@ -168,6 +170,9 @@ void main() {
       }
 
       Get.put(GlobalNavController(), permanent: true);
+
+      // Log App Open event
+      AnalyticsService().logAppOpen();
 
       runApp(const MyApp());
     },
@@ -432,7 +437,10 @@ class MyApp extends StatelessWidget {
                 ),
                 theme: AppTheme.lightTheme,
                 themeMode: ThemeMode.light,
-                navigatorObservers: [CrashlyticsNavigatorObserver()],
+                navigatorObservers: [
+                  CrashlyticsNavigatorObserver(),
+                  FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+                ],
 
                 routingCallback: (routing) {
                   if (routing == null) return;

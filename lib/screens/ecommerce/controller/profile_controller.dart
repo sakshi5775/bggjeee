@@ -24,6 +24,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/core/services/analytics_service.dart';
 import 'package:open_file/open_file.dart';
 
 class ProfileController extends BaseController {
@@ -719,6 +720,9 @@ class ProfileController extends BaseController {
       // Reload profile to get updated data
       await loadProfile();
 
+      // Log Analytics
+      AnalyticsService().logUpdateProfile();
+
       showSuccessMessage(
         title: 'Profile',
         message: 'Profile updated successfully',
@@ -885,6 +889,10 @@ class ProfileController extends BaseController {
     if (result == null) return;
 
     final logoutAll = result == 'all';
+    
+    // Log Analytics
+    AnalyticsService().logLogout();
+
     await _authService.logout(logoutFromAllDevices: logoutAll);
   }
 
@@ -920,6 +928,9 @@ class ProfileController extends BaseController {
     try {
       final success = await _profileService.deleteProfile(uid);
       if (success) {
+        // Log Analytics
+        AnalyticsService().logDeleteAccount();
+
         showInfoMessage(
           title: 'Account deleted',
           message: 'Your account has been deleted successfully.',

@@ -8,6 +8,8 @@ import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_co
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../core/services/analytics_service.dart';
+
 /// Controller for global search: runs search across all modules and handles
 /// navigation with optional login check before opening protected routes.
 /// Triggers search as user types (debounced) and shows suggestions below.
@@ -24,7 +26,9 @@ class GlobalSearchController extends BaseController {
 
   final Rx<String> query = ''.obs;
   final RxBool isLoading = false.obs;
-  final Rx<GlobalSearchResponse?> searchResponse = Rx<GlobalSearchResponse?>(null);
+  final Rx<GlobalSearchResponse?> searchResponse = Rx<GlobalSearchResponse?>(
+    null,
+  );
 
   Timer? _debounceTimer;
   static const Duration _debounceDuration = Duration(milliseconds: 350);
@@ -82,14 +86,15 @@ class GlobalSearchController extends BaseController {
     try {
       isLoading.value = true;
       searchResponse.value = null;
+
+      // Log Analytics
+      AnalyticsService().logSearch(q);
+
       final response = await _service.search(q);
       searchResponse.value = response;
     } catch (e) {
       searchResponse.value = GlobalSearchResponse(sections: [], query: q);
-      showErrorMessage(
-        title: 'Search failed',
-        message: e.toString(),
-      );
+      showErrorMessage(title: 'Search failed', message: e.toString());
     } finally {
       isLoading.value = false;
     }

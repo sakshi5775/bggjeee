@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/screens/wallet/service/wallet_razorpay_service
 import 'package:astrobharataiuser/screens/wallet/widgets/wallet_success_dialog.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
+import 'package:astrobharataiuser/core/services/analytics_service.dart';
 
 class WalletController extends BaseController {
   final WalletService _walletService = WalletService();
@@ -137,6 +138,14 @@ class WalletController extends BaseController {
         "SUCCESS",
         data: "rechargeId:$_pendingRechargeId",
       );
+
+      // Log Analytics
+      AnalyticsService().logWalletRecharge(
+        amount: walletBalance
+            .value, // This is the new balance, but maybe we should log the recharge amount
+        transactionId: paymentId,
+      );
+
       // Show success modal
       _showPaymentSuccessModal();
       // Refresh wallet balance and history
@@ -146,10 +155,7 @@ class WalletController extends BaseController {
   }
 
   void _showPaymentSuccessModal() {
-    Get.dialog(
-      const WalletRechargeSuccessDialog(),
-      barrierDismissible: false,
-    );
+    Get.dialog(const WalletRechargeSuccessDialog(), barrierDismissible: false);
     Future.delayed(const Duration(seconds: 3), () {
       if (Get.isDialogOpen == true) Get.back();
     });
@@ -405,7 +411,9 @@ class WalletController extends BaseController {
           dt = item.initiatedAtDate ?? item.createdAtDate;
         }
         if (dt == null) return false;
-        if (from != null && dt.isBefore(DateTime(from.year, from.month, from.day))) return false;
+        if (from != null &&
+            dt.isBefore(DateTime(from.year, from.month, from.day)))
+          return false;
         if (to != null) {
           final endOfDay = DateTime(to.year, to.month, to.day, 23, 59, 59);
           if (dt.isAfter(endOfDay)) return false;

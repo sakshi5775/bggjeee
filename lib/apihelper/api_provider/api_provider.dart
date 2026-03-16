@@ -984,43 +984,143 @@ class ApiClient extends GetConnect
   }
 
   /// Modified getApi with Caching & Background Refresh
+  // Future<Response<T>> getApi<T>(
+  //   String uri, {
+  //   Map<String, dynamic>? query,
+  //   String? contentType,
+  //   T Function(dynamic)? decoder,
+  //   bool useAuthHeader = true,
+  //   bool useCache = true, // Caching control karne ke liye
+  // }) async {
+  //   final cacheKey = (baseUrl ?? "") + uri + (query?.toString() ?? "");
+
+  //   return _withRetry(() async {
+  //     // 1. CHECK CACHE FIRST (Fast Response)
+  //     if (useCache && _cacheBox.containsKey(cacheKey)) {
+  //       final cachedData = _getFormattedCache(cacheKey);
+  //       if (cachedData != null) {
+  //         if (kDebugMode) print('Serving from Cache: $uri');
+
+  //         // Background mein fresh data mangwao (Silent Update)
+  //         _refreshDataInBackground<T>(
+  //           uri,
+  //           query: query,
+  //           contentType: contentType,
+  //           decoder: decoder,
+  //           useAuthHeader: useAuthHeader,
+  //           cacheKey: cacheKey,
+  //         );
+
+  //         // Turant cached data return karo
+  //         return Response<T>(
+  //           body: decoder != null ? decoder(cachedData) : cachedData as T,
+  //           statusCode: 200,
+  //           statusText: "Cached Data",
+  //         );
+  //       }
+  //     }
+
+  //     // 2. ACTUAL NETWORK REQUEST (If no cache or first time)
+  //     Future<Response<T>> _sendRequest() => get<T>(
+  //       uri,
+  //       query: query,
+  //       headers: _buildHeaders(useAuthHeader: useAuthHeader),
+  //       contentType: contentType ?? 'application/json',
+  //       decoder: decoder,
+  //     );
+
+  //     Response<T> response = await _sendRequest();
+
+  //     // ... (Debug prints & 401 Refresh Token Logic same rahegi)
+  //     if (useAuthHeader &&
+  //         response.statusCode == 401 &&
+  //         await _tryRefreshToken()) {
+  //       response = await _sendRequest();
+  //     }
+
+  //     if (response.statusCode == 200 || response.statusCode == 201) {
+  //       // Image URL replacement (Aapka existing logic)
+  //       final updatedBody = _replaceImageUrls(response.body);
+
+  //       // 3. SAVE TO CACHE (Save raw body for future use)
+  //       if (useCache) {
+  //         _cacheBox.put(cacheKey, updatedBody);
+  //       }
+
+  //       return Response<T>(
+  //         body: updatedBody as T,
+  //         statusCode: response.statusCode,
+  //         statusText: response.statusText,
+  //         headers: response.headers,
+  //         request: response.request,
+  //       );
+  //     }
+
+  //     // ... (403, 401 session expired, and exception throwing same rahegi)
+  //     if (response.statusCode == 403) return response;
+  //     if (useAuthHeader && response.statusCode == 401) _handleSessionExpired();
+
+  //     throw returnException(response);
+  //   });
+  // }
+
+  // --------------------------------------------------------------------------
+  // HELPERS FOR CACHING
+  // --------------------------------------------------------------------------
+
+  /// Hive ke dynamic Map ko String key wale Map mein convert karta hai (Fixes Casting Error)
+  // dynamic _getFormattedCache(String key) {
+  //   final data = _cacheBox.get(key);
+  //   if (data == null) return null;
+  //   return _recursiveConvert(data);
+  // }
+
+  // dynamic _recursiveConvert(dynamic item) {
+  //   if (item is Map) {
+  //     return item.map((k, v) => MapEntry(k.toString(), _recursiveConvert(v)));
+  //   } else if (item is List) {
+  //     return item.map(_recursiveConvert).toList();
+  //   }
+  //   return item;
+  // }
+
+  // /// Background Refresh Logic
+  // void _refreshDataInBackground<T>(
+  //   String uri, {
+  //   Map<String, dynamic>? query,
+  //   String? contentType,
+  //   T Function(dynamic)? decoder,
+  //   bool useAuthHeader = true,
+  //   required String cacheKey,
+  // }) async {
+  //   try {
+  //     final response = await get<T>(
+  //       uri,
+  //       query: query,
+  //       headers: _buildHeaders(useAuthHeader: useAuthHeader),
+  //       contentType: contentType ?? 'application/json',
+  //       decoder: decoder,
+  //     );
+
+  //     if (response.statusCode == 200 || response.statusCode == 201) {
+  //       final updatedBody = _replaceImageUrls(response.body);
+  //       _cacheBox.put(cacheKey, updatedBody); // Cache update ho jayega
+  //       if (kDebugMode) print('Cache Updated in Background: $uri');
+  //     }
+  //   } catch (e) {
+  //     if (kDebugMode) print('Background Refresh Failed: $e');
+  //   }
+  // }
+
   Future<Response<T>> getApi<T>(
     String uri, {
     Map<String, dynamic>? query,
     String? contentType,
     T Function(dynamic)? decoder,
     bool useAuthHeader = true,
-    bool useCache = true, // Caching control karne ke liye
   }) async {
-    final cacheKey = (baseUrl ?? "") + uri + (query?.toString() ?? "");
-
     return _withRetry(() async {
-      // 1. CHECK CACHE FIRST (Fast Response)
-      if (useCache && _cacheBox.containsKey(cacheKey)) {
-        final cachedData = _getFormattedCache(cacheKey);
-        if (cachedData != null) {
-          if (kDebugMode) print('Serving from Cache: $uri');
-
-          // Background mein fresh data mangwao (Silent Update)
-          _refreshDataInBackground<T>(
-            uri,
-            query: query,
-            contentType: contentType,
-            decoder: decoder,
-            useAuthHeader: useAuthHeader,
-            cacheKey: cacheKey,
-          );
-
-          // Turant cached data return karo
-          return Response<T>(
-            body: decoder != null ? decoder(cachedData) : cachedData as T,
-            statusCode: 200,
-            statusText: "Cached Data",
-          );
-        }
-      }
-
-      // 2. ACTUAL NETWORK REQUEST (If no cache or first time)
+      // 1. NETWORK REQUEST
       Future<Response<T>> _sendRequest() => get<T>(
         uri,
         query: query,
@@ -1031,21 +1131,24 @@ class ApiClient extends GetConnect
 
       Response<T> response = await _sendRequest();
 
-      // ... (Debug prints & 401 Refresh Token Logic same rahegi)
+      // Debug Logs
+      if (kDebugMode) {
+        print('Urlll: ${response.request?.url}');
+        print('body: $query');
+        print('Status code: ${response.statusCode}');
+      }
+
+      // 2. REFRESH TOKEN LOGIC (Agar 401 aaye)
       if (useAuthHeader &&
           response.statusCode == 401 &&
           await _tryRefreshToken()) {
         response = await _sendRequest();
       }
 
+      // 3. SUCCESS RESPONSE (200 ya 201)
       if (response.statusCode == 200 || response.statusCode == 201) {
-        // Image URL replacement (Aapka existing logic)
+        // Aapka image URL replacement logic
         final updatedBody = _replaceImageUrls(response.body);
-
-        // 3. SAVE TO CACHE (Save raw body for future use)
-        if (useCache) {
-          _cacheBox.put(cacheKey, updatedBody);
-        }
 
         return Response<T>(
           body: updatedBody as T,
@@ -1056,60 +1159,23 @@ class ApiClient extends GetConnect
         );
       }
 
-      // ... (403, 401 session expired, and exception throwing same rahegi)
-      if (response.statusCode == 403) return response;
-      if (useAuthHeader && response.statusCode == 401) _handleSessionExpired();
+      // 4. ERROR HANDLING
+      if (response.statusCode == 403) {
+        return response;
+      }
+
+      if (useAuthHeader && response.statusCode == 401) {
+        _handleSessionExpired();
+      }
+
+      if (kDebugMode &&
+          response.statusCode != 200 &&
+          response.statusCode != 201) {
+        print('Error Response Body: ${response.bodyString}');
+      }
 
       throw returnException(response);
     });
-  }
-
-  // --------------------------------------------------------------------------
-  // HELPERS FOR CACHING
-  // --------------------------------------------------------------------------
-
-  /// Hive ke dynamic Map ko String key wale Map mein convert karta hai (Fixes Casting Error)
-  dynamic _getFormattedCache(String key) {
-    final data = _cacheBox.get(key);
-    if (data == null) return null;
-    return _recursiveConvert(data);
-  }
-
-  dynamic _recursiveConvert(dynamic item) {
-    if (item is Map) {
-      return item.map((k, v) => MapEntry(k.toString(), _recursiveConvert(v)));
-    } else if (item is List) {
-      return item.map(_recursiveConvert).toList();
-    }
-    return item;
-  }
-
-  /// Background Refresh Logic
-  void _refreshDataInBackground<T>(
-    String uri, {
-    Map<String, dynamic>? query,
-    String? contentType,
-    T Function(dynamic)? decoder,
-    bool useAuthHeader = true,
-    required String cacheKey,
-  }) async {
-    try {
-      final response = await get<T>(
-        uri,
-        query: query,
-        headers: _buildHeaders(useAuthHeader: useAuthHeader),
-        contentType: contentType ?? 'application/json',
-        decoder: decoder,
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final updatedBody = _replaceImageUrls(response.body);
-        _cacheBox.put(cacheKey, updatedBody); // Cache update ho jayega
-        if (kDebugMode) print('Cache Updated in Background: $uri');
-      }
-    } catch (e) {
-      if (kDebugMode) print('Background Refresh Failed: $e');
-    }
   }
 
   /// Helper to wrap requests with retry logic for temporary failures.

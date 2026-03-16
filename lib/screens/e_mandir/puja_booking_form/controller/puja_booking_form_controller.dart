@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/data_model/payment_model.dart';
 import 'package:astrobharataiuser/data_model/puja_booking_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/puja_booking_form/service/puja_booking_service.dart';
 import 'package:astrobharataiuser/screens/e_mandir/puja_booking_form/service/puja_payment_service.dart';
+import 'package:astrobharataiuser/core/services/analytics_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -341,6 +342,12 @@ class PujaBookingFormController extends BaseController {
       final verifyResponse = await _paymentService.verifyPayment(verifyRequest);
 
       if (verifyResponse != null && verifyResponse.success) {
+        // Log Analytics
+        AnalyticsService().logBookService(
+          serviceName: pujaTitle ?? 'Puja',
+          price: price,
+        );
+
         Get.offNamedUntil(
           AppRoutes.myBookings,
           (route) => route.settings.name == AppRoutes.bookPuja,

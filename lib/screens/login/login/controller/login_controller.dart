@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/core/services/analytics_service.dart';
 import 'package:astrobharataiuser/core/services/notification_service.dart';
 import 'package:astrobharataiuser/screens/login/login/service/login_service.dart';
 import 'package:country_code_picker/country_code_picker.dart';
@@ -116,6 +117,9 @@ class LoginController extends BaseController {
         final loginModel = await _loginService.login(identifier, password);
         if (loginModel != null) {
           CrashlyticsService.trackAction("AUTH", "LOGIN_SUCCESS");
+          AnalyticsService().setUserId(loginModel.user?.userId ?? "unknown");
+          AnalyticsService().logLogin(isEmailMode.value ? 'Email' : 'Phone');
+
           UserData().addLoginData(loginModel.toJson());
 
           // Set user ID for future crashes

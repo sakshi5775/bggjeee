@@ -6,9 +6,9 @@ import 'package:astrobharataiuser/screens/ecommerce/controller/wishlist_controll
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/core/services/analytics_service.dart';
 import 'package:astrobharataiuser/core/services/share_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
 
 class ProductDetailController extends BaseController {
@@ -102,6 +102,15 @@ class ProductDetailController extends BaseController {
       final result = await _ecommerceService.getProductById(product.value!.id!);
       if (result != null && result.product != null) {
         product.value = result.product;
+        
+        // Log Analytics
+        AnalyticsService().logViewItem(
+          itemId: product.value?.id ?? '',
+          itemName: product.value?.name ?? '',
+          itemCategory: product.value?.category ?? '',
+          price: product.value?.currentPrice ?? product.value?.basePrice,
+        );
+
         // Load variants and inventory from detail response
         _captureVariantsAndInventory(result);
         await Future.wait([
@@ -126,6 +135,15 @@ class ProductDetailController extends BaseController {
       final result = await _ecommerceService.getProductById(id);
       if (result != null && result.product != null) {
         product.value = result.product;
+
+        // Log Analytics
+        AnalyticsService().logViewItem(
+          itemId: product.value?.id ?? '',
+          itemName: product.value?.name ?? '',
+          itemCategory: product.value?.category ?? '',
+          price: product.value?.currentPrice ?? product.value?.basePrice,
+        );
+
         // Load variants and inventory from detail response
         _captureVariantsAndInventory(result);
         await Future.wait([
@@ -150,6 +168,15 @@ class ProductDetailController extends BaseController {
       final result = await _ecommerceService.getProductBySlug(slug);
       if (result != null && result.product != null) {
         product.value = result.product;
+
+        // Log Analytics
+        AnalyticsService().logViewItem(
+          itemId: product.value?.id ?? '',
+          itemName: product.value?.name ?? '',
+          itemCategory: product.value?.category ?? '',
+          price: product.value?.currentPrice ?? product.value?.basePrice,
+        );
+
         // Load variants and inventory from detail response
         _captureVariantsAndInventory(result);
         await Future.wait([

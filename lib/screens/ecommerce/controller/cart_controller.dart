@@ -12,6 +12,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/core/services/analytics_service.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_razorpay_service.dart';
 
 class CartController extends BaseController {
@@ -112,14 +113,23 @@ class CartController extends BaseController {
         return;
       }
 
-      await _service.verifyPayment(
-        paymentId: _pendingPaymentId!,
-        razorpayOrderId: orderId,
-        razorpayPaymentId: paymentId,
-        razorpaySignature: signature,
-      );
+        await _service.verifyPayment(
+          paymentId: _pendingPaymentId!,
+          razorpayOrderId: orderId,
+          razorpayPaymentId: paymentId,
+          razorpaySignature: signature,
+        );
 
-      // Clear cart and reload before showing success modal
+        // Log Purchase Event
+        final cartSnapshot = cart.value;
+        if (cartSnapshot != null) {
+          AnalyticsService().logPurchase(
+            transactionId: orderId.isNotEmpty ? orderId : paymentId,
+            value: cartSnapshot.totals?.total ?? cartSnapshot.total ?? 0.0,
+          );
+        }
+
+        // Clear cart and reload before showing success modal
       await clearCart();
       await loadCart();
 
@@ -374,6 +384,15 @@ class CartController extends BaseController {
       if (result != null) {
         _updateCartState(result);
         final newQty = quantityForProduct(product);
+
+        // Log Analytics
+        AnalyticsService().logAddToCart(
+          itemId: product.id ?? '',
+          itemName: product.name ?? '',
+          itemCategory: product.category ?? '',
+          quantity: quantity,
+          price: product.currentPrice ?? product.basePrice,
+        );
 
         if (showFeedback) {
           if (newQty == 0 && previousQty > 0) {
@@ -684,6 +703,16 @@ class CartController extends BaseController {
       final result = await _service.removeCartItem(item.id!);
       if (result != null) {
         _updateCartState(result);
+
+        // Log Analytics
+        AnalyticsService().logRemoveFromCart(
+          itemId: product?.id ?? item.productSnapshot?.productId ?? '',
+          itemName: product?.name ?? item.productSnapshot?.name ?? '',
+          itemCategory: product?.category ?? '',
+          quantity: item.quantity ?? 1,
+          price: product?.currentPrice ?? product?.basePrice ?? item.price,
+        );
+
         if (showFeedback) {
           final name = product?.name ?? item.productSnapshot?.name ?? 'Product';
           showSuccessMessage(

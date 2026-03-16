@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
+import 'package:astrobharataiuser/core/services/analytics_service.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
@@ -50,7 +51,7 @@ class AllServicesView extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                      //  SizedBox(height: 8.h),
+                        //  SizedBox(height: 8.h),
                         // Hero section
                         // _buildHeroSection(),
                         // SizedBox(height: 24.h),
@@ -83,7 +84,9 @@ class AllServicesView extends StatelessWidget {
                             borderRadius: BorderRadius.circular(14.r),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.deepOrange.withValues(alpha: 0.4),
+                                color: AppColors.deepOrange.withValues(
+                                  alpha: 0.4,
+                                ),
                                 blurRadius: 12,
                                 offset: const Offset(0, 6),
                               ),
@@ -93,6 +96,7 @@ class AllServicesView extends StatelessWidget {
                             color: Colors.transparent,
                             child: InkWell(
                               onTap: () {
+                                AnalyticsService().logServiceClicked('Learn Astrology');
                                 UserMainController.pushInCurrentTab(
                                   AppRoutes.courses,
                                 );
@@ -106,7 +110,11 @@ class AllServicesView extends StatelessWidget {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.school_outlined, size: 22, color: Colors.white),
+                                    Icon(
+                                      Icons.school_outlined,
+                                      size: 22,
+                                      color: Colors.white,
+                                    ),
                                     SizedBox(width: 10.w),
                                     AutoTranslateText(
                                       'Learn Astrology',
@@ -353,7 +361,10 @@ class AllServicesView extends StatelessWidget {
   }) {
     final isNetworkUrl = iconUrl.startsWith('http');
     return GestureDetector(
-      onTap: () => UserMainController.pushInCurrentTab(route),
+      onTap: () {
+        AnalyticsService().logServiceClicked(label);
+        UserMainController.pushInCurrentTab(route);
+      },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
         decoration: BoxDecoration(
