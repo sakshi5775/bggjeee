@@ -75,6 +75,9 @@ class ProductListController extends BaseController {
         listTitle.value = args['title'] as String? ?? 'All Categories';
       }
     }
+    if (filterType.value != null && showCategoriesFirst.value != true) {
+      isLoadingProducts.value = true;
+    }
     loadInitialData();
   }
 
@@ -96,6 +99,7 @@ class ProductListController extends BaseController {
       return;
     }
     if (filterType.value != null) {
+      isLoadingProducts.value = true;
       await loadProductsByFilterType();
     } else {
       await loadProducts(reset: true);
@@ -113,6 +117,12 @@ class ProductListController extends BaseController {
         result = await _ecommerceService.getTopSellingProducts(limit: 100);
       } else if (type == 'recommended') {
         result = await _ecommerceService.getRecommendations(limit: 100);
+        if (result == null || result.isEmpty) {
+          result = await _ecommerceService.getPersonalizedRecommendations(limit: 100);
+        }
+        if (result == null || result.isEmpty) {
+          result = await _ecommerceService.getFeaturedProducts(limit: 100);
+        }
       } else if (type == 'featured') {
         result = await _ecommerceService.getFeaturedProducts(limit: 100);
       }

@@ -26,8 +26,26 @@ class CallInitiationHelper {
     final context = Get.context;
     if (context == null) return;
 
+    final chatRate = astrologer.services.chat.pricePerMinute ??
+        astrologer.chatPricePerMin ??
+        astrologer.chatPrice ??
+        0.0;
+    final chatEnabled = astrologer.services.chat.enabled == true;
+    if (!chatEnabled || chatRate <= 0) {
+      Get.snackbar(
+        'Service Not Available',
+        '${astrologer.displayName} is not available for chat service right now.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 4),
+      );
+      return;
+    }
+
     final canProceed = await _precheckService.checkBeforeProceeding(
       astrologer: astrologer,
+      pricePerMinute: chatRate,
       estimatedMinutes: 15,
     );
     if (!canProceed) return;
@@ -43,10 +61,7 @@ class CallInitiationHelper {
     }
 
     // Show charges confirmation: "Astrologer has these charges, do you want to proceed?"
-    final chatPrice = astrologer.chatPricePerMin ?? astrologer.chatPrice ?? 0.0;
-    final chargeText = chatPrice > 0
-        ? '₹${chatPrice.toStringAsFixed(0)}/min'
-        : 'As per plan';
+    final chargeText = '₹${chatRate.toStringAsFixed(0)}/min';
     final confirmed = await Get.dialog<bool>(
       AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -127,16 +142,30 @@ class CallInitiationHelper {
     final context = Get.context;
     if (context == null) return;
 
+    final voiceRate = astrologer.services.voice.pricePerMinute ??
+        astrologer.voicePricePerMin ??
+        0.0;
+    final voiceEnabled = astrologer.services.voice.enabled == true;
+    if (!voiceEnabled || voiceRate <= 0) {
+      Get.snackbar(
+        'Service Not Available',
+        '${astrologer.displayName} is not available for voice call service right now.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 4),
+      );
+      return;
+    }
+
     final canProceed = await _precheckService.checkBeforeProceeding(
       astrologer: astrologer,
+      pricePerMinute: voiceRate,
       estimatedMinutes: 15,
     );
     if (!canProceed) return;
 
-    final pricePerMin = astrologer.voicePricePerMin ?? 0.0;
-    final chargeText = pricePerMin > 0
-        ? '₹${pricePerMin.toStringAsFixed(0)}/min'
-        : 'As per plan';
+    final chargeText = '₹${voiceRate.toStringAsFixed(0)}/min';
 
     final confirmed = await Get.dialog<bool>(
       AlertDialog(
@@ -228,16 +257,30 @@ class CallInitiationHelper {
     final context = Get.context;
     if (context == null) return;
 
+    final videoRate = astrologer.services.video.pricePerMinute ??
+        astrologer.videoPricePerMin ??
+        0.0;
+    final videoEnabled = astrologer.services.video.enabled == true;
+    if (!videoEnabled || videoRate <= 0) {
+      Get.snackbar(
+        'Service Not Available',
+        '${astrologer.displayName} is not available for video call service right now.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 4),
+      );
+      return;
+    }
+
     final canProceed = await _precheckService.checkBeforeProceeding(
       astrologer: astrologer,
+      pricePerMinute: videoRate,
       estimatedMinutes: 15,
     );
     if (!canProceed) return;
 
-    final pricePerMin = astrologer.videoPricePerMin ?? 0.0;
-    final chargeText = pricePerMin > 0
-        ? '₹${pricePerMin.toStringAsFixed(0)}/min'
-        : 'As per plan';
+    final chargeText = '₹${videoRate.toStringAsFixed(0)}/min';
 
     final confirmed = await Get.dialog<bool>(
       AlertDialog(

@@ -16,8 +16,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
-
 import '../../../core/routes/app_routes.dart';
 
 class ConsultationHistoryView extends StatefulWidget {
@@ -518,6 +516,8 @@ class _CallHistoryTab extends StatelessWidget {
               : 'Make Your First Video Call',
         );
       }
+      final itemsCount = list.length + (controller.hasMore ? 1 : 0) + 1;
+
       return RefreshIndicator(
         onRefresh: () => controller.loadHistory(reset: true),
         color: AppColors.deepOrange,
@@ -528,9 +528,20 @@ class _CallHistoryTab extends StatelessWidget {
             top: 16.h,
             bottom: 16.h + 70.h + MediaQuery.of(context).padding.bottom,
           ),
-          itemCount: list.length + (controller.hasMore ? 1 : 0),
+          itemCount: itemsCount,
           itemBuilder: (context, index) {
-            if (index == list.length) {
+            // Index 0 → filter row
+            if (index == 0) {
+              return _buildFilters(controller);
+            }
+
+            final historyIndex = index - 1;
+
+            // Load more row
+            if (historyIndex == list.length) {
+              if (!controller.hasMore) {
+                return const SizedBox.shrink();
+              }
               return Padding(
                 padding: EdgeInsets.symmetric(vertical: 16.h),
                 child: Center(
@@ -547,11 +558,123 @@ class _CallHistoryTab extends StatelessWidget {
                 ),
               );
             }
-            return _buildHistoryCard(controller, list[index]);
+
+            if (historyIndex < 0 || historyIndex >= list.length) {
+              return const SizedBox.shrink();
+            }
+
+            return _buildHistoryCard(controller, list[historyIndex]);
           },
         ),
       );
     });
+  }
+
+  Widget _buildFilters(AstrologerCallHistoryController controller) {
+    const statusOptions = [
+      '--',
+      'INITIATED',
+      'RINGING',
+      'ACCEPTED',
+      'CONNECTED',
+      'ONGOING',
+      'COMPLETED',
+      'REJECTED',
+      'MISSED',
+      'CANCELLED',
+      'FAILED',
+    ];
+
+    const callTypeOptions = [
+      '--',
+      'VOICE',
+      'VIDEO',
+    ];
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: 12.h),
+      child: Row(
+        children: [
+          // Status filter
+          Expanded(
+            child: Obx(
+              () => DropdownButtonFormField<String>(
+                value: controller.statusFilter.value.isEmpty
+                    ? '--'
+                    : controller.statusFilter.value,
+                items: statusOptions
+                    .map(
+                      (s) => DropdownMenuItem(
+                        value: s,
+                        child: AutoTranslateText(
+                          s == '--' ? 'All Status' : s,
+                          style: AppTypography.body2.copyWith(
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  final status = (value == null || value == '--') ? '' : value;
+                  controller.updateFilters(status: status);
+                },
+                decoration: InputDecoration(
+                  isDense: true,
+                  labelText: 'Status',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 8.h,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: 8.w),
+          // Call type filter
+          Expanded(
+            child: Obx(
+              () => DropdownButtonFormField<String>(
+                value: controller.callTypeFilter.value.isEmpty
+                    ? '--'
+                    : controller.callTypeFilter.value,
+                items: callTypeOptions
+                    .map(
+                      (s) => DropdownMenuItem(
+                        value: s,
+                        child: AutoTranslateText(
+                          s == '--' ? 'All Types' : s,
+                          style: AppTypography.body2.copyWith(
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  final type = (value == null || value == '--') ? '' : value;
+                  controller.updateFilters(type: type);
+                },
+                decoration: InputDecoration(
+                  isDense: true,
+                  labelText: 'Type',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 8.h,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildHistoryCard(
@@ -641,12 +764,29 @@ class _CallHistoryTab extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   AutoTranslateText(
-                    '₹${session.totalAmount}',
+                    '₹${session.totalAmount.toStringAsFixed(0)}',
                     style: AppTypography.body1.copyWith(
                       fontWeight: FontWeight.bold,
                       color: AppColors.deepOrange,
                     ),
                   ),
+                  if (session.totalMinutesBilled != null &&
+                      session.totalMinutesBilled! > 0)
+                    AutoTranslateText(
+                      '${session.totalMinutesBilled} min billed',
+                      style: MyTextTheme.smallBCN.copyWith(
+                        color: '#6F221E'.toColor().withValues(alpha: 0.7),
+                      ),
+                    ),
+                  if (session.deductions.isNotEmpty)
+                    AutoTranslateText(
+                      // Use first deduction (user wallet side)
+                      'Last debit: ₹${session.deductions.first.amount.toStringAsFixed(0)} '
+                      'at min ${session.deductions.first.minute}',
+                      style: MyTextTheme.smallBCN.copyWith(
+                        color: '#6F221E'.toColor().withValues(alpha: 0.7),
+                      ),
+                    ),
                 ],
               ),
             ],

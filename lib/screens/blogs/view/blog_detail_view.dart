@@ -609,15 +609,17 @@ class _BlogDetailViewState extends State<BlogDetailView> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                InkWell(
-                                  onTap: () {
-                                    _openCommentsSheet(widget.blog.id ?? '');
-                                  },
-                                  child: AutoTranslateText(
-                                    'Comments (${_commentCount.value})',
-                                    style: MyTextTheme.mediumBCB.copyWith(
-                                      color: '#3E2723'.toColor(),
-                                      fontWeight: FontWeight.w600,
+                                Obx(
+                                  () => InkWell(
+                                    onTap: () {
+                                      _openCommentsSheet(widget.blog.id ?? '');
+                                    },
+                                    child: AutoTranslateText(
+                                      'Comments (${_commentCount.value})',
+                                      style: MyTextTheme.mediumBCB.copyWith(
+                                        color: '#3E2723'.toColor(),
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
                                   ),
                                 ),

@@ -222,11 +222,18 @@ class CallService {
     int page = 1,
     int limit = 20,
     String? callType,
+    String? status,
   }) async {
     try {
-      final query = {'page': page.toString(), 'limit': limit.toString()};
-      if (callType != null) {
+      final query = {
+        'page': page.toString(),
+        'limit': limit.toString(),
+      };
+      if (callType != null && callType.isNotEmpty) {
         query['callType'] = callType;
+      }
+      if (status != null && status.isNotEmpty) {
+        query['status'] = status;
       }
 
       final response = await _apiRepository.getApi(

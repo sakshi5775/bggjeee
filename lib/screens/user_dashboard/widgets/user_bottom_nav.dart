@@ -47,8 +47,8 @@ class UserBottomNav extends StatelessWidget {
     final items = c.navItems;
     return Container(
       key: const ValueKey('main_menu'),
-      height: 70.h,
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+      height: 56.h,
+      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: List.generate(
@@ -73,8 +73,8 @@ class UserBottomNav extends StatelessWidget {
     final subs = c.subMenuItems[parentIndex] ?? [];
     return Container(
       key: ValueKey('sub_menu_$parentIndex'),
-      height: 70.h,
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+      height: 56.h,
+      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
       child: Row(
         children: [
           // Home button always stays

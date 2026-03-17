@@ -59,7 +59,13 @@ class AppRoutes {
   static const String faq = '/faq';
   static const String followingAstrologers = '/following-astrologers';
   static const String remedies = '/remedies';
+  static const String remediesPopular = '/remedies-popular';
+  static const String remedyCategoriesAll = '/remedy-categories-all';
   static const String remedyCategoryListing = '/remedy-category-listing';
+  static const String remedyDetail = '/remedy-detail';
+  static const String remedyBookingForm = '/remedy-booking-form';
+  static const String myRemedyBookings = '/my-remedy-bookings';
+  static const String remedyBookingDetail = '/remedy-booking-detail';
 
   // Support Tickets Routes
   static const String supportTickets = '/support-tickets';

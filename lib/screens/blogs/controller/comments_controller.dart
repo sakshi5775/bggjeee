@@ -21,7 +21,8 @@ class CommentsController extends BaseController {
 
   Future<void> load() async {
     loading.value = true;
-    comments.value = await _service.getComments(blogId);
+    final list = await _service.getComments(blogId);
+    comments.assignAll(list);
     loading.value = false;
   }
 
@@ -29,12 +30,12 @@ class CommentsController extends BaseController {
     if (text.trim().isEmpty) return;
     final ok = await _service.addComment(blogId: blogId, content: text.trim());
     if (ok) {
+      input.value = '';
+      await load();
       showSuccessMessage(
         title: 'Success',
         message: 'Comment added successfully',
       );
-      await load();
-      input.value = '';
     }
   }
 }

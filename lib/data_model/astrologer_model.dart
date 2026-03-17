@@ -19,6 +19,8 @@ class AstrologerModel {
   final Availability availability;
   final Metrics metrics;
   final Metadata metadata;
+  /// Backend category: NORMAL, KID_ASTROLOGER, CELEBRITY_ASTROLOGER (for client-side filter)
+  final String? astrologerCategory;
 
   AstrologerModel({
     required this.id,
@@ -28,6 +30,7 @@ class AstrologerModel {
     required this.availability,
     required this.metrics,
     required this.metadata,
+    this.astrologerCategory,
   });
 
   factory AstrologerModel.fromJson(Map<String, dynamic> json) {
@@ -47,6 +50,7 @@ class AstrologerModel {
       metadata: Metadata.fromJson(
         json['metadata'] as Map<String, dynamic>? ?? {},
       ),
+      astrologerCategory: json['astrologerCategory'] as String? ?? json['astrologer_category'] as String?,
     );
   }
 

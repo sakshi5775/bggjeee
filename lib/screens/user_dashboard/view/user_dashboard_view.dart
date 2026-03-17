@@ -26,6 +26,7 @@ import 'package:astrobharataiuser/data_model/blog_model.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/data_model/category_model.dart';
+import 'package:astrobharataiuser/data_model/remedy_category_model.dart';
 import 'package:astrobharataiuser/data_model/live_stream_model.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/video_player_widget.dart';
@@ -2201,6 +2202,24 @@ class UserDashboardView extends BasePage<UserDashboardController> {
 
   Widget _buildAstroRemedySection() {
     return Obx(() {
+      if (controller.isLoadingDashboardRemedies.value &&
+          controller.dashboardRemedyCategories.isEmpty) {
+        return Padding(
+          padding: AppPaddings.symmetric(h: 16),
+          child: SizedBox(
+            height: 100.h,
+            child: const Center(
+              child: CircularProgressIndicator(
+                color: AppColors.deepOrange,
+                strokeWidth: 2,
+              ),
+            ),
+          ),
+        );
+      }
+      if (controller.dashboardRemedyCategories.isEmpty) {
+        return const SizedBox.shrink();
+      }
       return Padding(
         padding: AppPaddings.symmetric(h: 16),
         child: Column(
@@ -2244,10 +2263,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 scrollDirection: Axis.horizontal,
                 padding: EdgeInsets.zero,
                 separatorBuilder: (_, __) => Spacing.w(8),
-                itemCount: controller.remedyCategories.length,
+                itemCount: controller.dashboardRemedyCategories.length,
                 itemBuilder: (context, index) {
-                  final category = controller.remedyCategories[index];
-                  return _buildRemedyCard(category);
+                  final category = controller.dashboardRemedyCategories[index];
+                  return _buildRemedyCardFromRemedy(category);
                 },
               ),
             ),
@@ -2255,6 +2274,81 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         ),
       );
     });
+  }
+
+  Widget _buildRemedyCardFromRemedy(RemedyCategoryModel category) {
+    return GestureDetector(
+      onTap: () {
+        if (category.id != null && category.id!.isNotEmpty) {
+          UserMainController.pushInCurrentTab(
+            AppRoutes.remedyCategoryListing,
+            arguments: {
+              'categoryId': category.id,
+              'title': category.title ?? 'Remedy',
+            },
+          );
+        }
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: 60.w,
+            height: 60.w,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  width: 60.w,
+                  height: 60.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                  ),
+                ),
+                ClipOval(
+                  child: SizedBox(
+                    width: 60.w,
+                    height: 60.w,
+                    child: category.image != null && category.image!.isNotEmpty
+                        ? NetworkImageWithLoader(
+                            url: category.image!,
+                            width: 60.w,
+                            height: 60.w,
+                            isCircular: true,
+                          )
+                        : Container(
+                            width: 60.w,
+                            height: 60.w,
+                            color: '#FCE5AA'.toColor(),
+                            child: Icon(
+                              Icons.category,
+                              size: 32.w,
+                              color: AppColors.deepOrange,
+                            ),
+                          ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Spacing.h(4),
+          SizedBox(
+            width: 74.w,
+            child: AutoTranslateText(
+              category.title ?? 'Remedy',
+              style: AppTypography.body2.copyWith(
+                color: '#3D0C11'.toColor(),
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildBlogSection() {

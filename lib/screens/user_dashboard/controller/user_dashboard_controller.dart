@@ -24,7 +24,9 @@ import 'package:astrobharataiuser/data_model/webinar_model.dart';
 import 'package:astrobharataiuser/data_model/category_model.dart';
 import 'package:astrobharataiuser/data_model/banner_model.dart';
 import 'package:astrobharataiuser/data_model/puja_model.dart';
+import 'package:astrobharataiuser/data_model/remedy_category_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
+import 'package:astrobharataiuser/screens/ecommerce/services/remedies_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/puja_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/youtube_service.dart';
 import 'package:flutter/foundation.dart';
@@ -186,10 +188,14 @@ class UserDashboardController extends BaseController
   final RxList<Blog> blogs = <Blog>[].obs;
   final RxBool isLoadingBlogs = false.obs;
 
-  // Ecommerce Categories for Astro Remedy Section
+  // Ecommerce Categories for Astro Remedy Section (legacy, kept for compatibility)
   final EcommerceService _ecommerceService = EcommerceService();
   final RxList<CategoryModel> remedyCategories = <CategoryModel>[].obs;
   final RxBool isLoadingRemedyCategories = false.obs;
+
+  // Remedies API data for Astro Remedy section (use this instead of mart categories)
+  final RxList<RemedyCategoryModel> dashboardRemedyCategories = <RemedyCategoryModel>[].obs;
+  final RxBool isLoadingDashboardRemedies = false.obs;
 
   // Digital Mart tab: all product categories
   final RxList<CategoryModel> digitalMartCategories = <CategoryModel>[].obs;
@@ -611,7 +617,9 @@ class UserDashboardController extends BaseController
         astrologerNames[astrologer.astrologerId] = name;
         astrologerNames[astrologer.id] = name;
       }
-      allAstrologer.assignAll(response.astrologers);
+      allAstrologer.assignAll(
+        response.astrologers.where((a) => a.isOnline).toList(),
+      );
     }
   }
 
@@ -1004,12 +1012,33 @@ class UserDashboardController extends BaseController
         .toList();
   }
 
-  /// Load remedy categories for Astro Remedy section
+  /// Load remedy categories for Astro Remedy section (from Remedies API, not mart)
+  Future<void> loadDashboardRemedyCategories() async {
+    if (!Get.isRegistered<RemediesService>()) {
+      Get.put(RemediesService());
+    }
+    final remediesService = Get.find<RemediesService>();
+    isLoadingDashboardRemedies.value = true;
+    try {
+      final data = await remediesService.getRemedyCategories(page: 1, limit: 10);
+      if (data != null && data.items != null && data.items!.isNotEmpty) {
+        dashboardRemedyCategories.assignAll(data.items!.take(10));
+      } else {
+        dashboardRemedyCategories.clear();
+      }
+    } catch (e) {
+      if (kDebugMode) print('Error loading dashboard remedy categories: $e');
+      dashboardRemedyCategories.clear();
+    } finally {
+      isLoadingDashboardRemedies.value = false;
+    }
+  }
+
+  /// Legacy: Load remedy categories from ecommerce (mart) - kept for any other usages
   Future<void> loadRemedyCategories() async {
     await runWithLoading(
       () async {
         isLoadingRemedyCategories.value = true;
-        // Load featured categories for remedy section
         final categoryData = await _ecommerceService.getCategories(
           page: 1,
           limit: 10,
@@ -1020,13 +1049,11 @@ class UserDashboardController extends BaseController
         if (categoryData != null &&
             categoryData.items != null &&
             categoryData.items!.isNotEmpty) {
-          // Filter to only top-level categories (no parent) and limit to 6
           remedyCategories.value = categoryData.items!
               .where((cat) => cat.parent == null)
               .take(6)
               .toList();
         } else {
-          // Fallback: try category tree
           final treeResult = await _ecommerceService.getCategoryTree();
           if (treeResult != null && treeResult.isNotEmpty) {
             remedyCategories.value = treeResult
@@ -1151,7 +1178,7 @@ class UserDashboardController extends BaseController
       Future.delayed(const Duration(milliseconds: 300), () {
         if (!isClosed) {
           loadYouTubeVideos();
-          loadRemedyCategories();
+          loadDashboardRemedyCategories();
           loadDigitalMartCategories();
         }
       });

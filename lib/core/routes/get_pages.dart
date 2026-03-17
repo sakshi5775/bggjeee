@@ -26,9 +26,20 @@ import 'package:astrobharataiuser/screens/login/forgot_password/view/reset_passw
 import 'package:astrobharataiuser/screens/login/forgot_password/binding/forgot_password_binding.dart';
 
 import 'package:astrobharataiuser/screens/ecommerce/remedies/view/remedies_view.dart';
+import 'package:astrobharataiuser/screens/ecommerce/remedies/remedy_services_all/view/remedy_services_all_view.dart';
+import 'package:astrobharataiuser/screens/ecommerce/remedies/remedy_services_all/bindings/remedy_services_all_binding.dart';
+import 'package:astrobharataiuser/screens/ecommerce/remedies/remedy_categories_all/view/remedy_categories_all_view.dart';
 import 'package:astrobharataiuser/screens/ecommerce/remedies/bindings/remedies_binding.dart';
 import 'package:astrobharataiuser/screens/ecommerce/remedies/remedy_category_listing/view/remedy_category_listing_view.dart';
 import 'package:astrobharataiuser/screens/ecommerce/remedies/remedy_category_listing/bindings/remedy_category_listing_binding.dart';
+import 'package:astrobharataiuser/screens/ecommerce/remedies/remedy_detail/view/remedy_detail_view.dart';
+import 'package:astrobharataiuser/screens/ecommerce/remedies/remedy_detail/bindings/remedy_detail_binding.dart';
+import 'package:astrobharataiuser/screens/ecommerce/remedies/remedy_booking_form/view/remedy_booking_form_view.dart';
+import 'package:astrobharataiuser/screens/ecommerce/remedies/remedy_booking_form/bindings/remedy_booking_form_binding.dart';
+import 'package:astrobharataiuser/screens/ecommerce/remedies/my_remedy_bookings/view/my_remedy_bookings_view.dart';
+import 'package:astrobharataiuser/screens/ecommerce/remedies/my_remedy_bookings/bindings/my_remedy_bookings_binding.dart';
+import 'package:astrobharataiuser/screens/ecommerce/remedies/remedy_booking_detail/view/remedy_booking_detail_view.dart';
+import 'package:astrobharataiuser/screens/ecommerce/remedies/remedy_booking_detail/bindings/remedy_booking_detail_binding.dart';
 import 'package:astrobharataiuser/screens/ai_chat/views/ai_chat_view.dart';
 import 'package:astrobharataiuser/screens/blogs/view/all_blogs_view.dart';
 import 'package:astrobharataiuser/screens/blogs/view/blog_comments_view.dart';
@@ -584,11 +595,53 @@ class PageRoutes {
       binding: RemediesBinding(),
     ),
     GetPage(
+      name: AppRoutes.remediesPopular,
+      page: () => const RemedyServicesAllView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+      binding: RemedyServicesAllBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.remedyCategoriesAll,
+      page: () => const RemedyCategoriesAllView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+      binding: RemediesBinding(),
+    ),
+    GetPage(
       name: AppRoutes.remedyCategoryListing,
       page: () => const RemedyCategoryListingView(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
       binding: RemedyCategoryListingBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.remedyDetail,
+      page: () => const RemedyDetailView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+      binding: RemedyDetailBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.remedyBookingForm,
+      page: () => const RemedyBookingFormView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+      binding: RemedyBookingFormBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.myRemedyBookings,
+      page: () => const MyRemedyBookingsView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+      binding: MyRemedyBookingsBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.remedyBookingDetail,
+      page: () => const RemedyBookingDetailView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+      binding: RemedyBookingDetailBinding(),
     ),
     GetPage(
       name: AppRoutes.productList,

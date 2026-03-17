@@ -37,16 +37,6 @@ class CoursesView extends GetView<CoursesController> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: true,
-      onPopInvokedWithResult: (didPop, result) {
-        if (didPop) {
-          try {
-            final mainController = Get.find<UserMainController>();
-            mainController.currentIndex.value = 0;
-          } catch (e) {
-            // Controller not found, ignore
-          }
-        }
-      },
       child: Container(
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Scaffold(
@@ -115,7 +105,7 @@ class CoursesView extends GetView<CoursesController> {
                             left: 16.w,
                             right: 16.w,
                             top: 12.h,
-                            bottom: 1.h, // only 1px visual gap below
+                            bottom: 0, // no vertical gap between search bar row and below
                           ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -124,6 +114,7 @@ class CoursesView extends GetView<CoursesController> {
                               Expanded(
                                 flex: 3,
                                 child: Container(
+                                  height: 44.h, // taller search bar
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(12.r),
@@ -139,47 +130,57 @@ class CoursesView extends GetView<CoursesController> {
                                   ),
                                   padding: EdgeInsets.symmetric(
                                     horizontal: 10.w,
-                                    vertical: 6.h,
+                                    vertical: 4.h,
                                   ),
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.search,
-                                        color: AppColors.deepOrangemix,
-                                        size: 18.w,
-                                      ),
-                                      SizedBox(width: 6.w),
-                                      Expanded(
-                                        child: TextField(
-                                          controller:
-                                              controller.searchController,
-                                          textInputAction:
-                                              TextInputAction.search,
-                                          onSubmitted: (_) =>
-                                              controller.loadCourses(
-                                            refresh: true,
-                                          ),
-                                          decoration: InputDecoration(
-                                            isDense: true,
-                                            hintText:
-                                                'Search courses, webinars...',
-                                            hintStyle: AppTypography.body2
-                                                .copyWith(
-                                              color: AppColors.textSecondary
-                                                  .withValues(alpha: 0.75),
+                                  child: Obx(
+                                    () => Row(
+                                      children: [
+                                        Icon(
+                                          Icons.search,
+                                          color: AppColors.deepOrangemix,
+                                          size: 20.w,
+                                        ),
+                                        SizedBox(width: 6.w),
+                                        Expanded(
+                                          child: TextField(
+                                            controller:
+                                                controller.searchController,
+                                            textInputAction:
+                                                TextInputAction.search,
+                                            onSubmitted: (_) => controller
+                                                .submitSearchAndNavigate(),
+                                            decoration: InputDecoration(
+                                              isDense: true,
+                                              hintText:
+                                                  'Search courses, webinars...',
+                                              hintStyle:
+                                                  AppTypography.body2.copyWith(
+                                                color: AppColors.textSecondary
+                                                    .withValues(alpha: 0.75),
+                                              ),
+                                              border: InputBorder.none,
+                                              enabledBorder: InputBorder.none,
+                                              focusedBorder: InputBorder.none,
+                                              contentPadding: EdgeInsets.zero,
                                             ),
-                                            border: InputBorder.none,
-                                            enabledBorder: InputBorder.none,
-                                            focusedBorder: InputBorder.none,
-                                            contentPadding:
-                                                EdgeInsets.zero,
-                                          ),
-                                          style: AppTypography.body2.copyWith(
-                                            color: AppColors.textPrimary,
+                                            style: AppTypography.body2.copyWith(
+                                              color: AppColors.textPrimary,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                        if (controller
+                                            .searchQuery.value.isNotEmpty)
+                                          GestureDetector(
+                                            onTap: () =>
+                                                controller.clearSearch(),
+                                            child: Icon(
+                                              Icons.close,
+                                              color: AppColors.textSecondary,
+                                              size: 18.w,
+                                            ),
+                                          ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -210,6 +211,81 @@ class CoursesView extends GetView<CoursesController> {
                         ),
 
                       if (!hideHeader) ...[
+                        // Inline search suggestions just below the search bar
+                        Obx(() {
+                          final suggestions =
+                              controller.searchSuggestions.toList();
+                          if (suggestions.isEmpty) {
+                            return const SizedBox.shrink();
+                          }
+                          return Padding(
+                            padding: EdgeInsets.only(
+                              left: 16.w,
+                              right: 16.w,
+                              bottom: 4.h,
+                            ),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8.r),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(
+                                      alpha: 0.06,
+                                    ),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: ListView.separated(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: suggestions.length,
+                                separatorBuilder: (_, __) => Divider(
+                                  height: 1,
+                                  color: AppColors.textSecondary
+                                      .withValues(alpha: 0.1),
+                                ),
+                                itemBuilder: (context, index) {
+                                  final course = suggestions[index];
+                                  return ListTile(
+                                    dense: true,
+                                    contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 12.w,
+                                      vertical: 4.h,
+                                    ),
+                                    leading: Icon(
+                                      Icons.play_circle_fill,
+                                      color: AppColors.deepOrangemix,
+                                      size: 20.w,
+                                    ),
+                                    title: AutoTranslateText(
+                                      course.title,
+                                      style: AppTypography.body2.copyWith(
+                                        color: AppColors.textPrimary,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    subtitle: (course.instructor.isNotEmpty)
+                                        ? AutoTranslateText(
+                                            course.instructor,
+                                            style: AppTypography.body2.copyWith(
+                                              color: AppColors.textSecondary,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          )
+                                        : null,
+                                    onTap: () =>
+                                        controller.openCourseDetail(course),
+                                  );
+                                },
+                              ),
+                            ),
+                          );
+                        }),
                         Obx(
                           () => controller.hasLiveWebinar.value
                               ? _buildLiveWebinarBanner()

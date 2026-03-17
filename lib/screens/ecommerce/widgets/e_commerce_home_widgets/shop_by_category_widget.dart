@@ -123,10 +123,9 @@ class ShopByCategoryWidget extends StatelessWidget {
                     ? baseCardHeight
                     : screenBasedHeight;
 
-                // Clamp to reasonable bounds (minimum 150.h, maximum 220.h)
-                // These bounds ensure it works on both small and large screens
-                final double minHeight = 150.h;
-                final double maxHeight = 220.h;
+                // Clamp to reasonable bounds (reduced height per request)
+                final double minHeight = 130.h;
+                final double maxHeight = 165.h;
                 final double dynamicHeight = calculatedHeight.clamp(
                   minHeight,
                   maxHeight,

@@ -39,7 +39,7 @@ class PujaMediaCardWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
                 child: NetworkImageWithLoader(
                   url: puja.image!,
-                  fit: BoxFit.fill,
+                  fit: BoxFit.cover,
                 ),
               ),
             ],

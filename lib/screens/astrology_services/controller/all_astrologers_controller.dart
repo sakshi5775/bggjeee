@@ -213,6 +213,19 @@ class AllAstrologersController extends GetxController {
       if (response != null) {
         List<AstrologerModel> filteredList = response.astrologers;
 
+        // CLIENT-SIDE filter by category when Kids or Celebrity is selected (backup if API does not filter)
+        if (selectedFilter.value == 'Kids') {
+          final kidOnly = filteredList
+              .where((a) => a.astrologerCategory == 'KID_ASTROLOGER')
+              .toList();
+          if (kidOnly.isNotEmpty) filteredList = kidOnly;
+        } else if (selectedFilter.value == 'Celebrity') {
+          final celebOnly = filteredList
+              .where((a) => a.astrologerCategory == 'CELEBRITY_ASTROLOGER')
+              .toList();
+          if (celebOnly.isNotEmpty) filteredList = celebOnly;
+        }
+
         // CLIENT-SIDE FILTERING for specific services
         if (selectedAvailability.value == 'CHAT') {
           filteredList = filteredList
@@ -467,7 +480,8 @@ class AllAstrologersController extends GetxController {
 
   /// Initialize follow status for loaded astrologers
   Future<void> _initializeFollowStatus() async {
-    for (var astrologer in astrologers) {
+    final snapshot = List<AstrologerModel>.from(astrologers);
+    for (var astrologer in snapshot) {
       // Fetch actual follow status from API if not already loaded
       if (!followStatus.containsKey(astrologer.astrologerId)) {
         try {

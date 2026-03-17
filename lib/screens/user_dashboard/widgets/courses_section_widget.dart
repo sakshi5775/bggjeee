@@ -124,22 +124,10 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
 
     return GestureDetector(
       onTap: () {
-        // Switch to Digital Learning tab (index 6) instead of navigating
-        try {
-          final dashboardController = Get.find<UserDashboardController>();
-          dashboardController.selectedSliderIndex.value = 6;
-          dashboardController.scrollController.animateTo(
-            0,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-        } catch (e) {
-          // Fallback if controller not found
-          UserMainController.pushInCurrentTab(
-            AppRoutes.courseDetail,
-            arguments: course.id,
-          );
-        }
+        UserMainController.pushInCurrentTab(
+          AppRoutes.courseDetail,
+          arguments: course.id,
+        );
       },
       child: SizedBox(
         width: cardWidth.w,

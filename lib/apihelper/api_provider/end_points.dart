@@ -237,6 +237,37 @@ class EndPoints {
       'ecommerce/api/search/suggestions';
   static const String ecommerceSearchPopular = 'ecommerce/api/search/popular';
 
+  /// Remedy categories (ecommerce)
+  static const String remedyCategoriesActiveList =
+      'ecommerce/api/remedy-categories/active/list';
+  static const String remedyCategories = 'ecommerce/api/remedy-categories';
+  static String remedyCategoryById(String id) =>
+      'ecommerce/api/remedy-categories/$id';
+
+  /// Remedy services (ecommerce)
+  static const String remedyServices = 'ecommerce/api/remedy-services';
+  static const String remedyServicesFeaturedList =
+      'ecommerce/api/remedy-services/featured/list';
+  static String remedyServicesByCategory(String categoryId) =>
+      'ecommerce/api/remedy-services/category/$categoryId';
+  static String remedyServiceById(String id) =>
+      'ecommerce/api/remedy-services/$id';
+
+  /// Remedy bookings (ecommerce)
+  static const String remedyBookings = 'ecommerce/api/remedy-bookings';
+  static const String remedyBookingsMyBookings =
+      'ecommerce/api/remedy-bookings/my-bookings';
+  static String remedyBookingByBookingId(String bookingId) =>
+      'ecommerce/api/remedy-bookings/booking/$bookingId';
+  static String remedyBookingById(String id) =>
+      'ecommerce/api/remedy-bookings/$id';
+  static String remedyBookingCancel(String id) =>
+      'ecommerce/api/remedy-bookings/$id/cancel';
+  static String remedyBookingInitiatePayment(String id) =>
+      'ecommerce/api/remedy-bookings/$id/initiate-payment';
+  static String remedyBookingVerifyPayment(String id) =>
+      'ecommerce/api/remedy-bookings/$id/verify-payment';
+
   /// AI Chat Personas
   static const String personaAi = 'astrologers/api/astrologers/persona-ai';
   static const String personaAiCategories =

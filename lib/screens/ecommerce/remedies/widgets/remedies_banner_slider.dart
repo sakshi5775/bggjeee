@@ -1,7 +1,10 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/screens/ecommerce/remedies/controllers/remedies_controller.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 class RemediesBannerSlider extends StatefulWidget {
   const RemediesBannerSlider({super.key});
@@ -14,7 +17,7 @@ class _RemediesBannerSliderState extends State<RemediesBannerSlider> {
   final PageController _pageController = PageController(viewportFraction: 0.92);
   Timer? _timer;
   int _currentPage = 0;
-  final int _totalPages = 3; // Number of banners
+  int _totalPages = 0;
 
   @override
   void initState() {
@@ -31,6 +34,7 @@ class _RemediesBannerSliderState extends State<RemediesBannerSlider> {
 
   void _startAutoSlide() {
     _timer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
+      if (_totalPages <= 1) return;
       if (_currentPage < _totalPages - 1) {
         _currentPage++;
       } else {
@@ -49,92 +53,79 @@ class _RemediesBannerSliderState extends State<RemediesBannerSlider> {
 
   @override
   Widget build(BuildContext context) {
+    final c = Get.find<RemediesController>();
     return Container(
-      height: 180.h,
       margin: EdgeInsets.symmetric(vertical: 16.h),
-      child: PageView.builder(
-        controller: _pageController,
-        itemCount: _totalPages,
-        onPageChanged: (int page) {
-          setState(() {
-            _currentPage = page;
-          });
-        },
-        itemBuilder: (context, index) {
-          return _buildBannerItem(index);
-        },
-      ),
+      child: Obx(() {
+        if (c.isLoadingBanners.value) {
+          return SizedBox(
+            height: 120.h,
+            child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+          );
+        }
+        final banners = c.banners;
+        if (banners.isEmpty) {
+          return const SizedBox.shrink();
+        }
+        _totalPages = banners.length;
+        return AspectRatio(
+          aspectRatio: 2.4,
+          child: PageView.builder(
+            controller: _pageController,
+            itemCount: _totalPages,
+            onPageChanged: (int page) {
+              setState(() {
+                _currentPage = page;
+              });
+            },
+            itemBuilder: (context, index) {
+              return _buildBannerItem(banners[index].thumbnailUrl);
+            },
+          ),
+        );
+      }),
     );
   }
 
-  Widget _buildBannerItem(int index) {
-    // Determine colors/content based on index or random
-    // Using the same placeholder design as before
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 5.w),
-      decoration: BoxDecoration(
-        color: index == 0
-            ? Colors.amber
-            : (index == 1
-                  ? Colors.blueAccent
-                  : Colors.greenAccent), // Differentiate placeholders
-        borderRadius: BorderRadius.circular(16.r),
-        // image: const DecorationImage(
-        //   image: AssetImage("assets/images/banner_placeholder.png"), // Uncomment when asset exists
-        //   fit: BoxFit.cover,
-        // ),
+ Widget _buildBannerItem(String imageUrl) {
+  final radius = BorderRadius.circular(16.r);
+
+  return Container(
+    margin: EdgeInsets.symmetric(horizontal: 6.w),
+    decoration: BoxDecoration(
+      borderRadius: radius,
+      border: Border.all(
+        color: Colors.black.withOpacity(0.08),
+        width: 1,
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16.r),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [
-                Colors.white.withValues(alpha: 0.9),
-                Colors.white.withValues(alpha: 0.0),
-              ],
-            ),
-          ),
-          padding: EdgeInsets.all(16.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AutoTranslateText(
-                "Find your Perfect Remedy\nin a 1-on-1 session",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF3E1212),
-                ),
-              ),
-              SizedBox(height: 8.h),
-              AutoTranslateText(
-                "with our certified Experts\nat just ₹499/-",
-                style: TextStyle(fontSize: 12, color: Colors.black87),
-              ),
-              SizedBox(height: 12.h),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF5F2221),
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                child: AutoTranslateText(
-                  "Book your Consultation",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.06),
+          blurRadius: 8,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    ),
+    clipBehavior: Clip.antiAlias, // IMPORTANT
+    child: CachedNetworkImage(
+      imageUrl: imageUrl,
+      fit: BoxFit.cover, // IMPORTANT (instead of contain)
+      width: double.infinity,
+      height: double.infinity,
+      placeholder: (_, __) => Container(
+        color: Colors.grey.shade100,
+        alignment: Alignment.center,
+        child: const CircularProgressIndicator(strokeWidth: 2),
+      ),
+      errorWidget: (_, __, ___) => Container(
+        color: Colors.grey.shade100,
+        alignment: Alignment.center,
+        child: AutoTranslateText(
+          'Banner unavailable',
+          style: TextStyle(fontSize: 12.sp, color: Colors.black54),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

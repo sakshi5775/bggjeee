@@ -1,16 +1,22 @@
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/category_model.dart';
+import 'package:astrobharataiuser/data_model/banner_model.dart';
 import 'package:astrobharataiuser/data_model/remedy_category_model.dart';
+import 'package:astrobharataiuser/data_model/remedy_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/services/remedies_service.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/service/banner_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class RemediesController extends BaseController {
   final RemediesService _remediesService = Get.find<RemediesService>();
+  final BannerService _bannerService = BannerService();
 
   final RxList<CategoryModel> storeCategories = <CategoryModel>[].obs;
   final RxList<RemedyCategoryModel> remedyCategories =
       <RemedyCategoryModel>[].obs;
+  final RxList<RemedyModel> featuredRemedyServices = <RemedyModel>[].obs;
+  final RxBool isLoadingFeatured = true.obs;
 
   final RxBool isLoadingStore = true.obs;
   final RxBool isLoadingRemedies = true.obs;
@@ -26,10 +32,8 @@ class RemediesController extends BaseController {
   final RxString searchQuery = ''.obs;
 
   // Banner (Static for now)
-  final RxList<String> bannerImages = <String>[
-    // Placeholders, will be replaced or populated later
-    'assets/images/banner1.png',
-  ].obs;
+  final RxList<BannerItem> banners = <BannerItem>[].obs;
+  final RxBool isLoadingBanners = true.obs;
 
   final ScrollController scrollController = ScrollController();
 
@@ -58,9 +62,38 @@ class RemediesController extends BaseController {
 
   Future<void> _loadInitialData() async {
     await Future.wait([
+      _fetchBanners(),
       _fetchStoreCategories(),
       _fetchRemedyCategories(reset: true),
+      _fetchFeaturedRemedyServices(),
     ]);
+  }
+
+  Future<void> _fetchFeaturedRemedyServices() async {
+    try {
+      isLoadingFeatured.value = true;
+      final list = await _remediesService.getFeaturedRemedyServices(limit: 10);
+      featuredRemedyServices.assignAll(list);
+    } catch (e) {
+      print("Error fetching featured remedies: $e");
+      featuredRemedyServices.clear();
+    } finally {
+      isLoadingFeatured.value = false;
+    }
+  }
+
+  Future<void> _fetchBanners() async {
+    try {
+      isLoadingBanners.value = true;
+      // Use Banner API (general category) instead of static placeholder.
+      // If your backend uses a different category name, change it here.
+      final list = await _bannerService.getBannersByCategory('general');
+      banners.assignAll(list);
+    } catch (_) {
+      banners.clear();
+    } finally {
+      isLoadingBanners.value = false;
+    }
   }
 
   Future<void> _fetchStoreCategories() async {
@@ -88,7 +121,7 @@ class RemediesController extends BaseController {
       final data = await _remediesService.getRemedyCategories(
         page: currentPage,
         limit: _limit,
-        searchQuery: currentQuery.isNotEmpty ? currentQuery : null,
+        search: currentQuery.isNotEmpty ? currentQuery : null,
       );
 
       // Concurrency check: If query changed while fetching, discard result

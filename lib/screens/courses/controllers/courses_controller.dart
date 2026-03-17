@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/course_model.dart';
 import 'package:astrobharataiuser/data_model/course_type_model.dart';
 import 'package:astrobharataiuser/data_model/pillar_model.dart';
@@ -33,6 +36,8 @@ class CoursesController extends BaseController
   final RxString searchQuery = ''.obs;
   final RxString instructorQuery = ''.obs;
   final TextEditingController searchController = TextEditingController();
+  final RxList<CourseModel> searchSuggestions = <CourseModel>[].obs;
+  Timer? _searchDebounce;
 
   // Category selection (0: All, 1: Courses, 2: E-Books)
   final RxInt selectedCategory = 0.obs;
@@ -92,6 +97,7 @@ class CoursesController extends BaseController
       ac.dispose();
     }
     searchController.removeListener(_performSearch);
+    _searchDebounce?.cancel();
     searchController.dispose();
     super.onClose();
   }
@@ -268,9 +274,58 @@ class CoursesController extends BaseController
 
   // Perform search
   void _performSearch() {
-    searchQuery.value = searchController.text.trim();
-    // Trigger a fresh load from the courses API with the search query
-    loadCourses(refresh: true);
+    final query = searchController.text.trim();
+    searchQuery.value = query;
+
+    // If query is cleared, reset suggestions and reload default courses.
+    if (query.isEmpty) {
+      _searchDebounce?.cancel();
+      searchSuggestions.clear();
+      loadCourses(refresh: true);
+      return;
+    }
+
+    // Debounce API calls to avoid firing on every keystroke
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 350), () async {
+      // Trigger a fresh load from the courses API with the search query
+      await loadCourses(refresh: true);
+      // Update suggestions from the latest courses list
+      searchSuggestions
+        ..clear()
+        ..addAll(courses.take(6));
+    });
+  }
+
+  /// Navigate to the first matching course after a submitted search.
+  Future<void> submitSearchAndNavigate() async {
+    final query = searchController.text.trim();
+    if (query.isEmpty) return;
+    searchQuery.value = query;
+    await loadCourses(refresh: true);
+    if (courses.isNotEmpty) {
+      final first = courses.first;
+      Get.toNamed(
+        AppRoutes.courseDetail,
+        arguments: first.id,
+      );
+    }
+  }
+
+  /// Navigate to a specific course (used by suggestions).
+  void openCourseDetail(CourseModel course) {
+    Get.toNamed(
+      AppRoutes.courseDetail,
+      arguments: course.id,
+    );
+  }
+
+  /// Clear current search and reload default courses.
+  Future<void> clearSearch() async {
+    searchController.clear();
+    searchQuery.value = '';
+    searchSuggestions.clear();
+    await loadCourses(refresh: true);
   }
 
   // Refresh

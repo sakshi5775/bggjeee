@@ -16,6 +16,8 @@ import '../widgets/wallpaper_grid_widget.dart';
 import '../widgets/festival_grid_widget.dart';
 import 'package:astrobharataiuser/screens/panchang/view/panchang_view.dart';
 import 'package:astrobharataiuser/screens/panchang/controller/panchang_controller.dart';
+import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/collection_bottom_sheet.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 
 class EMandirWallpaperView extends BasePage<EMandirWallpaperController> {
   const EMandirWallpaperView({super.key});
@@ -27,7 +29,9 @@ class EMandirWallpaperView extends BasePage<EMandirWallpaperController> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         // endDrawer: const CommonEndDrawer(),
-        body: Column(
+        body: Stack(
+          children: [
+            Column(
           children: [
             Obx(() => CommonHeader(title: controller.selectedFilter.value)),
             SizedBox(height: 4.h),
@@ -210,6 +214,46 @@ class EMandirWallpaperView extends BasePage<EMandirWallpaperController> {
                       }),
                     ),
                   ],
+                ),
+              ),
+            ),
+            ],
+            ), // Column
+            // Sangrah FAB: on all Library (Mandir) pages; gradientBackground fill, orangeGradient border
+            Positioned(
+              right: 16.w,
+              bottom: 24.h,
+              child: Material(
+                elevation: 4,
+                borderRadius: BorderRadius.circular(30.r),
+                child: InkWell(
+                  onTap: () => showCollectionBottomSheet(context),
+                  borderRadius: BorderRadius.circular(30.r),
+                  child: Container(
+                    padding: EdgeInsets.all(3.w),
+                    decoration: BoxDecoration(
+                      gradient: AppColors.orangeGradient,
+                      borderRadius: BorderRadius.circular(30.r),
+                    ),
+                    child: Container(
+                      padding: EdgeInsets.all(14.w),
+                      decoration: BoxDecoration(
+                        gradient: AppColors.gradientBackground,
+                        borderRadius: BorderRadius.circular(27.r),
+                      ),
+                      child: Image.network(
+                        AppConstant.collectionSangrahIcon,
+                        width: 40.w,
+                        height: 40.w,
+                        fit: BoxFit.contain,
+                        errorBuilder: (_, __, ___) => Icon(
+                          Icons.collections_bookmark_outlined,
+                          color: AppColors.deepOrange,
+                          size: 40.w,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),

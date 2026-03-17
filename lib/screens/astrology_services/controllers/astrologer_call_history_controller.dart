@@ -23,9 +23,17 @@ class AstrologerCallHistoryController extends BaseController {
   final int _itemsPerPage = 20;
   bool _hasMore = true;
 
+  // Filters
+  final RxString statusFilter = ''.obs; // e.g. CONNECTED, COMPLETED, MISSED...
+  final RxString callTypeFilter = ''.obs; // VOICE / VIDEO / ''
+
   @override
   void onInit() {
     super.onInit();
+    // Default callType filter from tab, if provided
+    if (callType != null && callType!.isNotEmpty) {
+      callTypeFilter.value = callType!;
+    }
     loadHistory();
   }
 
@@ -47,10 +55,14 @@ class AstrologerCallHistoryController extends BaseController {
 
       isLoading.value = true;
 
+      final effectiveCallType =
+          callTypeFilter.value.isNotEmpty ? callTypeFilter.value : callType;
+
       final result = await _callService.getCallHistory(
         page: _currentPage,
         limit: _itemsPerPage,
-        callType: callType,
+        callType: effectiveCallType,
+        status: statusFilter.value,
       );
 
       final raw = result['sessions'];
@@ -148,5 +160,15 @@ class AstrologerCallHistoryController extends BaseController {
     final minutes = duration.inMinutes;
     final remainingSeconds = duration.inSeconds % 60;
     return '${minutes}m ${remainingSeconds}s';
+  }
+
+  /// Update filters and reload history
+  Future<void> updateFilters({
+    String? status,
+    String? type,
+  }) async {
+    if (status != null) statusFilter.value = status;
+    if (type != null) callTypeFilter.value = type;
+    await loadHistory(reset: true);
   }
 }

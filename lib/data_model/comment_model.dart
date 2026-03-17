@@ -4,7 +4,14 @@ class CommentResponse {
   CommentResponse({required this.data});
 
   factory CommentResponse.fromJson(Map<String, dynamic> json) {
-    final list = (json['data'] as List<dynamic>? ?? [])
+    List<dynamic> rawList = [];
+    final data = json['data'];
+    if (data is List<dynamic>) {
+      rawList = data;
+    } else if (data is Map<String, dynamic>) {
+      rawList = data['comments'] as List<dynamic>? ?? data['data'] as List<dynamic>? ?? [];
+    }
+    final list = rawList
         .map((e) => Comment.fromJson(e as Map<String, dynamic>))
         .toList();
     return CommentResponse(data: list);

@@ -55,9 +55,9 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
               // Year and Location Selectors
               _buildYearLocationSelectors(),
 
-              Spacing.h(16),
+              Spacing.h(12),
 
-              // Events List
+              // Events List - Expanded so list gets remaining space and doesn't overflow
               Expanded(child: _buildEventsList()),
             ],
           );
@@ -72,11 +72,11 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
       final isAllSelected = controller.selectedMonth.value == 0;
 
       return Container(
-        height: 60.h,
+        constraints: BoxConstraints(minHeight: 48.h, maxHeight: 56.h),
         decoration: BoxDecoration(color: Colors.transparent),
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
           itemCount: controller.monthNames.length + 1, // +1 for "All" option
           itemBuilder: (context, index) {
             if (index == 0) {
@@ -97,23 +97,26 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
                     color: isAllSelected ? null : Colors.white,
                     borderRadius: BorderRadius.circular(8.r),
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      AutoTranslateText(
-                        'All',
-                        style: MyTextTheme.mediumBCB.copyWith(
-                          color: isAllSelected ? Colors.white : Colors.black,
-                          fontSize: 14,
-                          fontWeight: isAllSelected
-                              ? FontWeight.w600
-                              : FontWeight.w400,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        AutoTranslateText(
+                          'All',
+                          style: MyTextTheme.mediumBCB.copyWith(
+                            color: isAllSelected ? Colors.white : Colors.black,
+                            fontSize: 14,
+                            fontWeight: isAllSelected
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -139,12 +142,13 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
                   color: isSelected ? null : Colors.white,
                   borderRadius: BorderRadius.circular(8.r),
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Flexible(
-                      child: AutoTranslateText(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      AutoTranslateText(
                         monthName,
                         style: MyTextTheme.mediumBCB.copyWith(
                           color: isSelected ? Colors.white : Colors.black,
@@ -156,8 +160,8 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );
@@ -427,24 +431,83 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
                 ],
               ),
             ),
-            // Right arrow icon
-            GestureDetector(
-              onTap: () => _showCalendarOptions(
-                festival,
-                dateStr,
-                dayNumber,
-                dayName,
-                date,
-              ),
-              child: Icon(
-                Icons.arrow_forward_ios,
-                color: "#6B1B1A".toColor().withValues(alpha: 0.5),
-                size: 16.h,
-              ),
+            // Add to calendar icon + arrow
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  onPressed: () => _showAddToCalendarDialog(
+                    festival,
+                    date ?? DateTime.now(),
+                    dayNumber,
+                    dayName,
+                  ),
+                  icon: Icon(
+                    Icons.calendar_today,
+                    size: 20.w,
+                    color: "#6B1B1A".toColor().withValues(alpha: 0.7),
+                  ),
+                  tooltip: 'Add to calendar',
+                  padding: EdgeInsets.all(6.w),
+                  constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  color: "#6B1B1A".toColor().withValues(alpha: 0.5),
+                  size: 16.h,
+                ),
+              ],
             ),
           ],
         ),
       ),
+    );
+  }
+
+  void _showAddToCalendarDialog(
+    Map<String, dynamic> festival,
+    DateTime eventDate,
+    int dayNumber,
+    String dayName,
+  ) {
+    final name = festival['name']?.toString() ?? 'Festival';
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+        title: AutoTranslateText(
+          'Add to Calendar',
+          style: MyTextTheme.mediumBCB.copyWith(fontSize: 18),
+        ),
+        content: AutoTranslateText(
+          'Add "$name" on ${DateFormat('MMM d, yyyy').format(eventDate)} to your device calendar?',
+          style: MyTextTheme.smallBCN.copyWith(
+            fontSize: 14,
+            color: Colors.black87,
+            height: 1.4,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: AutoTranslateText('Cancel', style: MyTextTheme.smallBCB),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Get.back();
+              await _addToCalendar(festival, eventDate);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: "#DFB343".toColor(),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+            ),
+            child: AutoTranslateText('Add'),
+          ),
+        ],
+      ),
+      barrierDismissible: true,
     );
   }
 
@@ -511,198 +574,6 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
         'latitude': controller.currentLatitude,
         'longitude': controller.currentLongitude,
         'timezone': controller.currentTimezone,
-      },
-    );
-  }
-
-  void _showCalendarOptions(
-    Map<String, dynamic> festival,
-    String dateStr,
-    int dayNumber,
-    String dayName,
-    DateTime? date,
-  ) {
-    final eventDate = date ?? DateTime.now();
-
-    showModalBottomSheet(
-      context: Get.context!,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (context) =>
-          _buildCalendarOptionsSheet(festival, eventDate, dayNumber, dayName),
-    );
-  }
-
-  Widget _buildCalendarOptionsSheet(
-    Map<String, dynamic> festival,
-    DateTime eventDate,
-    int dayNumber,
-    String dayName,
-  ) {
-    return DraggableScrollableSheet(
-      initialChildSize: 0.5,
-      minChildSize: 0.4,
-      maxChildSize: 0.9,
-      builder: (context, scrollController) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.r),
-              topRight: Radius.circular(20.r),
-            ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                margin: EdgeInsets.only(top: 12.h),
-                width: 40.w,
-                height: 4.h,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(2.r),
-                ),
-              ),
-              Spacing.h(16),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: AutoTranslateText(
-                  'Add to Calendar',
-                  style: MyTextTheme.largeBCB.copyWith(
-                    color: "#6F221E".toColor(),
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Spacing.h(16),
-              Expanded(
-                child: SingleChildScrollView(
-                  controller: scrollController,
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(16.w),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade50,
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            AutoTranslateText(
-                              festival['name']?.toString() ?? 'Festival',
-                              style: MyTextTheme.mediumBCB.copyWith(
-                                color: "#6F221E".toColor(),
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Spacing.h(8),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.calendar_today,
-                                  size: 16.w,
-                                  color: "#6F221E".toColor().withValues(
-                                    alpha: 0.7,
-                                  ),
-                                ),
-                                Spacing.w(8),
-                                Flexible(
-                                  child: AutoTranslateText(
-                                    DateFormat(
-                                      'EEEE, MMMM dd, yyyy',
-                                    ).format(eventDate),
-                                    style: MyTextTheme.smallBCN.copyWith(
-                                      color: "#6F221E".toColor().withOpacity(
-                                        0.7,
-                                      ),
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            if (festival['description'] != null) ...[
-                              Spacing.h(8),
-                              AutoTranslateText(
-                                festival['description']?.toString() ?? '',
-                                style: MyTextTheme.smallBCN.copyWith(
-                                  color: "#6F221E".toColor().withValues(
-                                    alpha: 0.6,
-                                  ),
-                                  fontSize: 12,
-                                ),
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                      Spacing.h(16),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () => _addToCalendar(festival, eventDate),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: "#DFB343".toColor(),
-                            padding: EdgeInsets.symmetric(vertical: 14.h),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.r),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.calendar_today,
-                                color: Colors.white,
-                                size: 20.w,
-                              ),
-                              Spacing.w(8),
-                              Flexible(
-                                child: AutoTranslateText(
-                                  'Add to Calendar',
-                                  style: MyTextTheme.mediumBCB.copyWith(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Spacing.h(12),
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 12.h),
-                        child: AutoTranslateText(
-                          'This will open your default calendar app to save the event',
-                          style: MyTextTheme.smallBCN.copyWith(
-                            color: Colors.grey.shade600,
-                            fontSize: 12,
-                          ),
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
       },
     );
   }

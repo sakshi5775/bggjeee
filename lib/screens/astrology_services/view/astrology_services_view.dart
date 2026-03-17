@@ -231,14 +231,7 @@ class AstrologyServicesView extends StatelessWidget {
   ) {
     return Container(
       padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 10.h),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [const Color(0xFF5D1C21), Colors.transparent],
-          stops: [0.0, 1.0],
-        ),
-      ),
+      decoration: const BoxDecoration(),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
         decoration: BoxDecoration(

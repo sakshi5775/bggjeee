@@ -22,10 +22,23 @@ class CourseDetailView extends StatelessWidget {
     final controller = Get.put(CourseDetailController(courseId: courseId));
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      // endDrawer: const CommonEndDrawer(),
-      body: SafeArea(
-        child: Obx(() {
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              AppColors.gradientBackground.colors.first,
+              AppColors.gradientBackground.colors.length > 1
+                  ? AppColors.gradientBackground.colors[1]
+                  : Colors.white,
+              Colors.white,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          bottom: false,
+          child: Obx(() {
           if (controller.isLoading.value &&
               controller.courseDetail.value == null) {
             return Center(
@@ -66,9 +79,11 @@ class CourseDetailView extends StatelessWidget {
           return Column(
             children: [
               const CommonHeader(title: 'Course Detail'),
-              // Scrollable Content
+              // Scrollable Content (key prevents scroll position restore / autoscroll)
               Expanded(
                 child: SingleChildScrollView(
+                  key: PageStorageKey<String>('course_detail_${controller.courseId}'),
+                  physics: const ClampingScrollPhysics(),
                   child: Column(
                     children: [
                       // Hero Section with Video Thumbnail
@@ -107,6 +122,7 @@ class CourseDetailView extends StatelessWidget {
           );
         }),
       ),
+    ),
     );
   }
 
@@ -190,36 +206,6 @@ class CourseDetailView extends StatelessWidget {
           ),
         ),
 
-        // Play button overlay (center)
-        Positioned.fill(
-          child: Center(
-            child: GestureDetector(
-              onTap: () {
-                // TODO: Play preview video
-              },
-              child: Container(
-                width: 64.w,
-                height: 64.w,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.3),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  Icons.play_arrow,
-                  color: AppColors.primaryGradient.colors.first,
-                  size: 36.w,
-                ),
-              ),
-            ),
-          ),
-        ),
       ],
     );
   }

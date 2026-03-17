@@ -170,7 +170,18 @@ class PujaBookingFormController extends BaseController {
       pujaTitle = args['pujaTitle'] as String?;
       packageIndex = args['packageIndex'] as int? ?? 0;
       personCount = args['personCount'] as int? ?? 1;
-      price = args['price'] as double?;
+      final priceArg = args['price'];
+      if (priceArg != null) {
+        if (priceArg is int) {
+          price = priceArg.toDouble();
+        } else if (priceArg is double) {
+          price = priceArg;
+        } else if (priceArg is num) {
+          price = priceArg.toDouble();
+        }
+      } else {
+        price = null;
+      }
       packageName = args['packageName'] as String?;
       selectedAddress = args['address'] as AddressModel?;
     }

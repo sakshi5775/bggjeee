@@ -189,7 +189,7 @@ class GlobalNavController extends GetxController {
         if (index == 1)
           activeSubItemIndex.value = 0; // Consult
         else if (index == 2)
-          activeSubItemIndex.value = 1; // Temple
+          activeSubItemIndex.value = 0; // Library (Mandir opens Library)
         else if (index == 3)
           activeSubItemIndex.value = 0; // Mart
         else if (index == 4)
@@ -233,7 +233,7 @@ class GlobalNavController extends GetxController {
       if (index == 1) {
         activeSubItemIndex.value = 0; // Chat
       } else if (index == 2) {
-        activeSubItemIndex.value = 1; // Temple
+        activeSubItemIndex.value = 0; // Library (Mandir opens Library)
       } else if (index == 3) {
         activeSubItemIndex.value = 0; // Mart
       } else if (index == 4) {
@@ -290,8 +290,11 @@ class GlobalNavController extends GetxController {
 
   void _handleMandirSubItem(int subIndex) {
     if (subIndex == 0) {
-      // Library
-      UserMainController.pushInCurrentTab(AppRoutes.eMandirWallpaper);
+      // Library — open with Library tab selected
+      UserMainController.pushInCurrentTab(
+        AppRoutes.eMandirWallpaper,
+        arguments: {'initialFilter': 'Library'},
+      );
     } else if (subIndex == 1) {
       // Temple
       UserMainController.pushInCurrentTab(AppRoutes.virtualDarshan);

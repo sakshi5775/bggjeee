@@ -19,7 +19,22 @@ class ChatInitiationHelper {
   static Future<void> initiateChat(AstrologerModel astrologer) async {
     try {
       // 1. Check Wallet balance (Bypass profile completeness check as per user request)
-      final pricePerMinute = astrologer.chatPrice ?? 299.0;
+      final pricePerMinute = astrologer.services.chat.pricePerMinute ??
+          astrologer.chatPricePerMin ??
+          astrologer.chatPrice ??
+          0.0;
+      final chatEnabled = astrologer.services.chat.enabled == true;
+      if (!chatEnabled || pricePerMinute <= 0) {
+        Get.snackbar(
+          'Service Not Available',
+          '${astrologer.displayName} is not available for chat service right now.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 4),
+        );
+        return;
+      }
 
       final isWalletSufficient = await _precheckService.checkBeforeProceeding(
         astrologer: astrologer,

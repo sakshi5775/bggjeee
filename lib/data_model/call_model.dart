@@ -231,12 +231,22 @@ class CallHistoryItem {
   final String astrologerId;
   final String astrologerName;
   final String? astrologerImage;
+  /// Effective call duration in seconds (derived from backend fields).
   final int durationSeconds;
   final double totalAmount;
   final DateTime createdAt;
   final DateTime? startedAt;
   final DateTime? endedAt;
   final String? recordingUrl;
+  // Additional user-side billing fields
+  final int? totalMinutesBilled;
+  final double? pricePerMinute;
+  final String? currency;
+  final String? paymentStatus;
+  final String? endReason;
+  final int? ringDuration;
+  final int? totalDurationSeconds;
+  final List<CallDeduction> deductions;
 
   CallHistoryItem({
     required this.callId,
@@ -251,6 +261,14 @@ class CallHistoryItem {
     this.startedAt,
     this.endedAt,
     this.recordingUrl,
+    this.totalMinutesBilled,
+    this.pricePerMinute,
+    this.currency,
+    this.paymentStatus,
+    this.endReason,
+    this.ringDuration,
+    this.totalDurationSeconds,
+    this.deductions = const [],
   });
 
   factory CallHistoryItem.fromJson(Map<String, dynamic> json) {
@@ -279,6 +297,26 @@ class CallHistoryItem {
       return (json['astrologerId'] ?? '').toString();
     }
 
+    // Prefer explicit duration fields from new API
+    final int effectiveDurationSeconds = (() {
+      final callDuration = (json['callDuration'] as num?)?.toInt();
+      final totalDuration = (json['totalDuration'] as num?)?.toInt();
+      final legacySeconds = (json['durationSeconds'] as num?)?.toInt();
+      return callDuration ?? totalDuration ?? legacySeconds ?? 0;
+    })();
+
+    // Map deductions (user wallet side only)
+    final List<CallDeduction> deductions = (() {
+      final raw = json['deductions'];
+      if (raw is List) {
+        return raw
+            .whereType<Map<String, dynamic>>()
+            .map(CallDeduction.fromJson)
+            .toList();
+      }
+      return <CallDeduction>[];
+    })();
+
     return CallHistoryItem(
       callId: (json['callId'] ?? json['_id'] ?? '').toString(),
       callType: json['callType'] as String? ?? 'VOICE',
@@ -286,7 +324,7 @@ class CallHistoryItem {
       astrologerId: extractAstrologerId(),
       astrologerName: extractAstrologerName(),
       astrologerImage: extractAstrologerImage(),
-      durationSeconds: (json['durationSeconds'] as num?)?.toInt() ?? 0,
+      durationSeconds: effectiveDurationSeconds,
       totalAmount: (json['totalAmount'] as num?)?.toDouble() ?? 0.0,
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'] as String)
@@ -298,6 +336,43 @@ class CallHistoryItem {
           ? DateTime.parse(json['endedAt'] as String)
           : null,
       recordingUrl: json['recordingUrl'] as String?,
+      totalMinutesBilled:
+          (json['totalMinutesBilled'] as num?)?.toInt(), // user-side billing
+      pricePerMinute: (json['pricePerMinute'] as num?)?.toDouble(),
+      currency: json['currency'] as String?,
+      paymentStatus: json['paymentStatus'] as String?,
+      endReason: json['endReason'] as String?,
+      ringDuration: (json['ringDuration'] as num?)?.toInt(),
+      totalDurationSeconds:
+          (json['totalDuration'] as num?)?.toInt(), // keep raw totalDuration
+      deductions: deductions,
+    );
+  }
+}
+
+class CallDeduction {
+  final int minute;
+  final double amount;
+  final double? walletBalanceBefore;
+  final double? walletBalanceAfter;
+  final String? description;
+
+  CallDeduction({
+    required this.minute,
+    required this.amount,
+    this.walletBalanceBefore,
+    this.walletBalanceAfter,
+    this.description,
+  });
+
+  factory CallDeduction.fromJson(Map<String, dynamic> json) {
+    return CallDeduction(
+      minute: (json['minute'] as num?)?.toInt() ?? 0,
+      amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
+      walletBalanceBefore:
+          (json['walletBalanceBefore'] as num?)?.toDouble(),
+      walletBalanceAfter: (json['walletBalanceAfter'] as num?)?.toDouble(),
+      description: json['description'] as String?,
     );
   }
 }

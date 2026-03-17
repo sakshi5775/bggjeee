@@ -140,6 +140,7 @@ class AstrologerService {
 
       if (astrologerCategory != null && astrologerCategory.isNotEmpty) {
         query['astrologerCategory'] = astrologerCategory;
+        query['astrologer_category'] = astrologerCategory;
       }
 
       final response = await _apiRepository.getApi(

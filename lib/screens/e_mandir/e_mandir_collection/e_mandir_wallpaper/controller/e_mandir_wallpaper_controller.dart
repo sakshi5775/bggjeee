@@ -56,23 +56,31 @@ class EMandirWallpaperController extends BaseController {
     scrollToSelectedFilter();
   }
 
+  /// Scroll so the selected filter chip is centered in the viewport.
   void scrollToSelectedFilter() {
     final index = filters.indexOf(selectedFilter.value);
-    if (index != -1 && filterScrollController.hasClients) {
-      // Calculate approximate position. Each chip is roughly ~100 width.
-      final offset = index * 100.0;
-      filterScrollController.animateTo(
-        offset,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
+    if (index == -1 || !filterScrollController.hasClients) return;
+    final position = filterScrollController.position;
+    final viewportWidth = position.viewportDimension;
+    // Approximate chip width (padding + text + margin)
+    const double chipWidth = 100.0;
+    final maxExtent = position.maxScrollExtent;
+    // Center the selected chip: chip center at viewport center
+    double offset = (index * chipWidth) - (viewportWidth / 2) + (chipWidth / 2);
+    offset = offset.clamp(0.0, maxExtent);
+    filterScrollController.animateTo(
+      offset,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   void onChangeFilter(String filter) {
     if (selectedFilter.value == filter) return;
     selectedFilter.value = filter;
     fetchContent();
+    // Center the selected tab in the horizontal list
+    WidgetsBinding.instance.addPostFrameCallback((_) => scrollToSelectedFilter());
   }
 
   void onChangeGreetingFilter(String filter) {

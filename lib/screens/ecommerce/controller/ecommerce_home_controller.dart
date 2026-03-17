@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/data_model/banner_model.dart';
 import 'package:astrobharataiuser/data_model/blog_model.dart';
@@ -689,22 +690,17 @@ class EcommerceHomeController extends BaseController {
     selectedCategory.value = category;
     selectedSubcategory.value = null; // Reset subcategory when category changes
 
-    // Don't navigate immediately - let user see subcategories first
-    // Navigation will happen when subcategory is selected or user clicks on category again
+    // Always navigate to product list when a category is selected (e.g. from Shop by Category)
+    // so the product list page is shown even when category has 0 items or subcategories
     if (category != null) {
-      // If category has no subcategories, navigate directly
-      final subs = subcategories;
-      if (subs.isEmpty) {
-        if (category.id != null) {
-          UserMainController.pushInCurrentTab('/product-list', arguments: {'category': category});
-        } else if (category.slug != null) {
-          UserMainController.pushInCurrentTab(
-            '/product-list',
-            arguments: {'categorySlug': category.slug},
-          );
-        }
+      if (category.id != null) {
+        UserMainController.pushInCurrentTab(AppRoutes.productList, arguments: {'category': category});
+      } else if (category.slug != null) {
+        UserMainController.pushInCurrentTab(
+          AppRoutes.productList,
+          arguments: {'categorySlug': category.slug},
+        );
       }
-      // If category has subcategories, stay on home page to show subcategory filter
     }
   }
 

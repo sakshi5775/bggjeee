@@ -4,7 +4,6 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -157,7 +156,10 @@ class AllAstrologerWidget extends BasePage<UserDashboardController> {
                                   color: AppColors.deepOrange,
                                 ),
                                 AutoTranslateText(
-                                  '${astrologer.chatPricePerMin?.toInt() ?? 0}/min',
+                                  (astrologer.chatPricePerMin != null &&
+                                              astrologer.chatPricePerMin! > 0)
+                                          ? '${astrologer.chatPricePerMin!.toInt()}/min'
+                                          : 'Not available',
                                   style: TextStyle(
                                     fontSize: 9.sp,
                                     color: AppColors.deepOrange,

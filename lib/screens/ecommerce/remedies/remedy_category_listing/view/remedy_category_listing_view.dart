@@ -1,6 +1,7 @@
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/app_manager/myButton.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/remedy_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/remedies/remedy_category_listing/controller/remedy_category_listing_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -204,7 +205,10 @@ class RemedyCategoryListingView
                     color: Colors.white,
                   ),
                   onPress: () {
-                    // Handle booking
+                    Get.toNamed(
+                      AppRoutes.remedyDetail,
+                      arguments: {'serviceId': remedy.id},
+                    );
                   },
                 ),
               ],

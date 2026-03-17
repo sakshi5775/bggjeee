@@ -172,17 +172,18 @@ class BookPujaController extends BaseController {
     return 'ॐ';
   }
 
-  // Get minimum price from packages
+  /// Display price: same logic as puja detail (recommended package or first package).
+  /// Use this so book pooja list and pooja detail show the same price.
   double? getMinPrice(PujaModel puja) {
     if (puja.packages == null || puja.packages!.isEmpty) {
       return null;
     }
-    final prices = puja.packages!
-        .map((p) => p.price ?? 0.0)
-        .where((p) => p > 0)
-        .toList();
-    if (prices.isEmpty) return null;
-    return prices.reduce((a, b) => a < b ? a : b);
+    final package = puja.packages!.firstWhere(
+      (p) => p.isRecommended == true,
+      orElse: () => puja.packages!.first,
+    );
+    final price = package.price;
+    return (price != null && price > 0) ? price : null;
   }
 
   // Get duration from timing

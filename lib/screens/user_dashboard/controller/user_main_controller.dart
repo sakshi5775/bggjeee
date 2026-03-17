@@ -1,5 +1,6 @@
 import 'package:astrobharataiuser/binding/dashboard_binding/user_dashboard_binding.dart';
 
+import 'package:astrobharataiuser/binding/e_mandir_binding/e_mandir_wallpaper_binding.dart';
 import 'package:astrobharataiuser/binding/e_mandir_binding/virtual_darshan_binding.dart';
 import 'package:astrobharataiuser/binding/ecommerce_binding/ecommerce_binding.dart';
 import 'package:astrobharataiuser/binding/courses_binding/courses_binding.dart';
@@ -9,6 +10,7 @@ import 'package:astrobharataiuser/core/routes/get_pages.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/all_astrologers_view.dart';
 import 'package:astrobharataiuser/screens/consult/view/consult_view.dart';
+import 'package:astrobharataiuser/screens/e_mandir/e_mandir_collection/e_mandir_wallpaper/view/e_mandir_wallpaper_view.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/controller/virtual_darshan_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/view/virtual_darshan_view.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
@@ -37,10 +39,11 @@ class UserMainController extends GetxController {
   );
 
   /// The initial / root route of each tab.
+  /// Tab 2 (Mandir) opens Library (eMandirWallpaper) with Library filter.
   final List<String> tabInitialRoutes = const [
     '/user-home',
     AppRoutes.consultHome,
-    AppRoutes.virtualDarshan,
+    AppRoutes.eMandirWallpaper,
     AppRoutes.ecommerceHome,
     AppRoutes.courses,
   ];
@@ -55,6 +58,8 @@ class UserMainController extends GetxController {
     super.onInit();
     // Tab 1 (Consult): no availability filter = show all three (Chat, Call, Video) per card
     _tabInitialArguments[1] = null;
+    // Tab 2 (Mandir): open Library page with Library tab selected (not Today)
+    _tabInitialArguments[2] = {'initialFilter': 'Library'};
     _tabInitialArguments[3] = {'isFeatured': true};
   }
 
@@ -280,6 +285,12 @@ class UserMainController extends GetxController {
           settings: finalSettings,
           page: () => const VirtualDarshanView(),
           binding: VirtualDarshanBinding(),
+        );
+      case AppRoutes.eMandirWallpaper:
+        return GetPageRoute(
+          settings: finalSettings,
+          page: () => const EMandirWallpaperView(),
+          binding: EMandirWallpaperBinding(),
         );
       case AppRoutes.ecommerceHome:
         return GetPageRoute(

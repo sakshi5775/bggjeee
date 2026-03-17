@@ -441,8 +441,20 @@ class EcommerceService with ApiHelperMixin {
 
       if (response.body['success'] == true) {
         final data = response.body['data'];
+        List<dynamic>? rawList;
         if (data is List) {
-          return data
+          rawList = data;
+        } else if (data is Map<String, dynamic>) {
+          rawList = (data['items'] is List)
+              ? data['items'] as List<dynamic>
+              : (data['products'] is List)
+                  ? data['products'] as List<dynamic>
+                  : (data['data'] is List)
+                      ? data['data'] as List<dynamic>
+                      : null;
+        }
+        if (rawList != null && rawList.isNotEmpty) {
+          return rawList
               .whereType<Map<String, dynamic>>()
               .map(ProductModel.fromJson)
               .toList();

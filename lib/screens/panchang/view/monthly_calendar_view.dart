@@ -53,6 +53,11 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
 
               Spacing.h(10),
 
+              // Tithi / Selected date info banner (like reference)
+              _buildTithiBanner(),
+
+              Spacing.h(12),
+
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
@@ -61,7 +66,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
                       _buildCalendarGrid(),
                       Spacing.h(20),
 
-                      // Hindu Calendar Events Section
+                      // Hindu Calendar (Festival) Section
                       _buildFestivalsSection(),
                       Spacing.h(20),
                     ],
@@ -174,6 +179,126 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
     );
   }
 
+  /// Tithi / selected date info banner using primaryGradient.
+  /// Shows Hindu month, paksha | tithi for selected date and date + location on right.
+  Widget _buildTithiBanner() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 15.w),
+      child: Obx(() {
+        final isFetching = controller.isFetchingPanchang.value;
+        final hinduDetails = controller.getCurrentHinduDetails();
+        final pakshaTithi = controller.getPakshaTithi();
+        final sel = controller.selectedDate.value;
+        final dateStr = DateFormat('d MMM, yyyy (EEEE)').format(sel);
+        final location = controller.selectedLocation.value;
+
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOutCubic,
+          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+          decoration: BoxDecoration(
+            gradient: AppColors.primaryGradient,
+            borderRadius: BorderRadius.circular(14.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.2),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.nightlight_round,
+                  color: AppColors.gradientBackground.colors.first,
+                  size: 32.w,
+                ),
+                Spacing.w(12),
+                Expanded(
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 220),
+                    child: Column(
+                      key: ValueKey('${sel.year}-${sel.month}-${sel.day}'),
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (isFetching)
+                          AutoTranslateText(
+                            'Loading...',
+                            style: MyTextTheme.smallBCN.copyWith(
+                              color: Colors.white70,
+                              fontSize: 12,
+                            ),
+                          )
+                        else ...[
+                          AutoTranslateText(
+                            hinduDetails,
+                            style: MyTextTheme.smallBCB.copyWith(
+                              color: Colors.white,
+                              fontSize: 11,
+                              height: 1.3,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Spacing.h(4),
+                          AutoTranslateText(
+                            pakshaTithi,
+                            style: MyTextTheme.mediumBCB.copyWith(
+                              color: AppColors.gradientBackground.colors.first,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+                Spacing.w(8),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AutoTranslateText(
+                      dateStr,
+                      style: MyTextTheme.smallBCB.copyWith(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.end,
+                    ),
+                    Spacing.h(2),
+                    AutoTranslateText(
+                      location,
+                      style: MyTextTheme.smallBCN.copyWith(
+                        color: Colors.white70,
+                        fontSize: 11,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.end,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
   Widget _buildCalendarGrid() {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 15.w),
@@ -224,25 +349,35 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
   }
 
   Widget _buildDaysOfWeekHeader({required double dayWidth}) {
-    final days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: days.map((day) {
-        return Container(
-          width: dayWidth,
-          height: 32.08.h,
-          alignment: Alignment.center,
-          child: AutoTranslateText(
-            day,
-            textAlign: TextAlign.center,
-            style: MyTextTheme.smallBCB.copyWith(
-              fontSize: 12.04,
-              fontWeight: FontWeight.w400,
-              color: Color.fromRGBO(107, 27, 26, 0.6), // fill_BELX40
+    final days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 6.h),
+      decoration: BoxDecoration(
+        gradient: AppColors.gradientBackground,
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: days.asMap().entries.map((entry) {
+          final isSunday = entry.key == 0;
+          return Container(
+            width: dayWidth,
+            height: 28.h,
+            alignment: Alignment.center,
+            child: AutoTranslateText(
+              entry.value,
+              textAlign: TextAlign.center,
+              style: MyTextTheme.smallBCB.copyWith(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: isSunday
+                    ? AppColors.primaryGradient.colors.first
+                    : Color.fromRGBO(107, 27, 26, 0.85),
+              ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        }).toList(),
+      ),
     );
   }
 
@@ -251,14 +386,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
       padding: EdgeInsets.symmetric(horizontal: 16.05.w, vertical: 0),
       height: 44.11.h,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFF38B3B), // rgba(243, 139, 59, 1)
-            Color(0xFFDD2914), // rgba(221, 41, 20, 1)
-          ],
-        ),
+        gradient: AppColors.orangeGradient,
         borderRadius: BorderRadius.circular(14.04.r),
       ),
       child: Row(
@@ -425,107 +553,103 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
   }) {
     final festivals = controller.getFestivalsForDate(date);
     final hasFestival = festivals.isNotEmpty;
+    final isSunday = date.weekday == DateTime.sunday;
 
-    // Determine background color based on Figma design
+    // Styling: selected/today = orangeGradient, default = gradientBackground tint, Sunday = primary
     Color? backgroundColor;
     Color textColor;
     Border? border;
     Gradient? gradient;
 
     if (!isCurrentMonth) {
-      backgroundColor = "#FAF6F0".toColor(); // fill_NZ04EU
-      textColor = "#6B1B1A".toColor(); // fill_54O2QS
+      backgroundColor = AppColors.gradientBackground.colors.last;
+      textColor = Colors.grey.shade600;
       gradient = null;
-    } else if (isToday) {
-      // Today has orange gradient background
-      backgroundColor = null; // No solid color when using gradient
-      textColor = "#FFFFFF".toColor();
-      border = null;
-      gradient = LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          Color(0xFFF38B3B), // rgba(243, 139, 59, 1)
-          Color(0xFFDD2914), // rgba(221, 41, 20, 1)
-        ],
-      );
     } else if (isSelected) {
-      // Selected dates have green background
-      backgroundColor = Color(0xFFE8F5E9); // fill_UJ83TC
-      textColor = "#6B1B1A".toColor();
+      backgroundColor = null;
+      textColor = Colors.white;
       border = Border.all(
-        color: Color.fromRGBO(45, 122, 62, 0.2), // stroke_NWIJ0N
-        width: 0.58,
+        color: AppColors.orangeGradient.colors.first.withValues(alpha: 0.8),
+        width: 0.8,
       );
-      gradient = null;
+      gradient = AppColors.orangeGradient;
+    } else if (isToday) {
+      backgroundColor = null;
+      textColor = Colors.white;
+      border = null;
+      gradient = AppColors.orangeGradient;
     } else {
-      backgroundColor = "#FAF6F0".toColor(); // fill_NZ04EU
-      textColor = "#6B1B1A".toColor(); // fill_54O2QS
+      backgroundColor = AppColors.gradientBackground.colors[1];
+      textColor = isSunday
+          ? AppColors.primaryGradient.colors.first
+          : Color(0xFF6B1B1A);
       gradient = null;
     }
 
     return GestureDetector(
       onTap: () {
         if (isCurrentMonth) {
-          // Update selected date
           controller.selectedDate.value = date;
           controller.fetchMonthlyCalendar();
           controller.fetchPanchangForSelectedDate();
         }
       },
-      child: Container(
-        width: dayWidth,
-        height: 42.8.h,
-        padding: EdgeInsets.only(
-          top: 11.36.h,
-          left: 4.01.w,
-          right: 4.01.w,
-          bottom: 0,
+      child: TweenAnimationBuilder<double>(
+        key: ValueKey('${date.millisecondsSinceEpoch}-$isSelected'),
+        tween: Tween(begin: isSelected ? 0.92 : 1.0, end: 1.0),
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOutCubic,
+        builder: (context, scale, child) => Transform.scale(
+          scale: scale,
+          child: child,
         ),
-        // padding: AppPaddings.all(15),
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(10.03.r),
-          border: border,
-          gradient: gradient,
-        ),
-        child: Stack(
-          children: [
-            // Date number
-            Positioned(
-              top: 0.74.h,
-              left: 0,
-              right: 0,
-              child: AutoTranslateText(
-                day.toString(),
-                textAlign: TextAlign.center,
-                style: MyTextTheme.mediumBCB.copyWith(
-                  fontSize: 14.04,
-                  fontWeight: FontWeight.w500,
-                  color: textColor,
-                  height: 1.43,
-                  letterSpacing: -0.15,
-                ),
-              ),
-            ),
-            // Festival indicator dot (green dot for selected dates)
-            if (hasFestival && isSelected)
+        child: Container(
+          width: dayWidth,
+          height: 42.8.h,
+          padding: EdgeInsets.only(top: 6.h, left: 2.w, right: 2.w, bottom: 4.h),
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(10.r),
+            border: border,
+            gradient: gradient,
+          ),
+          child: Stack(
+            children: [
+              // Date number
               Positioned(
-                bottom: 8.36.h,
+                top: 2.h,
                 left: 0,
                 right: 0,
-                child: Center(
-                  child: Container(
-                    width: 4.01.w,
-                    height: 4.01.h,
-                    decoration: BoxDecoration(
-                      color: Color(0xFF2D7A3E), // fill_KF0GMQ
-                      shape: BoxShape.circle,
-                    ),
+                child: AutoTranslateText(
+                  day.toString(),
+                  textAlign: TextAlign.center,
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: textColor,
+                    height: 1.2,
                   ),
                 ),
               ),
-          ],
+              // Festival dot for any date with festivals
+              if (hasFestival)
+                Positioned(
+                  bottom: 4.h,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: Container(
+                      width: 5.w,
+                      height: 5.h,
+                      decoration: BoxDecoration(
+                        color: Color(0xFF2D7A3E),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -553,27 +677,34 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
-          Row(
-            children: [
-              Icon(
-                Icons.star_border_outlined,
-                color: Color(0xFFFF9933), // 3rd-orange
-                size: 20.05.w,
-              ),
-              Spacing.w(8.02),
-              AutoTranslateText(
-                'Hindu Calendar',
-                style: MyTextTheme.largeBCB.copyWith(
-                  fontSize: 18.05,
-                  fontWeight: FontWeight.w500,
-                  color: "#6B1B1A".toColor(), // fill_54O2QS
-                  height: 1.5,
+          // Header - Hindu Calendar (festival list)
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 8.h),
+            decoration: BoxDecoration(
+              gradient: AppColors.gradientBackground,
+              borderRadius: BorderRadius.circular(10.r),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.star_rounded,
+                  color: AppColors.orangeGradient.colors.first,
+                  size: 22.w,
                 ),
-              ),
-            ],
+                Spacing.w(8),
+                AutoTranslateText(
+                  'Hindu Calendar',
+                  style: MyTextTheme.largeBCB.copyWith(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primaryGradient.colors.first,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
           ),
-          Spacing.h(16.05),
+          //Spacing.h(1),
           // Festivals List
           Obx(() {
             if (controller.calendarData.isEmpty) {
@@ -668,115 +799,6 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
     required Map<String, dynamic> festival,
     required String dateStr,
   }) {
-    return GestureDetector(
-      onTap: () =>
-          _navigateToFestivalDetail(festival, dateStr, dayNumber, dayName),
-      child: Container(
-        margin: EdgeInsets.only(bottom: 12.03.h),
-        padding: EdgeInsets.all(12.w),
-        decoration: BoxDecoration(
-          color: "#FAF6F0".toColor(), // fill_NZ04EU
-          borderRadius: BorderRadius.circular(14.04.r),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Date Badge with orange gradient
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 12.w),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFFF38B3B), // rgba(243, 139, 59, 1)
-                    Color(0xFFDD2914), // rgba(221, 41, 20, 1)
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  AutoTranslateText(
-                    dayNumber.toString(),
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                      height: 1.0,
-                    ),
-                  ),
-                  AutoTranslateText(
-                    dayName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: MyTextTheme.smallBCN.copyWith(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 10,
-                      color: Colors.white,
-                      height: 1.0,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Spacing.w(12),
-            // Festival Info
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AutoTranslateText(
-                    festival['name']?.toString() ?? 'Festival',
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: "#6B1B1A".toColor(), // fill_54O2QS
-                      height: 1.43,
-                      letterSpacing: -0.15,
-                    ),
-                  ),
-                  Spacing.h(4),
-                  if (festival['description'] != null)
-                    AutoTranslateText(
-                      festival['description']?.toString() ?? '',
-                      style: MyTextTheme.smallBCN.copyWith(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w400,
-                        color: Color.fromRGBO(107, 27, 26, 0.6), // fill_BELX40
-                        height: 1.6,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                ],
-              ),
-            ),
-            // Right arrow icon
-            GestureDetector(
-              onTap: () =>
-                  _showCalendarOptions(festival, dateStr, dayNumber, dayName),
-              child: Icon(
-                Icons.arrow_forward_ios,
-                color: "#6B1B1A".toColor().withValues(alpha: 0.5),
-                size: 16.h,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// Show calendar options bottom sheet from right side
-  void _showCalendarOptions(
-    Map<String, dynamic> festival,
-    String dateStr,
-    int dayNumber,
-    String dayName,
-  ) {
-    // Parse date
     DateTime? eventDate;
     try {
       final parts = dateStr.split('/');
@@ -787,200 +809,172 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
           int.parse(parts[2]),
         );
       }
-    } catch (e) {
-      eventDate = DateTime.now();
-    }
-
+    } catch (_) {}
     eventDate ??= DateTime.now();
 
-    // Show bottom sheet
-    showModalBottomSheet(
-      context: Get.context!,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (context) =>
-          _buildCalendarOptionsSheet(festival, eventDate!, dayNumber, dayName),
-    );
-  }
-
-  /// Calendar Options Bottom Sheet Widget
-  Widget _buildCalendarOptionsSheet(
-    Map<String, dynamic> festival,
-    DateTime eventDate,
-    int dayNumber,
-    String dayName,
-  ) {
-    return DraggableScrollableSheet(
-      initialChildSize: 0.5,
-      minChildSize: 0.4,
-      maxChildSize: 0.9,
-      builder: (context, scrollController) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.r),
-              topRight: Radius.circular(20.r),
+    return Padding(
+      padding: EdgeInsets.only(bottom: 10.h),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () =>
+              _navigateToFestivalDetail(festival, dateStr, dayNumber, dayName),
+          borderRadius: BorderRadius.circular(14.r),
+          child: Container(
+            padding: EdgeInsets.all(12.w),
+            decoration: BoxDecoration(
+              color: AppColors.gradientBackground.colors[1],
+              borderRadius: BorderRadius.circular(14.r),
             ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Handle bar
-              Container(
-                margin: EdgeInsets.only(top: 12.h),
-                width: 40.w,
-                height: 4.h,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(2.r),
-                ),
-              ),
-              Spacing.h(12),
-              // Title
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: AutoTranslateText(
-                  'Add to Calendar',
-                  style: MyTextTheme.largeBCB.copyWith(
-                    color: "#6F221E".toColor(),
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Date badge (orange)
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 12.w),
+                  decoration: BoxDecoration(
+                    gradient: AppColors.orangeGradient,
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
-                ),
-              ),
-              Spacing.h(12),
-              // Scrollable content
-              Expanded(
-                child: SingleChildScrollView(
-                  controller: scrollController,
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Event Details
-                      Container(
-                        padding: EdgeInsets.all(16.w),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade50,
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            AutoTranslateText(
-                              festival['name']?.toString() ?? 'Festival',
-                              style: MyTextTheme.mediumBCB.copyWith(
-                                color: "#6F221E".toColor(),
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Spacing.h(8),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.calendar_today,
-                                  size: 16.w,
-                                  color: "#6F221E".toColor().withValues(
-                                    alpha: 0.7,
-                                  ),
-                                ),
-                                Spacing.w(8),
-                                Flexible(
-                                  child: AutoTranslateText(
-                                    DateFormat(
-                                      'EEEE, MMMM dd, yyyy',
-                                    ).format(eventDate),
-                                    style: MyTextTheme.smallBCN.copyWith(
-                                      color: "#6F221E".toColor().withOpacity(
-                                        0.7,
-                                      ),
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            if (festival['description'] != null) ...[
-                              Spacing.h(8),
-                              AutoTranslateText(
-                                festival['description']?.toString() ?? '',
-                                style: MyTextTheme.smallBCN.copyWith(
-                                  color: "#6F221E".toColor().withValues(
-                                    alpha: 0.6,
-                                  ),
-                                  fontSize: 12,
-                                ),
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ],
+                      AutoTranslateText(
+                        dayNumber.toString().padLeft(2, '0'),
+                        style: MyTextTheme.mediumBCB.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                          height: 1.0,
                         ),
                       ),
-                      Spacing.h(16),
-                      // Add to Calendar Button
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () => _addToCalendar(festival, eventDate),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: "#DFB343".toColor(),
-                            padding: EdgeInsets.symmetric(vertical: 14.h),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.r),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.calendar_today,
-                                color: Colors.white,
-                                size: 20.w,
-                              ),
-                              Spacing.w(8),
-                              Flexible(
-                                child: AutoTranslateText(
-                                  'Add to Calendar',
-                                  style: MyTextTheme.mediumBCB.copyWith(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Spacing.h(12),
-                      // Note
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 12.h),
-                        child: AutoTranslateText(
-                          'This will open your default calendar app to save the event',
-                          style: MyTextTheme.smallBCN.copyWith(
-                            color: Colors.grey.shade600,
-                            fontSize: 12,
-                          ),
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                      AutoTranslateText(
+                        dayName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: MyTextTheme.smallBCN.copyWith(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 10,
+                          color: Colors.white,
+                          height: 1.0,
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-            ],
+                Spacing.w(12),
+                // Festival name & description
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AutoTranslateText(
+                        festival['name']?.toString() ?? 'Festival',
+                        style: MyTextTheme.mediumBCB.copyWith(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF6B1B1A),
+                          height: 1.3,
+                        ),
+                      ),
+                      if (festival['description'] != null) ...[
+                        Spacing.h(4),
+                        AutoTranslateText(
+                          festival['description']?.toString() ?? '',
+                          style: MyTextTheme.smallBCN.copyWith(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w400,
+                            color: Color.fromRGBO(107, 27, 26, 0.65),
+                            height: 1.5,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                // Add to calendar (simple icon) + View arrow
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      onPressed: () => _showAddToCalendarDialog(
+                        festival,
+                        eventDate!,
+                        dayNumber,
+                        dayName,
+                      ),
+                      icon: Icon(
+                        Icons.calendar_today,
+                        size: 20.w,
+                        color: AppColors.primaryGradient.colors.first.withValues(alpha: 0.85),
+                      ),
+                      tooltip: 'Add to calendar',
+                      padding: EdgeInsets.all(6.w),
+                      constraints: BoxConstraints(minWidth: 36, minHeight: 36),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14.h,
+                      color: AppColors.primaryGradient.colors.first.withValues(alpha: 0.6),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        );
-      },
+        ),
+      ),
+    );
+  }
+
+  /// Simple dialog to add festival to calendar (replaces heavy bottom sheet).
+  void _showAddToCalendarDialog(
+    Map<String, dynamic> festival,
+    DateTime eventDate,
+    int dayNumber,
+    String dayName,
+  ) {
+    final name = festival['name']?.toString() ?? 'Festival';
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+        title: AutoTranslateText(
+          'Add to Calendar',
+          style: MyTextTheme.mediumBCB.copyWith(fontSize: 18),
+        ),
+        content: AutoTranslateText(
+          'Add "$name" on ${DateFormat('MMM d, yyyy').format(eventDate)} to your device calendar?',
+          style: MyTextTheme.smallBCN.copyWith(
+            fontSize: 14,
+            color: Colors.black87,
+            height: 1.4,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: AutoTranslateText('Cancel', style: MyTextTheme.smallBCB),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Get.back();
+              await _addToCalendar(festival, eventDate);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: "#DFB343".toColor(),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+            ),
+            child: AutoTranslateText('Add'),
+          ),
+        ],
+      ),
+      barrierDismissible: true,
     );
   }
 

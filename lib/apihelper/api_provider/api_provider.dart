@@ -864,7 +864,8 @@ class ApiClient extends GetConnect
     timeout = const Duration(seconds: 30);
     token = UserData().getLoginData.accessToken;
   }
-  // Hive Box Reference
+  // Hive Box Reference (reserved for API caching; currently disabled)
+  // ignore: unused_field
   final _cacheBox = Hive.box('api_cache');
   @override
   void onInit() {
@@ -879,11 +880,21 @@ class ApiClient extends GetConnect
   /// Recursively replaces S3 image URLs with CloudFront CDN URL in API response.
   /// Returns Map<String, dynamic> and List so decoders get the expected types.
   dynamic _replaceImageUrls(dynamic data) {
-    const oldUrl = 'https://astrobharatai.s3.ap-south-1.amazonaws.com/';
     const newUrl = 'https://d3c2un7ipdye89.cloudfront.net/';
+    const oldUrls = <String>[
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/',
+      'http://astrobharatai.s3.ap-south-1.amazonaws.com/',
+      // Some backends return without trailing slash
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com',
+      'http://astrobharatai.s3.ap-south-1.amazonaws.com',
+    ];
 
     if (data is String) {
-      return data.replaceAll(oldUrl, newUrl);
+      var out = data;
+      for (final oldUrl in oldUrls) {
+        out = out.replaceAll(oldUrl, newUrl);
+      }
+      return out;
     }
     if (data is Map) {
       return Map<String, dynamic>.from(
@@ -1586,7 +1597,14 @@ class ApiClient extends GetConnect
       }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return response;
+        final updatedBody = _replaceImageUrls(response.body);
+        return Response(
+          body: updatedBody,
+          statusCode: response.statusCode,
+          statusText: response.statusText,
+          headers: response.headers,
+          request: response.request,
+        );
       }
 
       if (useAuthHeader && _isUnauthorized(response.statusCode)) {

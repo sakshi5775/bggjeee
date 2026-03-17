@@ -126,7 +126,7 @@ class PujaCardWidget extends StatelessWidget {
           // Image
           NetworkImageWithLoader(
             url: puja.image ?? '',
-            fit: BoxFit.fill,
+            fit: BoxFit.cover,
             width: double.infinity,
             height: 160.h,
           ),
