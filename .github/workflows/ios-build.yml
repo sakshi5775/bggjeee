@@ -94,7 +94,7 @@ EOF
           APP_VERSION_NAME=$(python3 - <<'PY'
 import re
 txt=open('pubspec.yaml','r',encoding='utf-8').read()
-m=re.search(r'^version:\\s*([^\\n]+)$',txt, re.M)
+m=re.search(r'^version:\s*([^\n]+)$',txt, re.M)
 if not m:
     raise SystemExit("Could not find version in pubspec.yaml")
 v=m.group(1).strip()
@@ -109,8 +109,10 @@ PY
             -configuration Release \
             -sdk iphoneos \
             -archivePath "$ARCHIVE_PATH" \
+            -destination 'generic/platform=iOS' \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
             DEVELOPMENT_TEAM="" \
             COMPILER_INDEX_STORE_ENABLE=NO \
             MARKETING_VERSION="$APP_VERSION_NAME" \
@@ -153,24 +155,34 @@ EOF
           echo "Generated $TARGET_FILE"
 
       - name: Upload dSYM as GitHub artifact (backup)
-        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ios-dSYMs
           path: ios/build/Runner.xcarchive/dSYMs
-          if-no-files-found: error
+          if-no-files-found: warn
 
-      - name: Check upload-symbols exists
-        run: |
-          set -e
-          ls -la ios/Pods/FirebaseCrashlytics
-          test -f ios/Pods/FirebaseCrashlytics/upload-symbols
-
-      - name: Upload dSYM to Firebase Crashlytics
+      - name: Locate upload-symbols and upload dSYM to Crashlytics
         run: |
           set -euo pipefail
-          chmod +x ios/Pods/FirebaseCrashlytics/upload-symbols
-          ios/Pods/FirebaseCrashlytics/upload-symbols \
-            -gsp ios/Runner/GoogleService-Info.plist \
-            -p ios ios/build/Runner.xcarchive/dSYMs
+          DSYM_DIR="ios/build/Runner.xcarchive/dSYMs"
+          GSP="ios/Runner/GoogleService-Info.plist"
+
+          UPLOAD_SYMBOLS=$(find ios/Pods -name 'upload-symbols' -type f 2>/dev/null | head -1)
+          if [[ -z "$UPLOAD_SYMBOLS" || ! -f "$UPLOAD_SYMBOLS" ]]; then
+            echo "::error::upload-symbols not found under ios/Pods"
+            find ios/Pods -type f -name '*.py' 2>/dev/null | head -5 || true
+            exit 1
+          fi
+          chmod +x "$UPLOAD_SYMBOLS"
+          echo "Using: $UPLOAD_SYMBOLS"
+
+          if [[ -z "$FIREBASE_TOKEN" ]]; then
+            echo "::warning::FIREBASE_TOKEN secret not set; Crashlytics upload may fail."
+          fi
+
+          "$UPLOAD_SYMBOLS" \
+            -gsp "$GSP" \
+            -p ios \
+            "$DSYM_DIR"
+          echo "Crashlytics dSYM upload finished."
 
