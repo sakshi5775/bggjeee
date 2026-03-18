@@ -105,7 +105,6 @@ import 'package:astrobharataiuser/screens/courses/views/my_learning_view.dart';
 
 import 'package:astrobharataiuser/screens/otp/view/otp_view.dart';
 import 'package:astrobharataiuser/screens/sign_up/view/signup_view.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/consultation_history_view.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/all_videos_view.dart';
 import 'package:astrobharataiuser/binding/dashboard_binding/all_videos_binding.dart';
@@ -435,7 +434,12 @@ class PageRoutes {
     GetPage(
       name: AppRoutes.userDashboard,
       page: () => const UserMainView(),
-      transition: Transition.fadeIn,
+      // Important: avoid keeping the previous UserMainView tree alive during
+      // transition. UserMainView contains nested Navigators with GlobalKeys, and
+      // overlapping trees can trigger:
+      // "Duplicate GlobalKeys detected in widget tree."
+      transition: Transition.noTransition,
+      transitionDuration: Duration.zero,
       binding: UserMainBinding(),
     ),
     GetPage(

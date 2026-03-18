@@ -76,9 +76,9 @@ class CoursePlayerView extends StatelessWidget {
         return OrientationBuilder(
           builder: (context, orientation) {
             if (orientation == Orientation.landscape) {
-              return _buildLandscapeLayout(controller);
+              return _buildLandscapeLayout(controller, context);
             } else {
-              return _buildPortraitLayout(controller);
+              return _buildPortraitLayout(controller, context);
             }
           },
         );
@@ -87,7 +87,7 @@ class CoursePlayerView extends StatelessWidget {
   }
 
   // Portrait layout: Video on top, tabs, then content
-  Widget _buildPortraitLayout(CoursePlayerController controller) {
+  Widget _buildPortraitLayout(CoursePlayerController controller, BuildContext context) {
     return Column(
       children: [
         // Header with course title, share, menu, autoplay toggle
@@ -116,7 +116,7 @@ class CoursePlayerView extends StatelessWidget {
         }),
 
         // Live Webinar Banner
-        _buildLiveWebinarBanner(controller),
+        _buildLiveWebinarBanner(controller, context),
 
         // Video Player Area
         _buildVideoPlayerSection(controller),
@@ -131,7 +131,7 @@ class CoursePlayerView extends StatelessWidget {
   }
 
   // Landscape layout: Video on left, sidebar on right
-  Widget _buildLandscapeLayout(CoursePlayerController controller) {
+  Widget _buildLandscapeLayout(CoursePlayerController controller, BuildContext context) {
     return Row(
       children: [
         // Video Player Area (Left)
@@ -140,7 +140,7 @@ class CoursePlayerView extends StatelessWidget {
           child: Column(
             children: [
               _buildHeader(controller),
-              _buildLiveWebinarBanner(controller),
+              _buildLiveWebinarBanner(controller, context),
               Expanded(child: _buildVideoPlayerSection(controller)),
               _buildNavigationTabs(controller),
             ],
@@ -871,7 +871,10 @@ class CoursePlayerView extends StatelessWidget {
   }
 
   // Live Webinar Banner
-  Widget _buildLiveWebinarBanner(CoursePlayerController controller) {
+  Widget _buildLiveWebinarBanner(
+    CoursePlayerController controller,
+    BuildContext context,
+  ) {
     return Obx(() {
       final webinar = controller.activeWebinar.value;
       if (webinar == null) return const SizedBox.shrink();
@@ -945,10 +948,15 @@ class CoursePlayerView extends StatelessWidget {
             // Join Button
             ElevatedButton(
               onPressed: () {
-                Get.to(
-                  () => LiveWebinarSessionView(
-                    webinarId: webinar.webinarId ?? webinar.id ?? '',
-                    courseId: controller.courseId,
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    settings: const RouteSettings(
+                      name: '/live-webinar-session-view',
+                    ),
+                    builder: (_) => LiveWebinarSessionView(
+                      webinarId: webinar.webinarId ?? webinar.id ?? '',
+                      courseId: controller.courseId,
+                    ),
                   ),
                 );
               },

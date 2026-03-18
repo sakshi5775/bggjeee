@@ -119,7 +119,7 @@ class LiveAstrologersView extends StatelessWidget {
           itemCount: controller.liveStreams.length,
           itemBuilder: (context, index) {
             final stream = controller.liveStreams[index];
-            return _buildOngoingCard(controller, stream);
+            return _buildOngoingCard(controller, stream, context);
           },
         ),
       );
@@ -129,6 +129,7 @@ class LiveAstrologersView extends StatelessWidget {
   Widget _buildOngoingCard(
     LiveAstrologersController controller,
     LiveStreamModel stream,
+    BuildContext context,
   ) {
     final profilePicture =
         stream.astrologerPhoto ??
@@ -144,22 +145,28 @@ class LiveAstrologersView extends StatelessWidget {
           message: 'Please login to watch live streams.',
           onLoginSuccess: () {
             // Navigate to live stream after successful login
-            Get.to(
-              () => LiveStreamView(
-                stream: stream,
-                astrologerName: astrologerName,
-                astrologerProfilePicture: profilePicture,
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                settings: const RouteSettings(name: '/live-stream-view'),
+                builder: (_) => LiveStreamView(
+                  stream: stream,
+                  astrologerName: astrologerName,
+                  astrologerProfilePicture: profilePicture,
+                ),
               ),
             );
           },
         );
 
         if (isLoggedIn) {
-          Get.to(
-            () => LiveStreamView(
-              stream: stream,
-              astrologerName: astrologerName,
-              astrologerProfilePicture: profilePicture,
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              settings: const RouteSettings(name: '/live-stream-view'),
+              builder: (_) => LiveStreamView(
+                stream: stream,
+                astrologerName: astrologerName,
+                astrologerProfilePicture: profilePicture,
+              ),
             ),
           );
         }

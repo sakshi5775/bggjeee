@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
-import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/screens/vastu/widgets/royal_vastu_compass.dart';
 import 'package:astrobharataiuser/screens/vastu/widgets/direction_overlay.dart';
 import 'package:astrobharataiuser/screens/vastu/widgets/ar_direction_overlay.dart';
@@ -35,6 +34,7 @@ class _CameraCompassOverlayState extends State<CameraCompassOverlay>
   CameraController? _cameraController;
   List<CameraDescription>? _cameras;
   bool _isCameraInitialized = false;
+  bool _isControllerDisposed = false;
   late AnimationController _fadeController;
   late AnimationController _scaleController;
   late Animation<double> _fadeAnimation;
@@ -100,24 +100,43 @@ class _CameraCompassOverlayState extends State<CameraCompassOverlay>
 
   @override
   void dispose() {
+    _isControllerDisposed = true;
     _fadeController.dispose();
     _scaleController.dispose();
-    _cameraController?.dispose();
+    final oldController = _cameraController;
+    _cameraController = null;
+    try {
+      oldController?.dispose();
+    } catch (_) {
+      // Ignore dispose errors
+    }
     super.dispose();
   }
 
   @override
   void deactivate() {
     // Pause camera when widget is deactivated
-    _cameraController?.pausePreview();
+    if (!_isControllerDisposed) {
+      try {
+        _cameraController?.pausePreview();
+      } catch (_) {
+        // Non-fatal
+      }
+    }
     super.deactivate();
   }
 
   @override
   void activate() {
     // Resume camera when widget is activated
-    if (_isCameraInitialized && _cameraController != null) {
-      _cameraController!.resumePreview();
+    if (!_isControllerDisposed &&
+        _isCameraInitialized &&
+        _cameraController != null) {
+      try {
+        _cameraController!.resumePreview();
+      } catch (_) {
+        // Non-fatal
+      }
     }
     super.activate();
   }
@@ -130,7 +149,9 @@ class _CameraCompassOverlayState extends State<CameraCompassOverlay>
         fit: StackFit.expand,
         children: [
           // Camera preview
-          if (_isCameraInitialized && _cameraController != null)
+          if (_isCameraInitialized &&
+              !_isControllerDisposed &&
+              _cameraController != null)
             CameraPreview(_cameraController!)
           else
             Container(

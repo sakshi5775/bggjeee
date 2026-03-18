@@ -99,8 +99,19 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
       final controller = Get.find<PalmReadingController>();
       controller.selectedPalmImage.value = file;
 
-      // Dispose camera before navigation to free resources
-      await _disposeController();
+      // Avoid disposing the camera while the route is still transitioning.
+      // Disposing too early can race with `CameraPreview` and crash with
+      // "buildPreview() called on disposed CameraController".
+      try {
+        _controller?.pausePreview();
+      } catch (_) {
+        // Non-fatal: preview pause can fail if already disposed.
+      }
+      if (mounted) {
+        setState(() {
+          _isCameraInitialized = false;
+        });
+      }
 
       // Replace camera route with scanning so back from scanning → upload (not camera)
       if (mounted) {
@@ -119,8 +130,14 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
   @override
   void dispose() {
     _isControllerDisposed = true;
-    _controller?.dispose();
-    _controller = null;
+    final oldController = _controller;
+    _controller = null; // Prevent CameraPreview from using a disposed instance
+    try {
+      oldController?.dispose();
+    } catch (_) {
+      // Ignore dispose errors
+    }
+    _isCameraInitialized = false;
     super.dispose();
   }
 
@@ -130,6 +147,7 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
       _isCameraInitialized = false;
       // Rebuild immediately so CameraPreview is removed before dispose completes
       if (mounted) setState(() {});
+      if (mounted) await WidgetsBinding.instance.endOfFrame;
       final oldController = _controller;
       _controller = null;
       try {
@@ -180,7 +198,9 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
               )
             else if (!_isCameraInitialized)
               const Center(child: CircularProgressIndicator())
-            else if (_controller != null && _controller!.value.isInitialized)
+            else if (!_isControllerDisposed &&
+                _controller != null &&
+                _controller!.value.isInitialized)
               SizedBox(
                 width: double.infinity,
                 height: double.infinity,

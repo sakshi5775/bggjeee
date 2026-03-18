@@ -3,7 +3,6 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
 import '../../../app_manager/ext/hex_color_ext.dart';
 import '../../../widgets/auto_translate_text.dart';
@@ -40,26 +39,31 @@ class AstrologyReportWidget extends StatelessWidget {
                 spacing: 10.w,
                 children: [
                   _buildAstrologyReportCard(
+                    context: context,
                     imageUrl:
                         'https://d3c2un7ipdye89.cloudfront.net/Sacred+Library/atharvaveda.jpeg',
                     title: 'Atharvaveda',
                   ),
                   _buildAstrologyReportCard(
+                    context: context,
                     imageUrl:
                         'https://d3c2un7ipdye89.cloudfront.net/Sacred+Library/jyotishVedang.jpeg',
                     title: 'Jyotish Vedang',
                   ),
                   _buildAstrologyReportCard(
+                    context: context,
                     imageUrl:
                         'https://d3c2un7ipdye89.cloudfront.net/Sacred+Library/rigveda.jpeg',
                     title: 'Rigveda',
                   ),
                   _buildAstrologyReportCard(
+                    context: context,
                     imageUrl:
                         'https://d3c2un7ipdye89.cloudfront.net/Sacred+Library/samveda.jpeg',
                     title: 'Samveda',
                   ),
                   _buildAstrologyReportCard(
+                    context: context,
                     imageUrl:
                         'https://d3c2un7ipdye89.cloudfront.net/Sacred+Library/yajurveda.jpeg',
                     title: 'Yajurveda',
@@ -74,12 +78,18 @@ class AstrologyReportWidget extends StatelessWidget {
   }
 
   Widget _buildAstrologyReportCard({
+    required BuildContext context,
     required String imageUrl,
     required String title,
   }) {
     return GestureDetector(
       onTap: () {
-        Get.to(() => BookOpenPage(imageUrl: imageUrl, title: title));
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            settings: const RouteSettings(name: '/book-open-page'),
+            builder: (_) => BookOpenPage(imageUrl: imageUrl, title: title),
+          ),
+        );
       },
       child: ClipRRect(
         borderRadius: AppRadius.only(

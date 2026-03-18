@@ -10,6 +10,8 @@ class RoleNavigationService {
       try {
         // Check if GetMaterialApp context is available
         if (Get.key.currentContext != null) {
+          // Avoid redundant navigation calls during login/splash races.
+          if (Get.currentRoute == AppRoutes.userDashboard) return;
           // Use GetX navigation
           Get.offAllNamed(AppRoutes.userDashboard);
         } else if (context != null) {
@@ -22,6 +24,7 @@ class RoleNavigationService {
           // Try again after a delay
           Future.delayed(Duration(milliseconds: 500), () {
             if (Get.key.currentContext != null) {
+              if (Get.currentRoute == AppRoutes.userDashboard) return;
               Get.offAllNamed(AppRoutes.userDashboard);
             }
           });
@@ -44,6 +47,7 @@ class RoleNavigationService {
       try {
         // Check if GetMaterialApp context is available
         if (Get.key.currentContext != null) {
+          if (Get.currentRoute == AppRoutes.userDashboard) return;
           // Use GetX navigation
           Get.offAllNamed(AppRoutes.userDashboard);
         } else if (context != null) {
@@ -56,6 +60,7 @@ class RoleNavigationService {
           // Try again after a delay
           Future.delayed(Duration(milliseconds: 500), () {
             if (Get.key.currentContext != null) {
+              if (Get.currentRoute == AppRoutes.userDashboard) return;
               Get.offAllNamed(AppRoutes.userDashboard);
             }
           });

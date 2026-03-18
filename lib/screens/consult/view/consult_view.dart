@@ -152,6 +152,7 @@ class ConsultView extends StatelessWidget {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
+                  settings: const RouteSettings(name: '/consult-filter-page'),
                   builder: (context) => _ConsultFilterPage(
                     isAstrologerTab: controller.tabIndex.value == 0,
                   ),

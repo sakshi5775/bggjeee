@@ -4,11 +4,8 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
-import 'package:astrobharataiuser/screens/astrology_services/view/astrology_services_view.dart';
-import 'package:astrobharataiuser/screens/palm_reading/view/palm_reading_view.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/widgets/ComingSoonPage.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:flutter/material.dart';
@@ -116,7 +113,7 @@ class OurServicesSection extends BasePage<UserDashboardController> {
                 UserMainController.pushInCurrentTab(AppRoutes.faceReading);
                 break;
               case 'palm reading':
-                Get.to(() => const PalmReadingView());
+                UserMainController.pushInCurrentTab(AppRoutes.palmReading);
                 break;
               case 'tarot reading':
               case 'tarot card reading':
@@ -124,7 +121,7 @@ class OurServicesSection extends BasePage<UserDashboardController> {
                 break;
               case 'consult':
               case 'consult astrologer':
-                Get.to(() => const AstrologyServicesView());
+                UserMainController.pushInCurrentTab(AppRoutes.astrologyServices);
                 break;
               case 'panchang':
                 UserMainController.pushInCurrentTab(AppRoutes.panchang);
@@ -192,7 +189,7 @@ class OurServicesSection extends BasePage<UserDashboardController> {
                 if (normalizedLabel.contains('kundli')) {
                   UserMainController.pushInCurrentTab(AppRoutes.kundliForm);
                 } else {
-                  Get.to(() => const ComingSoonPage());
+                  UserMainController.pushInCurrentTab(AppRoutes.comingSoon);
                 }
             }
           },

@@ -1,5 +1,7 @@
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:get/get.dart';
+import 'package:flutter/widgets.dart';
+import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 import 'package:astrobharataiuser/data_model/chalisa_detail_model.dart';
 import '../service/chalisa_service.dart';
 
@@ -21,8 +23,21 @@ class ChalisaDetailController extends BaseController {
   @override
   void onInit() {
     super.onInit();
-    chalisaId = Get.arguments['chalisaId'] as String;
-    contentType = (Get.arguments['contentType'] as String?) ?? 'chalisa';
+    final args = Get.arguments;
+    if (args == null || args is! Map) {
+      // Missing arguments — avoid crashing (late/unchecked access).
+      // Navigate back after first frame so routing can settle.
+      WidgetsBinding.instance.addPostFrameCallback((_) => Get.back());
+      return;
+    }
+
+    chalisaId = (args['chalisaId'] as String?) ?? '';
+    contentType = (args['contentType'] as String?) ?? 'chalisa';
+    if (chalisaId.isEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => Get.back());
+      return;
+    }
+
     fetchDetail();
   }
 
@@ -35,8 +50,13 @@ class ChalisaDetailController extends BaseController {
       if (response != null && response.data?.chalisa != null) {
         chalisa.value = response.data!.chalisa;
       }
-    } catch (e) {
-      print('Error: $e');
+    } catch (e, s) {
+      reportError(
+        e,
+        s,
+        type: CrashErrorType.ui,
+        reason: 'CHALISA_DETAIL_FETCH_FAILED',
+      );
     } finally {
       isLoading.value = false;
     }

@@ -110,6 +110,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/Material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../core/value/dimension.dart';
 
@@ -133,6 +134,29 @@ class NetworkImageWithLoader extends StatelessWidget {
   Widget build(BuildContext context) {
     final double h = height ?? 40.h;
     final double w = width ?? 40.w;
+
+    // Some call-sites pass local asset paths (e.g. `assets/images/...`) into
+    // this "network" widget. CachedNetworkImage treats them as URLs and will
+    // throw: "No host specified in URI assets/..."
+    if (url.startsWith('assets/')) {
+      final BoxFit effectiveFit = fit ?? BoxFit.cover;
+      final Widget image = url.toLowerCase().endsWith('.svg')
+          ? SvgPicture.asset(
+              url,
+              height: h.isFinite ? h : null,
+              width: w.isFinite ? w : null,
+              fit: effectiveFit,
+            )
+          : Image.asset(
+              url,
+              height: h.isFinite ? h : null,
+              width: w.isFinite ? w : null,
+              fit: effectiveFit,
+            );
+
+      if (isCircular) return ClipOval(child: image);
+      return ClipRRect(borderRadius: AppRadius.all(10), child: image);
+    }
 
     final Widget image = CachedNetworkImage(
       imageUrl: url,

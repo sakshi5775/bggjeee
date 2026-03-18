@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../controller/chalisa_controller.dart';
 import '../widgets/chalisa_card_widget.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class ChalisaView extends BasePage<ChalisaController> {
   const ChalisaView({super.key});
@@ -64,15 +65,17 @@ class ChalisaView extends BasePage<ChalisaController> {
               final chalisa = controller.chalisas[index];
               return ChalisaCardWidget(
                 chalisa: chalisa,
-                onTap: () {
-                  Get.toNamed(
-                    AppRoutes.chalisaDetail,
-                    arguments: {
-                      'chalisaId': chalisa.id,
-                      'contentType': controller.contentType,
-                    },
-                  );
-                },
+              onTap: () {
+  debugPrint("Chalisa ID: ${chalisa.id}");
+  
+  UserMainController.pushInCurrentTab(
+    AppRoutes.chalisaDetail,
+    arguments: {
+      'chalisaId': chalisa.id,
+      'contentType': controller.contentType,
+    },
+  );
+}
               );
             },
           );

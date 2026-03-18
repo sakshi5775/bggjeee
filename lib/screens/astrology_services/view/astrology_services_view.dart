@@ -623,7 +623,11 @@ class AstrologyServicesView extends StatelessWidget {
                   'isLive': false,
                   'isOnline': astrologerModel.isOnline,
                 };
-                return _buildAstrologerCard(astrologer, isLive: false);
+                return _buildAstrologerCard(
+                  astrologer,
+                  isLive: false,
+                  context: context,
+                );
               },
             ),
           ),
@@ -696,7 +700,11 @@ class AstrologyServicesView extends StatelessWidget {
               itemCount: controller.recommendedAstrologers.length,
               itemBuilder: (context, index) {
                 final astrologer = controller.recommendedAstrologers[index];
-                return _buildAstrologerCard(astrologer, isLive: false);
+                return _buildAstrologerCard(
+                  astrologer,
+                  isLive: false,
+                  context: context,
+                );
               },
             ),
           ),
@@ -817,7 +825,11 @@ class AstrologyServicesView extends StatelessWidget {
                     itemCount: controller.liveAstrologers.length,
                     itemBuilder: (context, index) {
                       final astrologer = controller.liveAstrologers[index];
-                      return _buildAstrologerCard(astrologer, isLive: true);
+                      return _buildAstrologerCard(
+                        astrologer,
+                        isLive: true,
+                        context: context,
+                      );
                     },
                   ),
           ),
@@ -890,7 +902,11 @@ class AstrologyServicesView extends StatelessWidget {
               itemCount: controller.vedicAstrologers.length,
               itemBuilder: (context, index) {
                 final astrologer = controller.vedicAstrologers[index];
-                return _buildAstrologerCard(astrologer, isLive: false);
+                return _buildAstrologerCard(
+                  astrologer,
+                  isLive: false,
+                  context: context,
+                );
               },
             ),
           ),
@@ -903,10 +919,11 @@ class AstrologyServicesView extends StatelessWidget {
   Widget _buildAstrologerCard(
     Map<String, dynamic> astrologer, {
     required bool isLive,
+    required BuildContext context,
   }) {
     if (isLive) {
       // Live Now card style (Second image)
-      return _buildLiveCard(astrologer);
+      return _buildLiveCard(astrologer, context);
     } else {
       // Recommended/Vedic card style (First image)
       return _buildRecommendedCard(astrologer);
@@ -1103,7 +1120,10 @@ class AstrologyServicesView extends StatelessWidget {
   }
 
   // Live Now card - Centered profile with LIVE badge (Second image style)
-  Widget _buildLiveCard(Map<String, dynamic> astrologer) {
+  Widget _buildLiveCard(
+    Map<String, dynamic> astrologer,
+    BuildContext context,
+  ) {
     final streamId = astrologer['streamId'] as String?;
     final astrologerName = astrologer['name'] as String?;
     final image = astrologer['image'] as String?;
@@ -1127,11 +1147,15 @@ class AstrologyServicesView extends StatelessWidget {
                 // Stream not found
               }
               if (stream != null) {
-                Get.to(
-                  () => LiveStreamView(
-                    stream: stream!,
-                    astrologerName: astrologerName,
-                    astrologerProfilePicture: image,
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    settings:
+                        const RouteSettings(name: '/live-stream-view'),
+                    builder: (_) => LiveStreamView(
+                      stream: stream!,
+                      astrologerName: astrologerName,
+                      astrologerProfilePicture: image,
+                    ),
                   ),
                 );
               }
@@ -1148,11 +1172,14 @@ class AstrologyServicesView extends StatelessWidget {
               // Stream not found
             }
             if (stream != null) {
-              Get.to(
-                () => LiveStreamView(
-                  stream: stream!,
-                  astrologerName: astrologerName,
-                  astrologerProfilePicture: image,
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  settings: const RouteSettings(name: '/live-stream-view'),
+                  builder: (_) => LiveStreamView(
+                    stream: stream!,
+                    astrologerName: astrologerName,
+                    astrologerProfilePicture: image,
+                  ),
                 ),
               );
             }

@@ -2,14 +2,12 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/banner_model.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/banner_service.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/widgets/ComingSoonPage.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/banner_carousel_widget.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class YearTabWidget extends StatefulWidget {
@@ -206,7 +204,7 @@ class _YearTabWidgetState extends State<YearTabWidget> {
     return GestureDetector(
       onTap: () {
         if (isComingSoon) {
-          Get.to(() => const ComingSoonPage());
+          UserMainController.pushInCurrentTab(AppRoutes.comingSoon);
         } else {
           UserMainController.pushInCurrentTab(route);
         }

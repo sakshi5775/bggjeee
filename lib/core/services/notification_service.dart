@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:flutter/services.dart';
 
 /// Core notification service using OneSignal.
 ///
@@ -26,21 +27,58 @@ class NotificationService extends GetxService {
 
   // ── Initialisation ──────────────────────────────────────────────
 
+  bool _isMissingOneSignalPlugin(Object error) {
+    // MissingPluginException text can differ by platform/device; treat any
+    // MissingPluginException (or OneSignal-related missing method) as non-fatal.
+    if (error is MissingPluginException) return true;
+    return error.toString().contains('MissingPluginException') ||
+        error.toString().contains('OneSignal');
+  }
+
+  void _logNonFatalPluginError(Object error, StackTrace stackTrace) {
+    debugPrint('[NotificationService] Non-fatal plugin error: $error');
+    debugPrint('[NotificationService] Stack: $stackTrace');
+  }
+
   /// Call once from [main.dart] after dependency injection.
   Future<NotificationService> init() async {
     try {
       // Enable verbose logging in debug mode only
       if (kDebugMode) {
-        OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+        try {
+          OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+        } catch (e, st) {
+          if (_isMissingOneSignalPlugin(e)) {
+            _logNonFatalPluginError(e, st);
+            return this;
+          }
+          rethrow;
+        }
       }
 
       // Initialise SDK
-      OneSignal.initialize(AppConstant.oneSignalAppId);
+      try {
+        OneSignal.initialize(AppConstant.oneSignalAppId);
+      } catch (e, st) {
+        if (_isMissingOneSignalPlugin(e)) {
+          _logNonFatalPluginError(e, st);
+          return this;
+        }
+        rethrow;
+      }
 
       // Setup all notification handlers
-      _setupNotificationHandlers();
-      _setupPermissionObserver();
-      _setupSubscriptionObserver();
+      try {
+        _setupNotificationHandlers();
+        _setupPermissionObserver();
+        _setupSubscriptionObserver();
+      } catch (e, st) {
+        if (_isMissingOneSignalPlugin(e)) {
+          _logNonFatalPluginError(e, st);
+          return this;
+        }
+        rethrow;
+      }
 
       // Fetch initial subscription / permission state
       _syncInitialState();
@@ -67,8 +105,11 @@ class NotificationService extends GetxService {
       isPermissionGranted.value = granted;
       debugPrint('[NotificationService] Permission granted: $granted');
       return granted;
-    } catch (e) {
+    } catch (e, st) {
       debugPrint('[NotificationService] Permission request error: $e');
+      if (_isMissingOneSignalPlugin(e)) {
+        _logNonFatalPluginError(e, st);
+      }
       return false;
     }
   }
@@ -80,9 +121,15 @@ class NotificationService extends GetxService {
   Future<void> setExternalUserId(String userId) async {
     if (userId.isEmpty) return;
     try {
-      OneSignal.login(userId);
+      // `login()` can fail asynchronously depending on plugin/native readiness.
+      // Await so MissingPluginException stays inside this try/catch.
+      await OneSignal.login(userId);
       debugPrint('[NotificationService] External user ID set: $userId');
-    } catch (e) {
+    } catch (e, st) {
+      if (_isMissingOneSignalPlugin(e)) {
+        _logNonFatalPluginError(e, st);
+        return;
+      }
       debugPrint('[NotificationService] setExternalUserId error: $e');
     }
   }
@@ -91,9 +138,14 @@ class NotificationService extends GetxService {
   /// user-targeted notifications.
   Future<void> removeExternalUserId() async {
     try {
-      OneSignal.logout();
+      // `logout()` can also fail asynchronously; keep it inside try/catch.
+      await OneSignal.logout();
       debugPrint('[NotificationService] External user ID removed');
-    } catch (e) {
+    } catch (e, st) {
+      if (_isMissingOneSignalPlugin(e)) {
+        _logNonFatalPluginError(e, st);
+        return;
+      }
       debugPrint('[NotificationService] removeExternalUserId error: $e');
     }
   }
@@ -111,12 +163,20 @@ class NotificationService extends GetxService {
   /// Get the OneSignal subscription (player) ID.
   /// The backend can use this to target individual devices.
   String? getSubscriptionId() {
-    return OneSignal.User.pushSubscription.id;
+    try {
+      return OneSignal.User.pushSubscription.id;
+    } catch (_) {
+      return null;
+    }
   }
 
   /// Get the device push token (FCM on Android, APNs on iOS).
   String? getPushToken() {
-    return OneSignal.User.pushSubscription.token;
+    try {
+      return OneSignal.User.pushSubscription.token;
+    } catch (_) {
+      return null;
+    }
   }
 
   // ── Private: Handlers ───────────────────────────────────────────
@@ -127,62 +187,123 @@ class NotificationService extends GetxService {
     // Fires when a notification arrives while the app is in the
     // foreground.  We intercept it to show a custom in-app banner
     // and prevent the default system notification.
-    OneSignal.Notifications.addForegroundWillDisplayListener((event) {
-      debugPrint('[NotificationService] Foreground notification received');
+    try {
+      OneSignal.Notifications.addForegroundWillDisplayListener((event) {
+        try {
+          debugPrint('[NotificationService] Foreground notification received');
 
-      final notification = event.notification;
-      final title = notification.title ?? '';
-      final body = notification.body ?? '';
-      final data = notification.additionalData ?? {};
+          final notification = event.notification;
+          final title = notification.title ?? '';
+          final body = notification.body ?? '';
+          final data = notification.additionalData ?? {};
 
-      // Show a styled in-app banner (top snackbar)
-      NotificationHelper.showInAppNotification(
-        title: title,
-        body: body,
-        data: data,
-      );
+          // Show a styled in-app banner (top snackbar)
+          NotificationHelper.showInAppNotification(
+            title: title,
+            body: body,
+            data: data,
+          );
 
-      // ALSO display the system notification in the status bar
-      // so the user sees it even if the in-app banner is missed.
-      event.notification.display();
-    });
+          // Also display the system notification in the status bar
+          // so the user sees it even if the in-app banner is missed.
+          event.notification.display();
+        } catch (e, st) {
+          if (_isMissingOneSignalPlugin(e)) {
+            _logNonFatalPluginError(e, st);
+            return;
+          }
+          // Keep foreground notification handling non-fatal.
+          debugPrint('[NotificationService] Foreground listener error: $e');
+        }
+      });
+    } catch (e, st) {
+      if (_isMissingOneSignalPlugin(e)) {
+        _logNonFatalPluginError(e, st);
+        return;
+      }
+      rethrow;
+    }
 
     // ── Background / Terminated (notification tapped) ──
     // Fires when user taps a notification that arrived while the app
     // was in background or terminated state.
-    OneSignal.Notifications.addClickListener((event) {
-      debugPrint('[NotificationService] Notification clicked');
-
-      final data = event.notification.additionalData ?? {};
-      // NotificationHelper.handleNotificationNavigation(data);
-    });
+    try {
+      OneSignal.Notifications.addClickListener((event) {
+        try {
+          debugPrint('[NotificationService] Notification clicked');
+          // If you enable deep-link navigation from background notifications,
+          // keep it inside a try/catch so missing OneSignal native plugin
+          // can't crash the app.
+        } catch (e, st) {
+          if (_isMissingOneSignalPlugin(e)) {
+            _logNonFatalPluginError(e, st);
+            return;
+          }
+          debugPrint('[NotificationService] Click listener error: $e');
+        }
+      });
+    } catch (e, st) {
+      if (_isMissingOneSignalPlugin(e)) {
+        _logNonFatalPluginError(e, st);
+        return;
+      }
+      rethrow;
+    }
   }
 
   /// Observe permission state changes at runtime.
   void _setupPermissionObserver() {
-    OneSignal.Notifications.addPermissionObserver((granted) {
-      isPermissionGranted.value = granted;
-      debugPrint('[NotificationService] Permission changed: $granted');
-    });
+    try {
+      OneSignal.Notifications.addPermissionObserver((granted) {
+        try {
+          isPermissionGranted.value = granted;
+          debugPrint('[NotificationService] Permission changed: $granted');
+        } catch (_) {
+          // Keep observer non-fatal.
+        }
+      });
+    } catch (e, st) {
+      if (_isMissingOneSignalPlugin(e)) {
+        _logNonFatalPluginError(e, st);
+      }
+    }
   }
 
   /// Observe push subscription changes (player ID / push token).
   void _setupSubscriptionObserver() {
-    OneSignal.User.pushSubscription.addObserver((state) {
-      final id = state.current.id;
-      final token = state.current.token;
-      playerId.value = id ?? '';
+    try {
+      OneSignal.User.pushSubscription.addObserver((state) {
+        try {
+          final id = state.current.id;
+          final token = state.current.token;
+          playerId.value = id ?? '';
 
-      debugPrint('[NotificationService] Subscription changed');
-      debugPrint('[NotificationService] Player ID: $id');
-      debugPrint('[NotificationService] Push Token: $token');
-    });
+          debugPrint('[NotificationService] Subscription changed');
+          debugPrint('[NotificationService] Player ID: $id');
+          debugPrint('[NotificationService] Push Token: $token');
+        } catch (_) {
+          // Keep observer non-fatal.
+        }
+      });
+    } catch (e, st) {
+      if (_isMissingOneSignalPlugin(e)) {
+        _logNonFatalPluginError(e, st);
+      }
+    }
   }
 
   /// Read the current permission & subscription state at startup.
   void _syncInitialState() {
-    isPermissionGranted.value = OneSignal.Notifications.permission;
-    playerId.value = OneSignal.User.pushSubscription.id ?? '';
+    try {
+      isPermissionGranted.value = OneSignal.Notifications.permission;
+      playerId.value = OneSignal.User.pushSubscription.id ?? '';
+    } catch (e, st) {
+      if (_isMissingOneSignalPlugin(e)) {
+        _logNonFatalPluginError(e, st);
+        return;
+      }
+      rethrow;
+    }
 
     debugPrint(
       '[NotificationService] Initial permission: ${isPermissionGranted.value}',

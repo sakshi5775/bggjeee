@@ -5,10 +5,7 @@ import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_co
 import 'dart:async';
 
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
-import 'package:astrobharataiuser/screens/ecommerce/view/ecommerce_home_view.dart';
-import 'package:astrobharataiuser/binding/ecommerce_binding/ecommerce_binding.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/widgets/ComingSoonPage.dart';
 
 class DigitalServicesAnimatedWidget extends StatefulWidget {
   const DigitalServicesAnimatedWidget({super.key});
@@ -23,7 +20,9 @@ class _DigitalServicesAnimatedWidgetState
   final List<Map<String, dynamic>> _imageData = [
     {
       'path': 'assets/app/DIGITALPOOJA.png',
-      'route': () => Get.to(() => const ComingSoonPage()),
+      'route': () {
+        UserMainController.pushInCurrentTab(AppRoutes.comingSoon);
+      },
     },
     {
       'path': 'assets/app/DIGITALEDUCATION.png',
@@ -49,10 +48,7 @@ class _DigitalServicesAnimatedWidgetState
           dashboardController.selectedSliderIndex.value = 4;
           dashboardController.scrollController.jumpTo(0);
         } catch (e) {
-          Get.to(
-            () => const EcommerceHomeView(showBackButton: true),
-            binding: EcommerceBinding(),
-          );
+        UserMainController.pushInCurrentTab(AppRoutes.ecommerceHome);
         }
       },
     },

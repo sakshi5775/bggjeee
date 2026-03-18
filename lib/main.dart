@@ -59,8 +59,10 @@ void main() {
 
       await Hive.initFlutter();
       await Hive.openBox('api_cache'); // Global cache box
-      // 2. Prevent zone-related bugs by ensuring consistency
-      BindingBase.debugZoneErrorsAreFatal = true;
+      // 2. Only treat zone errors as fatal in debug mode.
+      // In release this flag kills the process on any unhandled async error,
+      // turning recoverable zone exceptions into hard crashes.
+      BindingBase.debugZoneErrorsAreFatal = kDebugMode;
 
       // 3. Setup global portrait lock
       await SystemChrome.setPreferredOrientations([
@@ -86,10 +88,80 @@ void main() {
         );
 
         FlutterError.onError = (FlutterErrorDetails details) {
+          final exception = details.exception;
+          final stack = details.stack ?? StackTrace.current;
+          final exceptionString = exception.toString();
+
+          // Many of the issues we see in Crashlytics are recoverable and should
+          // NOT be marked as "fatal" (they were historically causing app
+          // crashes due to fatal recording + zone error handling).
+          bool isNonFatal = false;
+          CrashErrorType type = CrashErrorType.ui;
+          String reason = "FLUTTER_ERROR_NON_FATAL";
+
+          if (exception is MissingPluginException &&
+              exceptionString.contains('OneSignal')) {
+            isNonFatal = true;
+            type = CrashErrorType.ui;
+            reason = 'ONESIGNAL_MISSING_PLUGIN';
+          } else if (exceptionString.contains('IOperationRepo') &&
+              exceptionString.contains('OneSignal')) {
+            isNonFatal = true;
+            type = CrashErrorType.ui;
+            reason = 'ONESIGNAL_NATIVE_SERVICE_ERROR';
+          } else if (exceptionString.contains(
+                  'No host specified in URI assets/images/') ||
+              exceptionString.contains('No host specified in URI assets/')) {
+            isNonFatal = true;
+            type = CrashErrorType.ui;
+            reason = 'ASSET_URI_PARSED_AS_NETWORK';
+          } else if (exceptionString.contains('CameraException(') &&
+              exceptionString.contains('Disposed CameraController')) {
+            isNonFatal = true;
+            type = CrashErrorType.ui;
+            reason = 'CAMERA_DISPOSED_CONTROLLER';
+          } else if (exceptionString.contains('"EQ" not found') ||
+              exceptionString.contains('Get.put(EQ())') ||
+              exceptionString.contains('Get.lazyPut(() => EQ())')) {
+            isNonFatal = true;
+            type = CrashErrorType.ui;
+            reason = 'MISSING_GETX_DEP_EQ';
+          } else if (exceptionString.contains(
+              'Concurrent modification during iteration')) {
+            isNonFatal = true;
+            type = CrashErrorType.ui;
+            reason = 'CONCURRENT_MODIFICATION_DURING_ITERATION';
+          } else if (exceptionString.contains('Bad state: Too many elements')) {
+            isNonFatal = true;
+            type = CrashErrorType.ui;
+            reason = 'TOO_MANY_ELEMENTS';
+          } else if (exceptionString.contains('SocketException') ||
+              exceptionString.contains('Failed host lookup') ||
+              exceptionString.contains('No address associated with hostname')) {
+            isNonFatal = true;
+            type = CrashErrorType.socket;
+            reason = 'NETWORK_HOST_LOOKUP';
+          }
+
+          if (isNonFatal) {
+            CrashlyticsService.recordError(
+              exception,
+              stack,
+              fatal: false,
+              type: type,
+              reason: reason,
+            );
+            return;
+          }
+
+          // Unknown/Unexpected Flutter error: keep it as fatal.
           FirebaseCrashlytics.instance.recordFlutterFatalError(details);
         };
 
         PlatformDispatcher.instance.onError = (error, stack) {
+          // Skip FlutterErrors — already handled by FlutterError.onError above.
+          // Recording both causes duplicate crash entries in Crashlytics.
+          if (error is FlutterError) return true;
           CrashlyticsService.recordError(
             error,
             stack,
@@ -101,12 +173,49 @@ void main() {
 
         // UI-level crash protection
         ErrorWidget.builder = (FlutterErrorDetails details) {
+          final exceptionString = details.exception.toString();
+          bool isNonFatal = false;
+          CrashErrorType type = CrashErrorType.ui;
+          String reason = "WIDGET_TREE_ERROR";
+
+          if (exceptionString.contains('OneSignal') &&
+              exceptionString.contains('MissingPluginException')) {
+            isNonFatal = true;
+            reason = 'ONESIGNAL_MISSING_PLUGIN';
+          } else if (exceptionString.contains('IOperationRepo') &&
+              exceptionString.contains('OneSignal')) {
+            isNonFatal = true;
+            reason = 'ONESIGNAL_NATIVE_SERVICE_ERROR';
+          } else if (exceptionString.contains('No host specified in URI assets/')) {
+            isNonFatal = true;
+            reason = 'ASSET_URI_PARSED_AS_NETWORK';
+          } else if (exceptionString.contains('CameraException(') &&
+              exceptionString.contains('Disposed CameraController')) {
+            isNonFatal = true;
+            reason = 'CAMERA_DISPOSED_CONTROLLER';
+          } else if (exceptionString.contains('"EQ" not found')) {
+            isNonFatal = true;
+            reason = 'MISSING_GETX_DEP_EQ';
+          } else if (exceptionString.contains('Concurrent modification during iteration')) {
+            isNonFatal = true;
+            reason = 'CONCURRENT_MODIFICATION_DURING_ITERATION';
+          } else if (exceptionString.contains('Bad state: Too many elements')) {
+            isNonFatal = true;
+            reason = 'TOO_MANY_ELEMENTS';
+          } else if (exceptionString.contains('SocketException') ||
+              exceptionString.contains('Failed host lookup') ||
+              exceptionString.contains('No address associated with hostname')) {
+            isNonFatal = true;
+            type = CrashErrorType.socket;
+            reason = 'NETWORK_HOST_LOOKUP';
+          }
+
           CrashlyticsService.recordError(
             details.exception,
             details.stack ?? StackTrace.current,
-            fatal: true,
-            type: CrashErrorType.ui,
-            reason: "WIDGET_TREE_ERROR",
+            fatal: !isNonFatal,
+            type: type,
+            reason: reason,
           );
 
           return Material(
@@ -193,21 +302,30 @@ class CrashlyticsNavigatorObserver extends NavigatorObserver {
   @override
   void didPush(Route route, Route? previousRoute) {
     super.didPush(route, previousRoute);
-    CrashlyticsService.setKey("screen", route.settings.name ?? "unknown");
-    CrashlyticsService.log("NAVIGATION:PUSH | screen:${route.settings.name}");
+    final name = route.settings.name;
+    if (name == null) {
+      // Unnamed route pushed — flag as non-fatal so the offending call-site
+      // can be found and replaced with Get.toNamed() / pushInCurrentTab().
+      CrashlyticsService.recordError(
+        Exception('Unnamed route pushed — replace with Get.toNamed()'),
+        StackTrace.current,
+        fatal: false,
+        reason: 'UNNAMED_ROUTE_PUSH',
+      );
+      return;
+    }
+    CrashlyticsService.setKey("screen", name);
+    CrashlyticsService.log("NAVIGATION:PUSH | screen:$name");
   }
 
   @override
   void didPop(Route route, Route? previousRoute) {
     super.didPop(route, previousRoute);
     if (previousRoute != null) {
-      CrashlyticsService.setKey(
-        "screen",
-        previousRoute.settings.name ?? "unknown",
-      );
-      CrashlyticsService.log(
-        "NAVIGATION:POP_TO | screen:${previousRoute.settings.name}",
-      );
+      final name = previousRoute.settings.name;
+      if (name == null) return;
+      CrashlyticsService.setKey("screen", name);
+      CrashlyticsService.log("NAVIGATION:POP_TO | screen:$name");
     }
   }
 }

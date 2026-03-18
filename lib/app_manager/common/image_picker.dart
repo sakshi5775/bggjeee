@@ -189,6 +189,7 @@ class ImagePickerHelper {
       final image = await Navigator.push<File?>(
         context,
         MaterialPageRoute(
+          settings: const RouteSettings(name: '/camera-capture-screen'),
           builder: (_) => CameraCaptureScreen(cameras: cameras),
         ),
       );
@@ -404,6 +405,7 @@ class CameraCaptureScreen extends StatefulWidget {
 class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
   late CameraController _controller;
   bool _isCameraInitialized = false;
+  bool _isControllerDisposed = false;
   int _currentCameraIndex = 0;
   bool _isSwitching = false;
 
@@ -418,7 +420,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
       enableAudio: false,
     );
     await _controller.initialize();
-    if (!mounted) return;
+    if (!mounted || _isControllerDisposed) return;
     setState(() {
       _isCameraInitialized = true;
       _isSwitching = false;
@@ -433,8 +435,13 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
 
   @override
   void dispose() {
+    _isControllerDisposed = true;
     if (_isCameraInitialized) {
-      _controller.dispose();
+      try {
+        _controller.dispose();
+      } catch (_) {
+        // Ignore dispose errors
+      }
     }
     super.dispose();
   }
@@ -445,7 +452,14 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
       _isSwitching = true;
       _isCameraInitialized = false;
     });
-    await _controller.dispose();
+    // Ensure the widget stops rendering `CameraPreview` on the current
+    // controller before we dispose it (prevents disposed-controller races).
+    if (mounted) await WidgetsBinding.instance.endOfFrame;
+    try {
+      await _controller.dispose();
+    } catch (_) {
+      // Ignore dispose errors
+    }
     if (!mounted) return;
     _currentCameraIndex = (_currentCameraIndex + 1) % widget.cameras.length;
     await _initCamera(_currentCamera);
@@ -504,7 +518,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
               child: SizedBox(
                 width: _controller.value.previewSize?.height ?? 1,
                 height: _controller.value.previewSize?.width ?? 1,
-                child: CameraPreview(_controller),
+                child: _isControllerDisposed ? const SizedBox.shrink() : CameraPreview(_controller),
               ),
             ),
           ),

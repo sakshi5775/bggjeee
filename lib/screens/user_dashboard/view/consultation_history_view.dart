@@ -6,7 +6,6 @@ import 'package:astrobharataiuser/data_model/astrologer_chat_model.dart';
 import 'package:astrobharataiuser/data_model/call_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controllers/astrologer_call_history_controller.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controllers/astrologer_chat_history_controller.dart';
-import 'package:astrobharataiuser/screens/astrology_services/view/astrology_services_view.dart';
 import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -189,7 +188,7 @@ class _ChatHistoryTab extends StatelessWidget {
       final list = controller.filteredHistoryList;
       if (list.isEmpty) {
         return _EmptyHistoryTab(
-          onTap: () => Get.to(() => const AstrologyServicesView()),
+          onTap: () => UserMainController.pushInCurrentTab(AppRoutes.astrologyServices),
           actionText: 'Make Your First Chat',
         );
       }
@@ -510,7 +509,7 @@ class _CallHistoryTab extends StatelessWidget {
       final list = controller.historyList;
       if (list.isEmpty) {
         return _EmptyHistoryTab(
-          onTap: () => Get.to(() => const AstrologyServicesView()),
+          onTap: () => UserMainController.pushInCurrentTab(AppRoutes.astrologyServices),
           actionText: callType == 'VOICE'
               ? 'Make Your First Call'
               : 'Make Your First Video Call',

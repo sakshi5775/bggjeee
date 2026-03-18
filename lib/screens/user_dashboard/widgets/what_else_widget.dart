@@ -2,7 +2,6 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/widgets/ComingSoonPage.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
@@ -12,7 +11,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/core/services/share_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class WhatElseWidget extends StatelessWidget {
@@ -152,7 +150,7 @@ class WhatElseWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (isComingSoon) {
-          Get.to(() => const ComingSoonPage());
+          UserMainController.pushInCurrentTab(AppRoutes.comingSoon);
         } else {
           if (route == AppRoutes.ecommerceHome) {
             UserMainController.pushInCurrentTab(

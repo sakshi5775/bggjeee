@@ -993,6 +993,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                           return _buildLiveAstrologerProfile(
                             index,
                             controller.liveStreams[index],
+                            context,
                           );
                         } else {
                           return _buildOfflineAstrologerProfile(
@@ -5660,7 +5661,11 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     );
   }
 
-  Widget _buildLiveAstrologerProfile(int index, LiveStreamModel stream) {
+  Widget _buildLiveAstrologerProfile(
+    int index,
+    LiveStreamModel stream,
+    BuildContext context,
+  ) {
     final profilePicture =
         stream.astrologerPhoto ??
         controller.getProfilePictureForAstrologer(stream.astrologerId);
@@ -5681,13 +5686,16 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         if (isLoggedIn) {
           if (isLive) {
             // Navigate to live stream if it's actually live
-            Get.to(
-              () => LiveStreamView(
-                stream: stream,
-                astrologerName: stream.astrologerName,
-                astrologerProfilePicture: profilePicture,
-              ),
-            );
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  settings: const RouteSettings(name: '/live-stream-view'),
+                  builder: (_) => LiveStreamView(
+                    stream: stream,
+                    astrologerName: stream.astrologerName,
+                    astrologerProfilePicture: profilePicture,
+                  ),
+                ),
+              );
           } else {
             // Show "live stream has ended" message
             Get.snackbar(

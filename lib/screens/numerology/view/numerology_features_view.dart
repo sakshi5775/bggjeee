@@ -26,9 +26,9 @@ class NumerologyFeaturesView extends BasePage<NumerologyFormController> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Spacing.h(20),
-                    _buildInfoCard(),
-                    Spacing.h(24),
+                //    Spacing.h(20),
+                  //  _buildInfoCard(),
+                 //   Spacing.h(24),
                     _buildFeaturesGrid(),
                     Spacing.h(20),
                   ],

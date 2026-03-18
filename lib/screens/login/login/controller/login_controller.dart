@@ -132,6 +132,8 @@ class LoginController extends BaseController {
           }
 
           await Future.delayed(const Duration(milliseconds: 500));
+          // Avoid duplicate navigation during splash/login races.
+          if (Get.currentRoute == AppRoutes.userDashboard) return;
           Get.offAllNamed(AppRoutes.userDashboard);
         } else {
           CrashlyticsService.trackAction("AUTH", "LOGIN_FAIL");

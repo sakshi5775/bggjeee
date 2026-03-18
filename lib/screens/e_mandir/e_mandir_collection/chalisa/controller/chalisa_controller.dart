@@ -4,7 +4,7 @@ import 'package:astrobharataiuser/data_model/chalisa_model.dart';
 import '../service/chalisa_service.dart';
 
 class ChalisaController extends BaseController {
-  final ChalisaService _chalisaService = Get.put(ChalisaService());
+  final ChalisaService _chalisaService = Get.find<ChalisaService>();
 
   final RxList<ChalisaItem> chalisas = <ChalisaItem>[].obs;
   final RxBool isLoading = false.obs;
@@ -34,8 +34,12 @@ class ChalisaController extends BaseController {
       if (response != null && response.data != null) {
         chalisas.assignAll(response.data!.items);
       }
-    } catch (e) {
-      print('Error: $e');
+    } catch (e, s) {
+      reportError(
+        e,
+        s,
+        reason: 'CHALISA_LIST_FETCH_FAILED',
+      );
     } finally {
       isLoading.value = false;
     }
