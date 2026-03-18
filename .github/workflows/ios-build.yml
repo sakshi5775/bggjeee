@@ -50,6 +50,25 @@ jobs:
       - name: Flutter pub get
         run: flutter pub get
 
+      - name: Generate ios/firebase_app_id_file.json for Crashlytics
+        run: |
+          set -euo pipefail
+          GSP_PATH="ios/Runner/GoogleService-Info.plist"
+          APP_ID=$(/usr/libexec/PlistBuddy -c "Print :GOOGLE_APP_ID" "$GSP_PATH")
+          PROJECT_ID=$(/usr/libexec/PlistBuddy -c "Print :PROJECT_ID" "$GSP_PATH")
+
+          # firebase_crashlytics' upload-symbols tooling expects this file at:
+          #   ios/firebase_app_id_file.json
+          cat > ios/firebase_app_id_file.json <<EOF
+{
+  "GOOGLE_APP_ID": "$APP_ID",
+  "FIREBASE_PROJECT_ID": "$PROJECT_ID"
+}
+EOF
+
+          echo "Generated ios/firebase_app_id_file.json"
+          cat ios/firebase_app_id_file.json
+
       - name: Install CocoaPods properly
         run: |
           set -e
@@ -113,7 +132,7 @@ PY
           # Print one dSYM sample if present
           ls -la "$DSYM_PATH"/*.dSYM 2>/dev/null || true
 
-      - name: Generate firebase_app_id_file.json for Crashlytics
+      - name: (Optional) Generate .dart_tools flutterfire file for Crashlytics
         run: |
           set -euo pipefail
           GSP_PATH="ios/Runner/GoogleService-Info.plist"
@@ -132,7 +151,6 @@ PY
 EOF
 
           echo "Generated $TARGET_FILE"
-          cat "$TARGET_FILE"
 
       - name: Upload dSYM as GitHub artifact (backup)
         if: always()
