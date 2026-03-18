@@ -13,12 +13,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
       - name: Set up Flutter (stable)
         uses: subosito/flutter-action@v2
         with:
           flutter-version: "3.41.5"
           channel: stable
           cache: true
+
+      - name: Create android/local.properties (required by settings.gradle.kts)
+        run: |
+          FLUTTER_ROOT=$(dirname $(dirname $(which flutter)))
+          echo "flutter.sdk=$FLUTTER_ROOT" >> android/local.properties
 
       - name: Flutter pub get
         run: flutter pub get
@@ -38,6 +49,8 @@ jobs:
     runs-on: macos-latest
     env:
       FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      # Set DEVELOPMENT_TEAM in repo secrets if archive fails with code-signing errors
+      DEVELOPMENT_TEAM: ${{ secrets.DEVELOPMENT_TEAM }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -51,6 +64,9 @@ jobs:
 
       - name: Flutter pub get
         run: flutter pub get
+
+      - name: Generate Flutter iOS config (required before pod install)
+        run: flutter build ios --config-only --release --no-codesign
 
       - name: Generate ios/firebase_app_id_file.json for Crashlytics
         run: |
@@ -75,7 +91,7 @@ jobs:
         run: |
           test -f ios/Runner/GoogleService-Info.plist
 
-      - name: Build iOS archive (Release, no code signing)
+      - name: Build iOS archive (Release)
         run: |
           set -e
           IOS_WORKSPACE="ios/Runner.xcworkspace"
@@ -88,20 +104,37 @@ jobs:
           APP_VERSION_NAME=$(grep -E '^version:' pubspec.yaml | sed -E 's/^version:[[:space:]]*//; s/\+[0-9]*$//' | tr -d ' ')
           if [[ -z "$APP_VERSION_NAME" ]]; then echo "::error::Could not find version in pubspec.yaml"; exit 1; fi
 
-          xcodebuild \
-            -workspace "$IOS_WORKSPACE" \
-            -scheme "$IOS_SCHEME" \
-            -configuration Release \
-            -sdk iphoneos \
-            -archivePath "$ARCHIVE_PATH" \
-            -destination 'generic/platform=iOS' \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY="" \
-            DEVELOPMENT_TEAM="" \
-            COMPILER_INDEX_STORE_ENABLE=NO \
-            MARKETING_VERSION="$APP_VERSION_NAME" \
-            CURRENT_PROJECT_VERSION=${{ github.run_number }}
+          if [[ -n "$DEVELOPMENT_TEAM" ]]; then
+            echo "Building with DEVELOPMENT_TEAM for code signing..."
+            xcodebuild \
+              -workspace "$IOS_WORKSPACE" \
+              -scheme "$IOS_SCHEME" \
+              -configuration Release \
+              -sdk iphoneos \
+              -archivePath "$ARCHIVE_PATH" \
+              -destination 'generic/platform=iOS' \
+              -allowProvisioningUpdates \
+              DEVELOPMENT_TEAM="$DEVELOPMENT_TEAM" \
+              COMPILER_INDEX_STORE_ENABLE=NO \
+              MARKETING_VERSION="$APP_VERSION_NAME" \
+              CURRENT_PROJECT_VERSION=${{ github.run_number }}
+          else
+            echo "Building without code signing (set DEVELOPMENT_TEAM secret if archive fails)..."
+            xcodebuild \
+              -workspace "$IOS_WORKSPACE" \
+              -scheme "$IOS_SCHEME" \
+              -configuration Release \
+              -sdk iphoneos \
+              -archivePath "$ARCHIVE_PATH" \
+              -destination 'generic/platform=iOS' \
+              CODE_SIGNING_ALLOWED=NO \
+              CODE_SIGNING_REQUIRED=NO \
+              CODE_SIGN_IDENTITY="" \
+              DEVELOPMENT_TEAM="" \
+              COMPILER_INDEX_STORE_ENABLE=NO \
+              MARKETING_VERSION="$APP_VERSION_NAME" \
+              CURRENT_PROJECT_VERSION=${{ github.run_number }}
+          fi
 
           test -d "$DSYM_PATH"
 
