@@ -83,7 +83,7 @@ class ShopByCategoryWidget extends StatelessWidget {
           Obx(() {
             if (controller.isLoadingCategories.value) {
               return SizedBox(
-                height: 143.h,
+                height: 130.h,
                 child: Center(
                   child: Padding(
                     padding: EdgeInsets.all(20.h),
@@ -103,30 +103,13 @@ class ShopByCategoryWidget extends StatelessWidget {
 
             return LayoutBuilder(
               builder: (context, constraints) {
-                // Use MediaQuery to get screen height for responsive calculation
-                final screenHeight = MediaQuery.of(context).size.height;
+                // Tighter card height: image + padding + spacing + text (less bottom)
+                final double baseCardHeight = 90.h + 5.h + 7.h + 22.h + 2.h;
 
-                // Calculate card height based on actual card components
-                // Image: 90.h, padding: 10.h (5 top + 5 bottom), spacing: ~13.h (7.36 + 5.52)
-                // Text area: ~30.h (category name ~15.h + item count ~15.h with buffers)
-                // Shadow padding: 8.h
-                final double baseCardHeight = 90.h + 10.h + 13.h + 30.h + 8.h;
-
-                // Alternative: Use percentage of screen height as fallback
-                // This ensures it scales properly on all devices
-                final double screenBasedHeight =
-                    screenHeight * 0.18; // ~18% of screen height
-
-                // Use the larger of the two to prevent overflow
-                final double calculatedHeight =
-                    baseCardHeight > screenBasedHeight
-                    ? baseCardHeight
-                    : screenBasedHeight;
-
-                // Clamp to reasonable bounds (reduced height per request)
-                final double minHeight = 130.h;
-                final double maxHeight = 165.h;
-                final double dynamicHeight = calculatedHeight.clamp(
+                // Clamp to reduced bounds so white cards don't look too big
+                final double minHeight = 110.h;
+                final double maxHeight = 128.h;
+                final double dynamicHeight = baseCardHeight.clamp(
                   minHeight,
                   maxHeight,
                 );
@@ -139,7 +122,7 @@ class ShopByCategoryWidget extends StatelessWidget {
                       padding: EdgeInsets.only(
                         left: 16.w,
                         right: 16.w,
-                        bottom: 8.h, // Padding for shadow
+                        bottom: 4.h,
                       ),
                       itemCount: categories.length,
                       separatorBuilder: (context, index) => Spacing.w(12.w),
@@ -165,7 +148,7 @@ class ShopByCategoryWidget extends StatelessWidget {
       },
       child: Container(
         width: 102.w,
-        padding: EdgeInsets.only(top: 5.h, bottom: 5.h),
+        padding: EdgeInsets.only(top: 4.h, bottom: 2.h, left: 4.w, right: 4.w),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(15.r),
@@ -183,10 +166,10 @@ class ShopByCategoryWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              width: 90.w,
-              height: 90.h,
+              width: 86.w,
+              height: 86.h,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(14.71.r),
+                borderRadius: BorderRadius.circular(12.r),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.25),
@@ -196,12 +179,12 @@ class ShopByCategoryWidget extends StatelessWidget {
                 ],
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(14.71.r),
+                borderRadius: BorderRadius.circular(12.r),
                 child: category.image != null && category.image!.isNotEmpty
                     ? NetworkImageWithLoader(
                         url: category.image!,
-                        width: 90.w,
-                        height: 90.h,
+                        width: 86.w,
+                        height: 86.h,
                         fit: BoxFit.cover,
                       )
                     : Container(
@@ -214,7 +197,7 @@ class ShopByCategoryWidget extends StatelessWidget {
                       ),
               ),
             ),
-            Spacing.h(7.36),
+            Spacing.h(4),
             Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -233,7 +216,7 @@ class ShopByCategoryWidget extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                Spacing.h(5.52),
+                Spacing.h(3),
                 if ((category.productCount ?? 0) > 0)
                   AutoTranslateText(
                     '${category.productCount} items',

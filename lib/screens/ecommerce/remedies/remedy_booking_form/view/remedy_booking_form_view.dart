@@ -1,5 +1,5 @@
 import 'package:astrobharataiuser/app_manager/myButton.dart';
-import 'package:astrobharataiuser/app_manager/my_text_field.dart';
+import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/ecommerce/remedies/remedy_booking_form/controller/remedy_booking_form_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -11,6 +11,43 @@ import 'package:get/get.dart';
 
 class RemedyBookingFormView extends BasePage<RemedyBookingFormController> {
   const RemedyBookingFormView({super.key});
+
+  static const double _cardRadius = 10;
+  static const double _sectionSpacing = 12;
+  static const double _fieldGap = 6;
+
+  /// Compact, filled input style so the form looks clearly different from default
+  InputDecoration _inputDecoration(
+    String label, {
+    String? hint,
+  }) {
+    return InputDecoration(
+      labelText: label,
+      hintText: hint ?? label,
+      isDense: true,
+      filled: true,
+      fillColor: const Color(0xFFF8F6F3),
+      contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      labelStyle: TextStyle(fontSize: 12.sp, color: Colors.grey[700]),
+      hintStyle: TextStyle(fontSize: 12.sp, color: Colors.grey[500]),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8.r),
+        borderSide: BorderSide(color: Colors.grey.shade300),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8.r),
+        borderSide: BorderSide(color: Colors.grey.shade300),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8.r),
+        borderSide: BorderSide(color: AppColors.deepOrange, width: 1.5),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8.r),
+        borderSide: const BorderSide(color: Colors.red),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,32 +63,32 @@ class RemedyBookingFormView extends BasePage<RemedyBookingFormController> {
                 controller.serviceTitle ?? 'Complete your booking',
                 style: TextStyle(
                   color: AppColors.textSecondary,
-                  fontSize: 12.sp,
+                  fontSize: 11.sp,
                 ),
               ),
             ),
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 24.h),
+                padding: EdgeInsets.fromLTRB(12.w, 8.h, 12.w, 16.h),
                 child: Form(
                   key: controller.formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       _buildSummaryCard(),
-                      SizedBox(height: 20.h),
-                      _sectionTitle('Customer Details', Icons.person_outline),
-                      SizedBox(height: 10.h),
-                      _buildCustomerSection(),
-                      SizedBox(height: 20.h),
-                      _sectionTitle('Booking Details', Icons.calendar_today),
-                      SizedBox(height: 10.h),
+                      SizedBox(height: _sectionSpacing.h),
+                      _sectionTitle('Customer Details', Icons.person_outline_rounded),
+                      SizedBox(height: 5.h),
+                      _buildCustomerSection(context),
+                      SizedBox(height: _sectionSpacing.h),
+                      _sectionTitle('Booking Details', Icons.event_note_rounded),
+                      SizedBox(height: 5.h),
                       _buildBookingSection(context),
-                      SizedBox(height: 20.h),
-                      _sectionTitle('Person Details (for remedy)', Icons.face_rounded),
-                      SizedBox(height: 10.h),
+                      SizedBox(height: _sectionSpacing.h),
+                      _sectionTitle('Person (for remedy)', Icons.face_rounded),
+                      SizedBox(height: 5.h),
                       _buildPersonSection(context),
-                      SizedBox(height: 28.h),
+                      SizedBox(height: 18.h),
                       Obx(
                         () => MyButton(
                           title: controller.isSubmitting.value
@@ -60,7 +97,7 @@ class RemedyBookingFormView extends BasePage<RemedyBookingFormController> {
                                   ? 'Opening payment...'
                                   : 'Proceed to Pay'),
                           width: double.infinity,
-                          height: 52.h,
+                          height: 46.h,
                           useGradient: true,
                           onPress: (controller.isSubmitting.value ||
                                   controller.isPaymentInProgress.value)
@@ -69,18 +106,18 @@ class RemedyBookingFormView extends BasePage<RemedyBookingFormController> {
                           prefixIcon: (controller.isSubmitting.value ||
                                   controller.isPaymentInProgress.value)
                               ? SizedBox(
-                                  width: 22.w,
-                                  height: 22.h,
+                                  width: 18.w,
+                                  height: 18.h,
                                   child: const CircularProgressIndicator(
                                     strokeWidth: 2,
                                     color: Colors.white,
                                   ),
                                 )
                               : Icon(Icons.payment_rounded,
-                                  color: Colors.white, size: 22.sp),
+                                  color: Colors.white, size: 18.sp),
                         ),
                       ),
-                      SizedBox(height: 16.h),
+                      SizedBox(height: 10.h),
                     ],
                   ),
                 ),
@@ -96,19 +133,26 @@ class RemedyBookingFormView extends BasePage<RemedyBookingFormController> {
     return Row(
       children: [
         Container(
-          padding: EdgeInsets.all(8.w),
+          padding: EdgeInsets.all(5.w),
           decoration: BoxDecoration(
             gradient: AppColors.primaryGradient,
-            borderRadius: BorderRadius.circular(10.r),
+            borderRadius: BorderRadius.circular(6.r),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.deepOrange.withValues(alpha: 0.35),
+                blurRadius: 4,
+                offset: const Offset(0, 1),
+              ),
+            ],
           ),
-          child: Icon(icon, color: Colors.white, size: 18.sp),
+          child: Icon(icon, color: Colors.white, size: 14.sp),
         ),
-        SizedBox(width: 10.w),
+        SizedBox(width: 6.w),
         AutoTranslateText(
           title,
           style: TextStyle(
-            fontSize: 16.sp,
-            fontWeight: FontWeight.bold,
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w700,
             color: const Color(0xFF3E1212),
           ),
         ),
@@ -118,50 +162,52 @@ class RemedyBookingFormView extends BasePage<RemedyBookingFormController> {
 
   Widget _buildSummaryCard() {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
         gradient: AppColors.orangeGradient,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(_cardRadius.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepOrange.withValues(alpha: 0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            color: AppColors.deepOrange.withValues(alpha: 0.4),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(10.w),
+            padding: EdgeInsets.all(6.w),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(12.r),
+              color: Colors.white.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(8.r),
             ),
-            child: Icon(Icons.auto_awesome, color: Colors.white, size: 26.sp),
+            child: Icon(Icons.auto_awesome, color: Colors.white, size: 20.sp),
           ),
-          SizedBox(width: 14.w),
+          SizedBox(width: 10.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 AutoTranslateText(
                   controller.serviceTitle ?? 'Remedy',
                   style: TextStyle(
-                    fontSize: 16.sp,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(height: 6.h),
+                SizedBox(height: 2.h),
                 Text(
                   '₹${controller.price?.toStringAsFixed(0) ?? '0'}',
                   style: TextStyle(
-                    fontSize: 20.sp,
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.w800,
                     color: Colors.white,
+                    letterSpacing: 0.5,
                   ),
                 ),
               ],
@@ -172,99 +218,157 @@ class RemedyBookingFormView extends BasePage<RemedyBookingFormController> {
     );
   }
 
-  Widget _buildCustomerSection() {
+  Widget _cardWrapper(Widget child) {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(_cardRadius.r),
+        border: Border(
+          left: BorderSide(
+            color: AppColors.deepOrange,
+            width: 3.w,
+          ),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: Column(
+      child: child,
+    );
+  }
+
+  Widget _buildCustomerSection(BuildContext context) {
+    return _cardWrapper(
+      Column(
         children: [
-          MyTextField(
-            controller: controller.fullNameController,
-            hintText: 'Full Name',
-            labelText: 'Full Name',
-            validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
-          ),
-          SizedBox(height: 12.h),
-          MyTextField(
-            controller: controller.emailController,
-            hintText: 'Email',
-            labelText: 'Email',
-            keyboardType: TextInputType.emailAddress,
-            validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
-          ),
-          SizedBox(height: 12.h),
-          MyTextField(
-            controller: controller.phoneController,
-            hintText: 'Phone',
-            labelText: 'Phone',
-            keyboardType: TextInputType.phone,
-            maxLength: 10,
-            validator: (v) {
-              if (v == null || v.trim().isEmpty) return 'Required';
-              if (v.trim().length < 10) return 'Valid 10-digit number';
-              return null;
-            },
-          ),
-          SizedBox(height: 12.h),
-          MyTextField(
-            controller: controller.alternatePhoneController,
-            hintText: 'Alternate Phone (optional)',
-            labelText: 'Alternate Phone',
-            keyboardType: TextInputType.phone,
-            maxLength: 10,
-          ),
-          SizedBox(height: 12.h),
-          MyTextField(
-            controller: controller.addressLine1Controller,
-            hintText: 'Address Line 1',
-            labelText: 'Address Line 1',
-            validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
-          ),
-          SizedBox(height: 12.h),
-          MyTextField(
-            controller: controller.addressLine2Controller,
-            hintText: 'Address Line 2 (optional)',
-            labelText: 'Address Line 2',
-          ),
-          SizedBox(height: 12.h),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: MyTextField(
-                  controller: controller.cityController,
-                  hintText: 'City',
-                  labelText: 'City',
+                child: TextFormField(
+                  controller: controller.fullNameController,
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: AppColors.textPrimary,
+                    fontSize: 13.sp,
+                  ),
+                  decoration: _inputDecoration('Full Name'),
                   validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
                 ),
               ),
-              SizedBox(width: 12.w),
+              SizedBox(width: 8.w),
               Expanded(
-                child: MyTextField(
-                  controller: controller.stateController,
-                  hintText: 'State',
-                  labelText: 'State',
+                child: TextFormField(
+                  controller: controller.emailController,
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: AppColors.textPrimary,
+                    fontSize: 13.sp,
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: _inputDecoration('Email'),
                   validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
                 ),
               ),
             ],
           ),
-          SizedBox(height: 12.h),
-          MyTextField(
+          SizedBox(height: _fieldGap.h),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: controller.phoneController,
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: AppColors.textPrimary,
+                    fontSize: 13.sp,
+                  ),
+                  keyboardType: TextInputType.phone,
+                  maxLength: 10,
+                  decoration: _inputDecoration('Phone'),
+                  validator: (v) {
+                    if (v == null || v.trim().isEmpty) return 'Required';
+                    if (v.trim().length < 10) return '10 digits';
+                    return null;
+                  },
+                ),
+              ),
+              SizedBox(width: 8.w),
+              Expanded(
+                child: TextFormField(
+                  controller: controller.alternatePhoneController,
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: AppColors.textPrimary,
+                    fontSize: 13.sp,
+                  ),
+                  keyboardType: TextInputType.phone,
+                  maxLength: 10,
+                  decoration: _inputDecoration('Alt. Phone'),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: _fieldGap.h),
+          TextFormField(
+            controller: controller.addressLine1Controller,
+            style: MyTextTheme.mediumBCB.copyWith(
+              color: AppColors.textPrimary,
+              fontSize: 13.sp,
+            ),
+            decoration: _inputDecoration('Address Line 1'),
+            validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+          ),
+          SizedBox(height: _fieldGap.h),
+          TextFormField(
+            controller: controller.addressLine2Controller,
+            style: MyTextTheme.mediumBCB.copyWith(
+              color: AppColors.textPrimary,
+              fontSize: 13.sp,
+            ),
+            decoration: _inputDecoration('Address Line 2 (optional)'),
+          ),
+          SizedBox(height: _fieldGap.h),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: controller.cityController,
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: AppColors.textPrimary,
+                    fontSize: 13.sp,
+                  ),
+                  decoration: _inputDecoration('City'),
+                  validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                ),
+              ),
+              SizedBox(width: 8.w),
+              Expanded(
+                child: TextFormField(
+                  controller: controller.stateController,
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: AppColors.textPrimary,
+                    fontSize: 13.sp,
+                  ),
+                  decoration: _inputDecoration('State'),
+                  validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: _fieldGap.h),
+          TextFormField(
             controller: controller.pincodeController,
-            hintText: 'Pincode',
-            labelText: 'Pincode',
+            style: MyTextTheme.mediumBCB.copyWith(
+              color: AppColors.textPrimary,
+              fontSize: 13.sp,
+            ),
             keyboardType: TextInputType.number,
             maxLength: 6,
+            decoration: _inputDecoration('Pincode'),
             validator: (v) {
               if (v == null || v.trim().isEmpty) return 'Required';
               if (v.trim().length != 6) return '6 digits';
@@ -277,20 +381,8 @@ class RemedyBookingFormView extends BasePage<RemedyBookingFormController> {
   }
 
   Widget _buildBookingSection(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
+    return _cardWrapper(
+      Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Obx(() {
@@ -306,61 +398,77 @@ class RemedyBookingFormView extends BasePage<RemedyBookingFormController> {
                 if (picked != null) controller.setPreferredDate(picked);
               },
               child: InputDecorator(
-                decoration: InputDecoration(
-                  labelText: 'Preferred Date',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                ),
+                decoration: _inputDecoration('Preferred Date'),
                 child: Text(
-                  d != null
-                      ? '${d.day}/${d.month}/${d.year}'
-                      : 'Select date',
+                  d != null ? '${d.day}/${d.month}/${d.year}' : 'Select',
                   style: TextStyle(
                     color: d != null ? Colors.black87 : Colors.grey,
-                    fontSize: 14.sp,
+                    fontSize: 13.sp,
                   ),
                 ),
               ),
             );
           }),
-          SizedBox(height: 12.h),
-          AutoTranslateText('Time Slot', style: TextStyle(fontSize: 12.sp, color: Colors.grey)),
-          SizedBox(height: 6.h),
+          SizedBox(height: _fieldGap.h),
+          Padding(
+            padding: EdgeInsets.only(left: 4.w, bottom: 4.h),
+            child: AutoTranslateText(
+              'Time Slot',
+              style: TextStyle(
+                fontSize: 11.sp,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
           Obx(
-            () => Wrap(
-              spacing: 8.w,
-              runSpacing: 8.h,
+            () => Row(
               children: controller.timeSlots.map((slot) {
                 final selected = controller.preferredTimeSlot.value == slot;
-                return ChoiceChip(
-                  label: Text(
-                    slot.toUpperCase(),
-                    style: TextStyle(fontSize: 11.sp),
+                return Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 4.w),
+                    child: ChoiceChip(
+                      label: Text(
+                        slot.toUpperCase(),
+                        style: TextStyle(fontSize: 10.sp),
+                      ),
+                      selected: selected,
+                      onSelected: (_) => controller.setTimeSlot(slot),
+                      selectedColor: AppColors.orangeGradient.colors.first,
+                      labelStyle: TextStyle(
+                        color: selected ? Colors.white : Colors.black87,
+                        fontSize: 10.sp,
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 4.w,
+                        vertical: 6.h,
+                      ),
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
                   ),
-                  selected: selected,
-                  onSelected: (_) => controller.setTimeSlot(slot),
-                  selectedColor: AppColors.orangeGradient.colors.first,
-                  labelStyle: TextStyle(
-                    color: selected ? Colors.white : Colors.black87,
-                    fontSize: 11.sp,
-                  ),
-                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 );
               }).toList(),
             ),
           ),
-          SizedBox(height: 12.h),
-          MyTextField(
+          SizedBox(height: _fieldGap.h),
+          TextFormField(
             controller: controller.specialInstructionsController,
-            hintText: 'Special instructions (optional)',
-            maxLine: 2,
+            style: MyTextTheme.mediumBCB.copyWith(
+              color: AppColors.textPrimary,
+              fontSize: 13.sp,
+            ),
+            maxLines: 2,
+            decoration: _inputDecoration('Special instructions (optional)'),
           ),
-          SizedBox(height: 12.h),
-          MyTextField(
+          SizedBox(height: _fieldGap.h),
+          TextFormField(
             controller: controller.purposeController,
-            hintText: 'Purpose (optional)',
+            style: MyTextTheme.mediumBCB.copyWith(
+              color: AppColors.textPrimary,
+              fontSize: 13.sp,
+            ),
+            decoration: _inputDecoration('Purpose (optional)'),
           ),
         ],
       ),
@@ -368,83 +476,117 @@ class RemedyBookingFormView extends BasePage<RemedyBookingFormController> {
   }
 
   Widget _buildPersonSection(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
+    return _cardWrapper(
+      Column(
         children: [
-          MyTextField(
-            controller: controller.personNameController,
-            hintText: 'Name',
-            labelText: 'Name',
-            validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
-          ),
-          SizedBox(height: 12.h),
-          Obx(() {
-            final d = controller.personDob.value;
-            return InkWell(
-              onTap: () async {
-                final picked = await showDatePicker(
-                  context: context,
-                  initialDate: d ?? DateTime(1990, 1, 1),
-                  firstDate: DateTime(1900),
-                  lastDate: DateTime.now(),
-                );
-                if (picked != null) controller.setPersonDob(picked);
-              },
-              child: InputDecorator(
-                decoration: InputDecoration(
-                  labelText: 'Date of Birth',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.r),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: controller.personNameController,
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: AppColors.textPrimary,
+                    fontSize: 13.sp,
                   ),
-                ),
-                child: Text(
-                  d != null
-                      ? '${d.day}/${d.month}/${d.year}'
-                      : 'Select DOB',
-                  style: TextStyle(
-                    color: d != null ? Colors.black87 : Colors.grey,
-                    fontSize: 14.sp,
-                  ),
+                  decoration: _inputDecoration('Name'),
+                  validator: (v) =>
+                      v == null || v.trim().isEmpty ? 'Required' : null,
                 ),
               ),
-            );
-          }),
-          SizedBox(height: 12.h),
-          MyTextField(
-            controller: controller.birthPlaceController,
-            hintText: 'Birth Place (optional)',
+              SizedBox(width: 8.w),
+              Expanded(
+                child: Obx(() {
+                  final d = controller.personDob.value;
+                  return InkWell(
+                    onTap: () async {
+                      final picked = await showDatePicker(
+                        context: context,
+                        initialDate: d ?? DateTime(1990, 1, 1),
+                        firstDate: DateTime(1900),
+                        lastDate: DateTime.now(),
+                      );
+                      if (picked != null) controller.setPersonDob(picked);
+                    },
+                    child: InputDecorator(
+                      decoration: _inputDecoration('DOB'),
+                      child: Text(
+                        d != null
+                            ? '${d.day}/${d.month}/${d.year}'
+                            : 'Select',
+                        style: TextStyle(
+                          color: d != null ? Colors.black87 : Colors.grey,
+                          fontSize: 13.sp,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ],
           ),
-          SizedBox(height: 12.h),
-          MyTextField(
-            controller: controller.birthTimeController,
-            hintText: 'Birth Time (optional)',
+          SizedBox(height: _fieldGap.h),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: controller.birthPlaceController,
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: AppColors.textPrimary,
+                    fontSize: 13.sp,
+                  ),
+                  decoration: _inputDecoration('Birth Place'),
+                ),
+              ),
+              SizedBox(width: 8.w),
+              Expanded(
+                child: TextFormField(
+                  controller: controller.birthTimeController,
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: AppColors.textPrimary,
+                    fontSize: 13.sp,
+                  ),
+                  decoration: _inputDecoration('Birth Time'),
+                ),
+              ),
+            ],
           ),
-          SizedBox(height: 12.h),
-          MyTextField(
-            controller: controller.gotraController,
-            hintText: 'Gotra (optional)',
+          SizedBox(height: _fieldGap.h),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: controller.gotraController,
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: AppColors.textPrimary,
+                    fontSize: 13.sp,
+                  ),
+                  decoration: _inputDecoration('Gotra'),
+                ),
+              ),
+              SizedBox(width: 8.w),
+              Expanded(
+                child: TextFormField(
+                  controller: controller.rashiController,
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: AppColors.textPrimary,
+                    fontSize: 13.sp,
+                  ),
+                  decoration: _inputDecoration('Rashi'),
+                ),
+              ),
+            ],
           ),
-          SizedBox(height: 12.h),
-          MyTextField(
-            controller: controller.rashiController,
-            hintText: 'Rashi (optional)',
-          ),
-          SizedBox(height: 12.h),
-          MyTextField(
+          SizedBox(height: _fieldGap.h),
+          TextFormField(
             controller: controller.nakshatraController,
-            hintText: 'Nakshatra (optional)',
+            style: MyTextTheme.mediumBCB.copyWith(
+              color: AppColors.textPrimary,
+              fontSize: 13.sp,
+            ),
+            decoration: _inputDecoration('Nakshatra (optional)'),
           ),
         ],
       ),
