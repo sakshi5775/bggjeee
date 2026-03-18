@@ -1,0 +1,27 @@
+﻿2026-03-18T22:34:57.3961400Z ##[group]Run set -e
+2026-03-18T22:34:57.3961690Z [36;1mset -e[0m
+2026-03-18T22:34:57.3961910Z [36;1msudo gem install cocoapods[0m
+2026-03-18T22:34:57.3962180Z [36;1mcd ios[0m
+2026-03-18T22:34:57.3962500Z [36;1mpod repo update[0m
+2026-03-18T22:34:57.3962740Z [36;1mpod install --repo-update[0m
+2026-03-18T22:34:57.4002580Z shell: /bin/bash -e {0}
+2026-03-18T22:34:57.4002950Z env:
+2026-03-18T22:34:57.4003210Z   FIREBASE_TOKEN: 
+2026-03-18T22:34:57.4003440Z   DEVELOPMENT_TEAM: 
+2026-03-18T22:34:57.4003860Z   FLUTTER_ROOT: /Users/runner/hostedtoolcache/flutter/stable-3.41.5-arm64
+2026-03-18T22:34:57.4004240Z   PUB_CACHE: /Users/runner/.pub-cache
+2026-03-18T22:34:57.4004420Z ##[endgroup]
+2026-03-18T22:35:00.8539480Z Successfully installed cocoapods-1.16.2
+2026-03-18T22:35:00.8539960Z Parsing documentation for cocoapods-1.16.2
+2026-03-18T22:35:00.8540270Z Done installing documentation for cocoapods after 1 seconds
+2026-03-18T22:35:00.8540650Z 1 gem installed
+2026-03-18T22:35:02.7820030Z Updating spec repo `trunk`
+2026-03-18T22:35:15.1940850Z Updating local specs repositories
+2026-03-18T22:35:15.2875810Z Analyzing dependencies
+2026-03-18T22:35:15.3319020Z firebase_analytics: Using Firebase SDK version '11.15.0' defined in 'firebase_core'
+2026-03-18T22:35:15.3349010Z firebase_core: Using Firebase SDK version '11.15.0' defined in 'firebase_core'
+2026-03-18T22:35:15.5406860Z firebase_crashlytics: Using Firebase SDK version '11.15.0' defined in 'firebase_core'
+2026-03-18T22:35:19.6092220Z Downloading dependencies
+2026-03-18T22:35:19.6093200Z Generating Pods project
+2026-03-18T22:35:19.6093860Z Integrating client project
+2026-03-18T22:35:19.6094440Z Pod installation complete! There are 42 dependencies from the Podfile and 80 total pods installed.

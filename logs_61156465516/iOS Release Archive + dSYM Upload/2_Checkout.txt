@@ -1,0 +1,76 @@
+﻿2026-03-18T22:27:48.6682190Z ##[group]Run actions/checkout@v4
+2026-03-18T22:27:48.6682920Z with:
+2026-03-18T22:27:48.6683400Z   repository: sakshi5775/bggjeee
+2026-03-18T22:27:48.6684130Z   token: ***
+2026-03-18T22:27:48.6684590Z   ssh-strict: true
+2026-03-18T22:27:48.6685150Z   ssh-user: git
+2026-03-18T22:27:48.6685630Z   persist-credentials: true
+2026-03-18T22:27:48.6686170Z   clean: true
+2026-03-18T22:27:48.6686670Z   sparse-checkout-cone-mode: true
+2026-03-18T22:27:48.6687250Z   fetch-depth: 1
+2026-03-18T22:27:48.6687730Z   fetch-tags: false
+2026-03-18T22:27:48.6688230Z   show-progress: true
+2026-03-18T22:27:48.6688750Z   lfs: false
+2026-03-18T22:27:48.6689220Z   submodules: false
+2026-03-18T22:27:48.6689750Z   set-safe-directory: true
+2026-03-18T22:27:48.6690440Z env:
+2026-03-18T22:27:48.6690890Z   FIREBASE_TOKEN: 
+2026-03-18T22:27:48.6691370Z   DEVELOPMENT_TEAM: 
+2026-03-18T22:27:48.6691860Z ##[endgroup]
+2026-03-18T22:27:48.9838740Z Syncing repository: sakshi5775/bggjeee
+2026-03-18T22:27:48.9840730Z ##[group]Getting Git version info
+2026-03-18T22:27:48.9841700Z Working directory is '/Users/runner/work/bggjeee/bggjeee'
+2026-03-18T22:27:48.9842930Z [command]/opt/homebrew/bin/git version
+2026-03-18T22:27:49.0141350Z git version 2.53.0
+2026-03-18T22:27:49.0166870Z ##[endgroup]
+2026-03-18T22:27:49.0172910Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/276c6af0-f97b-4fac-a536-1dee0e960764/.gitconfig'
+2026-03-18T22:27:49.0182670Z Temporarily overriding HOME='/Users/runner/work/_temp/276c6af0-f97b-4fac-a536-1dee0e960764' before making global git config changes
+2026-03-18T22:27:49.0184490Z Adding repository directory to the temporary git global config as a safe directory
+2026-03-18T22:27:49.0186380Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/bggjeee/bggjeee
+2026-03-18T22:27:49.0276530Z Deleting the contents of '/Users/runner/work/bggjeee/bggjeee'
+2026-03-18T22:27:49.0279500Z ##[group]Initializing the repository
+2026-03-18T22:27:49.0283920Z [command]/opt/homebrew/bin/git init /Users/runner/work/bggjeee/bggjeee
+2026-03-18T22:27:49.0429320Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-03-18T22:27:49.0430800Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-03-18T22:27:49.0432010Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-03-18T22:27:49.0432930Z hint: call:
+2026-03-18T22:27:49.0433430Z hint:
+2026-03-18T22:27:49.0434060Z hint: 	git config --global init.defaultBranch <name>
+2026-03-18T22:27:49.0434800Z hint:
+2026-03-18T22:27:49.0435530Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-03-18T22:27:49.0436680Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-03-18T22:27:49.0437650Z hint:
+2026-03-18T22:27:49.0438160Z hint: 	git branch -m <name>
+2026-03-18T22:27:49.0438750Z hint:
+2026-03-18T22:27:49.0439530Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-03-18T22:27:49.0440770Z Initialized empty Git repository in /Users/runner/work/bggjeee/bggjeee/.git/
+2026-03-18T22:27:49.0443110Z [command]/opt/homebrew/bin/git remote add origin https://github.com/sakshi5775/bggjeee
+2026-03-18T22:27:49.0503390Z ##[endgroup]
+2026-03-18T22:27:49.0504420Z ##[group]Disabling automatic garbage collection
+2026-03-18T22:27:49.0505830Z [command]/opt/homebrew/bin/git config --local gc.auto 0
+2026-03-18T22:27:49.0559950Z ##[endgroup]
+2026-03-18T22:27:49.0560910Z ##[group]Setting up auth
+2026-03-18T22:27:49.0564090Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-03-18T22:27:49.0614400Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-03-18T22:27:49.1358200Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-03-18T22:27:49.1408420Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-03-18T22:27:49.2015590Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-03-18T22:27:49.2073720Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-03-18T22:27:49.3011140Z [command]/opt/homebrew/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-03-18T22:27:49.3066260Z ##[endgroup]
+2026-03-18T22:27:49.3067230Z ##[group]Fetching the repository
+2026-03-18T22:27:49.3071580Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +fa7c57c64ae191966058261d1b10394ddcc51a76:refs/remotes/origin/main
+2026-03-18T22:29:12.1952050Z From https://github.com/sakshi5775/bggjeee
+2026-03-18T22:29:12.1954660Z  * [new ref]         fa7c57c64ae191966058261d1b10394ddcc51a76 -> origin/main
+2026-03-18T22:29:12.2012580Z ##[endgroup]
+2026-03-18T22:29:12.2013920Z ##[group]Determining the checkout info
+2026-03-18T22:29:12.2015890Z ##[endgroup]
+2026-03-18T22:29:12.2174940Z [command]/opt/homebrew/bin/git sparse-checkout disable
+2026-03-18T22:29:12.2200530Z [command]/opt/homebrew/bin/git config --local --unset-all extensions.worktreeConfig
+2026-03-18T22:29:12.2265250Z ##[group]Checking out the ref
+2026-03-18T22:29:12.2269550Z [command]/opt/homebrew/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-03-18T22:29:12.7061290Z Switched to a new branch 'main'
+2026-03-18T22:29:12.7066880Z branch 'main' set up to track 'origin/main'.
+2026-03-18T22:29:12.7079410Z ##[endgroup]
+2026-03-18T22:29:12.7182470Z [command]/opt/homebrew/bin/git log -1 --format=%H
+2026-03-18T22:29:12.7249140Z fa7c57c64ae191966058261d1b10394ddcc51a76

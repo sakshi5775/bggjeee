@@ -74,8 +74,8 @@ jobs:
           GSP_PATH="ios/Runner/GoogleService-Info.plist"
           APP_ID=$(/usr/libexec/PlistBuddy -c "Print :GOOGLE_APP_ID" "$GSP_PATH")
           PROJECT_ID=$(/usr/libexec/PlistBuddy -c "Print :PROJECT_ID" "$GSP_PATH")
-          # Write JSON safely without tricky shell quote nesting.
-          printf '{ "GOOGLE_APP_ID": "%s", "FIREBASE_PROJECT_ID": "%s" }%s' "$APP_ID" "$PROJECT_ID" '\n' > ios/firebase_app_id_file.json
+          # Write valid JSON (\n in printf format = real newline; literal '\n' as argument would break Crashlytics).
+          printf '{ "GOOGLE_APP_ID": "%s", "FIREBASE_PROJECT_ID": "%s" }\n' "$APP_ID" "$PROJECT_ID" > ios/firebase_app_id_file.json
           echo "Generated ios/firebase_app_id_file.json"
           cat ios/firebase_app_id_file.json
 
@@ -161,7 +161,7 @@ jobs:
           TARGET_DIR=".dart_tools/flutterfire/ios/default"
           TARGET_FILE="$TARGET_DIR/firebase_app_id_file.json"
           mkdir -p "$TARGET_DIR"
-          printf '{ "GOOGLE_APP_ID": "%s", "FIREBASE_PROJECT_ID": "%s" }%s' "$APP_ID" "$PROJECT_ID" '\n' > "$TARGET_FILE"
+          printf '{ "GOOGLE_APP_ID": "%s", "FIREBASE_PROJECT_ID": "%s" }\n' "$APP_ID" "$PROJECT_ID" > "$TARGET_FILE"
           echo "Generated $TARGET_FILE"
 
       - name: Upload dSYM as GitHub artifact (backup)

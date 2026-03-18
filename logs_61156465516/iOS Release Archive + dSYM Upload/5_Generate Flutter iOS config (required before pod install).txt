@@ -1,0 +1,16 @@
+﻿2026-03-18T22:30:43.4876140Z ##[group]Run flutter build ios --config-only --release --no-codesign
+2026-03-18T22:30:43.4876850Z [36;1mflutter build ios --config-only --release --no-codesign[0m
+2026-03-18T22:30:43.4915490Z shell: /bin/bash -e {0}
+2026-03-18T22:30:43.4915830Z env:
+2026-03-18T22:30:43.4916080Z   FIREBASE_TOKEN: 
+2026-03-18T22:30:43.4916350Z   DEVELOPMENT_TEAM: 
+2026-03-18T22:30:43.4916700Z   FLUTTER_ROOT: /Users/runner/hostedtoolcache/flutter/stable-3.41.5-arm64
+2026-03-18T22:30:43.4917200Z   PUB_CACHE: /Users/runner/.pub-cache
+2026-03-18T22:30:43.4917390Z ##[endgroup]
+2026-03-18T22:30:44.4765930Z Warning: Building for device with codesigning disabled. You will have to manually codesign before deploying to device.
+2026-03-18T22:30:50.6418920Z Building com.astrobharatai.astrouser for device (ios-release)...
+2026-03-18T22:30:50.6738480Z Upgrading AppFrameworkInfo.plist
+2026-03-18T22:30:50.6747610Z Upgrading Podfile
+2026-03-18T22:30:50.7140610Z To ensure your app continues to launch on upcoming iOS versions, UIScene lifecycle support will soon be required. Please see https://flutter.dev/to/uiscene-migration for the migration guide.
+2026-03-18T22:30:50.7173540Z 
+2026-03-18T22:34:57.0463730Z Running pod install...                                            241.4s
