@@ -83,17 +83,8 @@ jobs:
 
           mkdir -p "$(dirname "$ARCHIVE_PATH")"
 
-          APP_VERSION_NAME=$(python3 - <<'PY'
-import re
-txt=open('pubspec.yaml','r',encoding='utf-8').read()
-m=re.search(r'^version:\s*([^\n]+)$',txt, re.M)
-if not m:
-    raise SystemExit("Could not find version in pubspec.yaml")
-v=m.group(1).strip()
-# pubspec version looks like 1.0.1+59; we want only 1.0.1
-print(v.split('+')[0])
-PY
-          )
+          APP_VERSION_NAME=$(grep -E '^version:' pubspec.yaml | sed -E 's/^version:[[:space:]]*//; s/\+[0-9]*$//' | tr -d ' ')
+          if [[ -z "$APP_VERSION_NAME" ]]; then echo "::error::Could not find version in pubspec.yaml"; exit 1; fi
 
           xcodebuild \
             -workspace "$IOS_WORKSPACE" \
