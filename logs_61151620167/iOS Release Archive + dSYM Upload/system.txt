@@ -1,8 +1,0 @@
-2026-03-18T21:41:21.4110000Z Requested labels: macos-latest
-2026-03-18T21:41:21.4110000Z Job defined at: sakshi5775/bggjeee/.github/workflows/ios-build.yml@refs/heads/main
-2026-03-18T21:41:21.4110000Z Waiting for a runner to pick up this job...
-2026-03-18T21:41:21.4140000Z Evaluating ios.if
-2026-03-18T21:41:21.4140000Z Evaluating: success()
-2026-03-18T21:41:21.4140000Z Result: true
-2026-03-18T21:41:21.7820000Z Job is waiting for a hosted runner to come online.
-2026-03-18T21:41:21.7830000Z Job is about to start running on the hosted runner: GitHub Actions 1000000065
