@@ -79,26 +79,47 @@ class ForgotPasswordOtpView extends GetView<ForgotPasswordController> {
                         ),
                       ),
                       Spacing.h(12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Column(
                         children: [
                           const AutoTranslateText(
-                            'We have sent a 6-digit code to ',
+                            'We have sent a 6-digit code to',
                             style: TextStyle(
                               color: AppColors.textSecondary,
                               fontSize: 14,
                             ),
+                            textAlign: TextAlign.center,
                           ),
-                          Flexible(
-                            child: Text(
-                              controller.emailController.text,
-                              style: const TextStyle(
-                                color: AppColors.textPrimary,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                              overflow: TextOverflow.ellipsis,
+                          SizedBox(height: 4.h),
+                          Text(
+                            controller.emailController.text,
+                            style: const TextStyle(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
                             ),
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: 8.h),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.info_outline,
+                                size: 13.sp,
+                                color: AppColors.saffron.withValues(alpha: 0.8),
+                              ),
+                              SizedBox(width: 4.w),
+                              AutoTranslateText(
+                                'Check your SMS & email inbox',
+                                style: TextStyle(
+                                  color: AppColors.saffron,
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
                           ),
                         ],
                       ),

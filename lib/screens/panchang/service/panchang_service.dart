@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class PanchangService {
-  /// Base URL for panchang API (port 8010)
+  /// Base URL for panchang API (port 8000/api/numerology)
   static const String _panchangBaseUrl =
       'http://3.109.91.254:8000/api/numerology/api';
 

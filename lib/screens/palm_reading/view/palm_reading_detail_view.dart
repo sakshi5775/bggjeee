@@ -2,8 +2,12 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
+import 'package:astrobharataiuser/core/services/pdf_generator_service.dart';
 import 'package:astrobharataiuser/data_model/palm_reading_model.dart';
+import 'package:astrobharataiuser/data_model/pdf_metadata.dart';
+import 'package:astrobharataiuser/data_model/pdf_section.dart';
 import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_controller.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
@@ -28,7 +32,20 @@ class PalmReadingDetailView extends StatelessWidget {
         backgroundColor: Colors.transparent, // Match Face Reading background
         body: Column(
           children: [
-            const CommonHeader(title: 'Palm Reading Detail'),
+            Obx(() => CommonHeader(
+              title: 'Palm Reading Detail',
+              customActions: [
+                if (controller.palmReadingData.value != null)
+                  IconButton(
+                    icon: Icon(
+                      Icons.picture_as_pdf_rounded,
+                      color: '#6F221E'.toColor(),
+                      size: 22.w,
+                    ),
+                    onPressed: () => _exportToPdf(controller.palmReadingData.value!),
+                  ),
+              ],
+            )),
             Expanded(
               child: Obx(() {
                 if (controller.isLoadingReading.value) {
@@ -574,6 +591,52 @@ class PalmReadingDetailView extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _exportToPdf(PalmReadingData result) async {
+    final List<PdfSection> sections = [];
+
+    if (result.overallReading.isNotEmpty) {
+      sections.add(PdfSection(
+        title: 'Hand Type',
+        content: 'Analysis performed on: ${result.handType}',
+      ));
+      sections.add(PdfSection(title: 'Overall Reading', content: result.overallReading));
+    }
+
+    if (result.summary.isNotEmpty) {
+      sections.add(PdfSection(title: 'Summary', content: result.summary));
+    }
+
+    for (var reading in result.readings) {
+      if (reading.category.toUpperCase() == 'OVERALL') continue;
+      String title = reading.category
+          .replaceAll('_', ' ')
+          .split(' ')
+          .map((word) => word[0].toUpperCase() + word.substring(1).toLowerCase())
+          .join(' ');
+      sections.add(PdfSection(
+        title: title,
+        content: reading.interpretation,
+        score: reading.confidence != null ? reading.confidence! * 100 : null,
+      ));
+    }
+
+    String? userName;
+    if (Get.isRegistered<UserDashboardController>()) {
+      userName = Get.find<UserDashboardController>().userName.value;
+    }
+
+    await PdfGeneratorService.generateAstrologyReport(
+      title: 'Palm Reading Analysis',
+      sections: sections,
+      metadata: PdfMetadata(
+        userName: userName,
+        generatedAt: DateTime.now(),
+        reportType: PdfReportType.palmReading,
+      ),
+      languageCode: 'en',
     );
   }
 }

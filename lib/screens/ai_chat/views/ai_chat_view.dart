@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/screens/ai_chat/widgets/chat_profile_dialog.da
 import 'package:astrobharataiuser/screens/ai_chat/widgets/empty_state_widget.dart';
 import 'package:astrobharataiuser/screens/ai_chat/widgets/persona_card.dart';
 import 'package:astrobharataiuser/screens/ai_chat/widgets/persona_list_card.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/widgets/banner_carousel_widget.dart';
 import 'package:astrobharataiuser/services/chat_call_precheck_service.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/profile_check_helper.dart';
@@ -96,7 +97,25 @@ class AiChatView extends BasePage<AiChatController> {
               Expanded(
                 child: bannerWidget != null
                     ? _buildScrollWithBanner(context)
-                    : _buildContentWithoutBanner(context),
+                    : Obx(() {
+                        final effectiveBanner = controller.banners.isNotEmpty
+                            ? Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16.w,
+                                  vertical: 8.h,
+                                ),
+                                child: BannerCarouselWidget(
+                                  banners: controller.banners,
+                                ),
+                              )
+                            : null;
+                        return effectiveBanner != null
+                            ? _buildScrollWithBanner(
+                                context,
+                                overrideBanner: effectiveBanner,
+                              )
+                            : _buildContentWithoutBanner(context);
+                      }),
               ),
             ],
           ),
@@ -154,7 +173,11 @@ class AiChatView extends BasePage<AiChatController> {
     });
   }
 
-  Widget _buildScrollWithBanner(BuildContext context) {
+  Widget _buildScrollWithBanner(
+    BuildContext context, {
+    Widget? overrideBanner,
+  }) {
+    final effectiveBanner = overrideBanner ?? bannerWidget;
     return RefreshIndicator(
       onRefresh: controller.refresh,
       color: AppColors.deepOrange,
@@ -165,7 +188,7 @@ class AiChatView extends BasePage<AiChatController> {
           return CustomScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
-              SliverToBoxAdapter(child: bannerWidget),
+              SliverToBoxAdapter(child: effectiveBanner),
               SliverFillRemaining(
                 child: Center(
                   child: CircularProgressIndicator(
@@ -183,7 +206,7 @@ class AiChatView extends BasePage<AiChatController> {
           return CustomScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
-              SliverToBoxAdapter(child: bannerWidget),
+              SliverToBoxAdapter(child: effectiveBanner),
               SliverFillRemaining(
                 child: EmptyStateWidget(
                   isEmpty: controller.personas.isEmpty,
@@ -214,7 +237,7 @@ class AiChatView extends BasePage<AiChatController> {
           child: CustomScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
-              SliverToBoxAdapter(child: bannerWidget),
+              SliverToBoxAdapter(child: effectiveBanner),
               ..._buildContentSlivers(context, filteredList),
               SliverPadding(
                 padding: EdgeInsets.only(

@@ -779,56 +779,97 @@ class _ProductListViewState extends State<ProductListView> {
                           }),
                         ),
                         SizedBox(width: 5.07.w),
-                        // Add to Cart Icon
+                        // Add to Cart / Quantity Selector
                         Obx(() {
-                          final quantity = cartController.quantityForProduct(
-                            product,
-                          );
-                          final isProcessing = cartController.isProductUpdating(
-                            product,
-                          );
-                          return GestureDetector(
-                            onTap: isProcessing
-                                ? null
-                                : () async {
-                                    if (quantity > 0) {
-                                      await cartController.incrementProduct(
-                                        product,
-                                      );
-                                    } else {
+                          final quantity = cartController.quantityForProduct(product);
+                          final isProcessing = cartController.isProductUpdating(product);
+
+                          if (quantity <= 0) {
+                            return GestureDetector(
+                              onTap: isProcessing
+                                  ? null
+                                  : () async {
                                       await cartController.addItem(
                                         product: product,
                                         quantity: 1,
                                       );
-                                    }
-                                  },
-                            child: Container(
-                              width: 24.06.w,
-                              height: 24.06.w,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10.14.r),
-                                border: Border.all(
-                                  color: '#DD2914'.toColor(),
-                                  width: 0.39,
+                                    },
+                              child: Container(
+                                width: 24.06.w,
+                                height: 24.06.w,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10.14.r),
+                                  border: Border.all(
+                                    color: '#DD2914'.toColor(),
+                                    width: 0.39,
+                                  ),
                                 ),
-                              ),
-                              child: isProcessing
-                                  ? Center(
-                                      child: SizedBox(
-                                        width: 12.w,
-                                        height: 12.h,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: '#DD2914'.toColor(),
+                                child: isProcessing
+                                    ? Center(
+                                        child: SizedBox(
+                                          width: 12.w,
+                                          height: 12.h,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: '#DD2914'.toColor(),
+                                          ),
                                         ),
+                                      )
+                                    : Icon(
+                                        Icons.add,
+                                        size: 18.w,
+                                        color: '#DD2914'.toColor(),
                                       ),
-                                    )
-                                  : Icon(
-                                      Icons.add,
-                                      size: 18.w,
-                                      color: '#DD2914'.toColor(),
+                              ),
+                            );
+                          }
+
+                          return Container(
+                            height: 24.06.w,
+                            decoration: BoxDecoration(
+                              color: '#DD2914'.toColor(),
+                              borderRadius: BorderRadius.circular(10.14.r),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                GestureDetector(
+                                  onTap: isProcessing
+                                      ? null
+                                      : () => cartController.decrementProduct(product),
+                                  child: Container(
+                                    width: 22.w,
+                                    height: 24.06.w,
+                                    alignment: Alignment.center,
+                                    child: Icon(Icons.remove, size: 12.w, color: Colors.white),
+                                  ),
+                                ),
+                                Container(
+                                  width: 20.w,
+                                  alignment: Alignment.center,
+                                  child: AutoTranslateText(
+                                    quantity.toString(),
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 10.sp,
+                                      color: Colors.white,
                                     ),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: isProcessing
+                                      ? null
+                                      : () => cartController.incrementProduct(product),
+                                  child: Container(
+                                    width: 22.w,
+                                    height: 24.06.w,
+                                    alignment: Alignment.center,
+                                    child: Icon(Icons.add, size: 12.w, color: Colors.white),
+                                  ),
+                                ),
+                              ],
                             ),
                           );
                         }),

@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/all_astrologers_controller.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/all_astrologers_view.dart';
 import 'package:astrobharataiuser/screens/horoscope/controller/horoscope_form_controller.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/widgets/banner_carousel_widget.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -33,7 +34,12 @@ class EMandirWallpaperView extends BasePage<EMandirWallpaperController> {
           children: [
             Column(
           children: [
-            Obx(() => CommonHeader(title: controller.selectedFilter.value)),
+            Obx(
+              () => CommonHeader(
+                title: controller.selectedFilter.value,
+                showBackButton: true,
+              ),
+            ),
             SizedBox(height: 4.h),
             // Filter chips
             SizedBox(
@@ -57,6 +63,14 @@ class EMandirWallpaperView extends BasePage<EMandirWallpaperController> {
                 },
               ),
             ),
+            // Banner
+            Obx(() {
+              if (controller.banners.isEmpty) return const SizedBox.shrink();
+              return Padding(
+                padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 0),
+                child: BannerCarouselWidget(banners: controller.banners),
+              );
+            }),
             SizedBox(height: 8.h),
             // Body content
             Expanded(
@@ -176,7 +190,10 @@ class EMandirWallpaperView extends BasePage<EMandirWallpaperController> {
                           if (!Get.isRegistered<PanchangController>()) {
                             Get.put(PanchangController());
                           }
-                          return const PanchangView(hideHeader: true);
+                          return const PanchangView(
+                            hideHeader: true,
+                            bannerCategory: null,
+                          );
                         }
                         if (controller.selectedFilter.value == 'Rashifal') {
                           if (!Get.isRegistered<HoroscopeFormController>()) {

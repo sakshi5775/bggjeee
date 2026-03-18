@@ -82,7 +82,7 @@ class CourseDetailView extends StatelessWidget {
               // Scrollable Content (key prevents scroll position restore / autoscroll)
               Expanded(
                 child: SingleChildScrollView(
-                  key: PageStorageKey<String>('course_detail_${controller.courseId}'),
+                  controller: controller.scrollController,
                   physics: const ClampingScrollPhysics(),
                   child: Column(
                     children: [
@@ -689,16 +689,15 @@ class CourseDetailView extends StatelessWidget {
     bool isEnrolled,
     CourseDetailController controller,
   ) {
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.all(16.w),
-        child: Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            gradient: AppColors.primaryGradient,
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          child: ElevatedButton(
+    return Padding(
+      padding: EdgeInsets.all(16.w),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: AppColors.primaryGradient,
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        child: ElevatedButton(
             onPressed: isEnrolled
                 ? () {
                     // Continue Learning - Open Course Player (Udemy behavior)
@@ -742,7 +741,6 @@ class CourseDetailView extends StatelessWidget {
             ),
           ),
         ),
-      ),
     );
   }
 

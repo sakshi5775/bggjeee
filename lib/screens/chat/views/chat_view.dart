@@ -8,6 +8,7 @@ import 'package:astrobharataiuser/screens/chat/controllers/chat_controller.dart'
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/full_screen_image_viewer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -193,53 +194,73 @@ class _ChatViewState extends State<ChatView> with WidgetsBindingObserver {
                 ],
                 titleWidget: Row(
                   children: [
-                    // Profile picture
-                    Container(
-                      width: 36.w,
-                      height: 36.w,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.3),
-                          width: 1.5,
-                        ),
-                      ),
-                      child: ClipOval(
-                        child:
-                            widget.persona.image != null &&
-                                widget.persona.image!.isNotEmpty
-                            ? CachedNetworkImage(
+                    // Profile picture (tap to view full screen, WhatsApp-style)
+                    GestureDetector(
+                      onTap: widget.persona.image != null &&
+                              widget.persona.image!.isNotEmpty
+                          ? () {
+                              FullScreenImageViewer.open(
+                                context: context,
                                 imageUrl: widget.persona.image!,
-                                width: 36.w,
-                                height: 36.w,
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) => Container(
-                                  color: Colors.white.withValues(alpha: 0.2),
-                                  child: Icon(
-                                    Icons.person,
-                                    color: AppColors.saffron,
-                                    size: 20.w,
+                                heroTag:
+                                    'ai_persona_profile_${widget.persona.id}',
+                                label: widget.persona.name,
+                              );
+                            }
+                          : null,
+                      child: Hero(
+                        tag: 'ai_persona_profile_${widget.persona.id}',
+                        child: Container(
+                          width: 36.w,
+                          height: 36.w,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.3),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: ClipOval(
+                            child:
+                                widget.persona.image != null &&
+                                    widget.persona.image!.isNotEmpty
+                                ? CachedNetworkImage(
+                                    imageUrl: widget.persona.image!,
+                                    width: 36.w,
+                                    height: 36.w,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => Container(
+                                      color: Colors.white.withValues(alpha: 0.2),
+                                      child: Icon(
+                                        Icons.person,
+                                        color: AppColors.saffron,
+                                        size: 20.w,
+                                      ),
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        Container(
+                                          color: AppColors.saffron.withValues(
+                                            alpha: 0.1,
+                                          ),
+                                          child: Icon(
+                                            Icons.person,
+                                            color: AppColors.saffron,
+                                            size: 20.w,
+                                          ),
+                                        ),
+                                  )
+                                : Container(
+                                    color: AppColors.saffron.withValues(
+                                      alpha: 0.1,
+                                    ),
+                                    child: Icon(
+                                      Icons.person,
+                                      color: AppColors.saffron,
+                                      size: 20.w,
+                                    ),
                                   ),
-                                ),
-                                errorWidget: (context, url, error) => Container(
-                                  color: AppColors.saffron.withValues(
-                                    alpha: 0.1,
-                                  ),
-                                  child: Icon(
-                                    Icons.person,
-                                    color: AppColors.saffron,
-                                    size: 20.w,
-                                  ),
-                                ),
-                              )
-                            : Container(
-                                color: AppColors.saffron.withValues(alpha: 0.1),
-                                child: Icon(
-                                  Icons.person,
-                                  color: AppColors.saffron,
-                                  size: 20.w,
-                                ),
-                              ),
+                          ),
+                        ),
                       ),
                     ),
                     SizedBox(width: 10.w),

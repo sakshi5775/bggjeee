@@ -398,13 +398,8 @@ class CoursesController extends BaseController
   Future<void> loadBanners() async {
     isLoadingBanners.value = true;
     try {
-      var list = await _bannerService.getBannersByCategory('applearning');
-      if (list.isEmpty) {
-        list = await _bannerService.getBannersByCategory('learning-portal');
-      }
+      final list = await _bannerService.getBannersWithFallback(['applearning', 'learning-portal']);
       learningBanners.assignAll(list);
-    } catch (e) {
-      debugPrint("Error fetching learning banners: $e");
     } finally {
       isLoadingBanners.value = false;
     }

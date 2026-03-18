@@ -64,8 +64,7 @@ class CartView extends GetView<CartController> {
                         padding: EdgeInsets.only(
                           left: 18.w,
                           right: 18.w,
-                          bottom: 24.h +
-                              MediaQuery.of(context).padding.bottom,
+                          bottom: 24.h,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -89,7 +88,7 @@ class CartView extends GetView<CartController> {
                           left: 18.w,
                           right: 18.w,
                           top: 16.h,
-                          bottom: 24.h + 70.h + MediaQuery.of(context).padding.bottom,
+                          bottom: 24.h,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

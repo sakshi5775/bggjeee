@@ -54,7 +54,17 @@ class AllAstrologersController extends GetxController {
   final RxString sortByFilter = 'rating'.obs;
   final RxString searchFilter = ''.obs;
 
-  AllAstrologersController({this.initialFilter, this.initialAvailability});
+  /// When true this controller is embedded inside the Consult tab and should
+  /// delegate filter state to [ConsultController].  When false (standalone
+  /// page such as "Chat with Astrologer") the local filter chips drive the
+  /// API query, regardless of whether ConsultController is registered.
+  final bool isEmbedded;
+
+  AllAstrologersController({
+    this.initialFilter,
+    this.initialAvailability,
+    this.isEmbedded = false,
+  });
 
   final RxnString selectedAvailability = RxnString();
 
@@ -153,33 +163,43 @@ class AllAstrologersController extends GetxController {
       String? sortBy;
       String? search;
 
-      if (Get.isRegistered<ConsultController>()) {
+      // ── Step 1: category/specialization always comes from the local tab chip ──
+      // This is true whether embedded or standalone so that clicking "Kids",
+      // "Vedic", etc. always has immediate effect in both contexts.
+      if (selectedFilter.value != 'All') {
+        if (selectedFilter.value == 'Celebrity') {
+          astrologerCategory = 'CELEBRITY_ASTROLOGER';
+        } else if (selectedFilter.value == 'Kids') {
+          astrologerCategory = 'KID_ASTROLOGER';
+        } else if (selectedFilter.value == 'Tarots') {
+          specialization = 'TAROT';
+        } else if (selectedFilter.value == 'Prashana') {
+          specialization = 'PRASHANA';
+        } else {
+          specialization = selectedFilter.value.toUpperCase();
+        }
+      }
+
+      // ── Step 2: advanced filters come from ConsultController when embedded,
+      //            or from local reactive fields when standalone ──
+      if (isEmbedded && Get.isRegistered<ConsultController>()) {
         final c = Get.find<ConsultController>();
-        specialization = c.selectedSpecializations.isEmpty ? null : c.selectedSpecializations.join(',');
+        // If ConsultController has its own specialization selection, it takes
+        // precedence only when the local tab chip is on "All" (no chip override).
+        if (selectedFilter.value == 'All') {
+          final cSpec = c.selectedSpecializations.isEmpty ? null : c.selectedSpecializations.join(',');
+          final cCat = c.astrologerCategory.value == 'ALL' ? null : c.astrologerCategory.value;
+          specialization = cSpec;
+          astrologerCategory = cCat;
+        }
         language = c.selectedLanguages.isEmpty ? null : c.selectedLanguages.join(',');
         availability = c.availability.value == 'ALL' ? null : c.availability.value;
-        astrologerCategory = c.astrologerCategory.value == 'ALL' ? null : c.astrologerCategory.value;
         minPrice = c.minPrice.value > 0 ? c.minPrice.value : null;
         maxPrice = c.maxPrice.value > 0 ? c.maxPrice.value : null;
         experience = c.minExperience.value > 0 ? c.minExperience.value : null;
         sortBy = c.sortBy.value.isNotEmpty ? c.sortBy.value : null;
         search = c.globalSearchQuery.value.trim().isEmpty ? null : c.globalSearchQuery.value.trim();
       } else {
-        if (selectedFilter.value != 'All') {
-          if (selectedFilter.value == 'Celebrity') {
-            astrologerCategory = 'CELEBRITY_ASTROLOGER';
-          } else if (selectedFilter.value == 'Kids') {
-            astrologerCategory = 'KID_ASTROLOGER';
-          } else {
-            if (selectedFilter.value == 'Tarots') {
-              specialization = 'TAROT';
-            } else if (selectedFilter.value == 'Prashana') {
-              specialization = 'PRASHANA';
-            } else {
-              specialization = selectedFilter.value.toUpperCase();
-            }
-          }
-        }
         availability =
             (selectedAvailability.value == 'CHAT' ||
                 selectedAvailability.value == 'VOICE_CALL' ||
@@ -213,17 +233,34 @@ class AllAstrologersController extends GetxController {
       if (response != null) {
         List<AstrologerModel> filteredList = response.astrologers;
 
-        // CLIENT-SIDE filter by category when Kids or Celebrity is selected (backup if API does not filter)
+        // CLIENT-SIDE backup: if API returned unfiltered results (e.g. backend
+        // ignores the category param), narrow the list down ourselves so the
+        // user never sees wrong results.  We skip the backup only when the API
+        // clearly filtered correctly (i.e. every item already matches).
         if (selectedFilter.value == 'Kids') {
           final kidOnly = filteredList
               .where((a) => a.astrologerCategory == 'KID_ASTROLOGER')
               .toList();
-          if (kidOnly.isNotEmpty) filteredList = kidOnly;
+          filteredList = kidOnly; // always apply — empty list → "No astrologers"
         } else if (selectedFilter.value == 'Celebrity') {
           final celebOnly = filteredList
               .where((a) => a.astrologerCategory == 'CELEBRITY_ASTROLOGER')
               .toList();
-          if (celebOnly.isNotEmpty) filteredList = celebOnly;
+          filteredList = celebOnly;
+        } else if (selectedFilter.value != 'All' &&
+            specialization != null &&
+            specialization.isNotEmpty) {
+          // For specialization-based filters (Vedic, Tarots, Vastu, Prashana)
+          // apply a client-side check too, matching the spec string case-insensitively.
+          final specLower = selectedFilter.value.toLowerCase();
+          final specFiltered = filteredList.where((a) {
+            return a.specializations.any(
+              (s) => s.toLowerCase().contains(specLower) ||
+                     (specLower == 'tarots' && s.toLowerCase().contains('tarot')) ||
+                     (specLower == 'prashana' && s.toLowerCase().contains('prashna')),
+            );
+          }).toList();
+          if (specFiltered.isNotEmpty) filteredList = specFiltered;
         }
 
         // CLIENT-SIDE FILTERING for specific services
@@ -241,8 +278,8 @@ class AllAstrologersController extends GetxController {
               .toList();
         }
 
-        // CLIENT-SIDE price filter: include if any service price falls in [minPrice, maxPrice]
-        if (Get.isRegistered<ConsultController>()) {
+        // CLIENT-SIDE price filter: only apply when embedded in Consult tab.
+        if (isEmbedded && Get.isRegistered<ConsultController>()) {
           final c = Get.find<ConsultController>();
           final filterMin = c.minPrice.value > 0 ? c.minPrice.value : null;
           final filterMax = c.maxPrice.value > 0 ? c.maxPrice.value : null;
@@ -269,7 +306,7 @@ class AllAstrologersController extends GetxController {
         _initializeFollowStatus();
         hasMoreData.value = response.pagination.hasNextPage;
         currentPage.value = response.pagination.currentPage;
-        if (Get.isRegistered<ConsultController>()) {
+        if (isEmbedded && Get.isRegistered<ConsultController>()) {
           final c = Get.find<ConsultController>();
           final filterMin = c.minPrice.value > 0 ? c.minPrice.value : null;
           final filterMax = c.maxPrice.value > 0 ? c.maxPrice.value : null;
@@ -295,13 +332,8 @@ class AllAstrologersController extends GetxController {
   Future<void> loadBanners() async {
     isLoadingBanners.value = true;
     try {
-      var list = await _bannerService.getBannersByCategory('appastrologer');
-      if (list.isEmpty) {
-        list = await _bannerService.getBannersByCategory('astrologer');
-      }
+      final list = await _bannerService.getBannersWithFallback(['appastrologer', 'astrologer']);
       astrologerBanners.assignAll(list);
-    } catch (e) {
-      debugPrint('Error loading astrologer banners: $e');
     } finally {
       isLoadingBanners.value = false;
     }

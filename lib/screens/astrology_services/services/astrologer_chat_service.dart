@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:astrobharataiuser/apihelper/api_provider/api_provider.dart';
 import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
 import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
+import 'package:astrobharataiuser/apihelper/utils/port_fallback_helper.dart';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:astrobharataiuser/data_model/astrologer_chat_model.dart';
 import 'package:flutter/foundation.dart';
@@ -22,21 +24,97 @@ class AstrologerChatService {
     try {
       return Get.find(tag: 'chat');
     } catch (e) {
-      if (kDebugMode) {
-        print('ERROR: Chat API repository not found: $e');
-        print('Attempting to find without tag...');
-      }
-      // Fallback: try to find without tag or create a new one
+      if (kDebugMode) print('ERROR: Chat API repository not found: $e');
       try {
         final chatApiClient = Get.find<ApiClient>(tag: 'chat');
         return ApiRepository(apiClient: chatApiClient);
       } catch (e2) {
-        if (kDebugMode) {
-          print('ERROR: Chat API client not found: $e2');
-        }
+        if (kDebugMode) print('ERROR: Chat API client not found: $e2');
         rethrow;
       }
     }
+  }
+
+  ApiRepository get _fallbackApiRepository {
+    try {
+      return Get.find(tag: 'chat-fallback');
+    } catch (_) {
+      return _apiRepository;
+    }
+  }
+
+  /// GET via primary (8000/api/calls/api/). On connection failure retries with port-8009 fallback.
+  Future<Response<T>> _chatGet<T>(
+    String endpoint, {
+    Map<String, dynamic>? query,
+    bool useAuthHeader = true,
+  }) async {
+    try {
+      return await _apiRepository.getApi<T>(
+        endpoint,
+        query: query,
+        useAuthHeader: useAuthHeader,
+      );
+    } on SocketException {
+      if (kDebugMode) print('[ChatFallback] GET SocketException → port 8009: $endpoint');
+      return await _fallbackApiRepository.getApi<T>(
+        endpoint,
+        query: query,
+        useAuthHeader: useAuthHeader,
+      );
+    } catch (e) {
+      if (_isConnectionError(e)) {
+        if (kDebugMode) print('[ChatFallback] GET connection error → port 8009: $endpoint');
+        return await _fallbackApiRepository.getApi<T>(
+          endpoint,
+          query: query,
+          useAuthHeader: useAuthHeader,
+        );
+      }
+      rethrow;
+    }
+  }
+
+  /// POST via primary (8000/api/calls/api/). On connection failure retries with port-8009 fallback.
+  Future<Response> _chatPost(
+    String endpoint,
+    dynamic body, {
+    bool useAuthHeader = true,
+  }) async {
+    try {
+      return await _apiRepository.postApi(
+        endpoint,
+        body,
+        useAuthHeader: useAuthHeader,
+      );
+    } on SocketException {
+      if (kDebugMode) print('[ChatFallback] POST SocketException → port 8009: $endpoint');
+      return await _fallbackApiRepository.postApi(
+        endpoint,
+        body,
+        useAuthHeader: useAuthHeader,
+      );
+    } catch (e) {
+      if (_isConnectionError(e)) {
+        if (kDebugMode) print('[ChatFallback] POST connection error → port 8009: $endpoint');
+        return await _fallbackApiRepository.postApi(
+          endpoint,
+          body,
+          useAuthHeader: useAuthHeader,
+        );
+      }
+      rethrow;
+    }
+  }
+
+  bool _isConnectionError(dynamic e) {
+    final msg = e.toString().toLowerCase();
+    return msg.contains('connection refused') ||
+        msg.contains('connection failed') ||
+        msg.contains('failed host lookup') ||
+        msg.contains('network is unreachable') ||
+        msg.contains('no route to host') ||
+        msg.contains('socketexception');
   }
 
   /// Start chat session - Replaces purchaseSession
@@ -66,8 +144,8 @@ class AstrologerChatService {
       // I will use a direct string for now to be safe, or update EndPoints.
       // Actually, I should update EndPoints to add `chatSessionCreate`.
 
-      final response = await _apiRepository.postApi(
-        'chat/session/start', // New Standard Endpoint
+      final response = await _chatPost(
+        'chat/session/start',
         {'astrologerId': astrologerId},
         useAuthHeader: true,
       );
@@ -107,7 +185,7 @@ class AstrologerChatService {
   /// same server that created the session; port 8000 does not expose this route (404).
   Future<void> startExistingSession(String chatId) async {
     try {
-      final response = await _apiRepository.postApi(
+      final response = await _chatPost(
         EndPoints.chatSessionStart(chatId),
         {},
         useAuthHeader: true,
@@ -147,7 +225,7 @@ class AstrologerChatService {
   /// Get chat session details
   Future<AstrologerChatSession> getSession(String chatId) async {
     try {
-      final response = await _apiRepository.getApi(
+      final response = await _chatGet(
         EndPoints.chatSessionGet(chatId),
         useAuthHeader: true,
       );
@@ -172,7 +250,7 @@ class AstrologerChatService {
   }) async {
     try {
       final body = reason != null ? {'reason': reason} : {};
-      final response = await _apiRepository.postApi(
+      final response = await _chatPost(
         EndPoints.chatSessionEnd(chatId),
         body,
         useAuthHeader: true,
@@ -194,7 +272,7 @@ class AstrologerChatService {
   /// Get active sessions
   Future<List<AstrologerChatSession>> getActiveSessions() async {
     try {
-      final response = await _apiRepository.getApi(
+      final response = await _chatGet(
         EndPoints.chatSessionsActive,
         useAuthHeader: true,
       );
@@ -238,11 +316,11 @@ class AstrologerChatService {
       // Try using the API repository first
       Response? response;
       try {
-        response = await _apiRepository.getApi(
-        EndPoints.chatSessionsHistory,
-        query: {'page': page, 'limit': limit},
-        useAuthHeader: true,
-      );
+        response = await _chatGet(
+          EndPoints.chatSessionsHistory,
+          query: {'page': page, 'limit': limit},
+          useAuthHeader: true,
+        );
       } catch (e) {
         if (kDebugMode) {
           print('API Repository failed, trying direct HTTP: $e');
@@ -409,7 +487,7 @@ class AstrologerChatService {
     return {'sessions': <AstrologerChatSession>[], 'pagination': null};
   }
 
-  /// Direct HTTP fallback for getting session history
+  /// Direct HTTP call for getting session history (primary 8000/api/calls/, fallback 8009)
   Future<Response> _getSessionHistoryDirect({
     int page = 1,
     int limit = 50,
@@ -420,31 +498,31 @@ class AstrologerChatService {
         throw Exception('No access token available');
       }
 
-      final uri = Uri.parse('http://3.109.91.254:8009/api/chat/sessions/history')
-          .replace(queryParameters: {
-        'page': page.toString(),
-        'limit': limit.toString(),
-      });
+      const String historyPath = '/api/chat/sessions/history';
+      final queryParams = {'page': page.toString(), 'limit': limit.toString()};
+      final headers = {
+        'accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      };
 
-      if (kDebugMode) {
-        print('Direct HTTP call to: $uri');
-      }
+      final primaryUri = Uri.parse('${PortFallbackHelper.callsApiPrimary}$historyPath')
+          .replace(queryParameters: queryParams);
+      final fallbackUri = Uri.parse('${PortFallbackHelper.callsApiFallback}$historyPath')
+          .replace(queryParameters: queryParams);
 
-      final httpResponse = await http.get(
-        uri,
-        headers: {
-          'accept': 'application/json',
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      ).timeout(const Duration(seconds: 30));
+      if (kDebugMode) print('Direct HTTP call (primary): $primaryUri');
+
+      final httpResponse = await PortFallbackHelper.callWithFallback(
+        primary: () => http.get(primaryUri, headers: headers).timeout(const Duration(seconds: 30)),
+        fallback: () => http.get(fallbackUri, headers: headers).timeout(const Duration(seconds: 30)),
+      );
 
       if (kDebugMode) {
         print('Direct HTTP response status: ${httpResponse.statusCode}');
         print('Direct HTTP response body: ${httpResponse.body}');
       }
 
-      // Convert http.Response to GetConnect Response
       final body = jsonDecode(httpResponse.body);
       return Response(
         statusCode: httpResponse.statusCode,
@@ -453,9 +531,7 @@ class AstrologerChatService {
         bodyString: httpResponse.body,
       );
     } catch (e) {
-      if (kDebugMode) {
-        print('Direct HTTP call failed: $e');
-      }
+      if (kDebugMode) print('Direct HTTP call failed: $e');
       rethrow;
     }
   }
@@ -476,7 +552,7 @@ class AstrologerChatService {
         query['before'] = before;
       }
 
-      final response = await _apiRepository.getApi(
+      final response = await _chatGet(
         EndPoints.chatSessionMessages(chatId),
         query: query,
         useAuthHeader: true,
@@ -529,7 +605,7 @@ class AstrologerChatService {
     List<String> messageIds,
   ) async {
     try {
-      final response = await _apiRepository.postApi(
+      final response = await _chatPost(
         EndPoints.chatSessionMessagesRead(chatId),
         {'messageIds': messageIds},
         useAuthHeader: true,
@@ -557,7 +633,7 @@ class AstrologerChatService {
         body['review'] = review;
       }
 
-      final response = await _apiRepository.postApi(
+      final response = await _chatPost(
         EndPoints.chatSessionRating(chatId),
         body,
         useAuthHeader: true,
@@ -584,8 +660,8 @@ class AstrologerChatService {
 
       Response response;
       try {
-        response = await _apiRepository.getApi(
-        EndPoints.chatSessionDownload(chatId),
+        response = await _chatGet(
+          EndPoints.chatSessionDownload(chatId),
         useAuthHeader: true,
       );
       } catch (e) {
@@ -644,7 +720,7 @@ class AstrologerChatService {
     }
   }
 
-  /// Direct HTTP fallback for downloading chat history
+  /// Direct HTTP call for downloading chat history (primary 8000/api/calls/, fallback 8009)
   Future<Response> _downloadChatHistoryDirect(String chatId) async {
     try {
       final token = UserData().accessToken;
@@ -652,20 +728,21 @@ class AstrologerChatService {
         throw Exception('No access token available');
       }
 
-      final uri = Uri.parse('http://3.109.91.254:8009/api/chat/session/$chatId/download');
+      final downloadPath = '/api/chat/session/$chatId/download';
+      final headers = {
+        'accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      };
+      final primaryUri = Uri.parse('${PortFallbackHelper.callsApiPrimary}$downloadPath');
+      final fallbackUri = Uri.parse('${PortFallbackHelper.callsApiFallback}$downloadPath');
 
-      if (kDebugMode) {
-        print('Direct HTTP download call to: $uri');
-      }
+      if (kDebugMode) print('Direct HTTP download call (primary): $primaryUri');
 
-      final httpResponse = await http.get(
-        uri,
-        headers: {
-          'accept': 'application/json',
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      ).timeout(const Duration(seconds: 30));
+      final httpResponse = await PortFallbackHelper.callWithFallback(
+        primary: () => http.get(primaryUri, headers: headers).timeout(const Duration(seconds: 30)),
+        fallback: () => http.get(fallbackUri, headers: headers).timeout(const Duration(seconds: 30)),
+      );
 
       if (kDebugMode) {
         print('Direct HTTP download response status: ${httpResponse.statusCode}');

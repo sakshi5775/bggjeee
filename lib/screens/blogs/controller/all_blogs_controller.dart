@@ -61,15 +61,8 @@ class AllBlogsController extends BaseController {
   }
 
   Future<void> loadBanners() async {
-    try {
-      var list = await _bannerService.getBannersByCategory('appblog');
-      if (list.isEmpty) {
-        list = await _bannerService.getBannersByCategory('blogs');
-      }
-      blogBanners.assignAll(list);
-    } catch (e) {
-      debugPrint('Error loading blog banners: $e');
-    }
+    final list = await _bannerService.getBannersWithFallback(['appblog', 'blogs']);
+    blogBanners.assignAll(list);
   }
 
   Future<void> loadBlogs({bool refresh = false}) async {

@@ -65,6 +65,7 @@ class _RamalShastraCastingDotsViewState
         backgroundColor: Colors.transparent,
         // endDrawer: const CommonEndDrawer(),
         body: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               const CommonHeader(title: 'Ramal Shastra'),

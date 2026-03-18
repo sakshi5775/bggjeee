@@ -42,7 +42,7 @@ class WalletView extends StatelessWidget {
                       right: 16.w,
                       top: 16.h,
                       bottom:
-                          16.h + 70.h + MediaQuery.of(context).padding.bottom,
+                          16.h,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

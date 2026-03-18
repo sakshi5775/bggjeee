@@ -5,8 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class NumerologyService {
-  /// Base URL for numerology API (port 8010)
-  static const String _numerologyBaseUrl = 'http://3.109.91.254:8010/api';
+  /// Base URL for numerology API (port 8000/api/numerology)
+  static const String _numerologyBaseUrl = 'http://3.109.91.254:8000/api/numerology/api';
 
   /// Get Lo Shu Grid data
   Future<Map<String, dynamic>?> getLoShuGrid({

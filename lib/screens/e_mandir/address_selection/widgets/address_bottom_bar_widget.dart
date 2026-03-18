@@ -33,6 +33,8 @@ class AddressBottomBarWidget extends StatelessWidget {
           ],
         ),
         child: SafeArea(
+          top: false,
+          bottom: false,
           child: Row(
             children: [
               // Selected address info

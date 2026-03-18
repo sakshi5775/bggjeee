@@ -75,7 +75,9 @@ class ProductListController extends BaseController {
         listTitle.value = args['title'] as String? ?? 'All Categories';
       }
     }
-    if (filterType.value != null && showCategoriesFirst.value != true) {
+    // Always show loading spinner immediately so the grid never briefly shows
+    // "No products found" before the async fetch completes.
+    if (showCategoriesFirst.value != true) {
       isLoadingProducts.value = true;
     }
     loadInitialData();
@@ -224,8 +226,12 @@ class ProductListController extends BaseController {
       currentPage = 1;
       products.clear();
       hasMoreProducts.value = true;
+      // Clear the loading flag so the concurrent-load guard below doesn't
+      // block this fresh reset (e.g. when onInit pre-set it to show a spinner).
+      isLoadingProducts.value = false;
     }
 
+    // Allow reset calls through always; block only concurrent pagination loads.
     if (!hasMoreProducts.value || isLoadingProducts.value) return;
 
     try {

@@ -119,6 +119,9 @@ class EcommerceHomeController extends BaseController {
   final testimonialProducts = <ProductModel>[].obs;
   final isLoadingTestimonials = false.obs;
 
+  // Offer products: all products that have a discount/offer price (for marquee & big sale banner)
+  final offerProducts = <ProductModel>[].obs;
+
   // Banners
   final RxList<BannerItem> ecommerceBanners = <BannerItem>[].obs;
   final RxBool isLoadingBanners = false.obs;
@@ -296,6 +299,39 @@ class EcommerceHomeController extends BaseController {
   /// Load products from all categories for the testimonial section.
   /// Shows products from featured, top selling, and category sections (no filter by reviewCount,
   /// since list APIs often don't return reviewCount; product detail page shows actual reviews).
+  /// Returns true if a product has an offer/discount price set.
+  static bool productHasOffer(ProductModel p) {
+    if (p.discountPercentage != null && p.discountPercentage! > 0) return true;
+    if (p.discountedPrice != null &&
+        p.basePrice != null &&
+        p.discountedPrice! < p.basePrice!) return true;
+    return false;
+  }
+
+  /// Refreshes [offerProducts] by scanning all loaded product lists for discounted items.
+  void _updateOfferProducts() {
+    final seen = <String>{};
+    final result = <ProductModel>[];
+    for (final list in [
+      featuredProducts,
+      topSellingProducts,
+      recommendedProducts,
+      rudrakshaProducts,
+      kitsProducts,
+      pyramidsProducts,
+      labhKitProducts,
+    ]) {
+      for (final p in list) {
+        if (!productHasOffer(p)) continue;
+        final key = p.id ?? p.slug ?? '';
+        if (key.isNotEmpty && seen.contains(key)) continue;
+        if (key.isNotEmpty) seen.add(key);
+        result.add(p);
+      }
+    }
+    offerProducts.value = result;
+  }
+
   Future<void> loadTestimonialProducts() async {
     try {
       isLoadingTestimonials.value = true;
@@ -323,6 +359,7 @@ class EcommerceHomeController extends BaseController {
       if (testimonialProducts.isNotEmpty) {
         Future.delayed(const Duration(milliseconds: 500), _startTestimonialAutoScroll);
       }
+      _updateOfferProducts();
     } catch (e) {
       print('Error loading testimonial products: $e');
     } finally {
@@ -583,8 +620,8 @@ class EcommerceHomeController extends BaseController {
             );
             if (result != null) {
               featuredProducts.value = result;
-              // Restart auto-scroll after products are loaded
               _startBannerAutoScroll();
+              _updateOfferProducts();
             }
           },
           showBusy: false,
@@ -749,10 +786,7 @@ class EcommerceHomeController extends BaseController {
     await runWithLoading(
       () async {
         isLoadingBanners.value = true;
-        var list = await _bannerService.getBannersByCategory('appecommerce');
-        if (list.isEmpty) {
-          list = await _bannerService.getBannersByCategory('ecommerce');
-        }
+        final list = await _bannerService.getBannersWithFallback(['appecommerce', 'ecommerce']);
         ecommerceBanners.assignAll(list);
       },
       showBusy: false,

@@ -102,9 +102,9 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
       // Dispose camera before navigation to free resources
       await _disposeController();
 
-      // Navigate to scanning screen
+      // Replace camera route with scanning so back from scanning → upload (not camera)
       if (mounted) {
-        UserMainController.pushInCurrentTab('/palm-reading-scanning');
+        UserMainController.pushReplacementInCurrentTab(AppRoutes.palmReadingScanning);
       }
     } catch (e) {
       if (mounted) {
@@ -128,6 +128,8 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
     if (_controller != null) {
       _isControllerDisposed = true;
       _isCameraInitialized = false;
+      // Rebuild immediately so CameraPreview is removed before dispose completes
+      if (mounted) setState(() {});
       final oldController = _controller;
       _controller = null;
       try {
@@ -170,7 +172,7 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
                     ),
                     Spacing.h(24),
                     ElevatedButton(
-                      onPressed: () => Get.back(),
+                      onPressed: () => UserMainController.popCurrentTab(),
                       child: const AutoTranslateText('Go Back'),
                     ),
                   ],
@@ -311,7 +313,7 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
                 right: 0,
                 child: Center(
                   child: TextButton(
-                    onPressed: () => Get.back(),
+                    onPressed: () => UserMainController.popCurrentTab(),
                     child: AutoTranslateText(
                       'Skip',
                       style: MyTextTheme.mediumBCN

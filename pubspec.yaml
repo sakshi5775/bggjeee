@@ -24,7 +24,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # and users on 1.0.1 will see "Update available". If you only change +48 to +49 and
 # keep 1.0.1, the prompt will not show.
 
-version: 1.0.1+57
+version: 1.0.1+59
 
 
 environment:

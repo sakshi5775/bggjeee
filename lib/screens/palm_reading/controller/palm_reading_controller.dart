@@ -493,12 +493,12 @@ class PalmReadingController extends GetxController {
             // Still navigate to results, but it will show rescan option
             isScanning.value = false;
             scanError.value = '';
-            Get.offNamed(AppRoutes.palmReadingResults);
+            UserMainController.pushInCurrentTab(AppRoutes.palmReadingResults);
           } else {
             isScanning.value = false;
             scanError.value = '';
             // Navigate to results screen
-            Get.offNamed(AppRoutes.palmReadingResults);
+            UserMainController.pushInCurrentTab(AppRoutes.palmReadingResults);
           }
         } catch (e) {
           // Close loader on error

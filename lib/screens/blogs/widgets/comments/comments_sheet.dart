@@ -16,13 +16,18 @@ class CommentsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(CommentsController(blogId));
-    return SafeArea(
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.lightBackground,
-          borderRadius: AppRadius.only(topLeft: 20, topRight: 20),
-        ),
+    // Use blogId as tag so each blog gets its own controller instance.
+    final controller = Get.put(CommentsController(blogId), tag: blogId);
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.lightBackground,
+        borderRadius: AppRadius.only(topLeft: 20, topRight: 20),
+      ),
+      // SafeArea inside so the Container fills to the screen edge (no gap),
+      // but the content still clears the system navigation bar.
+      child: SafeArea(
+        top: false,
+        child: Padding(
         padding: AppPaddings.all(16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -80,6 +85,7 @@ class CommentsSheet extends StatelessWidget {
               children: [
                 Expanded(
                   child: TextField(
+                    controller: controller.textEditingController,
                     onChanged: (v) => controller.input.value = v,
                     decoration: InputDecoration(
                       hintText: AppTranslations.Translations.enterYourComment,
@@ -95,23 +101,30 @@ class CommentsSheet extends StatelessWidget {
                 ),
                 Spacing.w(10),
                 Obx(
-                  () => IconButton(
-                    onPressed: controller.input.value.trim().isEmpty
-                        ? null
-                        : () => controller.add(controller.input.value),
-                    icon: Icon(
-                      Icons.send,
-                      color: controller.input.value.trim().isEmpty
-                          ? AppColors.dividerLight
-                          : AppColors.saffron,
-                    ),
-                  ),
+                  () => controller.submitting.value
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : IconButton(
+                          onPressed: controller.input.value.trim().isEmpty
+                              ? null
+                              : () => controller.add(controller.input.value),
+                          icon: Icon(
+                            Icons.send,
+                            color: controller.input.value.trim().isEmpty
+                                ? AppColors.dividerLight
+                                : AppColors.saffron,
+                          ),
+                        ),
                 ),
               ],
             ),
           ],
         ),
-      ),
-    );
+        ), // Padding
+      ), // SafeArea
+    ); // Container
   }
 }

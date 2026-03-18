@@ -433,8 +433,10 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
         _selectedImage = pickedFile;
       });
 
-      // Navigate to scanning screen
-      final controller = Get.put(FaceReadingController());
+      // Navigate to scanning screen (reuse existing controller to preserve form data)
+      final controller = Get.isRegistered<FaceReadingController>()
+          ? Get.find<FaceReadingController>()
+          : Get.put(FaceReadingController());
       controller.setImage(pickedFile);
       UserMainController.pushInCurrentTab(AppRoutes.faceReadingScanning);
     } catch (e, stackTrace) {
@@ -472,8 +474,10 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
         _selectedImage = pickedFile;
       });
 
-      // Navigate to scanning screen
-      final controller = Get.put(FaceReadingController());
+      // Navigate to scanning screen (reuse existing controller to preserve form data)
+      final controller = Get.isRegistered<FaceReadingController>()
+          ? Get.find<FaceReadingController>()
+          : Get.put(FaceReadingController());
       controller.setImage(pickedFile);
       UserMainController.pushInCurrentTab(AppRoutes.faceReadingScanning);
     } catch (e, stackTrace) {

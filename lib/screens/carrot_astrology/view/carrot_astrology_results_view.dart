@@ -35,6 +35,7 @@ class CarrotAstrologyResultsView extends StatelessWidget {
         backgroundColor: '#F7EFBD'.toColor(),
         // endDrawer: const CommonEndDrawer(),
         body: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               const CommonHeader(title: 'Results'),

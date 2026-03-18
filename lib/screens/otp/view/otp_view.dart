@@ -126,13 +126,38 @@ class OTPView extends BasePage<OTPController> {
                             ),
                             Spacing.h(4),
                             Obx(
-                              () => AutoTranslateText(
-                                'Sent to ${controller.maskedDestination.value.isEmpty ? 'your number' : controller.maskedDestination.value}',
-                                style: MyTextTheme.smallBCN.copyWith(
-                                  color: AppColors.gray,
-                                  fontSize: 12.sp,
-                                ),
-                                textAlign: TextAlign.center,
+                              () => Column(
+                                children: [
+                                  AutoTranslateText(
+                                    'Sent to ${controller.maskedDestination.value.isEmpty ? 'your number' : controller.maskedDestination.value}',
+                                    style: MyTextTheme.smallBCN.copyWith(
+                                      color: AppColors.gray,
+                                      fontSize: 12.sp,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  SizedBox(height: 4.h),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.info_outline,
+                                        size: 13.sp,
+                                        color: AppColors.saffron.withValues(alpha: 0.8),
+                                      ),
+                                      SizedBox(width: 4.w),
+                                      AutoTranslateText(
+                                        'Check your SMS & email inbox',
+                                        style: MyTextTheme.smallBCN.copyWith(
+                                          color: AppColors.saffron,
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
                             Spacing.h(32),

@@ -219,6 +219,23 @@ class UserMainController extends GetxController {
     ctrl.navigatorKeys[ctrl.currentIndex.value].currentState?.popUntil((r) => r.isFirst);
   }
 
+  /// Replace the current route in the current tab with [route] (camera → scanning without camera in back-stack).
+  static Future<T?> pushReplacementInCurrentTab<T>(
+    String route, {
+    Object? arguments,
+  }) async {
+    Get.routing.args = arguments;
+    final ctrl = Get.find<UserMainController>();
+    final navKey = ctrl.navigatorKeys[ctrl.currentIndex.value];
+    return navKey.currentState?.pushReplacementNamed<T, T>(route, arguments: arguments);
+  }
+
+  /// Pop routes in the current tab until [predicate] is satisfied.
+  static void popUntilInCurrentTab(RoutePredicate predicate) {
+    final ctrl = Get.find<UserMainController>();
+    ctrl.navigatorKeys[ctrl.currentIndex.value].currentState?.popUntil(predicate);
+  }
+
   // ─── Route Resolution ────────────────────────────────────
   /// Shared across all five tab navigators.
   /// Tries the tab-root routes first, falls back to PageRoutes.routes.

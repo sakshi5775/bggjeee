@@ -27,6 +27,7 @@ class PersonaVoiceHistoryView extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               // Header using CommonHeader

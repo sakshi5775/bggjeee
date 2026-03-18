@@ -23,6 +23,7 @@ class EMandirFestivalDetailView extends GetView<FestivalDetailController> {
         backgroundColor: Colors.transparent,
         // endDrawer: const CommonEndDrawer(),
         body: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               // ── Header with share button ──

@@ -246,10 +246,14 @@ class ConsultView extends StatelessWidget {
 
   Widget _buildAiBanner(ConsultController controller) {
     return Obx(() {
-      if (controller.generalBanners.isEmpty) return SizedBox(height: 4.h);
+      var banners = controller.generalBanners;
+      if (banners.isEmpty && Get.isRegistered<AiChatController>()) {
+        banners = Get.find<AiChatController>().banners;
+      }
+      if (banners.isEmpty) return SizedBox(height: 4.h);
       return Padding(
         padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 16.h),
-        child: BannerCarouselWidget(banners: controller.generalBanners),
+        child: BannerCarouselWidget(banners: banners),
       );
     });
   }

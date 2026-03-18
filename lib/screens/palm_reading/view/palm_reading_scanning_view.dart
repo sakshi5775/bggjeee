@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/face_reading/widgets/scanner_overlay.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_controller.dart';
 import 'package:astrobharataiuser/screens/palm_reading/widgets/palm_reading_loading_widget.dart';
@@ -205,8 +206,12 @@ class _PalmReadingScanningViewState extends State<PalmReadingScanningView>
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Scaffold(
           backgroundColor: Colors.transparent,
-          body: Stack(
+          body: Column(
             children: [
+              const CommonHeader(title: 'Palm Scanning', showEndDrawer: false),
+              Expanded(
+                child: Stack(
+                  children: [
               // Main content
               Center(
                 child: Obx(() {
@@ -270,6 +275,9 @@ class _PalmReadingScanningViewState extends State<PalmReadingScanningView>
                     return const SizedBox.shrink();
                   }
                 }),
+                  ],
+                ),
+              ),
             ],
           ),
         ),

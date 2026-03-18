@@ -177,7 +177,7 @@ class KundliFormView extends BasePage<KundliFormController> {
                         left: 16.w,
                         right: 16.w,
                         top: 4.h,
-                        bottom: 4.h + 70.h + MediaQuery.of(context).padding.bottom,
+                        bottom: 4.h,
                     ),
                     itemCount: list.length,
                     itemBuilder: (context, index) {
@@ -214,7 +214,9 @@ class KundliFormView extends BasePage<KundliFormController> {
                               ),
                               SizedBox(height: 16.h),
                               AutoTranslateText(
-                                'Generating Kundli...',
+                                controller.isGeneratePdfMode
+                                    ? 'Generating Report...'
+                                    : 'Generating Kundli...',
                                 style: MyTextTheme.mediumBCB.copyWith(
                                   color: AppColors.textColorMaroon,
                                   fontSize: 14.sp,
@@ -617,7 +619,7 @@ class KundliFormView extends BasePage<KundliFormController> {
           left: 16.w,
           right: 16.w,
           top: 0.h,
-          bottom: 16.h + 70.h + MediaQuery.of(context).padding.bottom,
+          bottom: 16.h,
         ),
         child: _buildFormSection(),
       ),

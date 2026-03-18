@@ -10,7 +10,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class HomeTabBanner extends StatefulWidget {
   final String category;
 
-  const HomeTabBanner({super.key, this.category = 'general'});
+  const HomeTabBanner({super.key, this.category = 'appgeneral'});
 
   @override
   State<HomeTabBanner> createState() => _HomeTabBannerState();
@@ -33,10 +33,7 @@ class _HomeTabBannerState extends State<HomeTabBanner> {
     if (!mounted) return;
     setState(() => _loading = true);
     try {
-      var list = await _bannerService.getBannersByCategory(widget.category);
-      if (list.isEmpty) {
-        list = await _bannerService.getHomeBanners();
-      }
+      final list = await _bannerService.getBannersWithFallback([widget.category]);
       if (mounted) {
         setState(() {
           _banners
@@ -44,8 +41,6 @@ class _HomeTabBannerState extends State<HomeTabBanner> {
             ..addAll(list);
         });
       }
-    } catch (_) {
-      if (mounted) setState(() => _banners.clear());
     } finally {
       if (mounted) setState(() => _loading = false);
     }

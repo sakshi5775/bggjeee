@@ -8,6 +8,7 @@ import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/screens/face_reading/controller/face_reading_controller.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -225,8 +226,9 @@ class FaceReadingView extends StatelessWidget {
                       message: 'Please login to continue with face reading.',
                     );
                     if (ok) {
+                      Get.put(FaceReadingController());
                       UserMainController.pushInCurrentTab(
-                        AppRoutes.faceReadingUpload,
+                        AppRoutes.faceReadingForm,
                       );
                     }
                   },

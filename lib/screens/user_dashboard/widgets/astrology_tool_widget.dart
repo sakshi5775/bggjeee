@@ -118,17 +118,6 @@ class AstrologyToolWidget extends StatelessWidget {
       onTap: () {
         _requireLogin(
           () async {
-            if (pricingKey.isNotEmpty && Get.isRegistered<AiPricingController>()) {
-              final pricingCtrl = Get.find<AiPricingController>();
-              if (!pricingCtrl.hasSufficientBalance(pricingKey)) {
-                // Centralised handling: either insufficient balance dialog
-                // or "pricing not set" snackbar.
-                await pricingCtrl.showInsufficientBalancePopup(
-                  pricingKey,
-                );
-                return;
-              }
-            }
             UserMainController.pushInCurrentTab(route);
           },
           message: 'Login to access this service.',

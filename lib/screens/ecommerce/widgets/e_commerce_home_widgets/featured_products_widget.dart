@@ -299,13 +299,12 @@ class FeaturedProductsWidget extends StatelessWidget {
                       Spacer(),
                       Obx(() {
                         final quantity = cartController.quantityForProduct(product);
-                        final isProcessing = cartController.isProductUpdating(
-                          product,
-                        );
-                        if (quantity <= 0) {
-                          return Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
+                        final isProcessing = cartController.isProductUpdating(product);
+
+                        return Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (quantity <= 0)
                               GestureDetector(
                                 onTap: isProcessing
                                     ? null
@@ -316,17 +315,17 @@ class FeaturedProductsWidget extends StatelessWidget {
                                         );
                                       },
                                 child: Container(
-                                  height: 34.h,
-                                  padding: EdgeInsets.symmetric(horizontal: 10.w),
+                                  height: 30.h,
+                                  padding: EdgeInsets.symmetric(horizontal: 8.w),
                                   decoration: BoxDecoration(
                                     gradient: AppColors.orangeGradient,
-                                    borderRadius: BorderRadius.circular(10.r),
+                                    borderRadius: BorderRadius.circular(8.r),
                                   ),
                                   child: Center(
                                     child: isProcessing
                                         ? SizedBox(
-                                            width: 14.w,
-                                            height: 14.h,
+                                            width: 12.w,
+                                            height: 12.h,
                                             child: CircularProgressIndicator(
                                               strokeWidth: 2,
                                               color: Colors.white,
@@ -336,8 +335,8 @@ class FeaturedProductsWidget extends StatelessWidget {
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Icon(
-                                                Icons.check,
-                                                size: 14.sp,
+                                                Icons.add_shopping_cart,
+                                                size: 12.sp,
                                                 color: Colors.white,
                                               ),
                                               Spacing.w(4),
@@ -346,7 +345,7 @@ class FeaturedProductsWidget extends StatelessWidget {
                                                 style: TextStyle(
                                                   fontFamily: 'Poppins',
                                                   fontWeight: FontWeight.w600,
-                                                  fontSize: 12.sp,
+                                                  fontSize: 11.sp,
                                                   color: Colors.white,
                                                 ),
                                               ),
@@ -354,52 +353,76 @@ class FeaturedProductsWidget extends StatelessWidget {
                                           ),
                                   ),
                                 ),
-                              ),
-                              Spacing.w(6),
-                              Obx(() {
-                                final isFavorite =
-                                    wishlistController.isInWishlist(product);
-                                return GestureDetector(
-                                  onTap: () =>
-                                      wishlistController.toggleWishlist(product),
-                                    child: Container(
-                                      width: 34.w,
-                                      height: 34.h,
-                                      decoration: BoxDecoration(
-                                        gradient: AppColors.orangeGradient,
-                                        borderRadius: BorderRadius.circular(10.r),
-                                      ),
-                                      child: Icon(
-                                        isFavorite
-                                            ? Icons.favorite
-                                            : Icons.favorite_border,
-                                        size: 18.sp,
-                                        color: Colors.white,
+                              )
+                            else
+                              Container(
+                                height: 30.h,
+                                decoration: BoxDecoration(
+                                  gradient: AppColors.orangeGradient,
+                                  borderRadius: BorderRadius.circular(8.r),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: isProcessing
+                                          ? null
+                                          : () => cartController.decrementProduct(product),
+                                      child: Container(
+                                        width: 26.w,
+                                        height: 30.h,
+                                        alignment: Alignment.center,
+                                        child: Icon(Icons.remove, size: 13.sp, color: Colors.white),
                                       ),
                                     ),
-                                );
-                              }),
-                            ],
-                          );
-                        }
-                        return Container(
-                          height: 34.h,
-                          padding: EdgeInsets.symmetric(horizontal: 8.w),
-                          decoration: BoxDecoration(
-                            gradient: AppColors.orangeGradient,
-                            borderRadius: BorderRadius.circular(10.r),
-                          ),
-                          child: Center(
-                            child: AutoTranslateText(
-                              quantity.toString(),
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w600,
-                                fontSize: 11.sp,
-                                color: Colors.white,
+                                    Container(
+                                      width: 22.w,
+                                      alignment: Alignment.center,
+                                      child: AutoTranslateText(
+                                        quantity.toString(),
+                                        style: TextStyle(
+                                          fontFamily: 'Poppins',
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 11.sp,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: isProcessing
+                                          ? null
+                                          : () => cartController.incrementProduct(product),
+                                      child: Container(
+                                        width: 26.w,
+                                        height: 30.h,
+                                        alignment: Alignment.center,
+                                        child: Icon(Icons.add, size: 13.sp, color: Colors.white),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ),
+                            Spacing.w(6),
+                            Obx(() {
+                              final isFavorite = wishlistController.isInWishlist(product);
+                              return GestureDetector(
+                                onTap: () => wishlistController.toggleWishlist(product),
+                                child: Container(
+                                  width: 30.w,
+                                  height: 30.h,
+                                  decoration: BoxDecoration(
+                                    gradient: AppColors.orangeGradient,
+                                    borderRadius: BorderRadius.circular(8.r),
+                                  ),
+                                  child: Icon(
+                                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                                    size: 16.sp,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              );
+                            }),
+                          ],
                         );
                       }),
                     ],

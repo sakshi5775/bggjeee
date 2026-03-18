@@ -112,6 +112,7 @@ class AppRoutes {
 
   // Face Reading Routes
   static const String faceReading = '/face-reading';
+  static const String faceReadingForm = '/face-reading-form';
   static const String faceReadingUpload = '/face-reading-upload';
   static const String faceReadingScanning = '/face-reading-scanning';
   static const String faceReadingResults = '/face-reading-results';

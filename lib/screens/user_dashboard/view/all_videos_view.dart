@@ -75,7 +75,7 @@ class AllVideosView extends BasePage<AllVideosController> {
               if (hideHeader)
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: const HomeTabBanner(category: 'general'),
+                  child: const HomeTabBanner(category: 'appgeneral'),
                 ),
               _buildTabBar(),
               SizedBox(height: 12.h),

@@ -40,6 +40,7 @@ class AllBlogsView extends BasePage<AllBlogsController> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               // Header

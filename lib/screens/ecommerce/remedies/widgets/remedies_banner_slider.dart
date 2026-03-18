@@ -10,43 +10,64 @@ class RemediesBannerSlider extends StatefulWidget {
   const RemediesBannerSlider({super.key});
 
   @override
-  State<RemediesBannerSlider> createState() => _RemediesBannerSliderState();
+  State<RemediesBannerSlider> createState() =>
+      _RemediesBannerSliderState();
 }
 
 class _RemediesBannerSliderState extends State<RemediesBannerSlider> {
-  final PageController _pageController = PageController(viewportFraction: 0.92);
+  PageController? _pageController;
   Timer? _timer;
   int _currentPage = 0;
-  int _totalPages = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _startAutoSlide();
-  }
+  int _lastBannerLength = 0;
 
   @override
   void dispose() {
     _timer?.cancel();
-    _pageController.dispose();
+    _pageController?.dispose();
     super.dispose();
   }
 
-  void _startAutoSlide() {
-    _timer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
-      if (_totalPages <= 1) return;
-      if (_currentPage < _totalPages - 1) {
-        _currentPage++;
-      } else {
-        _currentPage = 0;
-      }
+  void _initController(int length) {
+    _timer?.cancel();
 
-      if (_pageController.hasClients) {
-        _pageController.animateToPage(
+    _currentPage = length == 0 ? 0 : 500 * length;
+
+    _pageController?.dispose();
+
+    _pageController = PageController(
+      initialPage: _currentPage,
+      viewportFraction: 0.92,
+    );
+
+    _lastBannerLength = length;
+
+    if (length > 0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scheduleNextSlide();
+      });
+    }
+  }
+
+  void _scheduleNextSlide() {
+    _timer?.cancel();
+
+    _timer = Timer(const Duration(seconds: 5), _goToNextSlide);
+  }
+
+  void _goToNextSlide() {
+    if (!mounted || _pageController == null) return;
+
+    _currentPage++;
+
+    _pageController!
+        .animateToPage(
           _currentPage,
-          duration: const Duration(milliseconds: 350),
-          curve: Curves.easeIn,
-        );
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+        )
+        .then((_) {
+      if (mounted) {
+        _scheduleNextSlide();
       }
     });
   }
@@ -54,32 +75,46 @@ class _RemediesBannerSliderState extends State<RemediesBannerSlider> {
   @override
   Widget build(BuildContext context) {
     final c = Get.find<RemediesController>();
+
     return Container(
       margin: EdgeInsets.symmetric(vertical: 16.h),
       child: Obx(() {
         if (c.isLoadingBanners.value) {
           return SizedBox(
             height: 120.h,
-            child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+            child: const Center(
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
           );
         }
+
         final banners = c.banners;
+
         if (banners.isEmpty) {
           return const SizedBox.shrink();
         }
-        _totalPages = banners.length;
-        return AspectRatio(
-          aspectRatio: 2.4,
+
+        // ✅ Initialize only when needed
+        if (_pageController == null ||
+            _lastBannerLength != banners.length) {
+          _initController(banners.length);
+        }
+
+        return SizedBox(
+          height: 140.h, // stable height required for PageView
           child: PageView.builder(
-            controller: _pageController,
-            itemCount: _totalPages,
-            onPageChanged: (int page) {
-              setState(() {
-                _currentPage = page;
-              });
+            controller: _pageController!,
+            itemCount: banners.length * 1000, // infinite effect
+            onPageChanged: (index) {
+              _currentPage = index;
+              _scheduleNextSlide();
             },
             itemBuilder: (context, index) {
-              return _buildBannerItem(banners[index].thumbnailUrl);
+              final actualIndex = index % banners.length;
+
+              return _buildBannerItem(
+                banners[actualIndex].thumbnailUrl,
+              );
             },
           ),
         );
@@ -87,45 +122,32 @@ class _RemediesBannerSliderState extends State<RemediesBannerSlider> {
     );
   }
 
- Widget _buildBannerItem(String imageUrl) {
-  final radius = BorderRadius.circular(16.r);
+  Widget _buildBannerItem(String imageUrl) {
+    final radius = BorderRadius.circular(16.r);
 
-  return Container(
-    margin: EdgeInsets.symmetric(horizontal: 6.w),
-    decoration: BoxDecoration(
-      borderRadius: radius,
-      border: Border.all(
-        color: Colors.black.withOpacity(0.08),
-        width: 1,
-      ),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.06),
-          blurRadius: 8,
-          offset: const Offset(0, 4),
-        ),
-      ],
-    ),
-    clipBehavior: Clip.antiAlias, // IMPORTANT
-    child: CachedNetworkImage(
-      imageUrl: imageUrl,
-      fit: BoxFit.cover, // IMPORTANT (instead of contain)
-      width: double.infinity,
-      height: double.infinity,
-      placeholder: (_, __) => Container(
-        color: Colors.grey.shade100,
-        alignment: Alignment.center,
-        child: const CircularProgressIndicator(strokeWidth: 2),
-      ),
-      errorWidget: (_, __, ___) => Container(
-        color: Colors.grey.shade100,
-        alignment: Alignment.center,
-        child: AutoTranslateText(
-          'Banner unavailable',
-          style: TextStyle(fontSize: 12.sp, color: Colors.black54),
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 6.w),
+      child: ClipRRect(
+        borderRadius: radius,
+        child: CachedNetworkImage(
+          imageUrl: imageUrl,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+          placeholder: (_, __) => const Center(
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+          errorWidget: (_, __, ___) => Center(
+            child: AutoTranslateText(
+              'Banner unavailable',
+              style: TextStyle(
+                fontSize: 12.sp,
+                color: Colors.black54,
+              ),
+            ),
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }

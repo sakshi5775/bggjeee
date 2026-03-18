@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/data_model/astrologer_chat_model.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controllers/astrologer_chat_controller.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/full_screen_image_viewer.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -113,43 +114,60 @@ class _AstrologerChatViewState extends State<AstrologerChatView> {
                       Expanded(
                         child: Row(
                           children: [
-                            Stack(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(color: AppColors.templeGold, width: 2),
-                                  ),
-                                  child: CircleAvatar(
-                                    radius: 20.r,
-                                    backgroundColor: AppColors.templeGold.withValues(alpha: 0.3),
-                                    backgroundImage:
-                                        controller.astrologer.profilePicture != null &&
-                                                controller.astrologer.profilePicture!.isNotEmpty
-                                            ? CachedNetworkImageProvider(controller.astrologer.profilePicture!)
-                                            : null,
-                                    child: controller.astrologer.profilePicture == null ||
-                                            controller.astrologer.profilePicture!.isEmpty
-                                        ? Icon(Icons.person_rounded, color: AppColors.templeGold, size: 24.w)
-                                        : null,
-                                  ),
-                                ),
-                                Obx(
-                                  () => Positioned(
-                                    bottom: 0,
-                                    right: 0,
+                            GestureDetector(
+                              onTap: controller.astrologer.profilePicture != null &&
+                                      controller.astrologer.profilePicture!.isNotEmpty
+                                  ? () {
+                                      FullScreenImageViewer.open(
+                                        context: context,
+                                        imageUrl: controller.astrologer.profilePicture!,
+                                        heroTag:
+                                            'astrologer_chat_profile_${controller.astrologer.id}',
+                                        label: controller.astrologer.displayName,
+                                      );
+                                    }
+                                  : null,
+                              child: Stack(
+                                children: [
+                                  Hero(
+                                    tag: 'astrologer_chat_profile_${controller.astrologer.id}',
                                     child: Container(
-                                      width: 10.w,
-                                      height: 10.h,
                                       decoration: BoxDecoration(
-                                        color: controller.effectiveOnlineStatus ? AppColors.success : Colors.grey,
                                         shape: BoxShape.circle,
-                                        border: Border.all(color: AppColors.saffron, width: 1.5),
+                                        border: Border.all(color: AppColors.templeGold, width: 2),
+                                      ),
+                                      child: CircleAvatar(
+                                        radius: 20.r,
+                                        backgroundColor: AppColors.templeGold.withValues(alpha: 0.3),
+                                        backgroundImage:
+                                            controller.astrologer.profilePicture != null &&
+                                                    controller.astrologer.profilePicture!.isNotEmpty
+                                                ? CachedNetworkImageProvider(controller.astrologer.profilePicture!)
+                                                : null,
+                                        child: controller.astrologer.profilePicture == null ||
+                                                controller.astrologer.profilePicture!.isEmpty
+                                            ? Icon(Icons.person_rounded, color: AppColors.templeGold, size: 24.w)
+                                            : null,
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                  Obx(
+                                    () => Positioned(
+                                      bottom: 0,
+                                      right: 0,
+                                      child: Container(
+                                        width: 10.w,
+                                        height: 10.h,
+                                        decoration: BoxDecoration(
+                                          color: controller.effectiveOnlineStatus ? AppColors.success : Colors.grey,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(color: AppColors.saffron, width: 1.5),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                             Spacing.w(10),
                             Expanded(

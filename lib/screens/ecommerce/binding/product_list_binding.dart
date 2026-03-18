@@ -12,7 +12,9 @@ class ProductListBinding extends Bindings {
     if (!Get.isRegistered<WishlistController>()) {
       Get.lazyPut(() => WishlistController(), fenix: true);
     }
-    Get.lazyPut(() => ProductListController());
+    // fenix: true ensures a fresh controller is created on every navigation,
+    // so Get.arguments (filterType, categoryId, etc.) are always read fresh.
+    Get.lazyPut(() => ProductListController(), fenix: true);
   }
 }
 

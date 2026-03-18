@@ -356,7 +356,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             showBackButton: false,
             bannerWidget: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: const HomeTabBanner(category: 'general'),
+              child: const HomeTabBanner(category: 'apphomescreen'),
             ),
           ),
         );
@@ -4921,7 +4921,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             left: 0,
             right: 0,
             top: 0,
-            bottom: 16.h + 70.h + MediaQuery.of(context).padding.bottom,
+            bottom: 16.h,
           ),
           child: Column(
             children: [

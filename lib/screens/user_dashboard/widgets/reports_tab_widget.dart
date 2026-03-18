@@ -45,10 +45,7 @@ class _ReportsTabWidgetState extends State<ReportsTabWidget> {
     if (!mounted) return;
     setState(() => _loadingBanners = true);
     try {
-      var list = await _bannerService.getBannersByCategory('blog');
-      if (list.isEmpty) {
-        list = await _bannerService.getHomeBanners();
-      }
+      final list = await _bannerService.getBannersWithFallback(['appblog', 'blog']);
       if (mounted) {
         setState(() {
           _banners
@@ -56,8 +53,6 @@ class _ReportsTabWidgetState extends State<ReportsTabWidget> {
             ..addAll(list);
         });
       }
-    } catch (_) {
-      if (mounted) setState(() => _banners.clear());
     } finally {
       if (mounted) setState(() => _loadingBanners = false);
     }

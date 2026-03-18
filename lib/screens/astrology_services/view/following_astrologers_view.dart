@@ -29,6 +29,7 @@ class FollowingAstrologersView extends StatelessWidget {
         backgroundColor: Colors.transparent,
         // endDrawer: const CommonEndDrawer(),
         body: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               // Header Section

@@ -20,6 +20,7 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               // Header

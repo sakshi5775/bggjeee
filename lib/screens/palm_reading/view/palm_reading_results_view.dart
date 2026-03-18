@@ -11,6 +11,7 @@ import 'package:astrobharataiuser/core/services/pdf_generator_service.dart';
 import 'package:astrobharataiuser/data_model/pdf_metadata.dart';
 import 'package:astrobharataiuser/data_model/pdf_section.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/data_model/palm_reading_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -343,8 +344,10 @@ class PalmReadingResultsView extends StatelessWidget {
             ),
             child: ElevatedButton(
               onPressed: () {
-                // Navigate back to upload screen
-                Get.offNamed('/palm-reading-upload');
+                // Pop back to the upload screen (already in the nested tab stack)
+                UserMainController.popUntilInCurrentTab(
+                  ModalRoute.withName(AppRoutes.palmReadingUpload),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.transparent,

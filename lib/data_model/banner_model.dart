@@ -84,6 +84,28 @@ class BannerItem {
   }
 }
 
+class SingleBannerResponse {
+  final bool success;
+  final String message;
+  final BannerItem? banner;
+
+  SingleBannerResponse({
+    required this.success,
+    required this.message,
+    this.banner,
+  });
+
+  factory SingleBannerResponse.fromJson(Map<String, dynamic> json) {
+    final data = json['data'] as Map<String, dynamic>?;
+    final bannerJson = data?['banner'] as Map<String, dynamic>?;
+    return SingleBannerResponse(
+      success: json['success'] as bool? ?? false,
+      message: json['message'] as String? ?? '',
+      banner: bannerJson != null ? BannerItem.fromJson(bannerJson) : null,
+    );
+  }
+}
+
 class BannersByCategoryResponse {
   final bool success;
   final String message;

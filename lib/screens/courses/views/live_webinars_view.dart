@@ -9,6 +9,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:intl/intl.dart';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../app_manager/network_image.dart';
 
 class LiveWebinarsView extends GetView<LiveWebinarsController> {
@@ -22,6 +23,7 @@ class LiveWebinarsView extends GetView<LiveWebinarsController> {
         backgroundColor: Colors.transparent,
         // endDrawer: const CommonEndDrawer(),
         body: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               Obx(
@@ -136,10 +138,11 @@ class LiveWebinarsView extends GetView<LiveWebinarsController> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16.r),
                 image: DecorationImage(
-                  image: NetworkImage(
+                  image: CachedNetworkImageProvider(
                     webinar.thumbnail ??
                         webinar.courseId?.thumbnail ??
                         'https://via.placeholder.com/400x200?text=No+Image',
+                    headers: const {'Accept': 'image/*'},
                   ),
                   fit: BoxFit.cover,
                   colorFilter: ColorFilter.mode(
@@ -266,7 +269,10 @@ class LiveWebinarsView extends GetView<LiveWebinarsController> {
                           backgroundImage:
                               (webinar.hostImage != null &&
                                   webinar.hostImage!.isNotEmpty)
-                              ? NetworkImage(webinar.hostImage!)
+                              ? CachedNetworkImageProvider(
+                                  webinar.hostImage!,
+                                  headers: const {'Accept': 'image/*'},
+                                )
                               : null,
                           onBackgroundImageError:
                               (webinar.hostImage != null &&
@@ -522,7 +528,10 @@ class LiveWebinarsView extends GetView<LiveWebinarsController> {
                       backgroundImage:
                           (webinar.hostImage != null &&
                               webinar.hostImage!.isNotEmpty)
-                          ? NetworkImage(webinar.hostImage!)
+                          ? CachedNetworkImageProvider(
+                              webinar.hostImage!,
+                              headers: const {'Accept': 'image/*'},
+                            )
                           : null,
                       onBackgroundImageError:
                           (webinar.hostImage != null &&

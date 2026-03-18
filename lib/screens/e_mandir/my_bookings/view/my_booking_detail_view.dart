@@ -110,6 +110,7 @@ class MyBookingDetailView extends BasePage<MyBookingDetailController> {
       ),
       child: SafeArea(
         top: false,
+        bottom: false,
         child: Obx(() {
           return GestureDetector(
             onTap: controller.isProcessingPayment.value

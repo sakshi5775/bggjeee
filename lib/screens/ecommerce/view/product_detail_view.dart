@@ -4,6 +4,8 @@ import 'package:astrobharataiuser/screens/ecommerce/widgets/product_details_widg
 import 'package:astrobharataiuser/screens/ecommerce/widgets/product_details_widgets/product_description_widget.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/product_details_widgets/product_specifications_widget.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/product_details_widgets/product_reviews_widget.dart';
+import 'package:astrobharataiuser/screens/ecommerce/widgets/product_details_widgets/product_usage_widget.dart';
+import 'package:astrobharataiuser/screens/ecommerce/widgets/product_details_widgets/product_process_widget.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/data_model/product_model.dart';
@@ -117,6 +119,18 @@ class ProductDetailView extends StatelessWidget {
                       Padding(
                         padding: AppPaddings.symmetric(h: 16),
                         child: ProductSpecificationsWidget(),
+                      ),
+                      SizedBox(height: 24.h),
+                      // Usage Instructions
+                      Padding(
+                        padding: AppPaddings.symmetric(h: 16),
+                        child: ProductUsageWidget(),
+                      ),
+                      SizedBox(height: 24.h),
+                      // Process Steps
+                      Padding(
+                        padding: AppPaddings.symmetric(h: 16),
+                        child: ProductProcessWidget(),
                       ),
                       // SizedBox(height: 24.h),
                       // // Customer Reviews

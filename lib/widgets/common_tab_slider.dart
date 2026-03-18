@@ -70,21 +70,41 @@ class _CommonTabSliderState extends State<CommonTabSlider> {
   void _scrollToSelectedTab(int index) {
     if (!_scrollController.hasClients) return;
 
-    // Ensure layout is complete before trying to scroll to a specific context
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
+      if (!mounted || !_scrollController.hasClients) return;
       final key = _tabKeys[index];
-      if (key?.currentContext != null) {
-        final renderObject = key!.currentContext!.findRenderObject();
-        if (renderObject is RenderBox && renderObject.hasSize) {
-          Scrollable.ensureVisible(
-            key.currentContext!,
-            alignment: 0.5, // Center the tab
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-        }
-      }
+      if (key?.currentContext == null) return;
+
+      final renderObject = key!.currentContext!.findRenderObject();
+      if (renderObject is! RenderBox || !renderObject.hasSize) return;
+
+      // Get the tab bar's own scroll view RenderBox as the ancestor
+      final scrollableState = Scrollable.maybeOf(key.currentContext!);
+      if (scrollableState == null) return;
+      final scrollableBox =
+          scrollableState.context.findRenderObject() as RenderBox?;
+      if (scrollableBox == null) return;
+
+      final tabOffset = renderObject.localToGlobal(
+        Offset.zero,
+        ancestor: scrollableBox,
+      );
+      final tabWidth = renderObject.size.width;
+      final viewportWidth = _scrollController.position.viewportDimension;
+      final maxExtent = _scrollController.position.maxScrollExtent;
+
+      // Scroll only the tab bar's internal horizontal scrollable
+      final targetOffset =
+          (_scrollController.offset +
+                  tabOffset.dx -
+                  (viewportWidth - tabWidth) / 2)
+              .clamp(0.0, maxExtent);
+
+      _scrollController.animateTo(
+        targetOffset,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
     });
   }
 

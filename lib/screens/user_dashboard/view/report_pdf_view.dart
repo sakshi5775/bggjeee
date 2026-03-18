@@ -160,7 +160,6 @@ class _ReportPdfViewState extends State<ReportPdfView> {
           CommonHeader(
             title: title,
             showBackButton: true,
-            onBackTap: () => Get.back(),
             customActions: [
               IconButton(
                 icon: Icon(Icons.share, color: headerColor, size: 22),

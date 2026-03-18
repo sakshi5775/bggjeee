@@ -97,7 +97,7 @@ class ProfileView extends GetView<ProfileController> {
                         left: 16.w,
                         right: 16.w,
                         top: 20.h,
-                        bottom: 20.h + 70.h + MediaQuery.of(context).padding.bottom,
+                        bottom: 20.h,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

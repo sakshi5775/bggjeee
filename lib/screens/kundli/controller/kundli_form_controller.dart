@@ -239,7 +239,12 @@ class KundliFormController extends BaseController {
     }
   }
 
-  /// Open a saved kundli: generate kundli from saved profile data and navigate to result
+  /// Open a saved kundli.
+  ///
+  /// - Normal mode  → generates the kundli chart and navigates to [kundliResult].
+  /// - Report mode  → (arrived from the Reports tab with [isGeneratePdfMode]=true)
+  ///   prefills the form fields with the saved-profile data and generates the
+  ///   PDF report, navigating to [reportPdfView] instead of [kundliResult].
   Future<void> openSavedKundli(Map<String, dynamic> profile) async {
     try {
       isOpeningSavedKundli.value = true;
@@ -255,7 +260,7 @@ class KundliFormController extends BaseController {
           ? (profile['longitude'] as num).toDouble()
           : double.tryParse(profile['longitude']?.toString() ?? '') ?? 0.0;
 
-      // Parse DOB from API format MM/dd/yyyy to dd/MM/yyyy for kundli API
+      // Parse DOB from API format MM/dd/yyyy → dd/MM/yyyy for kundli API
       String date = '';
       final dob = profile['dateOfBirth']?.toString();
       if (dob != null && dob.isNotEmpty) {
@@ -269,14 +274,16 @@ class KundliFormController extends BaseController {
         }
       }
 
-      // Parse birth time from "12:00 PM" to "HH:mm"
+      // Parse birth time from "12:00 PM" → "HH:mm"
       String time = '';
+      TimeOfDay? parsedTime;
       final bt = profile['birthTime']?.toString();
       if (bt != null && bt.isNotEmpty) {
         try {
           final format = DateFormat('hh:mm a');
           final dt = format.parse(bt);
           time = DateFormat('HH:mm').format(dt);
+          parsedTime = TimeOfDay(hour: dt.hour, minute: dt.minute);
         } catch (e) {
           debugPrint('Error parsing birth time: $e');
         }
@@ -303,6 +310,27 @@ class KundliFormController extends BaseController {
         return;
       }
 
+      // ── Report / PDF mode: use saved profile data to generate the report ──
+      if (isGeneratePdfMode) {
+        // Populate form controllers so _generatePdfReport can read them.
+        nameController.text = name.isNotEmpty ? name : 'User';
+        selectedGender.value =
+            (gender.isNotEmpty && genderOptions.contains(gender))
+                ? gender
+                : 'Male';
+        dateController.text = date; // dd/MM/yyyy
+        timeController.text = time; // HH:mm
+        if (parsedTime != null) selectedTime.value = parsedTime;
+        latitudeController.text = lat.toStringAsFixed(6);
+        longitudeController.text = lon.toStringAsFixed(6);
+        timezoneController.text = tz.toString();
+        selectedLocation.value = place.isNotEmpty ? place : 'Unknown';
+
+        await _generatePdfReport(lat, lon, tz);
+        return;
+      }
+
+      // ── Normal mode: generate kundli chart and go to result view ──
       const colorHex = '#ed6f30';
 
       final data = await _kundliService.generateKundli(

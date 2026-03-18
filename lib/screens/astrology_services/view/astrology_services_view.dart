@@ -36,6 +36,10 @@ class AstrologyServicesView extends StatelessWidget {
         backgroundColor: Colors.transparent,
         // endDrawer: const CommonEndDrawer(),
         body: SafeArea(
+          // top: false — CommonHeader already accounts for the status bar height
+          // internally, so we must not add it a second time here.
+          top: false,
+          bottom: false,
           child: Column(
             children: [
               // Header with Common Header

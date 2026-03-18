@@ -50,6 +50,7 @@ class AllAstrologersView extends StatelessWidget {
       AllAstrologersController(
         initialFilter: initialFilter,
         initialAvailability: availability,
+        isEmbedded: hideHeader,
       ),
       tag: tag,
     );

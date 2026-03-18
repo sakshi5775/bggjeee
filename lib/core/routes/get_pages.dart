@@ -263,6 +263,7 @@ import 'package:astrobharataiuser/screens/palm_reading/view/palm_reading_analysi
 import 'package:astrobharataiuser/binding/palm_reading_binding/palm_reading_binding.dart';
 import 'package:astrobharataiuser/binding/palm_reading_binding/palm_reading_history_binding.dart';
 import 'package:astrobharataiuser/screens/face_reading/view/face_reading_view.dart';
+import 'package:astrobharataiuser/screens/face_reading/view/face_reading_form_view.dart';
 import 'package:astrobharataiuser/screens/face_reading/view/face_reading_upload_view.dart';
 import 'package:astrobharataiuser/screens/face_reading/view/face_reading_scanning_view.dart';
 import 'package:astrobharataiuser/screens/face_reading/view/face_reading_results_view.dart';
@@ -1230,6 +1231,12 @@ class PageRoutes {
     GetPage(
       name: AppRoutes.faceReading,
       page: () => const FaceReadingView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.faceReadingForm,
+      page: () => const FaceReadingFormView(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),

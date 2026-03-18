@@ -40,10 +40,7 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
     if (!mounted) return;
     setState(() => _loadingBanners = true);
     try {
-      var list = await _bannerService.getBannersByCategory('general');
-      if (list.isEmpty) {
-        list = await _bannerService.getHomeBanners();
-      }
+      final list = await _bannerService.getBannersWithFallback(['appgeneral', 'general']);
       if (mounted) {
         setState(() {
           _banners
@@ -51,8 +48,6 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
             ..addAll(list);
         });
       }
-    } catch (_) {
-      if (mounted) setState(() => _banners.clear());
     } finally {
       if (mounted) setState(() => _loadingBanners = false);
     }

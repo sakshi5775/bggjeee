@@ -408,6 +408,8 @@ class PujaPackageSelectionBottomSheet extends StatelessWidget {
           ],
         ),
         child: SafeArea(
+          top: false,
+          bottom: false,
           child: Row(
             children: [
               // Selected package info

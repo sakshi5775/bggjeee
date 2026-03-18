@@ -1,12 +1,13 @@
 import 'dart:convert';
+import 'package:astrobharataiuser/apihelper/utils/port_fallback_helper.dart';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class MatchMakingService {
-  /// Base URL for match making API (port 8010)
+  /// Base URL for match making API (port 8000/api/numerology)
   static const String _matchMakingBaseUrl =
-      'http://3.109.91.254:8010/api/vedic/matching';
+      'http://3.109.91.254:8000/api/numerology/api/vedic/matching';
 
   /// Get Ashtakoot matching with astro details
   Future<Map<String, dynamic>?> getAshtakootMatching({
@@ -283,31 +284,65 @@ class MatchMakingService {
     return null;
   }
 
-  // ===== Matchmaking Profile CRUD (port 8002) =====
+  // ===== Matchmaking Profile CRUD (primary: 8000/api/users, fallback: 8002) =====
 
-  static const String _profileBaseUrl =
-      'http://3.109.91.254:8002/api/users/matchmaking-profile';
+  static const String _profilePath = '/api/users/matchmaking-profile';
+
+  Map<String, String> _profileHeaders(String? token) => {
+        'Accept': 'application/json',
+        if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token',
+      };
+
+  Future<http.Response> _profileGet(String suffix) {
+    final token = UserData().accessToken?.trim();
+    final headers = _profileHeaders(token);
+    return PortFallbackHelper.callWithFallback(
+      primary: () => PortFallbackHelper.get(
+          '${PortFallbackHelper.usersApiPrimary}$_profilePath$suffix',
+          headers: headers),
+      fallback: () => PortFallbackHelper.get(
+          '${PortFallbackHelper.usersApiFallback}$_profilePath$suffix',
+          headers: headers),
+    );
+  }
+
+  Future<http.Response> _profilePost(String suffix, String body) {
+    final token = UserData().accessToken?.trim();
+    final headers = {
+      ..._profileHeaders(token),
+      'Content-Type': 'application/json',
+    };
+    return PortFallbackHelper.callWithFallback(
+      primary: () => PortFallbackHelper.post(
+          '${PortFallbackHelper.usersApiPrimary}$_profilePath$suffix',
+          headers: headers,
+          body: body),
+      fallback: () => PortFallbackHelper.post(
+          '${PortFallbackHelper.usersApiFallback}$_profilePath$suffix',
+          headers: headers,
+          body: body),
+    );
+  }
+
+  Future<http.Response> _profileDelete(String suffix) {
+    final token = UserData().accessToken?.trim();
+    final headers = _profileHeaders(token);
+    return PortFallbackHelper.callWithFallback(
+      primary: () => PortFallbackHelper.delete(
+          '${PortFallbackHelper.usersApiPrimary}$_profilePath$suffix',
+          headers: headers),
+      fallback: () => PortFallbackHelper.delete(
+          '${PortFallbackHelper.usersApiFallback}$_profilePath$suffix',
+          headers: headers),
+    );
+  }
 
   /// GET all saved matchmaking profiles
   Future<List<Map<String, dynamic>>> getSavedMatchmakingProfiles() async {
     try {
-      final currentToken = UserData().accessToken?.trim();
-      final uri = Uri.parse(_profileBaseUrl);
+      final response = await _profileGet('');
 
-      final response = await http
-          .get(
-            uri,
-            headers: {
-              'Accept': 'application/json',
-              if (currentToken != null && currentToken.isNotEmpty)
-                'Authorization': 'Bearer $currentToken',
-            },
-          )
-          .timeout(const Duration(seconds: 15));
-
-      if (kDebugMode) {
-        debugPrint('GET Matchmaking Profiles Status: ${response.statusCode}');
-      }
+      if (kDebugMode) debugPrint('GET Matchmaking Profiles Status: ${response.statusCode}');
 
       if (response.statusCode == 200) {
         final body = json.decode(response.body) as Map<String, dynamic>;
@@ -317,9 +352,7 @@ class MatchMakingService {
       }
       return [];
     } catch (e) {
-      if (kDebugMode) {
-        debugPrint('Error fetching saved matchmaking profiles: $e');
-      }
+      if (kDebugMode) debugPrint('Error fetching saved matchmaking profiles: $e');
       return [];
     }
   }
@@ -330,27 +363,10 @@ class MatchMakingService {
     required Map<String, dynamic> girl,
   }) async {
     try {
-      final currentToken = UserData().accessToken?.trim();
-      final uri = Uri.parse(_profileBaseUrl);
-
       final reqBody = json.encode({'boy': boy, 'girl': girl});
+      final response = await _profilePost('', reqBody);
 
-      final response = await http
-          .post(
-            uri,
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              if (currentToken != null && currentToken.isNotEmpty)
-                'Authorization': 'Bearer $currentToken',
-            },
-            body: reqBody,
-          )
-          .timeout(const Duration(seconds: 15));
-
-      if (kDebugMode) {
-        debugPrint('POST Matchmaking Profile Status: ${response.statusCode}');
-      }
+      if (kDebugMode) debugPrint('POST Matchmaking Profile Status: ${response.statusCode}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final respBody = json.decode(response.body) as Map<String, dynamic>;
@@ -360,9 +376,7 @@ class MatchMakingService {
       }
       return null;
     } catch (e) {
-      if (kDebugMode) {
-        debugPrint('Error creating matchmaking profile: $e');
-      }
+      if (kDebugMode) debugPrint('Error creating matchmaking profile: $e');
       return null;
     }
   }
@@ -370,23 +384,9 @@ class MatchMakingService {
   /// DELETE a matchmaking profile by ID
   Future<bool> deleteMatchmakingProfile(String id) async {
     try {
-      final currentToken = UserData().accessToken?.trim();
-      final uri = Uri.parse('$_profileBaseUrl/$id');
+      final response = await _profileDelete('/$id');
 
-      final response = await http
-          .delete(
-            uri,
-            headers: {
-              'Accept': 'application/json',
-              if (currentToken != null && currentToken.isNotEmpty)
-                'Authorization': 'Bearer $currentToken',
-            },
-          )
-          .timeout(const Duration(seconds: 15));
-
-      if (kDebugMode) {
-        debugPrint('DELETE Matchmaking Profile Status: ${response.statusCode}');
-      }
+      if (kDebugMode) debugPrint('DELETE Matchmaking Profile Status: ${response.statusCode}');
 
       if (response.statusCode == 200) {
         final body = json.decode(response.body) as Map<String, dynamic>;

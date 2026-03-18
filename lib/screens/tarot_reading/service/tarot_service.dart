@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class TarotService {
-  /// Base URL for tarot API (port 8010 based on pattern)
+  /// Base URL for tarot API (port 8000/api/numerology based on pattern)
   static const String _tarotBaseUrl =
       'http://3.109.91.254:8000/api/numerology/api';
 

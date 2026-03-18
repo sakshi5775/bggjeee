@@ -42,6 +42,8 @@ class ProductDetailController extends BaseController {
   final isSpecificationsExpanded = false.obs;
   final isDescriptionExpanded = false.obs;
   final isReviewsExpanded = false.obs;
+  final isUsageExpanded = false.obs;
+  final isProcessExpanded = false.obs;
 
   @override
   void onInit() {
@@ -493,6 +495,14 @@ class ProductDetailController extends BaseController {
     isDescriptionExpanded.value = !isDescriptionExpanded.value;
   }
 
+  void toggleUsageExpanded() {
+    isUsageExpanded.value = !isUsageExpanded.value;
+  }
+
+  void toggleProcessExpanded() {
+    isProcessExpanded.value = !isProcessExpanded.value;
+  }
+
   void toggleReviewsExpanded() {
     isReviewsExpanded.value = !isReviewsExpanded.value;
   }
@@ -536,6 +546,14 @@ class ProductDetailController extends BaseController {
 
   List<String> get productKeyBenefits {
     return product.value?.spiritualBenefits ?? [];
+  }
+
+  String get productUsageInstructions {
+    return product.value?.usageInstructions ?? '';
+  }
+
+  List<ProductProcess> get productProcessList {
+    return product.value?.process ?? [];
   }
 
   // Get reviews data

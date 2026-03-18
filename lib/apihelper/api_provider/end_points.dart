@@ -702,6 +702,7 @@ class EndPoints {
   static const String bannersAll = 'users/api/users/banners/all';
   static String bannersByCategory(String category) =>
       'users/api/users/banners/category/$category';
+  static String bannerById(String id) => 'users/api/users/banners/$id';
 
   /// Daily Quote APIs
   static const String dailyQuote = 'users/api/users/daily-quote';

@@ -43,6 +43,7 @@ class ProductModel {
   List<ProductVariant>? variants;
   List<ProductInventory>? inventory;
   double? relevanceScore;
+  List<ProductProcess>? process;
 
   ProductModel({
     this.id,
@@ -87,6 +88,7 @@ class ProductModel {
     this.variants,
     this.inventory,
     this.relevanceScore,
+    this.process,
   });
 
   ProductModel.fromJson(Map<String, dynamic> json) {
@@ -295,6 +297,21 @@ class ProductModel {
       updatedAt = json['updatedAt']?.toString();
       inStock = json['inStock'] is bool ? json['inStock'] : null;
       relevanceScore = json['relevanceScore']?.toDouble();
+
+      // Parse process list
+      process = [];
+      if (json['process'] != null && json['process'] is List) {
+        try {
+          process = (json['process'] as List).map((e) {
+            if (e is Map<String, dynamic>) {
+              return ProductProcess.fromJson(e);
+            }
+            return ProductProcess();
+          }).toList();
+        } catch (e) {
+          process = [];
+        }
+      }
     } catch (e) {
       print('Error parsing ProductModel: $e');
       print('JSON data: $json');
@@ -350,6 +367,9 @@ class ProductModel {
     data['createdAt'] = createdAt;
     data['updatedAt'] = updatedAt;
     data['inStock'] = inStock;
+    if (process != null) {
+      data['process'] = process!.map((v) => v.toJson()).toList();
+    }
     return data;
   }
 }
@@ -945,3 +965,23 @@ class ProductDetailData {
   }
 }
 
+class ProductProcess {
+  String? id;
+  String? title;
+  String? description;
+
+  ProductProcess({this.id, this.title, this.description});
+
+  ProductProcess.fromJson(Map<String, dynamic> json) {
+    id = json['_id'] ?? json['id'];
+    title = json['title']?.toString();
+    description = json['description']?.toString();
+  }
+
+  Map<String, dynamic> toJson() => {
+        '_id': id,
+        'id': id,
+        'title': title,
+        'description': description,
+      };
+}

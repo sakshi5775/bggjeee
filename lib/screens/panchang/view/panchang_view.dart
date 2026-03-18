@@ -18,7 +18,16 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 class PanchangView extends BasePage<PanchangController> {
   final bool hideHeader;
 
-  const PanchangView({super.key, this.hideHeader = false});
+  /// Banner category to load when embedded (hideHeader = true).
+  /// Pass null to suppress the inner banner entirely (e.g. when the parent
+  /// screen already shows its own banner, like EMandirWallpaperView).
+  final String? bannerCategory;
+
+  const PanchangView({
+    super.key,
+    this.hideHeader = false,
+    this.bannerCategory = 'appgeneral',
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,10 +45,10 @@ class PanchangView extends BasePage<PanchangController> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    if (hideHeader)
+                    if (hideHeader && bannerCategory != null && bannerCategory!.isNotEmpty)
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        child: const HomeTabBanner(category: 'general'),
+                        child: HomeTabBanner(category: bannerCategory!),
                       ),
                     Spacing.h(hideHeader ? 12 : 20),
                     // Celestial Times Section

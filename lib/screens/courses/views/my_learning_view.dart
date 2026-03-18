@@ -29,6 +29,7 @@ class MyLearningView extends BasePage<MyLearningController> {
         // endDrawer: const CommonEndDrawer(),
         // bottomNavigationBar: _buildBottomNav(),
         body: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               // Header

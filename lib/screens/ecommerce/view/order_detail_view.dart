@@ -1,4 +1,4 @@
-﻿import 'package:astrobharataiuser/app_manager/network_image.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/data_model/order_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/order_detail_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -20,6 +20,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
+          bottom: false,
           child: Obx(() {
             if (controller.isLoading.value && controller.order.value == null) {
               return Center(

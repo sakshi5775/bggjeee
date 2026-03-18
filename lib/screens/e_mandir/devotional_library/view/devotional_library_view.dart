@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/screens/e_mandir/devotional_library/widgets/de
 import 'package:astrobharataiuser/screens/e_mandir/devotional_library/widgets/music_category_chips_widget.dart';
 import 'package:astrobharataiuser/screens/e_mandir/devotional_library/widgets/devotional_list_widget.dart';
 import 'package:astrobharataiuser/screens/e_mandir/devotional_library/widgets/mini_player_widget.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/widgets/banner_carousel_widget.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 
@@ -26,6 +27,15 @@ class DevotionalLibraryView extends GetView<DevotionalLibraryController> {
               children: [
                 const CommonHeader(title: 'Music Collection'),
                 SizedBox(height: 8.h),
+
+                // Sri Mandir banners
+                Obx(() {
+                  if (controller.banners.isEmpty) return const SizedBox.shrink();
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: BannerCarouselWidget(banners: controller.banners),
+                  );
+                }),
 
                 // God category avatars
                 const DevotionalTabsWidget(),

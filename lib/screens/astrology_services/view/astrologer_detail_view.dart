@@ -9,6 +9,7 @@ import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/widgets/full_screen_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -57,7 +58,7 @@ class AstrologerDetailView extends StatelessWidget {
                         child: Column(
                           children: [
                             // Profile Card - positioned after header
-                            _buildProfileCard(controller),
+                            _buildProfileCard(context, controller),
                             Spacing.h(16),
 
                             // Navigation Tabs
@@ -237,7 +238,7 @@ class AstrologerDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileCard(AstrologerDetailController controller) {
+  Widget _buildProfileCard(BuildContext context, AstrologerDetailController controller) {
     final astrologer = controller.astrologer;
     final isOnline = astrologer.isOnline;
     final rating = astrologer.rating;
@@ -261,22 +262,39 @@ class AstrologerDetailView extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Profile Picture
+          // Profile Picture (tap to view full screen, WhatsApp-style)
           Stack(
             clipBehavior: Clip.none,
             children: [
-              Container(
-                width: 120.w,
-                height: 120.w,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: const Color(0xFFDFB343), // Gold border
-                    width: 4,
+              GestureDetector(
+                onTap: astrologer.profilePicture != null &&
+                        astrologer.profilePicture!.isNotEmpty
+                    ? () {
+                        FullScreenImageViewer.open(
+                          context: context,
+                          imageUrl: astrologer.profilePicture!,
+                          heroTag:
+                              'astrologer_profile_${astrologer.id}',
+                          label: astrologer.displayName,
+                        );
+                      }
+                    : null,
+                child: Hero(
+                  tag: 'astrologer_profile_${astrologer.id}',
+                  child: Container(
+                    width: 120.w,
+                    height: 120.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: const Color(0xFFDFB343), // Gold border
+                        width: 4,
+                      ),
+                    ),
+                    child: ClipOval(
+                      child: _buildImage(astrologer.profilePicture, size: 120),
+                    ),
                   ),
-                ),
-                child: ClipOval(
-                  child: _buildImage(astrologer.profilePicture, size: 120),
                 ),
               ),
               // Online indicator

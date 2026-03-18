@@ -1,12 +1,17 @@
 import 'package:astrobharataiuser/core/base/base_controller.dart';
+import 'package:astrobharataiuser/data_model/banner_model.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/screens/ai_chat/services/ai_chat_service.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/service/banner_service.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class AiChatController extends BaseController {
   final AiChatService _aiChatService = AiChatService();
+  final BannerService _bannerService = BannerService();
+
+  final RxList<BannerItem> banners = <BannerItem>[].obs;
 
   // Personas list
   final RxList<PersonaModel> personas = <PersonaModel>[].obs;
@@ -37,7 +42,13 @@ class AiChatController extends BaseController {
     super.onInit();
     loadCategories();
     loadPersonas(refresh: true);
+    loadBanners();
     searchController.addListener(_performSearch);
+  }
+
+  Future<void> loadBanners() async {
+    final list = await _bannerService.getBannersWithFallback(['appastrologer', 'astrologer']);
+    banners.assignAll(list);
   }
 
   @override

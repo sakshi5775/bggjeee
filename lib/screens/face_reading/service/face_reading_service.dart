@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
 import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
+import 'package:astrobharataiuser/apihelper/utils/port_fallback_helper.dart';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:astrobharataiuser/data_model/face_reading_model.dart';
 import 'package:get/get.dart';
@@ -12,15 +13,15 @@ import 'package:http_parser/http_parser.dart';
 class FaceReadingService {
   final ApiRepository _apiRepository = Get.find();
 
-  /// Make face reading request to port 8002 (temporary endpoint)
-  Future<http.Response> _makeFaceReadingRequest({
+  static const String _analyzePath = '/api/users/face-reading/analyze';
+
+  /// Build a MultipartRequest for the given [baseUrl].
+  Future<http.MultipartRequest> _buildRequest({
+    required String baseUrl,
     required Map<String, String> fields,
     required Map<String, File?> files,
   }) async {
-    // Using port 8002 temporarily
-    final url = Uri.parse(
-      'http://3.109.91.254:8002/api/users/face-reading/analyze',
-    );
+    final url = Uri.parse('$baseUrl$_analyzePath');
     final request = http.MultipartRequest('POST', url);
 
     // Add authorization header
@@ -62,10 +63,35 @@ class FaceReadingService {
       }
     }
 
-    final streamedResponse = await request.send().timeout(
-      const Duration(minutes: 5),
+    return request;
+  }
+
+  /// Send a face-reading request: try primary (8000/api/users) first,
+  /// fallback to direct port 8002 on connection failure.
+  Future<http.Response> _makeFaceReadingRequest({
+    required Map<String, String> fields,
+    required Map<String, File?> files,
+  }) {
+    return PortFallbackHelper.callWithFallback(
+      primary: () async {
+        final req = await _buildRequest(
+          baseUrl: PortFallbackHelper.usersApiPrimary,
+          fields: fields,
+          files: files,
+        );
+        final streamed = await req.send().timeout(const Duration(minutes: 5));
+        return http.Response.fromStream(streamed);
+      },
+      fallback: () async {
+        final req = await _buildRequest(
+          baseUrl: PortFallbackHelper.usersApiFallback,
+          fields: fields,
+          files: files,
+        );
+        final streamed = await req.send().timeout(const Duration(minutes: 5));
+        return http.Response.fromStream(streamed);
+      },
     );
-    return http.Response.fromStream(streamedResponse);
   }
 
   /// Analyze face reading with image and optional user data
@@ -102,8 +128,7 @@ class FaceReadingService {
       // Prepare files
       final Map<String, File?> files = {'faceImage': faceImage};
 
-      // Make API call
-      // Using port 8002 temporarily - will switch back to 8000 later
+      // Make API call (8000/api/users primary, 8002 fallback)
       final response = await _makeFaceReadingRequest(
         fields: fields,
         files: files,

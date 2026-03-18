@@ -70,7 +70,7 @@ class _NamasteHomeViewState extends State<NamasteHomeView>
                 left: 16.w,
                 right: 16.w,
                 top: widget.hideHeader ? 0 : 10.h,
-                bottom: 20.h + 70.h + MediaQuery.of(context).padding.bottom,
+                bottom: 20.h,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

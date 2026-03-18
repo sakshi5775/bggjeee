@@ -5,14 +5,20 @@ class CommentResponse {
 
   factory CommentResponse.fromJson(Map<String, dynamic> json) {
     List<dynamic> rawList = [];
-    final data = json['data'];
-    if (data is List<dynamic>) {
-      rawList = data;
-    } else if (data is Map<String, dynamic>) {
-      rawList = data['comments'] as List<dynamic>? ?? data['data'] as List<dynamic>? ?? [];
+    final payload = json['data'];
+    if (payload is List<dynamic>) {
+      rawList = payload;
+    } else if (payload is Map<String, dynamic>) {
+      // Try every common key the backend might use.
+      rawList = (payload['comments'] ??
+              payload['data'] ??
+              payload['items'] ??
+              payload['results'] ??
+              []) as List<dynamic>;
     }
     final list = rawList
-        .map((e) => Comment.fromJson(e as Map<String, dynamic>))
+        .whereType<Map<String, dynamic>>()
+        .map((e) => Comment.fromJson(e))
         .toList();
     return CommentResponse(data: list);
   }

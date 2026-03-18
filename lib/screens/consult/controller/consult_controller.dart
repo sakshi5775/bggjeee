@@ -249,15 +249,8 @@ class ConsultController extends GetxController {
   Future<void> loadBanners() async {
     bannersLoading.value = true;
     try {
-      final list = await _bannerService.getBannersByCategory('general');
+      final list = await _bannerService.getBannersWithFallback(['appastrologer', 'astrologer']);
       generalBanners.value = list;
-    } catch (_) {
-      try {
-        final list = await _bannerService.getBannersByCategory('home');
-        generalBanners.value = list;
-      } catch (e) {
-        generalBanners.clear();
-      }
     } finally {
       bannersLoading.value = false;
     }

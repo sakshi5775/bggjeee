@@ -314,13 +314,8 @@ class AstrologyServicesController extends GetxController {
   Future<void> loadBanners() async {
     isLoadingBanners.value = true;
     try {
-      var list = await _bannerService.getBannersByCategory('appastrologer');
-      if (list.isEmpty) {
-        list = await _bannerService.getBannersByCategory('astrologer');
-      }
+      final list = await _bannerService.getBannersWithFallback(['appastrologer', 'astrologer']);
       serviceBanners.assignAll(list);
-    } catch (e) {
-      debugPrint('Error loading service banners: $e');
     } finally {
       isLoadingBanners.value = false;
     }

@@ -107,18 +107,6 @@ class OurServicesSection extends BasePage<UserDashboardController> {
       onTap: () {
         _requireLogin(
           () async {
-            if (pricingKey.isNotEmpty &&
-                Get.isRegistered<AiPricingController>()) {
-              final pricingCtrl = Get.find<AiPricingController>();
-              if (!pricingCtrl.hasSufficientBalance(pricingKey)) {
-                // Let AiPricingController decide whether to show an
-                // insufficient-balance dialog or a "pricing not set" snackbar.
-                await pricingCtrl.showInsufficientBalancePopup(
-                  pricingKey,
-                );
-                return;
-              }
-            }
             final normalizedLabel = label
                 .toLowerCase()
                 .replaceAll('\n', ' ')

@@ -1,8 +1,10 @@
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/data_model/banner_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/service/god_category_service.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/god_category_model.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/service/banner_service.dart';
 import '../data_model/devotional_music_model.dart';
 import '../service/devotional_music_service.dart';
 import '../service/audio_player_service.dart';
@@ -13,10 +15,15 @@ class DevotionalLibraryController extends BaseController {
   final DevotionalMusicService _musicService = Get.put(
     DevotionalMusicService(),
   );
+  final BannerService _bannerService = BannerService();
 
   late final AudioPlayerService audioService;
 
   final ScrollController godTabScrollController = ScrollController();
+
+  // Banners
+  final RxList<BannerItem> banners = <BannerItem>[].obs;
+  final RxBool isLoadingBanners = false.obs;
 
   // God categories
   final RxList<GodCategoryModel> godCategories = <GodCategoryModel>[].obs;
@@ -50,6 +57,17 @@ class DevotionalLibraryController extends BaseController {
     }
     audioService = Get.find<AudioPlayerService>();
     fetchGodCategories();
+    loadBanners();
+  }
+
+  Future<void> loadBanners() async {
+    isLoadingBanners.value = true;
+    try {
+      final list = await _bannerService.getBannersWithFallback(['appsrimandir']);
+      banners.assignAll(list);
+    } finally {
+      isLoadingBanners.value = false;
+    }
   }
 
   Future<void> fetchGodCategories() async {

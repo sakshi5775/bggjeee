@@ -10,6 +10,9 @@ import 'package:astrobharataiuser/screens/face_reading/widgets/scanner_overlay.d
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -37,8 +40,10 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
   void initState() {
     super.initState();
 
-    // Initialize controller - use put to ensure it exists
-    controller = Get.put(FaceReadingController(), permanent: false);
+    // Reuse existing controller to preserve form data
+    controller = Get.isRegistered<FaceReadingController>()
+        ? Get.find<FaceReadingController>()
+        : Get.put(FaceReadingController(), permanent: false);
 
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 800),
@@ -194,10 +199,12 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Stack(
+        body: Column(
           children: [
-            // Back button - hidden as per user request
-
+            const CommonHeader(title: 'Face Scanning', showEndDrawer: false),
+            Expanded(
+              child: Stack(
+                children: [
             // Main content
             Center(
               child: Obx(() {
@@ -236,6 +243,9 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
                     )
                   : const SizedBox.shrink();
             }),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -272,13 +282,21 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
                 ),
               ),
               Spacing.h(24),
-              Container(
+                Container(
                 decoration: BoxDecoration(
                   gradient: AppColors.orangeGradient,
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: ElevatedButton(
-                  onPressed: () => Get.back(),
+                  onPressed: () {
+                    // Clear error and image so upload view shows fresh options
+                    controller.errorMessage.value = '';
+                    controller.selectedImage.value = null;
+                    // Pop back to the upload screen in the nested tab navigator
+                    UserMainController.popUntilInCurrentTab(
+                      ModalRoute.withName(AppRoutes.faceReadingUpload),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     foregroundColor: Colors.white,

@@ -23,6 +23,7 @@ class AllFestivalView extends GetView<AllFestivalController> {
         backgroundColor: Colors.transparent,
         // endDrawer: const CommonEndDrawer(),
         body: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               // ── Header ──

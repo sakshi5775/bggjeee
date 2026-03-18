@@ -60,9 +60,12 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
           ),
           // Spacing.h(2),
           // Carousel Section: cards + dots below the white card
+          // Height is driven by the image aspect ratio (~16:9 → portrait
+          // puja images are typically square-ish).  Use 200 logical pixels
+          // so the full image is visible without cropping.
           ConstrainedBox(
             constraints: BoxConstraints(
-              maxHeight: Get.width > 600 ? 190.h : 170.h,
+              maxHeight: Get.width > 600 ? 220.h : 200.h,
             ),
             child: Obx(() {
               if (controller.isLoadingPujas.value) {
@@ -362,89 +365,84 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                       ),
                     ),
                   ),
-                  // Content beside image – fits card height driven by image
+                  // Content beside image
                   Expanded(
                     child: Padding(
-                      padding: EdgeInsets.fromLTRB(8.w, 5.h, 10.w, 5.h),
+                      padding: EdgeInsets.fromLTRB(8.w, 8.h, 10.w, 8.h),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              AutoTranslateText(
-                                puja.title ?? 'Pooja',
-                                style: TextStyle(
-                                  color: const Color(0xFF2D1810),
-                                  fontSize: 13.sp,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: -0.2,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              SizedBox(height: 1.h),
-                              AutoTranslateText(
-                                puja.subheading ??
-                                    puja.longDescription ??
-                                    'Divine blessings & spiritual fulfillment',
-                                style: TextStyle(
-                                  color: const Color(0xFF8A8A8A),
-                                  fontSize: 9.sp,
-                                  height: 1.25,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              SizedBox(height: 2.h),
-                              Row(
-                                children: [
-                                  _buildPujaChip(
-                                    icon: Icons.schedule_rounded,
-                                    label: duration,
-                                    color: const Color(0xFF5C6BC0),
-                                  ),
-                                  if (totalBookings != null &&
-                                      totalBookings > 0) ...[
-                                    SizedBox(width: 6.w),
-                                    _buildPujaChip(
-                                      icon: Icons.people_alt_rounded,
-                                      label: '$totalBookings+ booked',
-                                      color: const Color(0xFF26A69A),
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ],
+                          AutoTranslateText(
+                            puja.title ?? 'Pooja',
+                            style: TextStyle(
+                              color: const Color(0xFF2D1810),
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: -0.2,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
                           ),
                           SizedBox(height: 2.h),
+                          AutoTranslateText(
+                            puja.subheading ??
+                                puja.longDescription ??
+                                'Divine blessings & spiritual fulfillment',
+                            style: TextStyle(
+                              color: const Color(0xFF8A8A8A),
+                              fontSize: 9.sp,
+                              height: 1.25,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 4.h),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _buildPujaChip(
+                                icon: Icons.schedule_rounded,
+                                label: duration,
+                                color: const Color(0xFF5C6BC0),
+                              ),
+                              if (totalBookings != null &&
+                                  totalBookings > 0) ...[
+                                SizedBox(width: 6.w),
+                                _buildPujaChip(
+                                  icon: Icons.people_alt_rounded,
+                                  label: '$totalBookings+ booked',
+                                  color: const Color(0xFF26A69A),
+                                ),
+                              ],
+                            ],
+                          ),
+                          SizedBox(height: 44.h),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
                                     'Starts from',
                                     style: TextStyle(
                                       color: const Color(0xFFAAAAAA),
-                                      fontSize: 7.sp,
+                                      fontSize: 8.sp,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                  SizedBox(height: 0),
                                   Text(
                                     minPrice != null
                                         ? '₹${minPrice.toInt()}'
                                         : 'Free',
                                     style: TextStyle(
                                       color: const Color(0xFF2D1810),
-                                      fontSize: 13.sp,
+                                      fontSize: 16.sp,
                                       fontWeight: FontWeight.w800,
                                       letterSpacing: -0.5,
                                     ),
@@ -467,8 +465,8 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                                 },
                                 child: Container(
                                   padding: EdgeInsets.symmetric(
-                                    horizontal: 12.w,
-                                    vertical: 5.h,
+                                    horizontal: 14.w,
+                                    vertical: 8.h,
                                   ),
                                 decoration: BoxDecoration(
                                   gradient: AppColors.orangeGradient,
@@ -490,15 +488,15 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                                       'Book Now',
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 11.sp,
+                                        fontSize: 12.sp,
                                         fontWeight: FontWeight.w700,
                                         letterSpacing: 0.3,
                                       ),
                                     ),
-                                    SizedBox(width: 3.w),
+                                    SizedBox(width: 4.w),
                                     Icon(
                                       Icons.arrow_forward_rounded,
-                                      size: 12.r,
+                                      size: 13.r,
                                       color: Colors.white,
                                     ),
                                   ],

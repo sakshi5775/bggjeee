@@ -15,6 +15,7 @@ class RefundPolicyView extends StatelessWidget {
         backgroundColor: Colors.transparent,
         // endDrawer: const CommonEndDrawer(),
         body: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               const CommonHeader(title: 'Refund Policy'),

@@ -1,5 +1,6 @@
 import 'package:astrobharataiuser/apihelper/api_provider/api_provider.dart';
 import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
+import 'package:astrobharataiuser/apihelper/utils/port_fallback_helper.dart';
 import 'package:astrobharataiuser/core/base/api_helper_mixin.dart';
 import 'package:astrobharataiuser/screens/navtara/model/navtara_models.dart';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
@@ -82,17 +83,16 @@ class NavtaraService with ApiHelperMixin {
     Duration? timeout,
   }) async {
     try {
-      // Use port 8002 directly for Navtara compatibility API
-      const String baseUrl = 'http://3.109.91.254:8002';
-      final uri = Uri.parse('$baseUrl/api/users/navtara/compatibility');
+      // Try 8000/api/users first, fallback to 8002
+      const String navtaraPath = '/api/users/navtara/compatibility';
 
       // Normalize nakshatra names to API-expected format
       final normalizedNakshatra1 = NakshatraNameNormalizer.normalize(nakshatra1);
       final normalizedNakshatra2 = NakshatraNameNormalizer.normalize(nakshatra2);
-      
+
       debugPrint('Original nakshatras: $nakshatra1, $nakshatra2');
       debugPrint('Normalized nakshatras: $normalizedNakshatra1, $normalizedNakshatra2');
-      
+
       final Map<String, dynamic> body = {
         'person1': {'name': name1 ?? 'Person 1', 'janmaNakshatra': normalizedNakshatra1},
         'person2': {'name': name2 ?? 'Person 2', 'janmaNakshatra': normalizedNakshatra2},
@@ -101,32 +101,39 @@ class NavtaraService with ApiHelperMixin {
       if (language != null) body['language'] = language;
 
       debugPrint('Navtara Compatibility Request: $body');
-      debugPrint('Navtara Compatibility URL: $uri');
 
       // Get authorization token
       final currentToken = UserData().accessToken?.trim();
-
+      final headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        if (currentToken != null && currentToken.isNotEmpty)
+          'Authorization': 'Bearer $currentToken',
+      };
+      final encodedBody = json.encode(body);
       // Backend typically takes 2–3 minutes; use a long timeout so the request is not cut off
       final effectiveTimeout = timeout ?? const Duration(minutes: 5);
-      final response = await http
-          .post(
-            uri,
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              if (currentToken != null && currentToken.isNotEmpty)
-                'Authorization': 'Bearer $currentToken',
-            },
-            body: json.encode(body),
-          )
-          .timeout(
-            effectiveTimeout,
-            onTimeout: () {
-              lastCompatibilityErrorMessage =
-                  'The analysis is taking longer than expected. Please try again.';
-              throw Exception('Request timeout');
-            },
-          );
+
+      debugPrint('Navtara Compatibility URL (primary): ${PortFallbackHelper.usersApiPrimary}$navtaraPath');
+
+      final response = await PortFallbackHelper.callWithFallback(
+        primary: () => http
+            .post(Uri.parse('${PortFallbackHelper.usersApiPrimary}$navtaraPath'),
+                headers: headers, body: encodedBody)
+            .timeout(effectiveTimeout, onTimeout: () {
+          lastCompatibilityErrorMessage =
+              'The analysis is taking longer than expected. Please try again.';
+          throw Exception('Request timeout');
+        }),
+        fallback: () => http
+            .post(Uri.parse('${PortFallbackHelper.usersApiFallback}$navtaraPath'),
+                headers: headers, body: encodedBody)
+            .timeout(effectiveTimeout, onTimeout: () {
+          lastCompatibilityErrorMessage =
+              'The analysis is taking longer than expected. Please try again.';
+          throw Exception('Request timeout');
+        }),
+      );
 
       debugPrint('Navtara Compatibility Response Code: ${response.statusCode}');
       debugPrint('Navtara Compatibility Response Body: ${response.body}');

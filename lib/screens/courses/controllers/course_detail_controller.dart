@@ -20,8 +20,11 @@ class CourseDetailController extends BaseController {
 
   CourseDetailController({required this.courseId}) {}
 
+  final ScrollController scrollController = ScrollController();
+
   @override
   void onClose() {
+    scrollController.dispose();
     _razorpayService.dispose();
     super.onClose();
   }

@@ -1,4 +1,6 @@
 import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/data_model/banner_model.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/service/banner_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../data_model/e_mandir_wallpaper_model.dart';
@@ -29,10 +31,12 @@ class EMandirWallpaperController extends BaseController {
   final RxList<WallpaperItem> wallpapers = <WallpaperItem>[].obs;
   final RxList<DailyThoughtItem> dailyThoughts = <DailyThoughtItem>[].obs;
   final RxList<FestivalModel> festivals = <FestivalModel>[].obs;
+  final RxList<BannerItem> banners = <BannerItem>[].obs;
   GodCategory? currentCategory;
   final ScrollController filterScrollController = ScrollController();
 
   final EMandirHomeService _homeService = Get.put(EMandirHomeService());
+  final BannerService _bannerService = BannerService();
 
   @override
   void onInit() {
@@ -48,6 +52,12 @@ class EMandirWallpaperController extends BaseController {
       }
     }
     fetchContent();
+    loadBanners();
+  }
+
+  Future<void> loadBanners() async {
+    final list = await _bannerService.getBannersWithFallback(['appsrimandir']);
+    banners.assignAll(list);
   }
 
   @override

@@ -1,8 +1,6 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
 import 'package:astrobharataiuser/core/services/analytics_service.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -11,7 +9,6 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
 class AllServicesView extends StatelessWidget {
   const AllServicesView({super.key});
@@ -24,18 +21,16 @@ class AllServicesView extends StatelessWidget {
         backgroundColor: Colors.transparent,
         // endDrawer: const CommonEndDrawer(),
         body: SafeArea(
+          top: false,
           bottom: false,
           child: Column(
             children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: const CommonHeader(
-                  title: 'All Services',
-                  showDrawer: false,
-                  showBackButton: true,
-                  showWallet: true,
-                  showCart: true,
-                ),
+              const CommonHeader(
+                title: 'All Services',
+                showDrawer: false,
+                showBackButton: true,
+                showWallet: true,
+                showCart: true,
               ),
               Expanded(
                 child: SingleChildScrollView(
@@ -45,8 +40,7 @@ class AllServicesView extends StatelessWidget {
                       left: 16.w,
                       right: 16.w,
                       top: 16.h,
-                      bottom:
-                          16.h + 70.h + MediaQuery.of(context).padding.bottom,
+                      bottom: 16.h,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -285,49 +279,41 @@ class AllServicesView extends StatelessWidget {
         'label': 'Face Reading',
         'route': AppRoutes.faceReading,
         'icon': faceUrl,
-        'pricingKey': 'face_reading',
       },
       {
         'label': 'Palm Reading',
         'route': AppRoutes.palmReading,
         'icon': palmUrl,
-        'pricingKey': 'palmistry',
       },
       {
         'label': 'Vastu Reading',
         'route': AppRoutes.vastuDashboard,
         'icon': vastuUrl,
-        'pricingKey': 'vastu_reading',
       },
       {
         'label': 'Ramal Shastra',
         'route': AppRoutes.ramalShastra,
         'icon': ramalUrl,
-        'pricingKey': 'ramal_shastra',
       },
       {
         'label': 'Writing Astrology',
         'route': AppRoutes.handwritingAstrology,
         'icon': writingUrl,
-        'pricingKey': 'handwriting_analysis',
       },
       {
         'label': 'Prashna Kundli',
         'route': AppRoutes.prashnaKundali,
         'icon': prashnaUrl,
-        'pricingKey': 'prashna_kundali',
       },
       {
         'label': 'Tarot Reading',
         'route': AppRoutes.tarotReading,
         'icon': tarotUrl,
-        'pricingKey': 'tarot_reading',
       },
       {
         'label': 'Carrot Astrology',
         'route': AppRoutes.carrotAstrology,
         'icon': carrotUrl,
-        'pricingKey': 'carrot_astrology',
       },
     ];
 
@@ -344,7 +330,6 @@ class AllServicesView extends StatelessWidget {
                 label: s['label']!,
                 route: s['route']!,
                 iconUrl: s['icon']!,
-                pricingKey: s['pricingKey'],
               ),
             );
           }).toList(),
@@ -357,7 +342,6 @@ class AllServicesView extends StatelessWidget {
     required String label,
     required String route,
     required String iconUrl,
-    String? pricingKey,
   }) {
     final isNetworkUrl = iconUrl.startsWith('http');
     return GestureDetector(
@@ -401,62 +385,20 @@ class AllServicesView extends StatelessWidget {
             ),
             SizedBox(width: 10.w),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  AutoTranslateText(
-                    label,
-                    style: AppTypography.body2.copyWith(
-                      color: AppColors.textColorMaroon,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  if (pricingKey != null && pricingKey.isNotEmpty)
-                    _buildPriceTag(pricingKey),
-                ],
+              child: AutoTranslateText(
+                label,
+                style: AppTypography.body2.copyWith(
+                  color: AppColors.textColorMaroon,
+                  fontWeight: FontWeight.w600,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
         ),
       ),
     );
-  }
-
-  Widget _buildPriceTag(String pricingKey) {
-    if (!Get.isRegistered<AiPricingController>()) {
-      return const SizedBox.shrink();
-    }
-    return Obx(() {
-      final controller = Get.find<AiPricingController>();
-      final pricing = controller.getPricingFor(pricingKey);
-      if (pricing == null) return const SizedBox.shrink();
-      final price = controller.getDisplayPrice(pricingKey);
-      if (price.isEmpty) return const SizedBox.shrink();
-      return Padding(
-        padding: EdgeInsets.only(top: 4.h),
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: ['#FF6B35'.toColor(), '#F38B3B'.toColor()],
-            ),
-            borderRadius: BorderRadius.circular(6.r),
-          ),
-          child: Text(
-            price,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 10.sp,
-              fontWeight: FontWeight.w700,
-              fontFamily: 'Poppins',
-            ),
-          ),
-        ),
-      );
-    });
   }
 
   Widget _buildPlaceholderIcon() {

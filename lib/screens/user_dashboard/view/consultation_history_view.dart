@@ -201,7 +201,7 @@ class _ChatHistoryTab extends StatelessWidget {
             left: 16.w,
             right: 16.w,
             top: 16.h,
-            bottom: 16.h + 70.h + MediaQuery.of(context).padding.bottom,
+            bottom: 16.h,
           ),
           itemCount:
               list.length +
@@ -526,7 +526,7 @@ class _CallHistoryTab extends StatelessWidget {
             left: 16.w,
             right: 16.w,
             top: 16.h,
-            bottom: 16.h + 70.h + MediaQuery.of(context).padding.bottom,
+            bottom: 16.h,
           ),
           itemCount: itemsCount,
           itemBuilder: (context, index) {
