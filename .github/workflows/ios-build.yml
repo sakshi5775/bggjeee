@@ -50,15 +50,13 @@ jobs:
       - name: Flutter pub get
         run: flutter pub get
 
-      - name: CocoaPods install (with retry)
+      - name: Install CocoaPods properly
         run: |
           set -e
+          sudo gem install cocoapods
           cd ios
-          pod install --repo-update || {
-            echo "pod install failed. Installing/repairing CocoaPods..."
-            sudo gem install cocoapods
-            pod install --repo-update
-          }
+          pod repo update
+          pod install --repo-update
 
       - name: Verify GoogleService-Info.plist
         run: |
@@ -74,6 +72,18 @@ jobs:
 
           mkdir -p "$(dirname "$ARCHIVE_PATH")"
 
+          APP_VERSION_NAME=$(python3 - <<'PY'
+import re
+txt=open('pubspec.yaml','r',encoding='utf-8').read()
+m=re.search(r'^version:\\s*([^\\n]+)$',txt, re.M)
+if not m:
+    raise SystemExit("Could not find version in pubspec.yaml")
+v=m.group(1).strip()
+# pubspec version looks like 1.0.1+59; we want only 1.0.1
+print(v.split('+')[0])
+PY
+          )
+
           xcodebuild \
             -workspace "$IOS_WORKSPACE" \
             -scheme "$IOS_SCHEME" \
@@ -84,9 +94,24 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             DEVELOPMENT_TEAM="" \
             COMPILER_INDEX_STORE_ENABLE=NO \
+            MARKETING_VERSION="$APP_VERSION_NAME" \
             CURRENT_PROJECT_VERSION=${{ github.run_number }}
 
           test -d "$DSYM_PATH"
+
+      - name: Debug archive version + dSYM folder
+        run: |
+          set -e
+          ARCHIVE_PATH="ios/build/Runner.xcarchive"
+          DSYM_PATH="ios/build/Runner.xcarchive/dSYMs"
+          echo "CFBundleShortVersionString:"
+          /usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$ARCHIVE_PATH/Info.plist" || true
+          echo "CFBundleVersion (build number):"
+          /usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$ARCHIVE_PATH/Info.plist" || true
+          echo "Listing dSYMs:"
+          ls -la "$DSYM_PATH"
+          # Print one dSYM sample if present
+          ls -la "$DSYM_PATH"/*.dSYM 2>/dev/null || true
 
       - name: Upload dSYM as GitHub artifact (backup)
         if: always()
@@ -96,40 +121,17 @@ jobs:
           path: ios/build/Runner.xcarchive/dSYMs
           if-no-files-found: error
 
-      - name: Upload dSYMs to Firebase Crashlytics
+      - name: Check upload-symbols exists
         run: |
           set -e
+          ls -la ios/Pods/FirebaseCrashlytics
+          test -f ios/Pods/FirebaseCrashlytics/upload-symbols
 
-          DSYM_PATH="ios/build/Runner.xcarchive/dSYMs"
-          GSP_PATH="ios/Runner/GoogleService-Info.plist"
-          UPLOAD_SYMBOLS_SCRIPT="ios/Pods/FirebaseCrashlytics/upload-symbols"
-
-          IOS_APP_ID=$(/usr/libexec/PlistBuddy -c "Print :GOOGLE_APP_ID" "$GSP_PATH" || true)
-          if [ -z "$IOS_APP_ID" ]; then
-            echo "Could not read GOOGLE_APP_ID from $GSP_PATH"
-            exit 1
-          fi
-
-          if [ -f "$UPLOAD_SYMBOLS_SCRIPT" ]; then
-            echo "Uploading using upload-symbols script..."
-            chmod +x "$UPLOAD_SYMBOLS_SCRIPT"
-            "$UPLOAD_SYMBOLS_SCRIPT" -gsp "$GSP_PATH" -p ios "$DSYM_PATH" || {
-              echo "upload-symbols failed; will fall back to firebase-tools"
-            }
-          else
-            echo "upload-symbols script not found at: $UPLOAD_SYMBOLS_SCRIPT"
-          fi
-
-          if [ -z "$FIREBASE_TOKEN" ]; then
-            echo "FIREBASE_TOKEN secret is missing. Cannot upload symbols to Crashlytics."
-            exit 1
-          fi
-
-          if ! command -v firebase >/dev/null 2>&1; then
-            echo "Installing firebase-tools..."
-            npm i -g firebase-tools
-          fi
-
-          echo "Uploading using firebase-tools..."
-          firebase crashlytics:symbols:upload --app "$IOS_APP_ID" "$DSYM_PATH" --debug
+      - name: Upload dSYM to Firebase Crashlytics
+        run: |
+          set -euo pipefail
+          chmod +x ios/Pods/FirebaseCrashlytics/upload-symbols
+          ios/Pods/FirebaseCrashlytics/upload-symbols \
+            -gsp ios/Runner/GoogleService-Info.plist \
+            -p ios ios/build/Runner.xcarchive/dSYMs
 
