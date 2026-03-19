@@ -5,6 +5,10 @@ on:
     branches: [main]
   workflow_dispatch:
 
+env:
+  # Avoid Node.js 20 deprecation warning (actions will use Node 24)
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   android:
     name: Android Release APK
@@ -48,6 +52,7 @@ jobs:
     name: iOS Release Archive + dSYM Upload
     runs-on: macos-latest
     env:
+      # Required for Crashlytics to accept dSYM uploads (create token: Firebase Console > Project Settings > Service accounts > Generate new private key)
       FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
       # Set DEVELOPMENT_TEAM in repo secrets if archive fails with code-signing errors
       DEVELOPMENT_TEAM: ${{ secrets.DEVELOPMENT_TEAM }}
@@ -64,6 +69,14 @@ jobs:
 
       - name: Flutter pub get
         run: flutter pub get
+
+      - name: Cache CocoaPods
+        uses: actions/cache@v4
+        with:
+          path: ios/Pods
+          key: pods-${{ runner.os }}-${{ hashFiles('ios/Podfile', 'pubspec.lock') }}
+          restore-keys: |
+            pods-${{ runner.os }}-
 
       - name: Generate Flutter iOS config (required before pod install)
         run: flutter build ios --config-only --release --no-codesign
@@ -177,15 +190,26 @@ jobs:
           if-no-files-found: warn
 
       - name: Locate upload-symbols and upload dSYM to Crashlytics
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
         run: |
           set -euo pipefail
-          DSYM_DIR="ios/build/Runner.xcarchive/dSYMs"
+          ARCHIVE_PATH="ios/build/Runner.xcarchive"
           GSP="ios/Runner/GoogleService-Info.plist"
 
-          if [[ ! -d "$DSYM_DIR" ]] || [[ -z "$(ls -A "$DSYM_DIR" 2>/dev/null)" ]]; then
-            echo "::warning::dSYM directory missing or empty; skipping Crashlytics upload."
+          if [[ ! -d "$ARCHIVE_PATH" ]]; then
+            echo "::warning::Archive missing; skipping Crashlytics upload."
             exit 0
           fi
+
+          # Find all dSYMs (Runner.app, App.framework, Flutter.framework, etc.) inside the archive
+          DSYM_LIST=$(find "$ARCHIVE_PATH" -name "*.dSYM" -type d 2>/dev/null || true)
+          if [[ -z "$DSYM_LIST" ]]; then
+            echo "::warning::No dSYM files found in archive; skipping Crashlytics upload."
+            exit 0
+          fi
+          echo "Found dSYMs to upload:"
+          echo "$DSYM_LIST"
 
           UPLOAD_SYMBOLS=$(find ios/Pods -name 'upload-symbols' -type f 2>/dev/null | head -1)
           if [[ -z "$UPLOAD_SYMBOLS" || ! -f "$UPLOAD_SYMBOLS" ]]; then
@@ -197,12 +221,15 @@ jobs:
           echo "Using: $UPLOAD_SYMBOLS"
 
           if [[ -z "$FIREBASE_TOKEN" ]]; then
-            echo "::warning::FIREBASE_TOKEN secret not set; Crashlytics upload may fail."
+            echo "::warning::FIREBASE_TOKEN secret not set; add it in repo Settings > Secrets for Crashlytics to accept uploads."
           fi
 
-          "$UPLOAD_SYMBOLS" \
-            -gsp "$GSP" \
-            -p ios \
-            "$DSYM_DIR"
-          echo "Crashlytics dSYM upload finished."
+          # Upload each dSYM so Crashlytics can symbolicate all crashes (Runner + App + Flutter frameworks)
+          COUNT=0
+          while IFS= read -r dsym; do
+            [[ -z "$dsym" ]] && continue
+            echo "Uploading: $dsym"
+            "$UPLOAD_SYMBOLS" -gsp "$GSP" -p ios "$dsym" && COUNT=$((COUNT + 1)) || true
+          done <<< "$DSYM_LIST"
+          echo "Crashlytics dSYM upload finished ($COUNT dSYM(s) uploaded)."
 

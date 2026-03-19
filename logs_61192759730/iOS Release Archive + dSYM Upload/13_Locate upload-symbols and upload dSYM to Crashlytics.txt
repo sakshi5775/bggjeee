@@ -1,0 +1,54 @@
+﻿2026-03-19T06:55:51.9965190Z ##[group]Run set -euo pipefail
+2026-03-19T06:55:51.9965530Z [36;1mset -euo pipefail[0m
+2026-03-19T06:55:51.9965750Z [36;1mDSYM_DIR="ios/build/Runner.xcarchive/dSYMs"[0m
+2026-03-19T06:55:51.9966020Z [36;1mGSP="ios/Runner/GoogleService-Info.plist"[0m
+2026-03-19T06:55:51.9966250Z [36;1m[0m
+2026-03-19T06:55:51.9966460Z [36;1mif [[ ! -d "$DSYM_DIR" ]] || [[ -z "$(ls -A "$DSYM_DIR" 2>/dev/null)" ]]; then[0m
+2026-03-19T06:55:51.9966860Z [36;1m  echo "::warning::dSYM directory missing or empty; skipping Crashlytics upload."[0m
+2026-03-19T06:55:51.9967190Z [36;1m  exit 0[0m
+2026-03-19T06:55:51.9967320Z [36;1mfi[0m
+2026-03-19T06:55:51.9967520Z [36;1m[0m
+2026-03-19T06:55:51.9967790Z [36;1mUPLOAD_SYMBOLS=$(find ios/Pods -name 'upload-symbols' -type f 2>/dev/null | head -1)[0m
+2026-03-19T06:55:51.9968250Z [36;1mif [[ -z "$UPLOAD_SYMBOLS" || ! -f "$UPLOAD_SYMBOLS" ]]; then[0m
+2026-03-19T06:55:51.9968650Z [36;1m  echo "::error::upload-symbols not found under ios/Pods"[0m
+2026-03-19T06:55:51.9969030Z [36;1m  find ios/Pods -type f -name '*.py' 2>/dev/null | head -5 || true[0m
+2026-03-19T06:55:51.9969330Z [36;1m  exit 1[0m
+2026-03-19T06:55:51.9969470Z [36;1mfi[0m
+2026-03-19T06:55:51.9969600Z [36;1mchmod +x "$UPLOAD_SYMBOLS"[0m
+2026-03-19T06:55:51.9969800Z [36;1mecho "Using: $UPLOAD_SYMBOLS"[0m
+2026-03-19T06:55:51.9969970Z [36;1m[0m
+2026-03-19T06:55:51.9970120Z [36;1mif [[ -z "$FIREBASE_TOKEN" ]]; then[0m
+2026-03-19T06:55:51.9970450Z [36;1m  echo "::warning::FIREBASE_TOKEN secret not set; Crashlytics upload may fail."[0m
+2026-03-19T06:55:51.9970740Z [36;1mfi[0m
+2026-03-19T06:55:51.9970850Z [36;1m[0m
+2026-03-19T06:55:51.9971000Z [36;1m"$UPLOAD_SYMBOLS" \[0m
+2026-03-19T06:55:51.9971170Z [36;1m  -gsp "$GSP" \[0m
+2026-03-19T06:55:51.9971320Z [36;1m  -p ios \[0m
+2026-03-19T06:55:51.9971470Z [36;1m  "$DSYM_DIR"[0m
+2026-03-19T06:55:51.9971860Z [36;1mecho "Crashlytics dSYM upload finished."[0m
+2026-03-19T06:55:52.0029330Z shell: /bin/bash -e {0}
+2026-03-19T06:55:52.0029490Z env:
+2026-03-19T06:55:52.0029650Z   FIREBASE_TOKEN: 
+2026-03-19T06:55:52.0029790Z   DEVELOPMENT_TEAM: 
+2026-03-19T06:55:52.0030050Z   FLUTTER_ROOT: /Users/runner/hostedtoolcache/flutter/stable-3.41.5-arm64
+2026-03-19T06:55:52.0030380Z   PUB_CACHE: /Users/runner/.pub-cache
+2026-03-19T06:55:52.0030570Z ##[endgroup]
+2026-03-19T06:55:52.1614500Z Using: ios/Pods/FirebaseCrashlytics/upload-symbols
+2026-03-19T06:55:52.1632080Z ##[warning]FIREBASE_TOKEN secret not set; Crashlytics upload may fail.
+2026-03-19T06:56:16.1588410Z Successfully submitted symbols for architecture arm64 with UUID 0485bb83574130c1872584ececd4fb67 in dSYM: /Users/runner/work/bggjeee/bggjeee/ios/build/Runner.xcarchive/dSYMs/OneSignalOutcomes.framework.dSYM/Contents/Resources/DWARF/OneSignalOutcomes
+2026-03-19T06:56:16.1601150Z Successfully submitted symbols for architecture arm64 with UUID 80507f88e0513555ba2c5f65f2c61dfb in dSYM: /Users/runner/work/bggjeee/bggjeee/ios/build/Runner.xcarchive/dSYMs/OneSignalExtension.framework.dSYM/Contents/Resources/DWARF/OneSignalExtension
+2026-03-19T06:56:16.1603320Z Successfully submitted symbols for architecture arm64 with UUID 85385d18371a391480de3ad34fb26e51 in dSYM: /Users/runner/work/bggjeee/bggjeee/ios/build/Runner.xcarchive/dSYMs/OneSignalOSCore.framework.dSYM/Contents/Resources/DWARF/OneSignalOSCore
+2026-03-19T06:56:16.1605080Z Successfully submitted symbols for architecture arm64 with UUID b070594563fc3a2096e681fcb26eda71 in dSYM: /Users/runner/work/bggjeee/bggjeee/ios/build/Runner.xcarchive/dSYMs/OneSignalLocation.framework.dSYM/Contents/Resources/DWARF/OneSignalLocation
+2026-03-19T06:56:16.1606770Z Successfully submitted symbols for architecture arm64 with UUID 7a0f89d326c53e2988ab5fc4f19bbf28 in dSYM: /Users/runner/work/bggjeee/bggjeee/ios/build/Runner.xcarchive/dSYMs/OneSignalCore.framework.dSYM/Contents/Resources/DWARF/OneSignalCore
+2026-03-19T06:56:16.1618280Z Successfully submitted symbols for architecture arm64 with UUID c5fdf6e1a4e936df99abd54ad0210c23 in dSYM: /Users/runner/work/bggjeee/bggjeee/ios/build/Runner.xcarchive/dSYMs/OneSignalNotifications.framework.dSYM/Contents/Resources/DWARF/OneSignalNotifications
+2026-03-19T06:56:16.1623050Z Successfully submitted symbols for architecture arm64 with UUID 916e823ce16c39c9ba2892106819c9e4 in dSYM: /Users/runner/work/bggjeee/bggjeee/ios/build/Runner.xcarchive/dSYMs/OneSignalLiveActivities.framework.dSYM/Contents/Resources/DWARF/OneSignalLiveActivities
+2026-03-19T06:56:16.1626340Z Successfully submitted symbols for architecture arm64 with UUID c430034b9d5a3c339c3bc63efd9422a5 in dSYM: /Users/runner/work/bggjeee/bggjeee/ios/build/Runner.xcarchive/dSYMs/OneSignalUser.framework.dSYM/Contents/Resources/DWARF/OneSignalUser
+2026-03-19T06:56:16.1629380Z Successfully submitted symbols for architecture arm64 with UUID 4efdba223dde3cdbb81912670eca3c18 in dSYM: /Users/runner/work/bggjeee/bggjeee/ios/build/Runner.xcarchive/dSYMs/RazorpayCore.framework.dSYM/Contents/Resources/DWARF/RazorpayCore
+2026-03-19T06:56:16.1632180Z Successfully submitted symbols for architecture arm64 with UUID c47f67072eec331cb571655d49e14c80 in dSYM: /Users/runner/work/bggjeee/bggjeee/ios/build/Runner.xcarchive/dSYMs/App.framework.dSYM/Contents/Resources/DWARF/App
+2026-03-19T06:56:16.1633670Z Successfully submitted symbols for architecture arm64 with UUID 74229d2d9a3134aba97b8a98a6125b43 in dSYM: /Users/runner/work/bggjeee/bggjeee/ios/build/Runner.xcarchive/dSYMs/OneSignalFramework.framework.dSYM/Contents/Resources/DWARF/OneSignalFramework
+2026-03-19T06:56:16.1635180Z Successfully submitted symbols for architecture arm64 with UUID 2cf2a02e0b933934ba6f92aaefef8bdc in dSYM: /Users/runner/work/bggjeee/bggjeee/ios/build/Runner.xcarchive/dSYMs/Runner.app.dSYM/Contents/Resources/DWARF/Runner
+2026-03-19T06:56:16.1636650Z Successfully submitted symbols for architecture arm64 with UUID 4c4c441d55553144a19330365948c2bb in dSYM: /Users/runner/work/bggjeee/bggjeee/ios/build/Runner.xcarchive/dSYMs/Flutter.framework.dSYM/Contents/Resources/DWARF/Flutter
+2026-03-19T06:56:16.1642730Z Successfully submitted symbols for architecture arm64 with UUID 54d8be0d81bb3adbb873df8e9f365aaa in dSYM: /Users/runner/work/bggjeee/bggjeee/ios/build/Runner.xcarchive/dSYMs/OneSignalInAppMessages.framework.dSYM/Contents/Resources/DWARF/OneSignalInAppMessages
+2026-03-19T06:56:16.1644320Z Successfully submitted symbols for architecture arm64 with UUID 5694c76bb0b53c3f9ef6f5c9edbede21 in dSYM: /Users/runner/work/bggjeee/bggjeee/ios/build/Runner.xcarchive/dSYMs/RazorpayStandard.framework.dSYM/Contents/Resources/DWARF/RazorpayStandard
+2026-03-19T06:56:16.1646490Z [32mSuccessfully uploaded Crashlytics symbols[0m
+2026-03-19T06:56:16.1711640Z Crashlytics dSYM upload finished.

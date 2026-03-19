@@ -1,0 +1,10 @@
+﻿2026-03-19T06:46:31.9800040Z ##[group]Run FLUTTER_ROOT=$(dirname $(dirname $(which flutter)))
+2026-03-19T06:46:31.9800514Z [36;1mFLUTTER_ROOT=$(dirname $(dirname $(which flutter)))[0m
+2026-03-19T06:46:31.9800944Z [36;1mecho "flutter.sdk=$FLUTTER_ROOT" >> android/local.properties[0m
+2026-03-19T06:46:31.9850429Z shell: /usr/bin/bash -e {0}
+2026-03-19T06:46:31.9850678Z env:
+2026-03-19T06:46:31.9850974Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-19T06:46:31.9851479Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-19T06:46:31.9851923Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.41.5-x64
+2026-03-19T06:46:31.9852255Z   PUB_CACHE: /home/runner/.pub-cache
+2026-03-19T06:46:31.9852496Z ##[endgroup]
