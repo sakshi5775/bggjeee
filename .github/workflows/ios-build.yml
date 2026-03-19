@@ -197,11 +197,28 @@ jobs:
           echo "Collected dSYMs:"
           ls -la "$DSYM_OUT" 2>/dev/null || true
 
+      - name: Create dsym.zip for manual upload
+        run: |
+          if [[ -d "ios/build/dSYMs_collected" ]] && [[ -n "$(ls -A ios/build/dSYMs_collected 2>/dev/null)" ]]; then
+            cd ios/build && zip -r ../../dsym.zip dSYMs_collected && cd ../..
+            echo "Created dsym.zip (use in Firebase Console > Crashlytics > dSYMs > Upload)."
+            ls -la dsym.zip
+          else
+            echo "::warning::No dSYMs collected; skipping dsym.zip."
+          fi
+
       - name: Upload dSYM as GitHub artifact (backup)
         uses: actions/upload-artifact@v4
         with:
           name: ios-dSYMs
           path: ios/build/dSYMs_collected
+          if-no-files-found: warn
+
+      - name: Upload dsym.zip (for manual Firebase upload)
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsym-zip-build-${{ github.run_number }}
+          path: dsym.zip
           if-no-files-found: warn
 
       - name: Locate upload-symbols and upload dSYM to Crashlytics
