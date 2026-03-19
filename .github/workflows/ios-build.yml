@@ -136,7 +136,8 @@ jobs:
               CURRENT_PROJECT_VERSION=${{ github.run_number }}
           fi
 
-          test -d "$DSYM_PATH"
+          test -d "$ARCHIVE_PATH" || { echo "::error::Archive not found at $ARCHIVE_PATH"; exit 1; }
+          if [[ ! -d "$DSYM_PATH" ]]; then echo "::warning::dSYM directory not found at $DSYM_PATH (can happen when building without code signing); later upload steps may skip."; fi
 
       - name: Debug archive version + dSYM folder
         run: |
@@ -148,7 +149,7 @@ jobs:
           echo "CFBundleVersion (build number):"
           /usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$ARCHIVE_PATH/Info.plist" || true
           echo "Listing dSYMs:"
-          ls -la "$DSYM_PATH"
+          ls -la "$DSYM_PATH" 2>/dev/null || echo "(dSYM folder missing or empty)"
           # Print one dSYM sample if present
           ls -la "$DSYM_PATH"/*.dSYM 2>/dev/null || true
 
@@ -176,6 +177,11 @@ jobs:
           set -euo pipefail
           DSYM_DIR="ios/build/Runner.xcarchive/dSYMs"
           GSP="ios/Runner/GoogleService-Info.plist"
+
+          if [[ ! -d "$DSYM_DIR" ]] || [[ -z "$(ls -A "$DSYM_DIR" 2>/dev/null)" ]]; then
+            echo "::warning::dSYM directory missing or empty; skipping Crashlytics upload."
+            exit 0
+          fi
 
           UPLOAD_SYMBOLS=$(find ios/Pods -name 'upload-symbols' -type f 2>/dev/null | head -1)
           if [[ -z "$UPLOAD_SYMBOLS" || ! -f "$UPLOAD_SYMBOLS" ]]; then

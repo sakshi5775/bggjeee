@@ -1,9 +1,0 @@
-﻿2026-03-18T22:35:19.6388090Z ##[group]Run test -f ios/Runner/GoogleService-Info.plist
-2026-03-18T22:35:19.6388560Z [36;1mtest -f ios/Runner/GoogleService-Info.plist[0m
-2026-03-18T22:35:19.6977580Z shell: /bin/bash -e {0}
-2026-03-18T22:35:19.6984180Z env:
-2026-03-18T22:35:19.6984390Z   FIREBASE_TOKEN: 
-2026-03-18T22:35:19.6984560Z   DEVELOPMENT_TEAM: 
-2026-03-18T22:35:19.6984870Z   FLUTTER_ROOT: /Users/runner/hostedtoolcache/flutter/stable-3.41.5-arm64
-2026-03-18T22:35:19.6985250Z   PUB_CACHE: /Users/runner/.pub-cache
-2026-03-18T22:35:19.6985490Z ##[endgroup]

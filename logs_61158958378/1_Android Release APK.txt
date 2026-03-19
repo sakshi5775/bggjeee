@@ -1,0 +1,479 @@
+﻿2026-03-18T22:53:50.9862667Z Current runner version: '2.332.0'
+2026-03-18T22:53:50.9886002Z ##[group]Runner Image Provisioner
+2026-03-18T22:53:50.9886961Z Hosted Compute Agent
+2026-03-18T22:53:50.9887594Z Version: 20260213.493
+2026-03-18T22:53:50.9888194Z Commit: 5c115507f6dd24b8de37d8bbe0bb4509d0cc0fa3
+2026-03-18T22:53:50.9888939Z Build Date: 2026-02-13T00:28:41Z
+2026-03-18T22:53:50.9889698Z Worker ID: {0231c9a9-4690-4b66-aff8-c847f66c3bde}
+2026-03-18T22:53:50.9890382Z Azure Region: westcentralus
+2026-03-18T22:53:50.9891369Z ##[endgroup]
+2026-03-18T22:53:50.9892865Z ##[group]Operating System
+2026-03-18T22:53:50.9893597Z Ubuntu
+2026-03-18T22:53:50.9894080Z 24.04.3
+2026-03-18T22:53:50.9894536Z LTS
+2026-03-18T22:53:50.9895047Z ##[endgroup]
+2026-03-18T22:53:50.9895560Z ##[group]Runner Image
+2026-03-18T22:53:50.9896094Z Image: ubuntu-24.04
+2026-03-18T22:53:50.9896687Z Version: 20260309.50.1
+2026-03-18T22:53:50.9897878Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260309.50/images/ubuntu/Ubuntu2404-Readme.md
+2026-03-18T22:53:50.9899389Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260309.50
+2026-03-18T22:53:50.9900257Z ##[endgroup]
+2026-03-18T22:53:50.9901735Z ##[group]GITHUB_TOKEN Permissions
+2026-03-18T22:53:50.9903698Z Contents: read
+2026-03-18T22:53:50.9904273Z Metadata: read
+2026-03-18T22:53:50.9904882Z Packages: read
+2026-03-18T22:53:50.9905421Z ##[endgroup]
+2026-03-18T22:53:50.9907407Z Secret source: Actions
+2026-03-18T22:53:50.9908233Z Prepare workflow directory
+2026-03-18T22:53:51.0257468Z Prepare all required actions
+2026-03-18T22:53:51.0296310Z Getting action download info
+2026-03-18T22:53:51.4445921Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+2026-03-18T22:53:51.5571685Z Download action repository 'actions/setup-java@v4' (SHA:c1e323688fd81a25caa38c78aa6df2d33d3e20d9)
+2026-03-18T22:53:53.8192936Z Download action repository 'subosito/flutter-action@v2' (SHA:0ca7a949e71ae44c8e688a51c5e7e93b2c87e295)
+2026-03-18T22:53:54.3290528Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-03-18T22:53:54.5584545Z Getting action download info
+2026-03-18T22:53:54.6986503Z Download action repository 'actions/cache@v5' (SHA:668228422ae6a00e4ad889ee87cd7109ec5666a7)
+2026-03-18T22:53:59.4758279Z Complete job name: Android Release APK
+2026-03-18T22:53:59.5430995Z ##[group]Run actions/checkout@v4
+2026-03-18T22:53:59.5431581Z with:
+2026-03-18T22:53:59.5431778Z   repository: sakshi5775/bggjeee
+2026-03-18T22:53:59.5432186Z   token: ***
+2026-03-18T22:53:59.5432368Z   ssh-strict: true
+2026-03-18T22:53:59.5432546Z   ssh-user: git
+2026-03-18T22:53:59.5432735Z   persist-credentials: true
+2026-03-18T22:53:59.5432947Z   clean: true
+2026-03-18T22:53:59.5433178Z   sparse-checkout-cone-mode: true
+2026-03-18T22:53:59.5433415Z   fetch-depth: 1
+2026-03-18T22:53:59.5433623Z   fetch-tags: false
+2026-03-18T22:53:59.5433810Z   show-progress: true
+2026-03-18T22:53:59.5433998Z   lfs: false
+2026-03-18T22:53:59.5434175Z   submodules: false
+2026-03-18T22:53:59.5434371Z   set-safe-directory: true
+2026-03-18T22:53:59.5434774Z ##[endgroup]
+2026-03-18T22:53:59.6516533Z Syncing repository: sakshi5775/bggjeee
+2026-03-18T22:53:59.6518196Z ##[group]Getting Git version info
+2026-03-18T22:53:59.6518778Z Working directory is '/home/runner/work/bggjeee/bggjeee'
+2026-03-18T22:53:59.6519397Z [command]/usr/bin/git version
+2026-03-18T22:53:59.6598734Z git version 2.53.0
+2026-03-18T22:53:59.6627134Z ##[endgroup]
+2026-03-18T22:53:59.6650445Z Temporarily overriding HOME='/home/runner/work/_temp/5d08084f-a92f-4a74-a2f6-555c3ffd0f0c' before making global git config changes
+2026-03-18T22:53:59.6652203Z Adding repository directory to the temporary git global config as a safe directory
+2026-03-18T22:53:59.6657253Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/bggjeee/bggjeee
+2026-03-18T22:53:59.6699343Z Deleting the contents of '/home/runner/work/bggjeee/bggjeee'
+2026-03-18T22:53:59.6703416Z ##[group]Initializing the repository
+2026-03-18T22:53:59.6708221Z [command]/usr/bin/git init /home/runner/work/bggjeee/bggjeee
+2026-03-18T22:53:59.6809571Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-03-18T22:53:59.6810499Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-03-18T22:53:59.6811687Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-03-18T22:53:59.6812375Z hint: call:
+2026-03-18T22:53:59.6812685Z hint:
+2026-03-18T22:53:59.6813349Z hint: 	git config --global init.defaultBranch <name>
+2026-03-18T22:53:59.6813850Z hint:
+2026-03-18T22:53:59.6814348Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-03-18T22:53:59.6815212Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-03-18T22:53:59.6815876Z hint:
+2026-03-18T22:53:59.6816197Z hint: 	git branch -m <name>
+2026-03-18T22:53:59.6816550Z hint:
+2026-03-18T22:53:59.6817094Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-03-18T22:53:59.6817699Z Initialized empty Git repository in /home/runner/work/bggjeee/bggjeee/.git/
+2026-03-18T22:53:59.6826693Z [command]/usr/bin/git remote add origin https://github.com/sakshi5775/bggjeee
+2026-03-18T22:53:59.6860344Z ##[endgroup]
+2026-03-18T22:53:59.6861191Z ##[group]Disabling automatic garbage collection
+2026-03-18T22:53:59.6866039Z [command]/usr/bin/git config --local gc.auto 0
+2026-03-18T22:53:59.6895074Z ##[endgroup]
+2026-03-18T22:53:59.6895629Z ##[group]Setting up auth
+2026-03-18T22:53:59.6902454Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-03-18T22:53:59.6933347Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-03-18T22:53:59.7261699Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-03-18T22:53:59.7292530Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-03-18T22:53:59.7528799Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-03-18T22:53:59.7562106Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-03-18T22:53:59.7799445Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-03-18T22:53:59.7835999Z ##[endgroup]
+2026-03-18T22:53:59.7836788Z ##[group]Fetching the repository
+2026-03-18T22:53:59.7845075Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +bbee6acfab391c69933737aac30a8a665f5759ac:refs/remotes/origin/main
+2026-03-18T22:55:17.1538893Z From https://github.com/sakshi5775/bggjeee
+2026-03-18T22:55:17.1539699Z  * [new ref]         bbee6acfab391c69933737aac30a8a665f5759ac -> origin/main
+2026-03-18T22:55:17.1575374Z ##[endgroup]
+2026-03-18T22:55:17.1576027Z ##[group]Determining the checkout info
+2026-03-18T22:55:17.1578331Z ##[endgroup]
+2026-03-18T22:55:17.1584981Z [command]/usr/bin/git sparse-checkout disable
+2026-03-18T22:55:17.1627456Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-03-18T22:55:17.1658213Z ##[group]Checking out the ref
+2026-03-18T22:55:17.1658973Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-03-18T22:55:17.4336604Z Switched to a new branch 'main'
+2026-03-18T22:55:17.4337783Z branch 'main' set up to track 'origin/main'.
+2026-03-18T22:55:17.4372421Z ##[endgroup]
+2026-03-18T22:55:17.4416613Z [command]/usr/bin/git log -1 --format=%H
+2026-03-18T22:55:17.4439921Z bbee6acfab391c69933737aac30a8a665f5759ac
+2026-03-18T22:55:17.4682654Z ##[group]Run actions/setup-java@v4
+2026-03-18T22:55:17.4682961Z with:
+2026-03-18T22:55:17.4683310Z   distribution: temurin
+2026-03-18T22:55:17.4683511Z   java-version: 17
+2026-03-18T22:55:17.4683704Z   java-package: jdk
+2026-03-18T22:55:17.4683900Z   check-latest: false
+2026-03-18T22:55:17.4684091Z   server-id: github
+2026-03-18T22:55:17.4684277Z   server-username: GITHUB_ACTOR
+2026-03-18T22:55:17.4684508Z   server-password: GITHUB_TOKEN
+2026-03-18T22:55:17.4684733Z   overwrite-settings: true
+2026-03-18T22:55:17.4684940Z   job-status: success
+2026-03-18T22:55:17.4685249Z   token: ***
+2026-03-18T22:55:17.4685420Z ##[endgroup]
+2026-03-18T22:55:17.6675292Z ##[group]Installed distributions
+2026-03-18T22:55:17.6735505Z Resolved Java 17.0.18+8 from tool-cache
+2026-03-18T22:55:17.6736989Z Setting Java 17.0.18+8 as the default
+2026-03-18T22:55:17.6749895Z Creating toolchains.xml for JDK version 17 from temurin
+2026-03-18T22:55:17.6828361Z Writing to /home/runner/.m2/toolchains.xml
+2026-03-18T22:55:17.6829924Z 
+2026-03-18T22:55:17.6830103Z Java configuration:
+2026-03-18T22:55:17.6831342Z   Distribution: temurin
+2026-03-18T22:55:17.6831793Z   Version: 17.0.18+8
+2026-03-18T22:55:17.6832369Z   Path: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-18T22:55:17.6832909Z 
+2026-03-18T22:55:17.6833330Z ##[endgroup]
+2026-03-18T22:55:17.6849816Z Creating settings.xml with server-id: github
+2026-03-18T22:55:17.6858124Z Writing to /home/runner/.m2/settings.xml
+2026-03-18T22:55:17.7063386Z ##[group]Run subosito/flutter-action@v2
+2026-03-18T22:55:17.7063680Z with:
+2026-03-18T22:55:17.7063859Z   flutter-version: 3.41.5
+2026-03-18T22:55:17.7064072Z   channel: stable
+2026-03-18T22:55:17.7064246Z   cache: true
+2026-03-18T22:55:17.7064416Z   architecture: X64
+2026-03-18T22:55:17.7064604Z   pub-cache-path: default
+2026-03-18T22:55:17.7064806Z   dry-run: false
+2026-03-18T22:55:17.7065041Z   git-source: https://github.com/flutter/flutter.git
+2026-03-18T22:55:17.7065335Z env:
+2026-03-18T22:55:17.7065607Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-18T22:55:17.7066087Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-18T22:55:17.7066438Z ##[endgroup]
+2026-03-18T22:55:17.7155411Z ##[group]Run chmod +x "$GITHUB_ACTION_PATH/setup.sh"
+2026-03-18T22:55:17.7155817Z [36;1mchmod +x "$GITHUB_ACTION_PATH/setup.sh"[0m
+2026-03-18T22:55:17.7209235Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-03-18T22:55:17.7209633Z env:
+2026-03-18T22:55:17.7209929Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-18T22:55:17.7210416Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-18T22:55:17.7210792Z ##[endgroup]
+2026-03-18T22:55:17.7356503Z ##[group]Run $GITHUB_ACTION_PATH/setup.sh -p \
+2026-03-18T22:55:17.7356855Z [36;1m$GITHUB_ACTION_PATH/setup.sh -p \[0m
+2026-03-18T22:55:17.7357120Z [36;1m  -n '3.41.5' \[0m
+2026-03-18T22:55:17.7357329Z [36;1m  -f '' \[0m
+2026-03-18T22:55:17.7357511Z [36;1m  -a 'X64' \[0m
+2026-03-18T22:55:17.7357697Z [36;1m  -k '' \[0m
+2026-03-18T22:55:17.7357895Z [36;1m  -c '' \[0m
+2026-03-18T22:55:17.7358061Z [36;1m  -l '' \[0m
+2026-03-18T22:55:17.7358241Z [36;1m  -d 'default' \[0m
+2026-03-18T22:55:17.7358523Z [36;1m  -g 'https://github.com/flutter/flutter.git' \[0m
+2026-03-18T22:55:17.7358818Z [36;1m  stable[0m
+2026-03-18T22:55:17.7402493Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-03-18T22:55:17.7402828Z env:
+2026-03-18T22:55:17.7403115Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-18T22:55:17.7403595Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-18T22:55:17.7403956Z ##[endgroup]
+2026-03-18T22:55:17.9751952Z ##[group]Run actions/cache@v5
+2026-03-18T22:55:17.9752358Z with:
+2026-03-18T22:55:17.9752737Z   path: /opt/hostedtoolcache/flutter/stable-3.41.5-x64
+2026-03-18T22:55:17.9753520Z   key: flutter-linux-stable-3.41.5-x64-2c9eb20739dfec95e2c74bd3dfa4601b0a8a36aa
+2026-03-18T22:55:17.9754245Z   enableCrossOsArchive: false
+2026-03-18T22:55:17.9754865Z   fail-on-cache-miss: false
+2026-03-18T22:55:17.9755219Z   lookup-only: false
+2026-03-18T22:55:17.9755508Z   save-always: false
+2026-03-18T22:55:17.9755792Z env:
+2026-03-18T22:55:17.9756206Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-18T22:55:17.9756945Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-18T22:55:17.9757521Z ##[endgroup]
+2026-03-18T22:55:18.3052834Z Cache hit for: flutter-linux-stable-3.41.5-x64-2c9eb20739dfec95e2c74bd3dfa4601b0a8a36aa
+2026-03-18T22:55:19.5297313Z Received 71303168 of 1661408882 (4.3%), 67.9 MBs/sec
+2026-03-18T22:55:20.5298189Z Received 226492416 of 1661408882 (13.6%), 107.9 MBs/sec
+2026-03-18T22:55:21.5358450Z Received 394264576 of 1661408882 (23.7%), 125.2 MBs/sec
+2026-03-18T22:55:22.5315561Z Received 536870912 of 1661408882 (32.3%), 127.9 MBs/sec
+2026-03-18T22:55:23.5374801Z Received 679477248 of 1661408882 (40.9%), 129.4 MBs/sec
+2026-03-18T22:55:24.5388900Z Received 822083584 of 1661408882 (49.5%), 130.4 MBs/sec
+2026-03-18T22:55:25.5396761Z Received 977272832 of 1661408882 (58.8%), 132.9 MBs/sec
+2026-03-18T22:55:26.5404062Z Received 1128267776 of 1661408882 (67.9%), 134.3 MBs/sec
+2026-03-18T22:55:27.5414723Z Received 1279262720 of 1661408882 (77.0%), 135.4 MBs/sec
+2026-03-18T22:55:28.5442594Z Received 1442840576 of 1661408882 (86.8%), 137.4 MBs/sec
+2026-03-18T22:55:29.5436431Z Received 1585446912 of 1661408882 (95.4%), 137.3 MBs/sec
+2026-03-18T22:55:30.2142218Z Received 1661408882 of 1661408882 (100.0%), 135.6 MBs/sec
+2026-03-18T22:55:30.2142768Z Cache Size: ~1584 MB (1661408882 B)
+2026-03-18T22:55:30.2205132Z [command]/usr/bin/tar -xf /home/runner/work/_temp/b94b28bd-4827-42f2-8888-fa94a3bfcbc2/cache.tzst -P -C /home/runner/work/bggjeee/bggjeee --use-compress-program unzstd
+2026-03-18T22:55:35.2285125Z Cache restored successfully
+2026-03-18T22:55:35.5432967Z Cache restored from key: flutter-linux-stable-3.41.5-x64-2c9eb20739dfec95e2c74bd3dfa4601b0a8a36aa
+2026-03-18T22:55:35.9929780Z ##[group]Run actions/cache@v5
+2026-03-18T22:55:35.9930180Z with:
+2026-03-18T22:55:35.9930496Z   path: /home/runner/.pub-cache
+2026-03-18T22:55:35.9931949Z   key: flutter-pub-linux-stable-3.41.5-x64-2c9eb20739dfec95e2c74bd3dfa4601b0a8a36aa-8dcf6274afc593938e86022f4dbba320b91b18bac6d4200b4f2eeb8e9d3c882f
+2026-03-18T22:55:35.9933073Z   enableCrossOsArchive: false
+2026-03-18T22:55:35.9933334Z   fail-on-cache-miss: false
+2026-03-18T22:55:35.9933561Z   lookup-only: false
+2026-03-18T22:55:35.9933772Z   save-always: false
+2026-03-18T22:55:35.9933960Z env:
+2026-03-18T22:55:35.9934249Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-18T22:55:35.9934946Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-18T22:55:35.9935531Z ##[endgroup]
+2026-03-18T22:55:36.3169059Z Cache hit for: flutter-pub-linux-stable-3.41.5-x64-2c9eb20739dfec95e2c74bd3dfa4601b0a8a36aa-8dcf6274afc593938e86022f4dbba320b91b18bac6d4200b4f2eeb8e9d3c882f
+2026-03-18T22:55:37.5355989Z Received 54525952 of 200257912 (27.2%), 51.9 MBs/sec
+2026-03-18T22:55:38.5360099Z Received 196063608 of 200257912 (97.9%), 93.4 MBs/sec
+2026-03-18T22:55:39.1711280Z Received 200257912 of 200257912 (100.0%), 72.5 MBs/sec
+2026-03-18T22:55:39.1713673Z Cache Size: ~191 MB (200257912 B)
+2026-03-18T22:55:39.1775541Z [command]/usr/bin/tar -xf /home/runner/work/_temp/2540e958-6941-4c3a-a548-d17487437e8a/cache.tzst -P -C /home/runner/work/bggjeee/bggjeee --use-compress-program unzstd
+2026-03-18T22:55:41.0212628Z Cache restored successfully
+2026-03-18T22:55:41.0730023Z Cache restored from key: flutter-pub-linux-stable-3.41.5-x64-2c9eb20739dfec95e2c74bd3dfa4601b0a8a36aa-8dcf6274afc593938e86022f4dbba320b91b18bac6d4200b4f2eeb8e9d3c882f
+2026-03-18T22:55:41.0850687Z ##[group]Run $GITHUB_ACTION_PATH/setup.sh \
+2026-03-18T22:55:41.0851300Z [36;1m$GITHUB_ACTION_PATH/setup.sh \[0m
+2026-03-18T22:55:41.0851571Z [36;1m  -n '3.41.5' \[0m
+2026-03-18T22:55:41.0851791Z [36;1m  -a 'x64' \[0m
+2026-03-18T22:55:41.0852086Z [36;1m  -c '/opt/hostedtoolcache/flutter/stable-3.41.5-x64' \[0m
+2026-03-18T22:55:41.0852633Z [36;1m  -d '/home/runner/.pub-cache' \[0m
+2026-03-18T22:55:41.0852897Z [36;1m  stable[0m
+2026-03-18T22:55:41.0902268Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-03-18T22:55:41.0902611Z env:
+2026-03-18T22:55:41.0902929Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-18T22:55:41.0903444Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-18T22:55:41.0903816Z ##[endgroup]
+2026-03-18T22:55:41.3363703Z ##[group]Run FLUTTER_ROOT=$(dirname $(dirname $(which flutter)))
+2026-03-18T22:55:41.3364159Z [36;1mFLUTTER_ROOT=$(dirname $(dirname $(which flutter)))[0m
+2026-03-18T22:55:41.3364585Z [36;1mecho "flutter.sdk=$FLUTTER_ROOT" >> android/local.properties[0m
+2026-03-18T22:55:41.3414649Z shell: /usr/bin/bash -e {0}
+2026-03-18T22:55:41.3414905Z env:
+2026-03-18T22:55:41.3415208Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-18T22:55:41.3415734Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-18T22:55:41.3416222Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.41.5-x64
+2026-03-18T22:55:41.3416580Z   PUB_CACHE: /home/runner/.pub-cache
+2026-03-18T22:55:41.3416829Z ##[endgroup]
+2026-03-18T22:55:41.3547205Z ##[group]Run flutter pub get
+2026-03-18T22:55:41.3547487Z [36;1mflutter pub get[0m
+2026-03-18T22:55:41.3591431Z shell: /usr/bin/bash -e {0}
+2026-03-18T22:55:41.3591675Z env:
+2026-03-18T22:55:41.3591967Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-18T22:55:41.3592478Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-18T22:55:41.3592932Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.41.5-x64
+2026-03-18T22:55:41.3593276Z   PUB_CACHE: /home/runner/.pub-cache
+2026-03-18T22:55:41.3593527Z ##[endgroup]
+2026-03-18T22:55:41.6919054Z Resolving dependencies...
+2026-03-18T22:55:42.1518557Z Downloading packages...
+2026-03-18T22:55:42.2189012Z   _flutterfire_internals 1.3.59 (1.3.67 available)
+2026-03-18T22:55:42.2189680Z   add_2_calendar 2.2.5 (3.0.1 available)
+2026-03-18T22:55:42.2190268Z   agora_rtc_engine 6.5.3 (6.6.2 available)
+2026-03-18T22:55:42.2190997Z   archive 4.0.7 (4.0.9 available)
+2026-03-18T22:55:42.2191626Z   audio_session 0.1.25 (0.2.2 available)
+2026-03-18T22:55:42.2192223Z   audioplayers 6.5.1 (6.6.0 available)
+2026-03-18T22:55:42.2192851Z   audioplayers_darwin 6.3.0 (6.4.0 available)
+2026-03-18T22:55:42.2193321Z   audioplayers_web 5.1.1 (5.2.0 available)
+2026-03-18T22:55:42.2193689Z   audioplayers_windows 4.2.1 (4.3.0 available)
+2026-03-18T22:55:42.2194056Z   camera 0.11.3 (0.12.0 available)
+2026-03-18T22:55:42.2194420Z   camera_android_camerax 0.6.28 (0.7.1 available)
+2026-03-18T22:55:42.2194833Z   camera_avfoundation 0.9.22+9 (0.10.1 available)
+2026-03-18T22:55:42.2195386Z > characters 1.4.1 (was 1.4.0)
+2026-03-18T22:55:42.2195709Z   connectivity_plus 6.1.5 (7.0.0 available)
+2026-03-18T22:55:42.2196075Z   cross_file 0.3.5+1 (0.3.5+2 available)
+2026-03-18T22:55:42.2196402Z   dbus 0.7.11 (0.7.12 available)
+2026-03-18T22:55:42.2196701Z   easy_stepper 0.8.5+1 (1.0.1 available)
+2026-03-18T22:55:42.2197027Z   ffi 2.1.5 (2.2.0 available)
+2026-03-18T22:55:42.2197325Z   file_picker 8.3.7 (10.3.10 available)
+2026-03-18T22:55:42.2197676Z   firebase_analytics 11.6.0 (12.1.3 available)
+2026-03-18T22:55:42.2198154Z   firebase_analytics_platform_interface 4.4.3 (5.0.7 available)
+2026-03-18T22:55:42.2198671Z   firebase_analytics_web 0.5.10+16 (0.6.1+3 available)
+2026-03-18T22:55:42.2199055Z   firebase_core 3.15.2 (4.5.0 available)
+2026-03-18T22:55:42.2199396Z   firebase_core_web 2.24.1 (3.5.0 available)
+2026-03-18T22:55:42.2199722Z   firebase_crashlytics 4.3.10 (5.0.8 available)
+2026-03-18T22:55:42.2200127Z   firebase_crashlytics_platform_interface 3.8.10 (3.8.18 available)
+2026-03-18T22:55:42.2200493Z   flutter_lints 5.0.0 (6.0.0 available)
+2026-03-18T22:55:42.2200747Z   flutter_svg 2.2.3 (2.2.4 available)
+2026-03-18T22:55:42.2201513Z   flutter_tts 3.8.5 (4.2.5 available)
+2026-03-18T22:55:42.2201778Z   fluttertoast 8.2.14 (9.0.0 available)
+2026-03-18T22:55:42.2202034Z   geocoding 3.0.0 (4.0.0 available)
+2026-03-18T22:55:42.2202292Z   geocoding_android 3.3.1 (5.0.1 available)
+2026-03-18T22:55:42.2202609Z   geocoding_platform_interface 3.2.0 (5.0.0 available)
+2026-03-18T22:55:42.2202913Z   geolocator 13.0.4 (14.0.2 available)
+2026-03-18T22:55:42.2203186Z   geolocator_android 4.6.2 (5.0.2 available)
+2026-03-18T22:55:42.2203479Z   google_mlkit_commons 0.11.0 (0.11.1 available)
+2026-03-18T22:55:42.2203802Z   google_mlkit_face_detection 0.13.1 (0.13.2 available)
+2026-03-18T22:55:42.2204129Z   google_mlkit_translation 0.13.0 (0.13.1 available)
+2026-03-18T22:55:42.2204416Z   hooks 1.0.0 (1.0.2 available)
+2026-03-18T22:55:42.2204641Z   image 4.5.4 (4.8.0 available)
+2026-03-18T22:55:42.2204907Z   image_picker_android 0.8.13+13 (0.8.13+14 available)
+2026-03-18T22:55:42.2205215Z   image_picker_ios 0.8.13+5 (0.8.13+6 available)
+2026-03-18T22:55:42.2205489Z   js 0.6.7 (0.7.2 available)
+2026-03-18T22:55:42.2205720Z   json_annotation 4.10.0 (4.11.0 available)
+2026-03-18T22:55:42.2205984Z   just_audio 0.9.46 (0.10.5 available)
+2026-03-18T22:55:42.2206229Z   lints 5.1.1 (6.1.0 available)
+2026-03-18T22:55:42.2206644Z > matcher 0.12.19 (was 0.12.17)
+2026-03-18T22:55:42.2206901Z > material_color_utilities 0.13.0 (was 0.11.1)
+2026-03-18T22:55:42.2207410Z   meta 1.17.0 (1.18.2 available)
+2026-03-18T22:55:42.2207725Z   native_toolchain_c 0.17.4 (0.17.6 available)
+2026-03-18T22:55:42.2208001Z   objective_c 9.2.5 (9.3.0 available)
+2026-03-18T22:55:42.2208261Z   onesignal_flutter 5.3.7 (5.4.5 available)
+2026-03-18T22:55:42.2208546Z   package_info_plus 8.3.1 (9.0.0 available)
+2026-03-18T22:55:42.2208824Z   pdf 3.11.3 (3.12.0 available)
+2026-03-18T22:55:42.2209071Z   petitparser 7.0.1 (7.0.2 available)
+2026-03-18T22:55:42.2209324Z   pinput 5.0.2 (6.0.2 available)
+2026-03-18T22:55:42.2209554Z   posix 6.0.3 (6.5.0 available)
+2026-03-18T22:55:42.2209789Z   printing 5.14.2 (5.14.3 available)
+2026-03-18T22:55:42.2210048Z   razorpay_flutter 1.4.0 (1.4.1 available)
+2026-03-18T22:55:42.2210306Z   record 5.2.1 (6.2.0 available)
+2026-03-18T22:55:42.2210559Z   record_android 1.4.5 (1.5.1 available)
+2026-03-18T22:55:42.2211222Z ! record_linux 0.0.0 from path dummy_record_linux (overridden)
+2026-03-18T22:55:42.2211633Z   record_platform_interface 1.4.0 (1.5.0 available)
+2026-03-18T22:55:42.2211945Z   record_web 1.2.2 (1.3.0 available)
+2026-03-18T22:55:42.2212288Z   sensors_plus 4.0.2 (7.0.0 available)
+2026-03-18T22:55:42.2212626Z   sensors_plus_platform_interface 1.2.0 (2.0.1 available)
+2026-03-18T22:55:42.2212977Z   shared_preferences_android 2.4.20 (2.4.21 available)
+2026-03-18T22:55:42.2213283Z   socket_io_client 2.0.3+1 (3.1.4 available)
+2026-03-18T22:55:42.2213551Z   socket_io_common 2.0.3 (3.1.1 available)
+2026-03-18T22:55:42.2213811Z   source_span 1.10.1 (1.10.2 available)
+2026-03-18T22:55:42.2214072Z   sqflite_android 2.4.2+2 (2.4.2+3 available)
+2026-03-18T22:55:42.2214372Z   syncfusion_flutter_core 32.2.5 (33.1.44 available)
+2026-03-18T22:55:42.2214677Z   syncfusion_flutter_pdf 32.2.5 (33.1.44 available)
+2026-03-18T22:55:42.2215007Z   syncfusion_flutter_pdfviewer 32.2.5 (33.1.44 available)
+2026-03-18T22:55:42.2215371Z   syncfusion_flutter_signaturepad 32.2.5 (33.1.44 available)
+2026-03-18T22:55:42.2215723Z   syncfusion_pdfviewer_linux 32.2.5 (33.1.44 available)
+2026-03-18T22:55:42.2216050Z   syncfusion_pdfviewer_macos 32.2.5 (33.1.44 available)
+2026-03-18T22:55:42.2216421Z   syncfusion_pdfviewer_platform_interface 32.2.5 (33.1.44 available)
+2026-03-18T22:55:42.2216793Z   syncfusion_pdfviewer_web 32.2.5 (33.1.44 available)
+2026-03-18T22:55:42.2217129Z   syncfusion_pdfviewer_windows 32.2.5 (33.1.44 available)
+2026-03-18T22:55:42.2217428Z > test_api 0.7.10 (was 0.7.7)
+2026-03-18T22:55:42.2217666Z   url_launcher_ios 6.3.6 (6.4.1 available)
+2026-03-18T22:55:42.2217920Z   uuid 4.5.2 (4.5.3 available)
+2026-03-18T22:55:42.2218151Z   vector_graphics 1.1.19 (1.1.20 available)
+2026-03-18T22:55:42.2218604Z   vector_graphics_compiler 1.1.20 (1.2.0 available)
+2026-03-18T22:55:42.2218884Z   vector_math 2.2.0 (2.3.0 available)
+2026-03-18T22:55:42.2219137Z   video_player 2.10.1 (2.11.1 available)
+2026-03-18T22:55:42.2219406Z   video_player_android 2.9.1 (2.9.4 available)
+2026-03-18T22:55:42.2219704Z   video_player_avfoundation 2.9.0 (2.9.4 available)
+2026-03-18T22:55:42.2219985Z   wakelock_plus 1.3.3 (1.5.1 available)
+2026-03-18T22:55:42.2220286Z   wakelock_plus_platform_interface 1.3.0 (1.4.0 available)
+2026-03-18T22:55:42.2220618Z   webview_flutter_android 4.10.11 (4.10.13 available)
+2026-03-18T22:55:42.2221069Z   webview_flutter_wkwebview 3.23.5 (3.24.0 available)
+2026-03-18T22:55:42.2221348Z   win32 5.15.0 (6.0.0 available)
+2026-03-18T22:55:42.2221587Z   win32_registry 2.1.0 (3.0.2 available)
+2026-03-18T22:55:42.2221862Z Changed 4 dependencies!
+2026-03-18T22:55:42.2222206Z 90 packages have newer versions incompatible with dependency constraints.
+2026-03-18T22:55:42.2222615Z Try `flutter pub outdated` for more information.
+2026-03-18T22:55:43.0644954Z ##[group]Run flutter build apk --release --build-number 13
+2026-03-18T22:55:43.0645407Z [36;1mflutter build apk --release --build-number 13[0m
+2026-03-18T22:55:43.0694139Z shell: /usr/bin/bash -e {0}
+2026-03-18T22:55:43.0694389Z env:
+2026-03-18T22:55:43.0694702Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-18T22:55:43.0695222Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-18T22:55:43.0695704Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.41.5-x64
+2026-03-18T22:55:43.0696056Z   PUB_CACHE: /home/runner/.pub-cache
+2026-03-18T22:55:43.0696317Z ##[endgroup]
+2026-03-18T22:57:43.9147054Z Running Gradle task 'assembleRelease'...                        
+2026-03-18T22:57:43.9148619Z Checking the license for package NDK (Side by side) 27.0.12077973 in /usr/local/lib/android/sdk/licenses
+2026-03-18T22:57:43.9152496Z License for package NDK (Side by side) 27.0.12077973 accepted.
+2026-03-18T22:57:43.9157638Z Preparing "Install NDK (Side by side) 27.0.12077973 v.27.0.12077973".
+2026-03-18T22:57:57.3025281Z "Install NDK (Side by side) 27.0.12077973 v.27.0.12077973" ready.
+2026-03-18T22:57:57.3027071Z Installing NDK (Side by side) 27.0.12077973 in /usr/local/lib/android/sdk/ndk/27.0.12077973
+2026-03-18T22:57:57.3028903Z "Install NDK (Side by side) 27.0.12077973 v.27.0.12077973" complete.
+2026-03-18T22:57:57.8062235Z "Install NDK (Side by side) 27.0.12077973 v.27.0.12077973" finished.
+2026-03-18T23:01:16.1026705Z Checking the license for package Android SDK Platform 33 in /usr/local/lib/android/sdk/licenses
+2026-03-18T23:01:16.1028113Z License for package Android SDK Platform 33 accepted.
+2026-03-18T23:01:16.1029038Z Preparing "Install Android SDK Platform 33 (revision 3)".
+2026-03-18T23:01:18.5022401Z "Install Android SDK Platform 33 (revision 3)" ready.
+2026-03-18T23:01:18.5026482Z Installing Android SDK Platform 33 in /usr/local/lib/android/sdk/platforms/android-33
+2026-03-18T23:01:18.5033440Z "Install Android SDK Platform 33 (revision 3)" complete.
+2026-03-18T23:01:18.5038500Z "Install Android SDK Platform 33 (revision 3)" finished.
+2026-03-18T23:01:18.8022239Z Checking the license for package Android SDK Platform 31 in /usr/local/lib/android/sdk/licenses
+2026-03-18T23:01:18.8023357Z License for package Android SDK Platform 31 accepted.
+2026-03-18T23:01:18.8023976Z Preparing "Install Android SDK Platform 31 (revision 1)".
+2026-03-18T23:01:21.1023801Z "Install Android SDK Platform 31 (revision 1)" ready.
+2026-03-18T23:01:21.1024700Z Installing Android SDK Platform 31 in /usr/local/lib/android/sdk/platforms/android-31
+2026-03-18T23:01:21.1026117Z "Install Android SDK Platform 31 (revision 1)" complete.
+2026-03-18T23:01:21.1026827Z "Install Android SDK Platform 31 (revision 1)" finished.
+2026-03-18T23:01:36.3038630Z Checking the license for package CMake 3.22.1 in /usr/local/lib/android/sdk/licenses
+2026-03-18T23:01:36.3043880Z License for package CMake 3.22.1 accepted.
+2026-03-18T23:01:36.3072622Z Preparing "Install CMake 3.22.1 v.3.22.1".
+2026-03-18T23:01:37.4054862Z "Install CMake 3.22.1 v.3.22.1" ready.
+2026-03-18T23:01:37.4055821Z Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
+2026-03-18T23:01:37.4056788Z "Install CMake 3.22.1 v.3.22.1" complete.
+2026-03-18T23:01:37.5024181Z "Install CMake 3.22.1 v.3.22.1" finished.
+2026-03-18T23:02:49.1044400Z Font asset "CupertinoIcons.ttf" was tree-shaken, reducing it from 257628 to 1624 bytes (99.4% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.
+2026-03-18T23:02:49.1049500Z Font asset "MaterialIcons-Regular.otf" was tree-shaken, reducing it from 1645184 to 70128 bytes (95.7% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.
+2026-03-18T23:06:04.9068966Z Note: /home/runner/.pub-cache/hosted/pub.dev/razorpay_flutter-1.4.0/android/src/main/java/com/razorpay/razorpay_flutter/RazorpayDelegate.java uses or overrides a deprecated API.
+2026-03-18T23:06:04.9071036Z Note: Recompile with -Xlint:deprecation for details.
+2026-03-18T23:06:07.5024317Z Note: /home/runner/.pub-cache/hosted/pub.dev/google_mlkit_commons-0.11.0/android/src/main/java/com/google_mlkit_commons/InputImageConverter.java uses unchecked or unsafe operations.
+2026-03-18T23:06:07.5027699Z Note: Recompile with -Xlint:unchecked for details.
+2026-03-18T23:06:08.7026147Z Note: /home/runner/.pub-cache/hosted/pub.dev/google_mlkit_face_detection-0.13.1/android/src/main/java/com/google_mlkit_face_detection/FaceDetector.java uses unchecked or unsafe operations.
+2026-03-18T23:06:08.7029233Z Note: Recompile with -Xlint:unchecked for details.
+2026-03-18T23:06:12.5024784Z Note: Some input files use unchecked or unsafe operations.
+2026-03-18T23:06:12.5025755Z Note: Recompile with -Xlint:unchecked for details.
+2026-03-18T23:06:33.9033142Z Caught exception: Already watching path: /home/runner/work/bggjeee/bggjeee/android
+2026-03-18T23:10:25.8504961Z Running Gradle task 'assembleRelease'...                          881.8s
+2026-03-18T23:10:30.9857822Z ✓ Built build/app/outputs/flutter-apk/app-release.apk (436.4MB)
+2026-03-18T23:10:31.0700360Z ##[group]Run actions/upload-artifact@v4
+2026-03-18T23:10:31.0700714Z with:
+2026-03-18T23:10:31.0701222Z   name: android-apk
+2026-03-18T23:10:31.0701573Z   path: build/app/outputs/flutter-apk/app-release.apk
+2026-03-18T23:10:31.0701924Z   if-no-files-found: warn
+2026-03-18T23:10:31.0702171Z   compression-level: 6
+2026-03-18T23:10:31.0702399Z   overwrite: false
+2026-03-18T23:10:31.0702623Z   include-hidden-files: false
+2026-03-18T23:10:31.0702969Z env:
+2026-03-18T23:10:31.0703367Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-18T23:10:31.0703909Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-18T23:10:31.0704425Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.41.5-x64
+2026-03-18T23:10:31.0704845Z   PUB_CACHE: /home/runner/.pub-cache
+2026-03-18T23:10:31.0705188Z ##[endgroup]
+2026-03-18T23:10:31.3947056Z With the provided path, there will be 1 file uploaded
+2026-03-18T23:10:31.3954380Z Artifact name is valid!
+2026-03-18T23:10:31.3957010Z Root directory input is valid!
+2026-03-18T23:10:31.6075536Z Beginning upload of artifact content to blob storage
+2026-03-18T23:10:32.8216430Z Uploaded bytes 8388608
+2026-03-18T23:10:33.2932847Z Uploaded bytes 16777216
+2026-03-18T23:10:33.3518990Z Uploaded bytes 25165824
+2026-03-18T23:10:33.7141502Z Uploaded bytes 33554432
+2026-03-18T23:10:34.1229823Z Uploaded bytes 41943040
+2026-03-18T23:10:34.6163722Z Uploaded bytes 50331648
+2026-03-18T23:10:35.3048967Z Uploaded bytes 58720256
+2026-03-18T23:10:35.8215713Z Uploaded bytes 67108864
+2026-03-18T23:10:36.4522626Z Uploaded bytes 75497472
+2026-03-18T23:10:37.0024512Z Uploaded bytes 83886080
+2026-03-18T23:10:37.1119829Z Uploaded bytes 92274688
+2026-03-18T23:10:37.3571058Z Uploaded bytes 100663296
+2026-03-18T23:10:37.9458310Z Uploaded bytes 109051904
+2026-03-18T23:10:38.6399404Z Uploaded bytes 117440512
+2026-03-18T23:10:39.0535907Z Uploaded bytes 125829120
+2026-03-18T23:10:39.6285262Z Uploaded bytes 134217728
+2026-03-18T23:10:40.1995990Z Uploaded bytes 142606336
+2026-03-18T23:10:40.8264357Z Uploaded bytes 150994944
+2026-03-18T23:10:41.3311583Z Uploaded bytes 159383552
+2026-03-18T23:10:42.1115598Z Uploaded bytes 167772160
+2026-03-18T23:10:42.7525718Z Uploaded bytes 176160768
+2026-03-18T23:10:43.4505153Z Uploaded bytes 184549376
+2026-03-18T23:10:43.9713004Z Uploaded bytes 192937984
+2026-03-18T23:10:44.0547965Z Uploaded bytes 201326592
+2026-03-18T23:10:44.3005607Z Uploaded bytes 209715200
+2026-03-18T23:10:44.5866360Z Uploaded bytes 218103808
+2026-03-18T23:10:44.8608456Z Uploaded bytes 226492416
+2026-03-18T23:10:45.0468626Z Uploaded bytes 234881024
+2026-03-18T23:10:45.2250446Z Uploaded bytes 239091124
+2026-03-18T23:10:45.2843146Z Finished uploading artifact content to blob storage!
+2026-03-18T23:10:45.2847030Z SHA256 digest of uploaded artifact zip is 7246981cdf273540478ba3c1e1c627ef6d12f157cf1ee22e4a4da00215617cc9
+2026-03-18T23:10:45.2851270Z Finalizing artifact upload
+2026-03-18T23:10:45.5365558Z Artifact android-apk.zip successfully finalized. Artifact ID 5996597358
+2026-03-18T23:10:45.5366736Z Artifact android-apk has been successfully uploaded! Final size is 239091124 bytes. Artifact ID is 5996597358
+2026-03-18T23:10:45.5376280Z Artifact download URL: https://github.com/sakshi5775/bggjeee/actions/runs/23271034715/artifacts/5996597358
+2026-03-18T23:10:45.5654189Z Post job cleanup.
+2026-03-18T23:10:50.5401929Z Post job cleanup.
+2026-03-18T23:10:50.7596233Z Cache hit occurred on the primary key flutter-pub-linux-stable-3.41.5-x64-2c9eb20739dfec95e2c74bd3dfa4601b0a8a36aa-8dcf6274afc593938e86022f4dbba320b91b18bac6d4200b4f2eeb8e9d3c882f, not saving cache.
+2026-03-18T23:10:50.7699836Z Post job cleanup.
+2026-03-18T23:10:50.8909262Z Cache hit occurred on the primary key flutter-linux-stable-3.41.5-x64-2c9eb20739dfec95e2c74bd3dfa4601b0a8a36aa, not saving cache.
+2026-03-18T23:10:50.9075749Z Post job cleanup.
+2026-03-18T23:10:51.0930161Z Post job cleanup.
+2026-03-18T23:10:51.1932163Z [command]/usr/bin/git version
+2026-03-18T23:10:51.1983954Z git version 2.53.0
+2026-03-18T23:10:51.2029146Z Temporarily overriding HOME='/home/runner/work/_temp/1e9e5a9c-c042-4204-bcba-f353bb06c636' before making global git config changes
+2026-03-18T23:10:51.2030619Z Adding repository directory to the temporary git global config as a safe directory
+2026-03-18T23:10:51.2037219Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/bggjeee/bggjeee
+2026-03-18T23:10:51.2077395Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-03-18T23:10:51.2113663Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-03-18T23:10:51.2416767Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-03-18T23:10:51.2439341Z http.https://github.com/.extraheader
+2026-03-18T23:10:51.2453442Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-03-18T23:10:51.2488247Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-03-18T23:10:51.2737389Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-03-18T23:10:51.2770610Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-03-18T23:10:51.3138718Z Cleaning up orphan processes
+2026-03-18T23:10:51.3561690Z Terminate orphan process: pid (2704) (java)
+2026-03-18T23:10:51.3637840Z Terminate orphan process: pid (2997) (java)
+2026-03-18T23:10:51.3694288Z ##[warning]Node.js 20 actions are deprecated. The following actions are running on Node.js 20 and may not work as expected: actions/checkout@v4, actions/setup-java@v4, actions/upload-artifact@v4. Actions will be forced to run with Node.js 24 by default starting June 2nd, 2026. Please check if updated versions of these actions are available that support Node.js 24. To opt into Node.js 24 now, set the FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true environment variable on the runner or in your workflow file. Once Node.js 24 becomes the default, you can temporarily opt out by setting ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
