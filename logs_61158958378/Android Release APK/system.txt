@@ -1,8 +1,0 @@
-2026-03-18T22:53:47.3410000Z Requested labels: ubuntu-latest
-2026-03-18T22:53:47.3410000Z Job defined at: sakshi5775/bggjeee/.github/workflows/ios-build.yml@refs/heads/main
-2026-03-18T22:53:47.3410000Z Waiting for a runner to pick up this job...
-2026-03-18T22:53:47.3390000Z Evaluating android.if
-2026-03-18T22:53:47.3390000Z Evaluating: success()
-2026-03-18T22:53:47.3390000Z Result: true
-2026-03-18T22:53:48.1170000Z Job is waiting for a hosted runner to come online.
-2026-03-18T22:53:48.1180000Z Job is about to start running on the hosted runner: GitHub Actions 1000000079

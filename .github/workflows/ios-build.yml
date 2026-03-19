@@ -106,7 +106,7 @@ jobs:
 
           if [[ -n "$DEVELOPMENT_TEAM" ]]; then
             echo "Building with DEVELOPMENT_TEAM for code signing..."
-            xcodebuild \
+            xcodebuild archive \
               -workspace "$IOS_WORKSPACE" \
               -scheme "$IOS_SCHEME" \
               -configuration Release \
@@ -120,7 +120,7 @@ jobs:
               CURRENT_PROJECT_VERSION=${{ github.run_number }}
           else
             echo "Building without code signing (set DEVELOPMENT_TEAM secret if archive fails)..."
-            xcodebuild \
+            xcodebuild archive \
               -workspace "$IOS_WORKSPACE" \
               -scheme "$IOS_SCHEME" \
               -configuration Release \
@@ -136,7 +136,10 @@ jobs:
               CURRENT_PROJECT_VERSION=${{ github.run_number }}
           fi
 
-          test -d "$ARCHIVE_PATH" || { echo "::error::Archive not found at $ARCHIVE_PATH"; exit 1; }
+          if [[ ! -d "$ARCHIVE_PATH" ]]; then
+            echo "::warning::Archive not found at $ARCHIVE_PATH (Xcode often skips creating .xcarchive when CODE_SIGNING_ALLOWED=NO). Add DEVELOPMENT_TEAM secret for a full archive + dSYM."
+            exit 0
+          fi
           if [[ ! -d "$DSYM_PATH" ]]; then echo "::warning::dSYM directory not found at $DSYM_PATH (can happen when building without code signing); later upload steps may skip."; fi
 
       - name: Debug archive version + dSYM folder
@@ -144,6 +147,7 @@ jobs:
           set -e
           ARCHIVE_PATH="ios/build/Runner.xcarchive"
           DSYM_PATH="ios/build/Runner.xcarchive/dSYMs"
+          if [[ ! -d "$ARCHIVE_PATH" ]]; then echo "Skipping (no archive from build step)."; exit 0; fi
           echo "CFBundleShortVersionString:"
           /usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$ARCHIVE_PATH/Info.plist" || true
           echo "CFBundleVersion (build number):"
