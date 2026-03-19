@@ -52,9 +52,9 @@ jobs:
     name: iOS Release Archive + dSYM Upload
     runs-on: macos-latest
     env:
-      # Required for Crashlytics to accept dSYM uploads (create token: Firebase Console > Project Settings > Service accounts > Generate new private key)
+      # Required for Crashlytics to accept dSYM uploads (run: firebase login:ci)
       FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-      # Set DEVELOPMENT_TEAM in repo secrets if archive fails with code-signing errors
+      # Required for iOS archive + dSYM (Apple Team ID from https://developer.apple.com/account#MembershipDetailsCard)
       DEVELOPMENT_TEAM: ${{ secrets.DEVELOPMENT_TEAM }}
     steps:
       - name: Checkout
@@ -104,6 +104,14 @@ jobs:
         run: |
           test -f ios/Runner/GoogleService-Info.plist
 
+      - name: Require DEVELOPMENT_TEAM for iOS archive
+        run: |
+          if [[ -z "$DEVELOPMENT_TEAM" ]]; then
+            echo "::error::DEVELOPMENT_TEAM secret is not set. iOS archive cannot be created without it, so dSYMs will never reach Crashlytics. Add your Apple Team ID in repo Settings > Secrets > Actions. Get it from: https://developer.apple.com/account#MembershipDetailsCard"
+            exit 1
+          fi
+          echo "DEVELOPMENT_TEAM is set; proceeding with code-signed archive."
+
       - name: Build iOS archive (Release)
         run: |
           set -e
@@ -150,8 +158,8 @@ jobs:
           fi
 
           if [[ ! -d "$ARCHIVE_PATH" ]]; then
-            echo "::warning::Archive not found at $ARCHIVE_PATH (Xcode often skips creating .xcarchive when CODE_SIGNING_ALLOWED=NO). Add DEVELOPMENT_TEAM secret for a full archive + dSYM."
-            exit 0
+            echo "::error::Archive not created at $ARCHIVE_PATH. Without code signing, Xcode does not produce an archive. You must add DEVELOPMENT_TEAM secret (Apple Team ID) in repo Settings > Secrets > Actions. Get it from: https://developer.apple.com/account#MembershipDetailsCard (Membership details > Team ID)."
+            exit 1
           fi
           if [[ ! -d "$DSYM_PATH" ]]; then echo "::warning::dSYM directory not found at $DSYM_PATH (can happen when building without code signing); later upload steps may skip."; fi
 

@@ -1,0 +1,19 @@
+﻿2026-03-19T07:23:56.4471960Z ##[group]Run set -euo pipefail
+2026-03-19T07:23:56.4472950Z [36;1mset -euo pipefail[0m
+2026-03-19T07:23:56.4473690Z [36;1mGSP_PATH="ios/Runner/GoogleService-Info.plist"[0m
+2026-03-19T07:23:56.4474440Z [36;1mAPP_ID=$(/usr/libexec/PlistBuddy -c "Print :GOOGLE_APP_ID" "$GSP_PATH")[0m
+2026-03-19T07:23:56.4475050Z [36;1mPROJECT_ID=$(/usr/libexec/PlistBuddy -c "Print :PROJECT_ID" "$GSP_PATH")[0m
+2026-03-19T07:23:56.4477190Z [36;1m# Write valid JSON (\n in printf format = real newline; literal '\n' as argument would break Crashlytics).[0m
+2026-03-19T07:23:56.4477930Z [36;1mprintf '{ "GOOGLE_APP_ID": "%s", "FIREBASE_PROJECT_ID": "%s" }\n' "$APP_ID" "$PROJECT_ID" > ios/firebase_app_id_file.json[0m
+2026-03-19T07:23:56.4478970Z [36;1mecho "Generated ios/firebase_app_id_file.json"[0m
+2026-03-19T07:23:56.4479340Z [36;1mcat ios/firebase_app_id_file.json[0m
+2026-03-19T07:23:56.5752810Z shell: /bin/bash -e {0}
+2026-03-19T07:23:56.5753190Z env:
+2026-03-19T07:23:56.5753450Z   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+2026-03-19T07:23:56.5753930Z   FIREBASE_TOKEN: 
+2026-03-19T07:23:56.5754160Z   DEVELOPMENT_TEAM: 
+2026-03-19T07:23:56.5754490Z   FLUTTER_ROOT: /Users/runner/hostedtoolcache/flutter/stable-3.41.5-arm64
+2026-03-19T07:23:56.5754910Z   PUB_CACHE: /Users/runner/.pub-cache
+2026-03-19T07:23:56.5755180Z ##[endgroup]
+2026-03-19T07:23:56.6380810Z Generated ios/firebase_app_id_file.json
+2026-03-19T07:23:56.6408190Z { "GOOGLE_APP_ID": "1:227172104482:ios:80125179aa8f3f8c778d7b", "FIREBASE_PROJECT_ID": "astrobharatai-db3cf" }

@@ -1,0 +1,52 @@
+﻿2026-03-19T07:20:46.5867078Z ##[group]Run flutter build apk --release --build-number 16
+2026-03-19T07:20:46.5867534Z [36;1mflutter build apk --release --build-number 16[0m
+2026-03-19T07:20:46.5916525Z shell: /usr/bin/bash -e {0}
+2026-03-19T07:20:46.5916775Z env:
+2026-03-19T07:20:46.5916979Z   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+2026-03-19T07:20:46.5917369Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-19T07:20:46.5917857Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-03-19T07:20:46.5918310Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.41.5-x64
+2026-03-19T07:20:46.5918654Z   PUB_CACHE: /home/runner/.pub-cache
+2026-03-19T07:20:46.5918902Z ##[endgroup]
+2026-03-19T07:22:42.9093583Z Running Gradle task 'assembleRelease'...                        
+2026-03-19T07:22:42.9097301Z Checking the license for package NDK (Side by side) 27.0.12077973 in /usr/local/lib/android/sdk/licenses
+2026-03-19T07:22:42.9947252Z License for package NDK (Side by side) 27.0.12077973 accepted.
+2026-03-19T07:22:42.9969248Z Preparing "Install NDK (Side by side) 27.0.12077973 v.27.0.12077973".
+2026-03-19T07:22:56.0925376Z "Install NDK (Side by side) 27.0.12077973 v.27.0.12077973" ready.
+2026-03-19T07:22:56.0928931Z Installing NDK (Side by side) 27.0.12077973 in /usr/local/lib/android/sdk/ndk/27.0.12077973
+2026-03-19T07:22:56.0931715Z "Install NDK (Side by side) 27.0.12077973 v.27.0.12077973" complete.
+2026-03-19T07:22:56.2948028Z "Install NDK (Side by side) 27.0.12077973 v.27.0.12077973" finished.
+2026-03-19T07:26:11.7928009Z Checking the license for package Android SDK Platform 33 in /usr/local/lib/android/sdk/licenses
+2026-03-19T07:26:11.7929925Z License for package Android SDK Platform 33 accepted.
+2026-03-19T07:26:11.7934309Z Preparing "Install Android SDK Platform 33 (revision 3)".
+2026-03-19T07:26:14.3923258Z "Install Android SDK Platform 33 (revision 3)" ready.
+2026-03-19T07:26:14.3925011Z Installing Android SDK Platform 33 in /usr/local/lib/android/sdk/platforms/android-33
+2026-03-19T07:26:14.3928204Z "Install Android SDK Platform 33 (revision 3)" complete.
+2026-03-19T07:26:14.3929248Z "Install Android SDK Platform 33 (revision 3)" finished.
+2026-03-19T07:26:14.6923949Z Checking the license for package Android SDK Platform 31 in /usr/local/lib/android/sdk/licenses
+2026-03-19T07:26:14.6925266Z License for package Android SDK Platform 31 accepted.
+2026-03-19T07:26:14.6925971Z Preparing "Install Android SDK Platform 31 (revision 1)".
+2026-03-19T07:26:17.0925158Z "Install Android SDK Platform 31 (revision 1)" ready.
+2026-03-19T07:26:17.0927631Z Installing Android SDK Platform 31 in /usr/local/lib/android/sdk/platforms/android-31
+2026-03-19T07:26:17.0929499Z "Install Android SDK Platform 31 (revision 1)" complete.
+2026-03-19T07:26:17.0930153Z "Install Android SDK Platform 31 (revision 1)" finished.
+2026-03-19T07:26:32.7930627Z Checking the license for package CMake 3.22.1 in /usr/local/lib/android/sdk/licenses
+2026-03-19T07:26:32.7933657Z License for package CMake 3.22.1 accepted.
+2026-03-19T07:26:32.7935451Z Preparing "Install CMake 3.22.1 v.3.22.1".
+2026-03-19T07:26:33.9948024Z "Install CMake 3.22.1 v.3.22.1" ready.
+2026-03-19T07:26:33.9953539Z Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
+2026-03-19T07:26:33.9954637Z "Install CMake 3.22.1 v.3.22.1" complete.
+2026-03-19T07:26:33.9955562Z "Install CMake 3.22.1 v.3.22.1" finished.
+2026-03-19T07:27:45.5925570Z Font asset "CupertinoIcons.ttf" was tree-shaken, reducing it from 257628 to 1624 bytes (99.4% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.
+2026-03-19T07:27:45.5932625Z Font asset "MaterialIcons-Regular.otf" was tree-shaken, reducing it from 1645184 to 70128 bytes (95.7% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.
+2026-03-19T07:30:35.6960914Z Note: /home/runner/.pub-cache/hosted/pub.dev/razorpay_flutter-1.4.0/android/src/main/java/com/razorpay/razorpay_flutter/RazorpayDelegate.java uses or overrides a deprecated API.
+2026-03-19T07:30:35.6962863Z Note: Recompile with -Xlint:deprecation for details.
+2026-03-19T07:30:37.8954700Z Note: /home/runner/.pub-cache/hosted/pub.dev/google_mlkit_commons-0.11.0/android/src/main/java/com/google_mlkit_commons/InputImageConverter.java uses unchecked or unsafe operations.
+2026-03-19T07:30:37.8960872Z Note: Recompile with -Xlint:unchecked for details.
+2026-03-19T07:30:38.8975662Z Note: /home/runner/.pub-cache/hosted/pub.dev/google_mlkit_face_detection-0.13.1/android/src/main/java/com/google_mlkit_face_detection/FaceDetector.java uses unchecked or unsafe operations.
+2026-03-19T07:30:38.8977659Z Note: Recompile with -Xlint:unchecked for details.
+2026-03-19T07:30:43.3923495Z Note: Some input files use unchecked or unsafe operations.
+2026-03-19T07:30:43.3930244Z Note: Recompile with -Xlint:unchecked for details.
+2026-03-19T07:31:05.8923694Z Caught exception: Already watching path: /home/runner/work/bggjeee/bggjeee/android
+2026-03-19T07:34:52.7903451Z Running Gradle task 'assembleRelease'...                          845.3s
+2026-03-19T07:34:56.5525789Z ✓ Built build/app/outputs/flutter-apk/app-release.apk (436.4MB)

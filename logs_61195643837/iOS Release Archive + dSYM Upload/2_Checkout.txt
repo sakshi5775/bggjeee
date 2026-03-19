@@ -1,0 +1,77 @@
+﻿2026-03-19T07:20:18.6215600Z ##[group]Run actions/checkout@v4
+2026-03-19T07:20:18.6216980Z with:
+2026-03-19T07:20:18.6217670Z   repository: sakshi5775/bggjeee
+2026-03-19T07:20:18.6218880Z   token: ***
+2026-03-19T07:20:18.6221110Z   ssh-strict: true
+2026-03-19T07:20:18.6223630Z   ssh-user: git
+2026-03-19T07:20:18.6225240Z   persist-credentials: true
+2026-03-19T07:20:18.6227300Z   clean: true
+2026-03-19T07:20:18.6229140Z   sparse-checkout-cone-mode: true
+2026-03-19T07:20:18.6231920Z   fetch-depth: 1
+2026-03-19T07:20:18.6233440Z   fetch-tags: false
+2026-03-19T07:20:18.6234790Z   show-progress: true
+2026-03-19T07:20:18.6236080Z   lfs: false
+2026-03-19T07:20:18.6237600Z   submodules: false
+2026-03-19T07:20:18.6239080Z   set-safe-directory: true
+2026-03-19T07:20:18.6242710Z env:
+2026-03-19T07:20:18.6244240Z   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+2026-03-19T07:20:18.6246070Z   FIREBASE_TOKEN: 
+2026-03-19T07:20:18.6247370Z   DEVELOPMENT_TEAM: 
+2026-03-19T07:20:18.6247970Z ##[endgroup]
+2026-03-19T07:20:19.2574060Z Syncing repository: sakshi5775/bggjeee
+2026-03-19T07:20:19.2576190Z ##[group]Getting Git version info
+2026-03-19T07:20:19.2577040Z Working directory is '/Users/runner/work/bggjeee/bggjeee'
+2026-03-19T07:20:19.2578700Z [command]/opt/homebrew/bin/git version
+2026-03-19T07:20:19.2579480Z git version 2.53.0
+2026-03-19T07:20:19.2581460Z ##[endgroup]
+2026-03-19T07:20:19.2586150Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/bcd09f33-b729-47e0-89b9-9c9066c82733/.gitconfig'
+2026-03-19T07:20:19.2588110Z Temporarily overriding HOME='/Users/runner/work/_temp/bcd09f33-b729-47e0-89b9-9c9066c82733' before making global git config changes
+2026-03-19T07:20:19.2590510Z Adding repository directory to the temporary git global config as a safe directory
+2026-03-19T07:20:19.2591960Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/bggjeee/bggjeee
+2026-03-19T07:20:19.2697740Z Deleting the contents of '/Users/runner/work/bggjeee/bggjeee'
+2026-03-19T07:20:19.2702200Z ##[group]Initializing the repository
+2026-03-19T07:20:19.2708460Z [command]/opt/homebrew/bin/git init /Users/runner/work/bggjeee/bggjeee
+2026-03-19T07:20:19.2969230Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-03-19T07:20:19.2974790Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-03-19T07:20:19.2976400Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-03-19T07:20:19.2977440Z hint: call:
+2026-03-19T07:20:19.2979250Z hint:
+2026-03-19T07:20:19.2980990Z hint: 	git config --global init.defaultBranch <name>
+2026-03-19T07:20:19.2983280Z hint:
+2026-03-19T07:20:19.2985300Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-03-19T07:20:19.2988480Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-03-19T07:20:19.2989620Z hint:
+2026-03-19T07:20:19.2990160Z hint: 	git branch -m <name>
+2026-03-19T07:20:19.2990790Z hint:
+2026-03-19T07:20:19.2991570Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-03-19T07:20:19.2992830Z Initialized empty Git repository in /Users/runner/work/bggjeee/bggjeee/.git/
+2026-03-19T07:20:19.2995190Z [command]/opt/homebrew/bin/git remote add origin https://github.com/sakshi5775/bggjeee
+2026-03-19T07:20:19.3100320Z ##[endgroup]
+2026-03-19T07:20:19.3102900Z ##[group]Disabling automatic garbage collection
+2026-03-19T07:20:19.3104590Z [command]/opt/homebrew/bin/git config --local gc.auto 0
+2026-03-19T07:20:19.3224320Z ##[endgroup]
+2026-03-19T07:20:19.3225360Z ##[group]Setting up auth
+2026-03-19T07:20:19.3275190Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-03-19T07:20:19.3279230Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-03-19T07:20:19.5023010Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-03-19T07:20:19.5120680Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-03-19T07:20:19.6679050Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-03-19T07:20:19.6767570Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-03-19T07:20:19.8424300Z [command]/opt/homebrew/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-03-19T07:20:19.8583520Z ##[endgroup]
+2026-03-19T07:20:19.8616430Z ##[group]Fetching the repository
+2026-03-19T07:20:19.8628370Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +ed7097ef76196d927392513f8181e32cd772dc8c:refs/remotes/origin/main
+2026-03-19T07:20:22.4135990Z From https://github.com/sakshi5775/bggjeee
+2026-03-19T07:20:22.4155170Z  * [new ref]         ed7097ef76196d927392513f8181e32cd772dc8c -> origin/main
+2026-03-19T07:20:22.4293720Z ##[endgroup]
+2026-03-19T07:20:22.4297310Z ##[group]Determining the checkout info
+2026-03-19T07:20:22.4337730Z ##[endgroup]
+2026-03-19T07:20:22.4349450Z [command]/opt/homebrew/bin/git sparse-checkout disable
+2026-03-19T07:20:22.4434760Z [command]/opt/homebrew/bin/git config --local --unset-all extensions.worktreeConfig
+2026-03-19T07:20:22.4562720Z ##[group]Checking out the ref
+2026-03-19T07:20:22.4564250Z [command]/opt/homebrew/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-03-19T07:20:22.9867480Z Switched to a new branch 'main'
+2026-03-19T07:20:22.9895320Z branch 'main' set up to track 'origin/main'.
+2026-03-19T07:20:23.0048180Z ##[endgroup]
+2026-03-19T07:20:23.0125450Z [command]/opt/homebrew/bin/git log -1 --format=%H
+2026-03-19T07:20:23.0161410Z ed7097ef76196d927392513f8181e32cd772dc8c
