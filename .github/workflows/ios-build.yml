@@ -104,30 +104,22 @@ jobs:
         run: |
           test -f ios/Runner/GoogleService-Info.plist
 
-      - name: Require DEVELOPMENT_TEAM for iOS archive
-        run: |
-          if [[ -z "$DEVELOPMENT_TEAM" ]]; then
-            echo "::error::DEVELOPMENT_TEAM secret is not set. iOS archive cannot be created without it, so dSYMs will never reach Crashlytics. Add your Apple Team ID in repo Settings > Secrets > Actions. Get it from: https://developer.apple.com/account#MembershipDetailsCard"
-            exit 1
-          fi
-          echo "DEVELOPMENT_TEAM is set; proceeding with code-signed archive."
-
-      - name: Build iOS archive (Release)
+      - name: Build iOS archive or build (Release)
         run: |
           set -e
           IOS_WORKSPACE="ios/Runner.xcworkspace"
           IOS_SCHEME="Runner"
           ARCHIVE_PATH="ios/build/Runner.xcarchive"
-          DSYM_PATH="ios/build/Runner.xcarchive/dSYMs"
+          DERIVED_DATA="ios/build/DerivedData"
 
-          mkdir -p "$(dirname "$ARCHIVE_PATH")"
-
+          mkdir -p ios/build
           APP_VERSION_NAME=$(grep -E '^version:' pubspec.yaml | sed -E 's/^version:[[:space:]]*//; s/\+[0-9]*$//' | tr -d ' ')
           if [[ -z "$APP_VERSION_NAME" ]]; then echo "::error::Could not find version in pubspec.yaml"; exit 1; fi
 
+          # Try archive only if DEVELOPMENT_TEAM is set (CI has no Apple account/profiles, so archive usually fails)
           if [[ -n "$DEVELOPMENT_TEAM" ]]; then
-            echo "Building with DEVELOPMENT_TEAM for code signing..."
-            xcodebuild archive \
+            echo "Trying code-signed archive..."
+            if xcodebuild archive \
               -workspace "$IOS_WORKSPACE" \
               -scheme "$IOS_SCHEME" \
               -configuration Release \
@@ -138,16 +130,23 @@ jobs:
               DEVELOPMENT_TEAM="$DEVELOPMENT_TEAM" \
               COMPILER_INDEX_STORE_ENABLE=NO \
               MARKETING_VERSION="$APP_VERSION_NAME" \
-              CURRENT_PROJECT_VERSION=${{ github.run_number }}
-          else
-            echo "Building without code signing (set DEVELOPMENT_TEAM secret if archive fails)..."
-            xcodebuild archive \
+              CURRENT_PROJECT_VERSION=${{ github.run_number }}; then
+              echo "Archive succeeded."
+            else
+              echo "::warning::Archive failed (CI has no Apple account/provisioning profiles). Falling back to build without signing to get dSYMs for Crashlytics."
+            fi
+          fi
+
+          # If no archive (or not tried), do a build without signing so we still get dSYMs for Crashlytics
+          if [[ ! -d "$ARCHIVE_PATH" ]]; then
+            echo "Building without code signing (dSYMs will be in DerivedData)..."
+            xcodebuild build \
               -workspace "$IOS_WORKSPACE" \
               -scheme "$IOS_SCHEME" \
               -configuration Release \
               -sdk iphoneos \
-              -archivePath "$ARCHIVE_PATH" \
               -destination 'generic/platform=iOS' \
+              -derivedDataPath "$DERIVED_DATA" \
               CODE_SIGNING_ALLOWED=NO \
               CODE_SIGNING_REQUIRED=NO \
               CODE_SIGN_IDENTITY="" \
@@ -155,28 +154,21 @@ jobs:
               COMPILER_INDEX_STORE_ENABLE=NO \
               MARKETING_VERSION="$APP_VERSION_NAME" \
               CURRENT_PROJECT_VERSION=${{ github.run_number }}
+            echo "Build finished. dSYMs will be under $DERIVED_DATA/Build/Products/Release-iphoneos/"
           fi
 
-          if [[ ! -d "$ARCHIVE_PATH" ]]; then
-            echo "::error::Archive not created at $ARCHIVE_PATH. Without code signing, Xcode does not produce an archive. You must add DEVELOPMENT_TEAM secret (Apple Team ID) in repo Settings > Secrets > Actions. Get it from: https://developer.apple.com/account#MembershipDetailsCard (Membership details > Team ID)."
-            exit 1
-          fi
-          if [[ ! -d "$DSYM_PATH" ]]; then echo "::warning::dSYM directory not found at $DSYM_PATH (can happen when building without code signing); later upload steps may skip."; fi
-
-      - name: Debug archive version + dSYM folder
+      - name: Debug build output + dSYM locations
         run: |
           set -e
           ARCHIVE_PATH="ios/build/Runner.xcarchive"
-          DSYM_PATH="ios/build/Runner.xcarchive/dSYMs"
-          if [[ ! -d "$ARCHIVE_PATH" ]]; then echo "Skipping (no archive from build step)."; exit 0; fi
-          echo "CFBundleShortVersionString:"
-          /usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$ARCHIVE_PATH/Info.plist" || true
-          echo "CFBundleVersion (build number):"
-          /usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$ARCHIVE_PATH/Info.plist" || true
-          echo "Listing dSYMs:"
-          ls -la "$DSYM_PATH" 2>/dev/null || echo "(dSYM folder missing or empty)"
-          # Print one dSYM sample if present
-          ls -la "$DSYM_PATH"/*.dSYM 2>/dev/null || true
+          DERIVED_DSYM_ROOT="ios/build/DerivedData/Build/Products/Release-iphoneos"
+          if [[ -d "$ARCHIVE_PATH" ]]; then
+            echo "Archive present: $ARCHIVE_PATH"
+            /usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$ARCHIVE_PATH/Info.plist" 2>/dev/null || true
+            ls -la "$ARCHIVE_PATH/dSYMs" 2>/dev/null || true
+          fi
+          echo "Checking DerivedData dSYMs:"
+          find "$DERIVED_DSYM_ROOT" -name "*.dSYM" -type d 2>/dev/null | head -20 || true
 
       - name: (Optional) Generate .dart_tools flutterfire file for Crashlytics
         run: |
@@ -190,11 +182,26 @@ jobs:
           printf '{ "GOOGLE_APP_ID": "%s", "FIREBASE_PROJECT_ID": "%s" }\n' "$APP_ID" "$PROJECT_ID" > "$TARGET_FILE"
           echo "Generated $TARGET_FILE"
 
+      - name: Collect dSYMs from archive or DerivedData
+        run: |
+          set -e
+          DSYM_OUT="ios/build/dSYMs_collected"
+          mkdir -p "$DSYM_OUT"
+          for root in ios/build/Runner.xcarchive "ios/build/DerivedData/Build/Products/Release-iphoneos"; do
+            [[ ! -d "$root" ]] && continue
+            while IFS= read -r dsym; do
+              [[ -z "$dsym" ]] && continue
+              cp -R "$dsym" "$DSYM_OUT/" 2>/dev/null || true
+            done < <(find "$root" -name "*.dSYM" -type d 2>/dev/null)
+          done
+          echo "Collected dSYMs:"
+          ls -la "$DSYM_OUT" 2>/dev/null || true
+
       - name: Upload dSYM as GitHub artifact (backup)
         uses: actions/upload-artifact@v4
         with:
           name: ios-dSYMs
-          path: ios/build/Runner.xcarchive/dSYMs
+          path: ios/build/dSYMs_collected
           if-no-files-found: warn
 
       - name: Locate upload-symbols and upload dSYM to Crashlytics
@@ -202,18 +209,12 @@ jobs:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
         run: |
           set -euo pipefail
-          ARCHIVE_PATH="ios/build/Runner.xcarchive"
           GSP="ios/Runner/GoogleService-Info.plist"
-
-          if [[ ! -d "$ARCHIVE_PATH" ]]; then
-            echo "::warning::Archive missing; skipping Crashlytics upload."
-            exit 0
-          fi
-
-          # Find all dSYMs (Runner.app, App.framework, Flutter.framework, etc.) inside the archive
-          DSYM_LIST=$(find "$ARCHIVE_PATH" -name "*.dSYM" -type d 2>/dev/null || true)
+          # dSYMs can be in archive (code-signed build) or in DerivedData (no-signing build)
+          DSYM_LIST=$(find ios/build/Runner.xcarchive ios/build/DerivedData/Build/Products/Release-iphoneos ios/build/dSYMs_collected -name "*.dSYM" -type d 2>/dev/null || true)
+          DSYM_LIST=$(echo "$DSYM_LIST" | sort -u)
           if [[ -z "$DSYM_LIST" ]]; then
-            echo "::warning::No dSYM files found in archive; skipping Crashlytics upload."
+            echo "::warning::No dSYM files found; skipping Crashlytics upload."
             exit 0
           fi
           echo "Found dSYMs to upload:"
@@ -232,7 +233,6 @@ jobs:
             echo "::warning::FIREBASE_TOKEN secret not set; add it in repo Settings > Secrets for Crashlytics to accept uploads."
           fi
 
-          # Upload each dSYM so Crashlytics can symbolicate all crashes (Runner + App + Flutter frameworks)
           COUNT=0
           while IFS= read -r dsym; do
             [[ -z "$dsym" ]] && continue
