@@ -5,21 +5,12 @@ import 'package:http/http.dart' as http;
 /// Centralised fallback logic for services that used to hit dedicated micro-service ports.
 ///
 /// Strategy:
-///   Port 8002 services (user AI: face-reading, navtara, kundli, matchmaking)
-///       primary  : http://3.109.91.254:8000/api/users
-///       fallback : http://3.109.91.254:8002
-///
-///   Port 8009 services (chat / call REST)
-///       primary  : http://3.109.91.254:8000/api/calls
-///       fallback : http://3.109.91.254:8009
-///
-///   Socket.IO (chat / call / live-stream)
-///       primary  : http://3.109.91.254:8000   (gateway)
-///       fallback : http://3.109.91.254:8009
+///   The app originally used dedicated micro-service ports (8002/8009).
+///   Now we route everything through the gateway DNS (no IP/port).
 class PortFallbackHelper {
-  static const String _primaryHost = 'http://3.109.91.254:8000';
-  static const String _port8002Host = 'http://3.109.91.254:8002';
-  static const String _port8009Host = 'http://3.109.91.254:8009';
+  static const String _primaryHost = 'https://api.astrobharatai.com';
+  static const String _port8002Host = '$_primaryHost/api/users';
+  static const String _port8009Host = '$_primaryHost/api/calls';
 
   static const String usersApiPrimary = '$_primaryHost/api/users';
   static const String usersApiFallback = _port8002Host;
@@ -28,7 +19,7 @@ class PortFallbackHelper {
   static const String callsApiFallback = _port8009Host;
 
   static const String socketPrimary = _primaryHost;
-  static const String socketFallback = _port8009Host;
+  static const String socketFallback = _primaryHost;
 
   static Future<http.Response> callWithFallback({
     required Future<http.Response> Function() primary,

@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
 import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
 import 'package:astrobharataiuser/core/base/api_helper_mixin.dart';
 import 'package:astrobharataiuser/data_model/login_model.dart';
+import 'package:astrobharataiuser/utils/user_friendly_error.dart';
 import 'package:get/get.dart';
 
 class OtpService with ApiHelperMixin {
@@ -31,7 +32,10 @@ class OtpService with ApiHelperMixin {
       return true;
     }
 
-    throw response.body?['message']?.toString() ?? 'Failed to send OTP';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'Failed to send OTP',
+    );
   }
 
   /// Verify OTP and complete registration/login
@@ -58,7 +62,10 @@ class OtpService with ApiHelperMixin {
       }
     }
 
-    throw response.body?['message']?.toString() ?? 'OTP verification failed';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'OTP verification failed',
+    );
   }
 
   /// Resend OTP
@@ -71,7 +78,10 @@ class OtpService with ApiHelperMixin {
       return true;
     }
 
-    throw response.body?['message']?.toString() ?? 'Failed to resend OTP';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'Failed to resend OTP',
+    );
   }
 
   /// Check if user exists (by email or phone)

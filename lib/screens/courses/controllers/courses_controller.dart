@@ -137,12 +137,21 @@ class CoursesController extends BaseController
     }
   }
 
-  // Fetch course types for the learning journey section
+  /// Parse duration string (e.g. "4 WEEKS", "8 WEEKS") to sort order. Returns 0 if unparseable.
+  static int _durationWeeks(String duration) {
+    if (duration.isEmpty) return 0;
+    final match = RegExp(r'(\d+)').firstMatch(duration);
+    return match != null ? int.tryParse(match.group(1) ?? '') ?? 0 : 0;
+  }
+
+  // Fetch course types for the learning journey section (ordered ascending: Crash 4w → Diploma 8w → Bachelor 12w → Master 16w → Grand Master 24w)
   Future<void> fetchCourseTypes() async {
     isCourseTypesLoading.value = true;
     try {
       final response = await _coursesService.getCourseTypes();
-      courseTypesList.value = response?.courseTypes ?? [];
+      final list = response?.courseTypes ?? [];
+      list.sort((a, b) => _durationWeeks(a.duration).compareTo(_durationWeeks(b.duration)));
+      courseTypesList.value = list;
       _initBounceControllers();
     } catch (e) {
       debugPrint('Failed to fetch course types: $e');

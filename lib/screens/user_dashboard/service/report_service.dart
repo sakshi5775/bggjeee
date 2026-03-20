@@ -236,7 +236,7 @@ class ReportService {
       };
 
       final uri = Uri.parse(
-        'http://3.109.91.254:8000/api/numerology/api/pdf/history',
+        'https://api.astrobharatai.com/api/numerology/api/pdf/history',
       ).replace(queryParameters: queryParams);
 
       final response = await http.get(
@@ -258,7 +258,7 @@ class ReportService {
   Future<String?> getReportUrl(String id) async {
     try {
       final token = UserData().accessToken;
-      final uri = Uri.parse('http://3.109.91.254:8000/api/numerology/api/pdf/history/$id');
+      final uri = Uri.parse('https://api.astrobharatai.com/api/numerology/api/pdf/history/$id');
 
       final response = await http.get(
         uri,

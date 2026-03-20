@@ -20,8 +20,8 @@ class OurServicesSection extends BasePage<UserDashboardController> {
   // (label, iconPath, pricingKey)
   final List<(String, String, String)> _items = const [
     ('Consult\nAstrologer', AppConstant.serviceConsult, ''),
-    ('Generate\nKundli', AppConstant.serviceGenerateKundali, ''),
-    ('Match\nMaking', AppConstant.serviceMatchMaking, ''),
+    ('Generate\nKundli', AppConstant.serviceGenerateKundali, 'kundli'),
+    ('Match\nMaking', AppConstant.serviceMatchMaking, 'match'),
     ('Numerology', AppConstant.serviceNumerology, ''),
     ('Panchang', AppConstant.servicePanchang, ''),
     ('Check\nHoroscope', AppConstant.horoscope, ''),
@@ -30,7 +30,7 @@ class OurServicesSection extends BasePage<UserDashboardController> {
     (
       'Writing\nAstrology',
       AppConstant.writingAstrology,
-      'handwriting_analysis',
+      'handwriting',
     ),
     ('Prashna\nKundli', AppConstant.prashnaKundali, 'prashna_kundali'),
     ('Face\nreading', AppConstant.serviceFaceReading, 'face_reading'),
@@ -104,6 +104,16 @@ class OurServicesSection extends BasePage<UserDashboardController> {
       onTap: () {
         _requireLogin(
           () async {
+            // Enforce balance check at tap-time for paid services.
+            if (pricingKey.isNotEmpty && Get.isRegistered<AiPricingController>()) {
+              final pricingCtrl = Get.find<AiPricingController>();
+              final canProceed = await pricingCtrl.ensureHasSufficientBalance(
+                pricingKey,
+                showPopup: true,
+              );
+              if (!canProceed) return;
+            }
+
             final normalizedLabel = label
                 .toLowerCase()
                 .replaceAll('\n', ' ')

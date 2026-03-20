@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/data_model/banner_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/service/god_category_service.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/god_category_model.dart';
@@ -149,6 +150,6 @@ class DevotionalLibraryController extends BaseController {
     if (audioService.currentTrack == null && tracks.isNotEmpty) {
       audioService.playTrack(idx, newPlaylist: tracks.toList());
     }
-    Get.toNamed(AppRoutes.devotionalPlayer);
+    UserMainController.pushInCurrentTab(AppRoutes.devotionalPlayer);
   }
 }

@@ -36,18 +36,38 @@ class ConsultController extends GetxController {
   final RxList<String> selectedSpecializations = <String>[].obs;
   final RxList<String> selectedLanguages = <String>[].obs;
 
-  static final List<FilterOption> specializationOptions = [
-    FilterOption('VEDIC', 'Vedic'),
-    FilterOption('KP', 'KP'),
-    FilterOption('NADI', 'Nadi'),
-    FilterOption('NUMEROLOGY', 'Numerology'),
-    FilterOption('TAROT', 'Tarot'),
-    FilterOption('PALMISTRY', 'Palmistry'),
-    FilterOption('VASTU', 'Vastu'),
-    FilterOption('GEMOLOGY', 'Gemology'),
-    FilterOption('HORARY', 'Horary'),
-    FilterOption('PRASHNA', 'Prashna'),
-  ];
+  // Backend specialization enums; keys are display labels.
+  static const Map<String, String> specializationOptionsMap = {
+    'Palmistry': 'PALMISTRY',
+    'Jaimini': 'JAIMINI',
+    'Western': 'WESTERN',
+    'Reiki': 'REIKI',
+    'Face Reading': 'FACE_READING',
+    'KP System': 'KP_SYSTEM',
+    'Vastu': 'VASTU',
+    'Nadi': 'NADI',
+    'Ashtakvarga': 'ASHTAKVARGA',
+    'Ramal': 'RAMAL',
+    'Tajik': 'TAJIK',
+    'Muhurta': 'MUHURTA',
+    'Vedic': 'VEDIC',
+    'Lal Kitab': 'LAL_KITAB',
+    'Tarot Reading': 'TAROT_READING',
+    'Numerology': 'NUMEROLOGY',
+    'Gemology': 'GEMOLOGY',
+    'Horary': 'HORARY',
+    'Prashna': 'PRASHNA',
+    'Angel Reading': 'ANGEL_READING',
+    'Astrology': 'ASTROLOGY',
+    'TANTRA EXPERT': 'TANTRA_EXPERT',
+    'OCCULT EXPERT': 'OCCULT_EXPERT',
+    'PARANORMAL EXPERT': 'PARANORMAL_EXPERT',
+  };
+
+  static final List<FilterOption> specializationOptions =
+      specializationOptionsMap.entries
+          .map((e) => FilterOption(e.value, e.key))
+          .toList();
 
   static final List<FilterOption> availabilityOptions = [
     FilterOption('ALL', 'All'),
@@ -72,30 +92,32 @@ class ConsultController extends GetxController {
   ];
 
   /// All 23 languages from app translation (assets/languages.json)
+  // Language values are set to match what astrologers show in profile
+  // (e.g. "Hindi", "Gujarati") to ensure filtering works reliably.
   static final List<FilterOption> languageOptions = [
-    FilterOption('en', 'English'),
-    FilterOption('hi', 'Hindi'),
-    FilterOption('bn', 'Bengali'),
-    FilterOption('te', 'Telugu'),
-    FilterOption('mr', 'Marathi'),
-    FilterOption('ta', 'Tamil'),
-    FilterOption('gu', 'Gujarati'),
-    FilterOption('ur', 'Urdu'),
-    FilterOption('kn', 'Kannada'),
-    FilterOption('ml', 'Malayalam'),
-    FilterOption('or', 'Odia'),
-    FilterOption('pa', 'Punjabi'),
-    FilterOption('as', 'Assamese'),
-    FilterOption('mai', 'Maithili'),
-    FilterOption('bh', 'Bodo'),
-    FilterOption('ks', 'Kashmiri'),
-    FilterOption('kok', 'Konkani'),
-    FilterOption('ne', 'Nepali'),
-    FilterOption('sd', 'Sindhi'),
-    FilterOption('sa', 'Sanskrit'),
-    FilterOption('mni', 'Manipuri'),
-    FilterOption('sat', 'Santali'),
-    FilterOption('doi', 'Dogri'),
+    FilterOption('English', 'English'),
+    FilterOption('Hindi', 'Hindi'),
+    FilterOption('Bengali', 'Bengali'),
+    FilterOption('Telugu', 'Telugu'),
+    FilterOption('Marathi', 'Marathi'),
+    FilterOption('Tamil', 'Tamil'),
+    FilterOption('Gujarati', 'Gujarati'),
+    FilterOption('Urdu', 'Urdu'),
+    FilterOption('Kannada', 'Kannada'),
+    FilterOption('Malayalam', 'Malayalam'),
+    FilterOption('Odia', 'Odia'),
+    FilterOption('Punjabi', 'Punjabi'),
+    FilterOption('Assamese', 'Assamese'),
+    FilterOption('Maithili', 'Maithili'),
+    FilterOption('Bodo', 'Bodo'),
+    FilterOption('Kashmiri', 'Kashmiri'),
+    FilterOption('Konkani', 'Konkani'),
+    FilterOption('Nepali', 'Nepali'),
+    FilterOption('Sindhi', 'Sindhi'),
+    FilterOption('Sanskrit', 'Sanskrit'),
+    FilterOption('Manipuri', 'Manipuri'),
+    FilterOption('Santali', 'Santali'),
+    FilterOption('Dogri', 'Dogri'),
   ];
 
   // --- AI Astrologer ---

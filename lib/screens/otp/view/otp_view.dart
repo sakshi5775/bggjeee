@@ -299,31 +299,31 @@ class OTPView extends BasePage<OTPController> {
                               );
                             }),
                             Spacing.h(16),
-                            // Change Number Button
-                            Align(
-                              alignment: Alignment.center,
-                              child: TextButton(
-                                onPressed: () {
-                                  controller.changeNumber();
-                                },
-                                style: TextButton.styleFrom(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 16.w,
-                                    vertical: 8.h,
-                                  ),
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                ),
-                                child: AutoTranslateText(
-                                  'Change Phone Number',
-                                  style: MyTextTheme.smallBCB.copyWith(
-                                    color: AppColors.saffron,
-                                    fontSize: 13.sp,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                ),
-                              ),
-                            ),
+                            // // Change Number Button
+                            // Align(
+                            //   alignment: Alignment.center,
+                            //   child: TextButton(
+                            //     onPressed: () {
+                            //       controller.changeNumber();
+                            //     },
+                            //     style: TextButton.styleFrom(
+                            //       padding: EdgeInsets.symmetric(
+                            //         horizontal: 16.w,
+                            //         vertical: 8.h,
+                            //       ),
+                            //       tapTargetSize:
+                            //           MaterialTapTargetSize.shrinkWrap,
+                            //     ),
+                            //     child: AutoTranslateText(
+                            //       'Change Phone Number',
+                            //       style: MyTextTheme.smallBCB.copyWith(
+                            //         color: AppColors.saffron,
+                            //         fontSize: 13.sp,
+                            //         decoration: TextDecoration.underline,
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
                           ],
                         ),
                       ),

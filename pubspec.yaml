@@ -17,14 +17,13 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
 #
-# IMPORTANT – For Play Store update prompt (upgrader) to work:
-# The upgrader package compares VERSION NAME only (the part before +), not version code.
-# So on every release you must INCREMENT THE VERSION NAME (e.g. 1.0.1 → 1.0.2).
-# Example: this build 1.0.2+49, next build 1.0.3+50. Then the store will show 1.0.2
-# and users on 1.0.1 will see "Update available". If you only change +48 to +49 and
-# keep 1.0.1, the prompt will not show.
+# VERSION FORMAT: "X.Y.Z+BUILD" (single source of truth for Android & iOS)
+#   - X.Y.Z = versionName (user-visible, e.g. 1.0.1). Android: versionName. iOS: CFBundleShortVersionString.
+#   - BUILD = versionCode (integer, e.g. 59). Android: versionCode. iOS: CFBundleVersion.
+# On every release: bump X.Y.Z and/or BUILD. Upgrader compares versionName only.
+# Run: scripts\bump_version.ps1 (bumps patch + build, syncs minAppVersion).
 
-version: 1.0.1+59
+version: 1.0.2+60
 
 
 environment:

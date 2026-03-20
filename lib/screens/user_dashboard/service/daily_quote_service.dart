@@ -1,6 +1,7 @@
 import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
 import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
 import 'package:astrobharataiuser/data_model/daily_quote_model.dart';
+import 'package:astrobharataiuser/utils/user_friendly_error.dart';
 import 'package:get/get.dart';
 
 class DailyQuoteService {
@@ -17,7 +18,10 @@ class DailyQuoteService {
       return DailyQuoteResponse.fromJson(response.body);
     }
 
-    throw response.body?['message']?.toString() ?? 'Failed to load daily quote';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'Failed to load daily quote',
+    );
   }
 
   /// Get available languages for daily quote
@@ -33,8 +37,10 @@ class DailyQuoteService {
       return response.body as Map<String, dynamic>?;
     }
 
-    throw response.body?['message']?.toString() ??
-        'Failed to load daily quote languages';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'Failed to load daily quote languages',
+    );
   }
 
   /// Get daily quote history
@@ -52,7 +58,9 @@ class DailyQuoteService {
       return response.body as Map<String, dynamic>?;
     }
 
-    throw response.body?['message']?.toString() ??
-        'Failed to load daily quote history';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'Failed to load daily quote history',
+    );
   }
 }

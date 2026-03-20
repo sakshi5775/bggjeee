@@ -16,6 +16,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
 
 enum _AddressAction { edit, setDefault, delete }
 
@@ -87,7 +88,7 @@ class CartView extends GetView<CartController> {
                         padding: EdgeInsets.only(
                           left: 18.w,
                           right: 18.w,
-                          top: 16.h,
+                          top: 1.h,
                           bottom: 24.h,
                         ),
                         child: Column(
@@ -787,9 +788,122 @@ class _AddressSection extends StatelessWidget {
                 ],
               )
             else
-              AutoTranslateText(
-                'No delivery address selected. Please add an address to proceed.',
-                style: AppTypography.body2.copyWith(color: AppColors.sacredRed),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AutoTranslateText(
+                    'No delivery address selected. Add address for checkout, or enter pincode to calculate shipping.',
+                    style: AppTypography.body2.copyWith(color: AppColors.sacredRed),
+                  ),
+                  SizedBox(height: 12.h),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: AppColors.orangeGradient,
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () => _showAddressSheet(context),
+                          icon: Icon(
+                            Icons.add_location_alt_outlined,
+                            color: Colors.white,
+                          ),
+                          label: AutoTranslateText(
+                            'Add Address',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14.sp,
+                            ),
+                          ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                            side: BorderSide.none,
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                              vertical: 10.h,
+                          ),
+                        ),
+                      ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                  // Compact pincode + apply row (less bulky than full-width buttons)
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: controller.pincodeController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
+                          decoration: InputDecoration(
+                            hintText: 'Pincode (e.g. 560001)',
+                            hintStyle: TextStyle(color: AppColors.textSecondary),
+                            filled: true,
+                            fillColor: Colors.grey.shade100,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                              borderSide: BorderSide(
+                                color: AppColors.textSecondary.withValues(
+                                  alpha: 0.2,
+                                ),
+                              ),
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                              vertical: 10.h,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 10.w),
+                      SizedBox(
+                        width: 138.w,
+                        height: 48.h,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: AppColors.orangeGradient,
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () => controller.applyGuestPincode(),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.r),
+                                side: BorderSide.none,
+                              ),
+                              padding: EdgeInsets.zero,
+                            ),
+                            child: AutoTranslateText(
+                              'Check Delivery',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                                fontSize: 13.5,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
           ],
         ),

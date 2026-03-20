@@ -9,13 +9,15 @@ import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.da
 import 'package:astrobharataiuser/screens/ecommerce/controller/wishlist_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/utils/user_friendly_error.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/core/services/analytics_service.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_razorpay_service.dart';
 
-class CartController extends BaseController {
+class CartController extends BaseController with WidgetsBindingObserver {
   static const int maxQuantity = 50;
   static const int minQuantity = 1;
 
@@ -35,7 +37,12 @@ class CartController extends BaseController {
   final selectedAddress = Rxn<AddressModel>();
 
   final couponController = TextEditingController();
+  // Used for guest/temporary cart shipping calculation when no address is selected.
+  final pincodeController = TextEditingController();
+  final RxString guestPincode = ''.obs;
   final _pendingProducts = <String, bool>{}.obs;
+
+  String? _lastCartRefreshError;
 
   // Payment Method
   final RxString selectedPaymentMethod = 'online'.obs; // Default to online
@@ -49,8 +56,11 @@ class CartController extends BaseController {
   @override
   void onInit() {
     super.onInit();
-    loadCart();
-    loadAddresses();
+    WidgetsBinding.instance.addObserver(this);
+    // Load addresses first so cart can calculate dynamic shipping using selected address.
+    loadAddresses().whenComplete(() {
+      loadCart();
+    });
     loadYouMayAlsoLike();
     _initializeRazorpay();
   }
@@ -68,7 +78,9 @@ class CartController extends BaseController {
 
   @override
   void onClose() {
+    WidgetsBinding.instance.removeObserver(this);
     couponController.dispose();
+    pincodeController.dispose();
     _razorpayService.dispose();
     super.onClose();
   }
@@ -80,13 +92,22 @@ class CartController extends BaseController {
       },
       onError: (message) {
         isPlacingOrder.value = false;
-        showErrorMessage(title: 'Payment Failed', message: message);
+        showErrorMessage(
+          title: 'Payment Failed',
+          message: UserFriendlyError.message(
+            message,
+            fallback: 'Payment failed. Please try again.',
+          ),
+        );
       },
       onFailure: (response) {
         isPlacingOrder.value = false;
         showErrorMessage(
           title: 'Payment Failed',
-          message: '${response.code}: ${response.message}',
+          message: UserFriendlyError.message(
+            response.message,
+            fallback: 'Payment failed or was cancelled. Please try again.',
+          ),
         );
       },
     );
@@ -136,7 +157,13 @@ class CartController extends BaseController {
       // Show success modal that auto-closes after 3 seconds
       _showPaymentSuccessModal();
     } catch (e) {
-      showErrorMessage(title: 'Error', message: 'Verification failed: $e');
+      showErrorMessage(
+        title: 'Error',
+        message: UserFriendlyError.message(
+          e,
+          fallback: 'Payment verification failed. Please try again.',
+        ),
+      );
     } finally {
       isPlacingOrder.value = false;
       _pendingPaymentId = null;
@@ -263,6 +290,42 @@ class CartController extends BaseController {
 
   // Temporary storage for payment verification
   String? _pendingPaymentId;
+  bool _isRecoveringPendingPayment = false;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _recoverPendingPaymentOnResume();
+    }
+  }
+
+  bool _isSuccessfulPaymentStatus(String? status) {
+    final normalized = status?.toLowerCase().trim();
+    return normalized == 'completed' ||
+        normalized == 'captured' ||
+        normalized == 'paid' ||
+        normalized == 'success' ||
+        normalized == 'succeeded';
+  }
+
+  Future<void> _recoverPendingPaymentOnResume() async {
+    if (_pendingPaymentId == null || _isRecoveringPendingPayment) return;
+    _isRecoveringPendingPayment = true;
+    try {
+      final payment = await _service.getPaymentById(_pendingPaymentId!);
+      if (_isSuccessfulPaymentStatus(payment?.status)) {
+        await clearCart();
+        await loadCart();
+        _showPaymentSuccessModal();
+        _pendingPaymentId = null;
+        isPlacingOrder.value = false;
+      }
+    } catch (_) {
+      // Keep silent during auto-recovery checks.
+    } finally {
+      _isRecoveringPendingPayment = false;
+    }
+  }
 
   Future<void> loadCart() async {
     await runWithLoading(
@@ -271,7 +334,14 @@ class CartController extends BaseController {
         // Try to merge cart if we have a session ID (guest cart to merge with user cart)
         // If no session ID is available, mergeCart will skip the API call
         await _service.mergeCart();
-        final result = await _service.getCart();
+        final result = await _service.getCart(
+          shippingAddressId: selectedAddress.value?.id,
+          pincode: selectedAddress.value == null &&
+                  guestPincode.value.isNotEmpty
+              ? guestPincode.value
+              : null,
+          paymentMethod: selectedPaymentMethod.value,
+        );
         _updateCartState(result);
       },
       showBusy: false,
@@ -293,10 +363,64 @@ class CartController extends BaseController {
     savedItems.refresh();
   }
 
-  Future<void> _refreshCartFromServer() async {
-    final refreshed = await _service.getCart();
-    if (refreshed != null) {
-      _updateCartState(refreshed);
+  Future<bool> _refreshCartFromServer() async {
+    _lastCartRefreshError = null;
+    try {
+      final refreshed = await _service.getCart(
+        shippingAddressId: selectedAddress.value?.id,
+        pincode: selectedAddress.value == null && guestPincode.value.isNotEmpty
+            ? guestPincode.value
+            : null,
+        paymentMethod: selectedPaymentMethod.value,
+      );
+      if (refreshed != null) {
+        _updateCartState(refreshed);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      // Prevent unhandled Future exceptions (e.g. when refresh is called without await).
+      _lastCartRefreshError = e is String ? e : e.toString();
+      return false;
+    }
+  }
+
+  Future<void> applyGuestPincode() async {
+    final pincode = pincodeController.text.trim();
+    if (pincode.isEmpty) {
+      showErrorMessage(title: 'Pincode', message: 'Please enter pincode.');
+      return;
+    }
+    if (pincode.length < 6) {
+      showErrorMessage(
+        title: 'Pincode',
+        message: 'Pincode must be at least 6 digits.',
+      );
+      return;
+    }
+
+    guestPincode.value = pincode;
+    // Re-calculate shipping (cart view will update via controller refresh).
+    try {
+      final ok = await _refreshCartFromServer();
+      if (!ok) {
+        showErrorDialog(
+          title: 'Delivery unavailable',
+          error: _lastCartRefreshError ??
+              'We are unable to ship to this pincode. Please contact support.',
+        );
+        return;
+      }
+
+      showSuccessMessage(
+        title: 'Shipping updated',
+        message: 'Estimated shipping updated for pincode $pincode.',
+      );
+    } catch (e) {
+      showErrorDialog(
+        title: 'Delivery unavailable',
+        error: e,
+      );
     }
   }
 
@@ -382,7 +506,10 @@ class CartController extends BaseController {
       );
 
       if (result != null) {
+        // Some backends may return different cart totals/shipping from
+        // the "add item" response. Always refresh from getCart() to keep UI consistent.
         _updateCartState(result);
+        await _refreshCartFromServer();
         final newQty = quantityForProduct(product);
 
         // Log Analytics
@@ -636,6 +763,7 @@ class CartController extends BaseController {
 
       if (added != null) {
         _updateCartState(added);
+        await _refreshCartFromServer();
         if (showFeedback) {
           final name = product.name ?? 'Product';
           showSuccessMessage(
@@ -703,6 +831,7 @@ class CartController extends BaseController {
       final result = await _service.removeCartItem(item.id!);
       if (result != null) {
         _updateCartState(result);
+        await _refreshCartFromServer();
 
         // Log Analytics
         AnalyticsService().logRemoveFromCart(
@@ -895,6 +1024,12 @@ class CartController extends BaseController {
           selectedAddress.value = fallback ?? addresses.first;
         }
         addresses.refresh();
+
+        // If cart is already loaded, refresh it so shipping totals match the
+        // currently selected/default address.
+        if (cart.value != null) {
+          await _refreshCartFromServer();
+        }
       },
       showBusy: false,
       showError: false,
@@ -942,6 +1077,10 @@ class CartController extends BaseController {
 
   void selectAddress(AddressModel address) {
     selectedAddress.value = address;
+    // Re-calculate cart totals (Shiprocket shipping) when user changes address.
+    if (cart.value != null) {
+      _refreshCartFromServer();
+    }
   }
 
   Future<void> markDefault(AddressModel address) async {

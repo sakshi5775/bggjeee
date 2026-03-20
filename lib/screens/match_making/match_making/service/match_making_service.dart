@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 class MatchMakingService {
   /// Base URL for match making API (port 8000/api/numerology)
   static const String _matchMakingBaseUrl =
-      'http://3.109.91.254:8000/api/numerology/api/vedic/matching';
+      'https://api.astrobharatai.com/api/numerology/api/vedic/matching';
 
   /// Get Ashtakoot matching with astro details
   Future<Map<String, dynamic>?> getAshtakootMatching({

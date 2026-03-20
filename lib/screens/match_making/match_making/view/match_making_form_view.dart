@@ -5,10 +5,9 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/match_making/match_making/controller/match_making_form_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:astrobharataiuser/widgets/address_autocomplete_field.dart';
+import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/time_picker_helper.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -603,8 +602,7 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
           placeController: controller.person1PlaceController,
           onDateTap: () => _showDatePicker(Get.context!, true),
           onTimeTap: () => _showTimePicker(Get.context!, true),
-          onPlaceSelected: (place) =>
-              controller.setPerson1LocationFromAutocomplete(place),
+          onPlaceTap: () => _showLocationSheet(Get.context!, true),
           isPerson1: true,
         ),
 
@@ -644,8 +642,7 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
           placeController: controller.person2PlaceController,
           onDateTap: () => _showDatePicker(Get.context!, false),
           onTimeTap: () => _showTimePicker(Get.context!, false),
-          onPlaceSelected: (place) =>
-              controller.setPerson2LocationFromAutocomplete(place),
+          onPlaceTap: () => _showLocationSheet(Get.context!, false),
           isPerson1: false,
         ),
 
@@ -735,6 +732,39 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
     );
   }
 
+  void _showLocationSheet(BuildContext context, bool isPerson1) {
+    final placeController = isPerson1
+        ? controller.person1PlaceController
+        : controller.person2PlaceController;
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        height: MediaQuery.of(ctx).size.height * 0.7,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        ),
+        child: LocationBottomSheetWidget(
+          selectedCity: placeController.text.trim().isEmpty
+              ? 'Select birth place'
+              : placeController.text.trim(),
+          onCitySelected: (city, state, country, [lat, lng, tz]) {
+            if (isPerson1) {
+              controller.setPerson1LocationFromSheet(
+                  city, state, country, lat, lng, tz);
+            } else {
+              controller.setPerson2LocationFromSheet(
+                  city, state, country, lat, lng, tz);
+            }
+            Navigator.of(ctx).pop();
+          },
+        ),
+      ),
+    );
+  }
+
   Widget _buildPersonSection({
     required String label,
     required String subLabel,
@@ -744,7 +774,7 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
     required TextEditingController placeController,
     required VoidCallback onDateTap,
     required VoidCallback onTimeTap,
-    required Function(Map<String, dynamic>) onPlaceSelected,
+    required VoidCallback onPlaceTap,
     required bool isPerson1,
   }) {
     return Container(
@@ -808,36 +838,49 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
             onTap: onTimeTap,
           ),
           Spacing.h(12),
-          AddressAutocompleteField(
-            controller: placeController,
-            onPlaceSelected: onPlaceSelected,
-            country: 'in',
-            decoration: InputDecoration(
-              labelText: 'Birth Place',
-              hintText: 'Enter birth place',
-              labelStyle: MyTextTheme.smallBCN.copyWith(
-                color: '#68171E'.toColor().withValues(alpha: 0.6),
-              ),
-              prefixIcon: Icon(
-                Icons.location_on,
-                color: AppColors.deepOrange,
-                size: 20.w,
-              ),
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 12.w,
-                vertical: 14.h,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.r),
-                borderSide: BorderSide(
-                  color: '#68171E'.toColor().withValues(alpha: 0.2),
-                  width: 1,
+          GestureDetector(
+            onTap: onPlaceTap,
+            child: AbsorbPointer(
+              child: TextFormField(
+                controller: placeController,
+                readOnly: true,
+                decoration: InputDecoration(
+                  labelText: 'Birth Place',
+                  hintText: 'Tap to select birth place',
+                  labelStyle: MyTextTheme.smallBCN.copyWith(
+                    color: '#68171E'.toColor().withValues(alpha: 0.6),
+                  ),
+                  prefixIcon: Icon(
+                    Icons.location_on,
+                    color: AppColors.deepOrange,
+                    size: 20.w,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.r),
+                    borderSide: BorderSide(
+                      color: '#68171E'.toColor().withValues(alpha: 0.2),
+                      width: 1,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.r),
+                    borderSide: BorderSide(
+                      color: '#68171E'.toColor().withValues(alpha: 0.2),
+                      width: 1,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.r),
+                    borderSide: BorderSide(
+                      color: AppColors.deepOrange,
+                      width: 1.5,
+                    ),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 14.h,
+                  ),
                 ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.r),
-                borderSide: BorderSide(color: AppColors.deepOrange, width: 1.5),
               ),
             ),
           ),

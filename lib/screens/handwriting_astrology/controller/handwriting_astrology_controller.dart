@@ -130,10 +130,11 @@ class HandwritingAstrologyController extends GetxController {
     // Check balance
     if (Get.isRegistered<AiPricingController>()) {
       final pricingCtrl = Get.find<AiPricingController>();
-      if (!pricingCtrl.hasSufficientBalance('handwriting')) {
-        pricingCtrl.showInsufficientBalancePopup('handwriting');
-        return;
-      }
+      final canProceed = await pricingCtrl.ensureHasSufficientBalance(
+        'handwriting',
+        showPopup: true,
+      );
+      if (!canProceed) return;
     }
 
     try {

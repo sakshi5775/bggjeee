@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 
 class KundliService {
   /// Base URL for kundli API (port 8000/api/numerology)
-  static const String _kundliBaseUrl = 'http://3.109.91.254:8000/api/numerology/api';
+  static const String _kundliBaseUrl = 'https://api.astrobharatai.com/api/numerology/api';
 
   /// Generate Kundli
   Future<Map<String, dynamic>?> generateKundli({

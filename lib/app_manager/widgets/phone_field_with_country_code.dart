@@ -37,15 +37,15 @@ class PhoneFieldWithCountryCode extends StatefulWidget {
 }
 
 class _PhoneFieldWithCountryCodeState extends State<PhoneFieldWithCountryCode> {
-  CountryCode? _selectedCountry;
   late TextEditingController _controller;
+
+  CountryCode get _selectedCountry =>
+      widget.initialCountry ?? CountryCode.fromCountryCode('IN');
 
   @override
   void initState() {
     super.initState();
     _controller = widget.controller ?? TextEditingController();
-    _selectedCountry =
-        widget.initialCountry ?? CountryCode.fromCountryCode('IN');
     _controller.addListener(_onPhoneNumberChanged);
   }
 
@@ -65,10 +65,8 @@ class _PhoneFieldWithCountryCodeState extends State<PhoneFieldWithCountryCode> {
       final detectedCountry = _detectCountryFromPhoneNumber(phoneNumber);
       // Only update if country code actually changed to prevent displacement
       if (detectedCountry != null &&
-          detectedCountry.code != _selectedCountry?.code) {
-        setState(() {
-          _selectedCountry = detectedCountry;
-        });
+          detectedCountry.code != _selectedCountry.code) {
+        // Do not call setState here. Let parent rebuild via onCountryChanged.
         widget.onCountryChanged?.call(detectedCountry);
       }
     }
@@ -152,18 +150,15 @@ class _PhoneFieldWithCountryCodeState extends State<PhoneFieldWithCountryCode> {
                   ),
                   child: CountryCodePicker(
                     key: ValueKey(
-                      _selectedCountry?.code ?? 'IN',
+                      _selectedCountry.code,
                     ), // Key to prevent unnecessary rebuilds
                     onChanged: (CountryCode countryCode) {
                       // Only update if code actually changed to prevent rebuild
-                      if (countryCode.code != _selectedCountry?.code) {
-                        setState(() {
-                          _selectedCountry = countryCode;
-                        });
+                      if (countryCode.code != _selectedCountry.code) {
                         widget.onCountryChanged?.call(countryCode);
                       }
                     },
-                    initialSelection: _selectedCountry?.code ?? 'IN',
+                    initialSelection: _selectedCountry.code,
                     favorite: ['+91', 'IN', '+1', 'US'],
                     showCountryOnly: false,
                     showOnlyCountryWhenClosed:

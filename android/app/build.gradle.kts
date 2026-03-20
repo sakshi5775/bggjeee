@@ -33,6 +33,7 @@ android {
         applicationId = "com.astrobharatai.astrouser"
         minSdk = flutter.minSdkVersion
         targetSdk = 36
+        // From pubspec version "X.Y.Z+BUILD": versionCode=BUILD (int), versionName=X.Y.Z (string)
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         

@@ -48,14 +48,16 @@ class AstrologyToolWidget extends StatelessWidget {
       'route': AppRoutes.handwritingAstrology,
       'image':
           'https://d3c2un7ipdye89.cloudfront.net/Scanner+Slider/writing.jpeg',
-      'pricingKey': 'handwriting_analysis',
+      // Must match HandwritingAstrologyController balance-check key.
+      'pricingKey': 'handwriting',
     },
     {
       'label': 'Prashna Kundli',
       'route': AppRoutes.prashnaKundali,
       'image':
           'https://d3c2un7ipdye89.cloudfront.net/Astro+Service/New+Photos+Update/prashna+kundli.jpeg',
-      'pricingKey': 'prashna_kundali',
+      // Must match PrashnaKundaliController balance-check key.
+      'pricingKey': 'prashna_kundli',
     },
     {
       'label': 'Tarot Reading',
@@ -118,6 +120,16 @@ class AstrologyToolWidget extends StatelessWidget {
       onTap: () {
         _requireLogin(
           () async {
+            // Enforce balance check at tap-time for paid tools.
+            if (pricingKey.isNotEmpty && Get.isRegistered<AiPricingController>()) {
+              final pricingCtrl = Get.find<AiPricingController>();
+              final canProceed = await pricingCtrl.ensureHasSufficientBalance(
+                pricingKey,
+                showPopup: true,
+              );
+              if (!canProceed) return;
+            }
+
             UserMainController.pushInCurrentTab(route);
           },
           message: 'Login to access this service.',
@@ -197,6 +209,9 @@ class AstrologyToolWidget extends StatelessWidget {
       final controller = Get.find<AiPricingController>();
       final pricing = controller.getPricingFor(pricingKey);
       if (pricing == null) return const SizedBox.shrink();
+
+      // If priceOffer <= 0 treat it as free (no badge).
+      if (pricing.priceOffer <= 0) return const SizedBox.shrink();
 
       final price = controller.getDisplayPrice(pricingKey);
       final badgeText = price.isNotEmpty ? price : 'Paid';

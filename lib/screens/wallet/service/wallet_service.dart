@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
 import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
 import 'package:astrobharataiuser/core/base/api_helper_mixin.dart';
 import 'package:astrobharataiuser/data_model/wallet_model.dart';
+import 'package:astrobharataiuser/utils/user_friendly_error.dart';
 import 'package:get/get.dart';
 
 class WalletService with ApiHelperMixin {
@@ -27,9 +28,10 @@ class WalletService with ApiHelperMixin {
     if (response.body['success'] == true) {
       return WalletRechargeInitiateResponse.fromJson(response.body);
     } else {
-      String msg =
-          response.body['message']?.toString() ??
-          "Failed to initiate recharge. Please try again.";
+      final msg = UserFriendlyError.message(
+        response.body['message']?.toString(),
+        fallback: "Failed to initiate recharge. Please try again.",
+      );
       throw msg;
     }
   }
@@ -58,8 +60,10 @@ class WalletService with ApiHelperMixin {
     if (response.body['success'] == true) {
       return WalletRechargeVerifyResponse.fromJson(response.body);
     } else {
-      throw response.body['message']?.toString() ??
-          "Failed to verify recharge. Please try again.";
+      throw UserFriendlyError.message(
+        response.body['message']?.toString(),
+        fallback: "Failed to verify recharge. Please try again.",
+      );
     }
   }
 

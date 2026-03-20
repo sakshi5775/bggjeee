@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 class NumerologyService {
   /// Base URL for numerology API (port 8000/api/numerology)
-  static const String _numerologyBaseUrl = 'http://3.109.91.254:8000/api/numerology/api';
+  static const String _numerologyBaseUrl = 'https://api.astrobharatai.com/api/numerology/api';
 
   /// Get Lo Shu Grid data
   Future<Map<String, dynamic>?> getLoShuGrid({

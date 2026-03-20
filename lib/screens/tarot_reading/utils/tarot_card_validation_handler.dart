@@ -55,14 +55,6 @@ class TarotCardValidationHandler {
       return false; // Not a validation error, caller should handle
     }
 
-    // Check if we have a selected card to show in the message
-    if (selectedCard == null) {
-      debugPrint(
-        '⚠️ Status 400 but no selected card - cannot show unsuitable message',
-      );
-      return false; // Can't show unsuitable message without a card
-    }
-
     // Check retry limit
     if (currentRetryCount >= maxRetries) {
       debugPrint('⚠️ Max retries ($maxRetries) reached for $categoryName');
@@ -71,12 +63,17 @@ class TarotCardValidationHandler {
 
     // Show unsuitable card animation
     debugPrint('🎬 Showing unsuitable card animation');
-    debugPrint('   Card: ${selectedCard.name}');
+    debugPrint(
+      '   Card: ${selectedCard?.name ?? "Auto-selected"}',
+    );
     debugPrint('   Category: $categoryName');
     debugPrint('   Will auto-retry after animation');
 
     // Trigger the unsuitable card message
-    onShowUnsuitableMessage(selectedCard.name, categoryName);
+    onShowUnsuitableMessage(
+      selectedCard?.name ?? 'Auto-selected',
+      categoryName,
+    );
 
     // Schedule retry after a small delay (animation will complete first)
     // The animation widget will call onRetry via handleUnsuitableCardAutoRetry

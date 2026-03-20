@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -58,6 +59,9 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
   TimeOfDay? _selectedBirthTime;
   int _selectedBirthSeconds = 0;
   String _selectedLanguageCode = 'en';
+  double? _birthPlaceLat;
+  double? _birthPlaceLng;
+  double? _birthPlaceTz;
   static const Map<String, String> _languageOptions = {
     'en': 'English',
     'hi': 'Hindi',
@@ -110,6 +114,11 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
       if (birthPlace.country != null && birthPlace.country!.isNotEmpty) {
         placeParts.add(birthPlace.country!);
       }
+      _birthPlaceLat = birthPlace.latitude;
+      _birthPlaceLng = birthPlace.longitude;
+      _birthPlaceTz = birthPlace.timezone != null
+          ? double.tryParse(birthPlace.timezone!)
+          : null;
     }
     _birthPlaceController = TextEditingController(text: placeParts.join(', '));
 
@@ -327,22 +336,7 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
                         Spacing.h(16),
                         _buildResponsiveGroup(
                           children: [
-                            _buildTextField(
-                              label: 'Place of Birth',
-                              hint: 'City, State, Country',
-                              controller: _birthPlaceController,
-                              fillColor: Colors.white,
-                              prefixIcon: Icon(
-                                Icons.location_on_outlined,
-                                color: AppColors.deepOrange,
-                              ),
-                              validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return 'Please enter place of birth';
-                                }
-                                return null;
-                              },
-                            ),
+                            _buildPlaceOfBirthField(context),
                             _buildTextField(
                               label: 'Occupation',
                               controller: _occupationController,
@@ -517,7 +511,70 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
     final state = rawParts.length > 1 ? rawParts[1] : null;
     final country = rawParts.length > 2 ? rawParts[2] : null;
     if (city == null && state == null && country == null) return null;
-    return BirthPlace(city: city, state: state, country: country);
+    return BirthPlace(
+      city: city,
+      state: state,
+      country: country,
+      latitude: _birthPlaceLat,
+      longitude: _birthPlaceLng,
+      timezone: _birthPlaceTz?.toString(),
+    );
+  }
+
+  Widget _buildPlaceOfBirthField(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _showLocationSheet(context),
+      child: AbsorbPointer(
+        child: _buildTextField(
+          label: 'Place of Birth',
+          hint: 'Tap to select birth place',
+          controller: _birthPlaceController,
+          fillColor: Colors.white,
+          prefixIcon: Icon(
+            Icons.location_on_outlined,
+            color: AppColors.deepOrange,
+          ),
+          validator: (value) {
+            if (value == null || value.trim().isEmpty) {
+              return 'Please select place of birth';
+            }
+            return null;
+          },
+        ),
+      ),
+    );
+  }
+
+  void _showLocationSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        height: MediaQuery.of(ctx).size.height * 0.7,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        ),
+        child: LocationBottomSheetWidget(
+          selectedCity: _birthPlaceController.text.trim().isEmpty
+              ? 'Select birth place'
+              : _birthPlaceController.text.trim(),
+          onCitySelected: (city, state, country, [lat, lng, tz]) {
+            final parts = [city, state, country]
+                .where((s) => s != null && s.toString().trim().isNotEmpty)
+                .toList();
+            setState(() {
+              _birthPlaceController.text = parts.join(', ');
+              _birthPlaceLat = lat;
+              _birthPlaceLng = lng;
+              _birthPlaceTz = tz;
+            });
+            Navigator.of(ctx).pop();
+          },
+        ),
+      ),
+    );
   }
 
   BirthTime? _buildBirthTime() {

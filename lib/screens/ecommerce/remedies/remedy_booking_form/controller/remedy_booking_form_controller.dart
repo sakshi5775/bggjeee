@@ -1,13 +1,17 @@
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:astrobharataiuser/data_model/remedy_booking_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/services/remedies_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:astrobharataiuser/utils/user_friendly_error.dart';
 
-class RemedyBookingFormController extends BaseController {
+class RemedyBookingFormController extends BaseController
+    with WidgetsBindingObserver {
   final RemediesService _remediesService = Get.find<RemediesService>();
   late Razorpay _razorpay;
 
@@ -48,6 +52,7 @@ class RemedyBookingFormController extends BaseController {
   double? price;
   String? serviceImage;
   String? _createdBookingId;
+  bool _isRecoveringPendingPayment = false;
 
   final List<String> timeSlots = ['morning', 'afternoon', 'evening'];
 
@@ -68,8 +73,16 @@ class RemedyBookingFormController extends BaseController {
   @override
   void onInit() {
     super.onInit();
+    WidgetsBinding.instance.addObserver(this);
     _parseArguments();
     _initRazorpay();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _recoverPendingPaymentOnResume();
+    }
   }
 
   void _parseArguments() {
@@ -195,12 +208,12 @@ class RemedyBookingFormController extends BaseController {
         );
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        e.toString(),
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withValues(alpha: 0.9),
-        colorText: Colors.white,
+      showErrorMessage(
+        title: 'Error',
+        message: UserFriendlyError.message(
+          e,
+          fallback: 'Unable to submit booking. Please try again.',
+        ),
       );
     } finally {
       isSubmitting.value = false;
@@ -233,20 +246,39 @@ class RemedyBookingFormController extends BaseController {
           'order_id': orderId,
           'name': 'AstroBharatai',
           'description': 'Remedy Booking - ${serviceTitle ?? "Remedy"}',
+          'prefill': {
+            'contact':
+                UserData()
+                    .getLoginData
+                    .user
+                    ?.phone
+                    ?.replaceAll(RegExp(r'[^\d]'), '') ??
+                phoneController.text.trim(),
+            if (emailController.text.trim().isNotEmpty)
+              'email': emailController.text.trim(),
+            if (fullNameController.text.trim().isNotEmpty)
+              'name': fullNameController.text.trim(),
+          },
           'theme': {'color': '#FF9933'},
         };
         _razorpay.open(options);
       } else {
-        Get.snackbar(
-          'Payment Initiation Failed',
-          response?.message ?? 'Could not start payment',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.orange.withValues(alpha: 0.9),
-          colorText: Colors.white,
+        showErrorMessage(
+          title: 'Payment Initiation Failed',
+          message: UserFriendlyError.message(
+            response?.message,
+            fallback: 'Could not start payment. Please try again.',
+          ),
         );
       }
     } catch (e) {
-      Get.snackbar('Payment Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
+      showErrorMessage(
+        title: 'Payment Error',
+        message: UserFriendlyError.message(
+          e,
+          fallback: 'Payment could not be started. Please try again.',
+        ),
+      );
     } finally {
       isPaymentInProgress.value = false;
     }
@@ -267,6 +299,7 @@ class RemedyBookingFormController extends BaseController {
       );
       await _remediesService.verifyRemedyPayment(bookingId, verifyRequest);
       _navigateToRemediesView();
+      _createdBookingId = null;
       Get.snackbar(
         'Payment Successful',
         'Your remedy booking is confirmed.',
@@ -276,16 +309,26 @@ class RemedyBookingFormController extends BaseController {
         duration: const Duration(seconds: 3),
       );
     } catch (e) {
-      Get.snackbar('Verification Error', e.toString());
+      showErrorMessage(
+        title: 'Verification Error',
+        message: UserFriendlyError.message(
+          e,
+          fallback: 'Payment verification failed. Please contact support.',
+        ),
+      );
     } finally {
       isPaymentInProgress.value = false;
     }
   }
 
   void _onPaymentError(PaymentFailureResponse response) {
+    _createdBookingId = null;
     Get.snackbar(
       'Payment Failed',
-      response.message ?? 'Payment could not be completed',
+      UserFriendlyError.message(
+        response.message,
+        fallback: 'Payment could not be completed. Please try again.',
+      ),
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: Colors.red.withValues(alpha: 0.9),
       colorText: Colors.white,
@@ -298,6 +341,40 @@ class RemedyBookingFormController extends BaseController {
     UserMainController.pushInCurrentTab(AppRoutes.remedies);
   }
 
+  bool _isSuccessfulPaymentStatus(String? status) {
+    final normalized = status?.toLowerCase().trim();
+    return normalized == 'completed' ||
+        normalized == 'captured' ||
+        normalized == 'paid' ||
+        normalized == 'success' ||
+        normalized == 'succeeded';
+  }
+
+  Future<void> _recoverPendingPaymentOnResume() async {
+    if (_createdBookingId == null || _isRecoveringPendingPayment) return;
+    _isRecoveringPendingPayment = true;
+    try {
+      final booking = await _remediesService.getRemedyBookingById(
+        _createdBookingId!,
+      );
+      if (_isSuccessfulPaymentStatus(booking?.payment?.status)) {
+        _navigateToRemediesView();
+        Get.snackbar(
+          'Payment Successful',
+          'Your remedy booking is confirmed.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.withValues(alpha: 0.9),
+          colorText: Colors.white,
+        );
+        _createdBookingId = null;
+      }
+    } catch (_) {
+      // Keep silent during lifecycle recovery checks.
+    } finally {
+      _isRecoveringPendingPayment = false;
+    }
+  }
+
   void _onExternalWallet(ExternalWalletResponse response) {
     Get.snackbar(
       'External Wallet',
@@ -308,6 +385,7 @@ class RemedyBookingFormController extends BaseController {
 
   @override
   void onClose() {
+    WidgetsBinding.instance.removeObserver(this);
     fullNameController.dispose();
     emailController.dispose();
     phoneController.dispose();

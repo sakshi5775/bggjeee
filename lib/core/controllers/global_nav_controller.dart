@@ -141,6 +141,23 @@ class GlobalNavController extends GetxController {
     } else if (route == AppRoutes.devotionalLibrary) {
       activeSubMenuIndex.value = 2; // Mandir
       activeSubItemIndex.value = 3; // Music
+    } else if (route == AppRoutes.chalisa || route == AppRoutes.chalisaDetail) {
+      activeSubMenuIndex.value = 2; // Mandir
+      activeSubItemIndex.value = 0; // Library
+    } else if (route == AppRoutes.divyaDarshan) {
+      activeSubMenuIndex.value = 2; // Mandir
+      activeSubItemIndex.value = 1; // Temple
+    } else if (route == AppRoutes.eMandirFestivalDetail ||
+        route == AppRoutes.eMandirWallpaperStory) {
+      activeSubMenuIndex.value = 2; // Mandir
+      activeSubItemIndex.value = 0; // Library
+    } else if (route == AppRoutes.pujaDetail ||
+        route == AppRoutes.addressSelection ||
+        route == AppRoutes.pujaBookingForm ||
+        route == AppRoutes.myBookings ||
+        route == AppRoutes.myBookingDetail) {
+      activeSubMenuIndex.value = 2; // Mandir
+      activeSubItemIndex.value = 2; // Pooja
     } else if (route == AppRoutes.ecommerceHome) {
       activeSubMenuIndex.value = 3; // Mart
       activeSubItemIndex.value = 0; // Mart

@@ -4,7 +4,7 @@ import 'package:astrobharataiuser/data_model/ramal_shastra_model.dart';
 import 'package:http/http.dart' as http;
 
 class RamalShastraService {
-  static const String baseUrl = 'http://3.109.91.254:8000';
+  static const String baseUrl = 'https://api.astrobharatai.com';
 
   /// Analyze Ramal Shastra with question and points
   Future<RamalShastraData> analyzeRamalShastra({

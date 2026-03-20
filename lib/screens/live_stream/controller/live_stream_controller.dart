@@ -41,8 +41,9 @@ class LiveStreamController extends BaseController {
   // Socket.io connection for chat, gifts, and reactions
   IO.Socket? _socket;
   // Socket server (calls service) - use direct service port first, then gateway
-  static const String streamSocketUrl = 'http://3.109.91.254:8009';
-  static const String streamSocketUrlFallback = 'http://3.109.91.254:8000';
+  // Use gateway (no direct port).
+  static const String streamSocketUrl = 'https://api.astrobharatai.com';
+  static const String streamSocketUrlFallback = 'https://api.astrobharatai.com';
 
   // State
   final RxBool isLoading = true.obs;

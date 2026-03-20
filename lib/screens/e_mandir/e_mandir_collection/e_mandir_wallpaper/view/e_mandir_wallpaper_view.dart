@@ -1,4 +1,3 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/all_astrologers_controller.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/all_astrologers_view.dart';
 import 'package:astrobharataiuser/screens/horoscope/controller/horoscope_form_controller.dart';
@@ -20,8 +19,59 @@ import 'package:astrobharataiuser/screens/panchang/controller/panchang_controlle
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/collection_bottom_sheet.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 
-class EMandirWallpaperView extends BasePage<EMandirWallpaperController> {
-  const EMandirWallpaperView({super.key});
+class EMandirWallpaperView extends StatefulWidget {
+  const EMandirWallpaperView({super.key, this.initialFilter});
+
+  /// When opening from collection bottom sheet (or deep link), this selects the correct sub-tab.
+  final String? initialFilter;
+
+  @override
+  State<EMandirWallpaperView> createState() => _EMandirWallpaperViewState();
+}
+
+class _EMandirWallpaperViewState extends State<EMandirWallpaperView> {
+  late final EMandirWallpaperController controller;
+  late final ScrollController _filterScrollController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Some navigation paths may not attach `EMandirWallpaperBinding`.
+    // Ensure controller registration to avoid: "EMandirWallpaperController not found".
+    if (!Get.isRegistered<EMandirWallpaperController>()) {
+      Get.put(EMandirWallpaperController());
+    }
+    controller = Get.find<EMandirWallpaperController>();
+    _filterScrollController = ScrollController();
+
+    if (widget.initialFilter != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // Library tab was removed; map it to Festivals.
+        final initial = widget.initialFilter == 'Library'
+            ? 'Festivals'
+            : widget.initialFilter;
+
+        controller.applyRouteFilter(initial);
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          controller.scrollToSelectedFilter(_filterScrollController);
+        });
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _filterScrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToSelectedFilter() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.scrollToSelectedFilter(_filterScrollController);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,214 +79,223 @@ class EMandirWallpaperView extends BasePage<EMandirWallpaperController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        // endDrawer: const CommonEndDrawer(),
         body: Stack(
           children: [
             Column(
-          children: [
-            Obx(
-              () => CommonHeader(
-                title: controller.selectedFilter.value,
-                showBackButton: true,
-              ),
-            ),
-            SizedBox(height: 4.h),
-            // Filter chips
-            SizedBox(
-              height: 40.h,
-              child: ListView.builder(
-                controller: controller.filterScrollController,
-                scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                itemCount: controller.filters.length,
-                itemBuilder: (context, index) {
-                  final filter = controller.filters[index];
-                  return Obx(() {
-                    final isSelected =
-                        controller.selectedFilter.value == filter;
-                    return WallpaperFilterChip(
-                      label: filter,
-                      isSelected: isSelected,
-                      onTap: () => controller.onChangeFilter(filter),
-                    );
-                  });
-                },
-              ),
-            ),
-            // Banner
-            Obx(() {
-              if (controller.banners.isEmpty) return const SizedBox.shrink();
-              return Padding(
-                padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 0),
-                child: BannerCarouselWidget(banners: controller.banners),
-              );
-            }),
-            SizedBox(height: 8.h),
-            // Body content
-            Expanded(
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onHorizontalDragEnd: (details) {
-                  if (details.primaryVelocity == null) return;
-                  final currentFilterIndex = controller.filters.indexOf(
-                    controller.selectedFilter.value,
+              children: [
+                Obx(
+                  () => CommonHeader(
+                    title: controller.selectedFilter.value,
+                    showBackButton: true,
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                // Filter chips
+                SizedBox(
+                  height: 40.h,
+                  child: ListView.builder(
+                    controller: _filterScrollController,
+                    scrollDirection: Axis.horizontal,
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    itemCount: controller.filters.length,
+                    itemBuilder: (context, index) {
+                      final filter = controller.filters[index];
+                      return Obx(() {
+                        final isSelected =
+                            controller.selectedFilter.value == filter;
+                        return WallpaperFilterChip(
+                          label: filter,
+                          isSelected: isSelected,
+                          onTap: () {
+                            controller.onChangeFilter(filter);
+                            _scrollToSelectedFilter();
+                          },
+                        );
+                      });
+                    },
+                  ),
+                ),
+                // Banner
+                Obx(() {
+                  if (controller.banners.isEmpty) return const SizedBox.shrink();
+                  return Padding(
+                    padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 0),
+                    child: BannerCarouselWidget(banners: controller.banners),
                   );
+                }),
+                SizedBox(height: 8.h),
+                // Body content
+                Expanded(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onHorizontalDragEnd: (details) {
+                      if (details.primaryVelocity == null) return;
+                      final currentFilterIndex = controller.filters
+                          .indexOf(controller.selectedFilter.value);
 
-                  if (details.primaryVelocity! < -200) {
-                    // Swipe left -> Next Filter
-                    if (currentFilterIndex < controller.filters.length - 1) {
-                      controller.onChangeFilter(
-                        controller.filters[currentFilterIndex + 1],
-                      );
-                      controller.scrollToSelectedFilter();
-                    }
-                  } else if (details.primaryVelocity! > 200) {
-                    // Swipe right -> Previous Filter
-                    if (currentFilterIndex > 0) {
-                      controller.onChangeFilter(
-                        controller.filters[currentFilterIndex - 1],
-                      );
-                      controller.scrollToSelectedFilter();
-                    }
-                  }
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Greeting Sub-Filters (only visible if Greetings selected)
-                    Obx(() {
-                      if (controller.selectedFilter.value != 'Greetings') {
-                        return const SizedBox.shrink();
+                      if (details.primaryVelocity! < -200) {
+                        // Swipe left -> Next Filter
+                        if (currentFilterIndex <
+                            controller.filters.length - 1) {
+                          controller.onChangeFilter(
+                            controller.filters[currentFilterIndex + 1],
+                          );
+                          _scrollToSelectedFilter();
+                        }
+                      } else if (details.primaryVelocity! > 200) {
+                        // Swipe right -> Previous Filter
+                        if (currentFilterIndex > 0) {
+                          controller.onChangeFilter(
+                            controller.filters[currentFilterIndex - 1],
+                          );
+                          _scrollToSelectedFilter();
+                        }
                       }
-                      return Padding(
-                        padding: EdgeInsets.only(top: 12.h),
-                        child: SizedBox(
-                          height: 36.h,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            padding: EdgeInsets.symmetric(horizontal: 16.w),
-                            itemCount: controller.greetingFilters.length,
-                            itemBuilder: (context, index) {
-                              final filter = controller.greetingFilters[index];
-                              return Obx(() {
-                                final isSelected =
-                                    controller.selectedGreetingFilter.value ==
-                                    filter;
-                                return WallpaperFilterChip(
-                                  label: filter,
-                                  isSelected: isSelected,
-                                  onTap: () =>
-                                      controller.onChangeGreetingFilter(filter),
-                                );
-                              });
-                            },
-                          ),
-                        ),
-                      );
-                    }),
-
-                    SizedBox(height: 16.h),
-
-                    // Wallpapers Grid or Daily Thoughts List
-                    Expanded(
-                      child: Obx(() {
-                        if (controller.isLoading.value) {
-                          return const Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.deepOrange,
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Greeting Sub-Filters (only visible if Greetings selected)
+                        Obx(() {
+                          if (controller.selectedFilter.value != 'Greetings') {
+                            return const SizedBox.shrink();
+                          }
+                          return Padding(
+                            padding: EdgeInsets.only(top: 12.h),
+                            child: SizedBox(
+                              height: 36.h,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                padding:
+                                    EdgeInsets.symmetric(horizontal: 16.w),
+                                itemCount:
+                                    controller.greetingFilters.length,
+                                itemBuilder: (context, index) {
+                                  final filter =
+                                      controller.greetingFilters[index];
+                                  return Obx(() {
+                                    final isSelected = controller
+                                            .selectedGreetingFilter.value ==
+                                        filter;
+                                    return WallpaperFilterChip(
+                                      label: filter,
+                                      isSelected: isSelected,
+                                      onTap: () =>
+                                          controller
+                                              .onChangeGreetingFilter(filter),
+                                    );
+                                  });
+                                },
+                              ),
                             ),
                           );
-                        }
+                        }),
 
-                        // Rendering Daily Thoughts format if 'Greetings' selected
-                        if (controller.selectedFilter.value == 'Greetings') {
-                          if (controller.dailyThoughts.isEmpty) {
-                            return Center(
-                              child: AutoTranslateText(
-                                'No greetings found.',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 16.sp,
+                        SizedBox(height: 16.h),
+
+                        // Wallpapers Grid or Daily Thoughts List
+                        Expanded(
+                          child: Obx(() {
+                            if (controller.isLoading.value) {
+                              return const Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColors.deepOrange,
                                 ),
-                              ),
-                            );
-                          }
+                              );
+                            }
 
-                          return DailyThoughtsListWidget(
-                            dailyThoughts: controller.dailyThoughts,
-                          );
-                        }
+                            // Rendering Daily Thoughts format if 'Greetings' selected
+                            if (controller.selectedFilter.value == 'Greetings') {
+                              if (controller.dailyThoughts.isEmpty) {
+                                return Center(
+                                  child: AutoTranslateText(
+                                    'No greetings found.',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 16.sp,
+                                    ),
+                                  ),
+                                );
+                              }
 
-                        if (controller.selectedFilter.value == 'Today') {
-                          if (controller.wallpapers.isEmpty) {
-                            return Center(
-                              child: AutoTranslateText(
-                                'No wallpapers found.',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 16.sp,
-                                ),
-                              ),
-                            );
-                          }
+                              return DailyThoughtsListWidget(
+                                dailyThoughts: controller.dailyThoughts,
+                              );
+                            }
 
-                          return WallpaperGridWidget(
-                            wallpapers: controller.wallpapers,
-                            currentCategory: controller.currentCategory,
-                          );
-                        }
+                            if (controller.selectedFilter.value == 'Today') {
+                              if (controller.wallpapers.isEmpty) {
+                                return Center(
+                                  child: AutoTranslateText(
+                                    'No wallpapers found.',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 16.sp,
+                                    ),
+                                  ),
+                                );
+                              }
 
-                        if (controller.selectedFilter.value == 'Panchang') {
-                          if (!Get.isRegistered<PanchangController>()) {
-                            Get.put(PanchangController());
-                          }
-                          return const PanchangView(
-                            hideHeader: true,
-                            bannerCategory: null,
-                          );
-                        }
-                        if (controller.selectedFilter.value == 'Rashifal') {
-                          if (!Get.isRegistered<HoroscopeFormController>()) {
-                            Get.put(HoroscopeFormController());
-                          }
-                          return const HoroscopeFormView(hideHeader: true);
-                        }
+                              return WallpaperGridWidget(
+                                wallpapers: controller.wallpapers,
+                                currentCategory: controller.currentCategory,
+                              );
+                            }
 
-                        if (controller.selectedFilter.value == 'Astrology') {
-                          if (!Get.isRegistered<AllAstrologersController>()) {
-                            Get.put(AllAstrologersController());
-                          }
-                          return const AllAstrologersView(hideHeader: true);
-                        }
+                            if (controller.selectedFilter.value == 'Panchang') {
+                              if (!Get.isRegistered<PanchangController>()) {
+                                Get.put(PanchangController());
+                              }
+                              return const PanchangView(
+                                hideHeader: true,
+                                bannerCategory: null,
+                              );
+                            }
 
-                        if (controller.selectedFilter.value == 'Library') {
-                          if (controller.festivals.isEmpty) {
-                            return Center(
-                              child: AutoTranslateText(
-                                'No festivals found.',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 16.sp,
-                                ),
-                              ),
-                            );
-                          }
-                          return FestivalGridWidget(
-                            festivals: controller.festivals,
-                          );
-                        }
+                            if (controller.selectedFilter.value == 'Rashifal') {
+                              if (!Get.isRegistered<HoroscopeFormController>()) {
+                                Get.put(HoroscopeFormController());
+                              }
+                              return const HoroscopeFormView(hideHeader: true);
+                            }
 
-                        // Default empty state for other unhandled filters
-                        return const SizedBox.shrink();
-                      }),
+                            if (controller.selectedFilter.value == 'Astrology') {
+                              if (!Get.isRegistered<AllAstrologersController>()) {
+                                Get.put(AllAstrologersController());
+                              }
+                              return const AllAstrologersView(hideHeader: true);
+                            }
+
+                            // "Library" tab removed; only Festivals remains.
+                            if (controller.selectedFilter.value == 'Festivals') {
+                              if (controller.festivals.isEmpty) {
+                                return Center(
+                                  child: AutoTranslateText(
+                                    'No festivals found.',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 16.sp,
+                                    ),
+                                  ),
+                                );
+                              }
+                              return FestivalGridWidget(
+                                festivals: controller.festivals,
+                              );
+                            }
+
+                            // Default empty state for other unhandled filters
+                            return const SizedBox.shrink();
+                          }),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-            ],
-            ), // Column
-            // Sangrah FAB: on all Library (Mandir) pages; gradientBackground fill, orangeGradient border
+
+            // Sangrah FAB: shows on this Mandir wallpaper/collection screen
             Positioned(
               right: 16.w,
               bottom: 24.h,

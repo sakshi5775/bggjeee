@@ -514,6 +514,38 @@ class MatchMakingFormController extends BaseController {
     }
   }
 
+  /// Set person 1 location from location bottom sheet (city, state, country, lat, lng, timezone).
+  void setPerson1LocationFromSheet(
+    String city,
+    String? state,
+    String? country, [
+    double? latitude,
+    double? longitude,
+    double? timezone,
+  ]) {
+    final parts = [city, state, country].where((s) => s != null && s.toString().trim().isNotEmpty).toList();
+    person1PlaceController.text = parts.join(', ');
+    if (latitude != null) person1LatController.text = latitude.toString();
+    if (longitude != null) person1LonController.text = longitude.toString();
+    if (timezone != null) person1TzController.text = timezone.toString();
+  }
+
+  /// Set person 2 location from location bottom sheet.
+  void setPerson2LocationFromSheet(
+    String city,
+    String? state,
+    String? country, [
+    double? latitude,
+    double? longitude,
+    double? timezone,
+  ]) {
+    final parts = [city, state, country].where((s) => s != null && s.toString().trim().isNotEmpty).toList();
+    person2PlaceController.text = parts.join(', ');
+    if (latitude != null) person2LatController.text = latitude.toString();
+    if (longitude != null) person2LonController.text = longitude.toString();
+    if (timezone != null) person2TzController.text = timezone.toString();
+  }
+
   /// Fetch coordinates for person 1 place (fallback if not using autocomplete)
   Future<void> fetchPerson1Coordinates() async {
     final place = person1PlaceController.text.trim();

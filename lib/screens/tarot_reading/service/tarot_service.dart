@@ -10,7 +10,7 @@ import 'package:http/http.dart' as http;
 class TarotService {
   /// Base URL for tarot API (port 8000/api/numerology based on pattern)
   static const String _tarotBaseUrl =
-      'http://3.109.91.254:8000/api/numerology/api';
+      'https://api.astrobharatai.com/api/numerology/api';
 
   /// Shuffle tarot cards
   /// [shuffleType] can be 'minor', 'major', or 'both'

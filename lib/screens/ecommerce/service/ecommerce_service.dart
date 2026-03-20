@@ -1034,9 +1034,27 @@ class EcommerceService with ApiHelperMixin {
   }
 
   // Cart APIs
-  Future<CartModel?> getCart() async {
+  Future<CartModel?> getCart({
+    String? shippingAddressId,
+    String? pincode,
+    String? paymentMethod,
+  }) async {
     try {
-      final response = await _apiRepository.getApi(EndPoints.ecommerceCart);
+      final query = <String, dynamic>{};
+      if (shippingAddressId != null && shippingAddressId.isNotEmpty) {
+        query['shippingAddressId'] = shippingAddressId;
+      } else if (pincode != null && pincode.isNotEmpty) {
+        // For guest users / when you already have pincode
+        query['pincode'] = pincode;
+      }
+      if (paymentMethod != null && paymentMethod.isNotEmpty) {
+        query['paymentMethod'] = paymentMethod;
+      }
+
+      final response = await _apiRepository.getApi(
+        EndPoints.ecommerceCart,
+        query: query.isEmpty ? null : query,
+      );
       if (response.body['success'] == true) {
         if (response.body['data'] != null &&
             response.body['data'] is Map<String, dynamic>) {

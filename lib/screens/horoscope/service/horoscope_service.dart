@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class HoroscopeService {
-  static const String _baseUrl = 'http://3.109.91.254:8000/api/numerology/api';
+  static const String _baseUrl = 'https://api.astrobharatai.com/api/numerology/api';
 
   /// Get Extended Kundali (Key Points)
   Future<Map<String, dynamic>?> getExtendedKundali({

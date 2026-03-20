@@ -11,17 +11,17 @@ import 'package:astrobharataiuser/core/services/auth_service.dart';
 
 Future<void> init() async {
   Get.put(NetworkService(), permanent: true);
-  Get.lazyPut(() => ApiClient(appBaseUrl: "http://3.109.91.254:8000/api/"));
+  Get.lazyPut(() => ApiClient(appBaseUrl: "https://api.astrobharatai.com/api/"));
 
   // Chat/Call REST APIs — primary via gateway (8000), fallback direct to port 8009
   // Primary: 8000/api/calls/api/ → full URL e.g. 8000/api/calls/api/chat/session/{id}
   Get.lazyPut(
-    () => ApiClient(appBaseUrl: "http://3.109.91.254:8000/api/calls/api/"),
+    () => ApiClient(appBaseUrl: "https://api.astrobharatai.com/api/calls/api/"),
     tag: 'chat',
   );
-  // Fallback: direct port 8009 — used when gateway is unreachable
+  // Fallback: same gateway (no port-based routing)
   Get.lazyPut(
-    () => ApiClient(appBaseUrl: "http://3.109.91.254:8009/api/"),
+    () => ApiClient(appBaseUrl: "https://api.astrobharatai.com/api/calls/api/"),
     tag: 'chat-fallback',
   );
 

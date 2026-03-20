@@ -27,9 +27,9 @@ cd ..
 Write-Host "Getting dependencies..." -ForegroundColor Yellow
 flutter pub get
 
-# Build App Bundle
+# Build App Bundle (uses your preferred split-debug-info path)
 Write-Host "Building Android App Bundle..." -ForegroundColor Yellow
-flutter build appbundle --release --obfuscate --split-debug-info=./debug_info --tree-shake-icons
+flutter build appbundle --release --obfuscate --split-debug-info=build/symbols --tree-shake-icons
 
 Write-Host "=========================================" -ForegroundColor Green
 Write-Host "Build Complete!" -ForegroundColor Green

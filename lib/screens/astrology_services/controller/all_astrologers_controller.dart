@@ -233,6 +233,48 @@ class AllAstrologersController extends GetxController {
       if (response != null) {
         List<AstrologerModel> filteredList = response.astrologers;
 
+        // Client-side fallback for embedded Consult filters.
+        // Some backends ignore language/specialization query params; this
+        // guarantees filter correctness using astrologer profile fields.
+        if (isEmbedded && Get.isRegistered<ConsultController>()) {
+          final c = Get.find<ConsultController>();
+
+          if (c.selectedLanguages.isNotEmpty) {
+            final selectedLangs = c.selectedLanguages
+                .map((s) => s.toString().trim().toLowerCase())
+                .where((s) => s.isNotEmpty)
+                .toSet();
+
+            filteredList = filteredList.where((a) {
+              final langs =
+                  a.languages.map((l) => l.toString().trim().toLowerCase()).toList();
+              // Accept both full names and potential codes by doing a contains match.
+              return langs.any((l) => selectedLangs.any((sel) {
+                    return l == sel || l.contains(sel);
+                  }));
+            }).toList();
+          }
+
+          if (c.selectedSpecializations.isNotEmpty) {
+            final selectedSpecs = c.selectedSpecializations
+                .map((s) => s.toString().trim().toLowerCase())
+                .where((s) => s.isNotEmpty)
+                .toSet();
+
+            filteredList = filteredList.where((a) {
+              final specs = a.specializations
+                  .map((s) => s.toString().trim().toLowerCase())
+                  .toList();
+              return specs.any((spec) => selectedSpecs.any((sel) {
+                    // Match either exact enum key or partial label-based string.
+                    return spec == sel ||
+                        spec.contains(sel) ||
+                        sel.contains(spec);
+                  }));
+            }).toList();
+          }
+        }
+
         // CLIENT-SIDE backup: if API returned unfiltered results (e.g. backend
         // ignores the category param), narrow the list down ourselves so the
         // user never sees wrong results.  We skip the backup only when the API

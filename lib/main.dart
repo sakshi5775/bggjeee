@@ -34,6 +34,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:hive_ce_flutter/adapters.dart';
 import 'package:upgrader/upgrader.dart';
+import 'package:version/version.dart';
 // import 'package:astrobharataiuser/core/services/notification_service.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:astrobharataiuser/apihelper/network_service/network_service.dart';
@@ -303,17 +304,8 @@ class CrashlyticsNavigatorObserver extends NavigatorObserver {
   void didPush(Route route, Route? previousRoute) {
     super.didPush(route, previousRoute);
     final name = route.settings.name;
-    if (name == null) {
-      // Unnamed route pushed — flag as non-fatal so the offending call-site
-      // can be found and replaced with Get.toNamed() / pushInCurrentTab().
-      CrashlyticsService.recordError(
-        Exception('Unnamed route pushed — replace with Get.toNamed()'),
-        StackTrace.current,
-        fatal: false,
-        reason: 'UNNAMED_ROUTE_PUSH',
-      );
-      return;
-    }
+    // Unnamed routes are normal for modals (e.g. showModalBottomSheet); skip logging.
+    if (name == null) return;
     CrashlyticsService.setKey("screen", name);
     CrashlyticsService.log("NAVIGATION:PUSH | screen:$name");
   }
@@ -435,6 +427,23 @@ class CustomUpgraderMessages extends UpgraderMessages {
   String get buttonTitleUpdate => 'Update Now';
 }
 
+/// When [AppConstant.upgraderAppcastUrl] is set, use appcast for version check so the update
+/// popup works even when Play/App Store lookup fails (e.g. no network to play.google.com).
+UpgraderStoreController? get _upgraderStoreController {
+  final url = AppConstant.upgraderAppcastUrl;
+  if (url == null || url.isEmpty) return null;
+  return UpgraderStoreController(
+    onAndroid: () => UpgraderAppcastStore(
+      appcastURL: url,
+      osVersion: Version(0, 0, 0),
+    ),
+    oniOS: () => UpgraderAppcastStore(
+      appcastURL: url,
+      osVersion: Version(0, 0, 0),
+    ),
+  );
+}
+
 /// Single Upgrader instance used throughout the app.
 /// Set [debugDisplayAlways] to true only to test the dialog without a real Play Store update.
 final upgrader = Upgrader(
@@ -443,8 +452,8 @@ final upgrader = Upgrader(
   durationUntilAlertAgain: const Duration(days: 1),
   minAppVersion: AppConstant.minAppVersion,
   messages: CustomUpgraderMessages(),
-  // Android package id for Play Store lookup (store listing must be public)
-  countryCode: 'in', // India; remove or change for other regions
+  storeController: _upgraderStoreController ?? UpgraderStoreController(),
+  countryCode: 'in', // India; for Play Store lookup when appcast is not used
   willDisplayUpgrade: ({
     required bool display,
     String? installedVersion,
@@ -486,8 +495,8 @@ class MyApp extends StatelessWidget {
           GlobalWidgetsLocalizations.delegate, // WidgetsLocalizations
         ];
 
-        // Wrap app with UpgradeAlert using the shared upgrader.
-        // navigatorKey: Get.key fixes "context does not include a Navigator" for the dialog.
+        // Wrap app with UpgradeAlert. When appcast URL is set in AppConstant, update popup
+        // works even when Play/App Store lookup fails (e.g. network/DNS issues).
         final appWithUpgrader = UpgradeAlert(
           upgrader: upgrader,
           navigatorKey: Get.key,

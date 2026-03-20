@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/screens/ecommerce/remedies/remedy_booking_form
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -15,6 +16,33 @@ class RemedyBookingFormView extends BasePage<RemedyBookingFormController> {
   static const double _cardRadius = 10;
   static const double _sectionSpacing = 12;
   static const double _fieldGap = 6;
+
+  void _showLocationSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        height: MediaQuery.of(ctx).size.height * 0.7,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        ),
+        child: LocationBottomSheetWidget(
+          selectedCity: controller.birthPlaceController.text.trim().isEmpty
+              ? 'Select birth place'
+              : controller.birthPlaceController.text.trim(),
+          onCitySelected: (city, state, country, [lat, lng, tz]) {
+            final parts = [city, state, country]
+                .where((s) => s != null && s.toString().trim().isNotEmpty)
+                .toList();
+            controller.birthPlaceController.text = parts.join(', ');
+            Navigator.of(ctx).pop();
+          },
+        ),
+      ),
+    );
+  }
 
   /// Compact, filled input style so the form looks clearly different from default
   InputDecoration _inputDecoration(
@@ -530,13 +558,18 @@ class RemedyBookingFormView extends BasePage<RemedyBookingFormController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: TextFormField(
-                  controller: controller.birthPlaceController,
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: AppColors.textPrimary,
-                    fontSize: 13.sp,
+                child: GestureDetector(
+                  onTap: () => _showLocationSheet(context),
+                  child: AbsorbPointer(
+                    child: TextFormField(
+                      controller: controller.birthPlaceController,
+                      style: MyTextTheme.mediumBCB.copyWith(
+                        color: AppColors.textPrimary,
+                        fontSize: 13.sp,
+                      ),
+                      decoration: _inputDecoration('Birth Place', hint: 'Tap to select'),
+                    ),
                   ),
-                  decoration: _inputDecoration('Birth Place'),
                 ),
               ),
               SizedBox(width: 8.w),

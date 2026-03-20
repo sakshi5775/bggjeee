@@ -1,4 +1,4 @@
-﻿import 'package:astrobharataiuser/data_model/course_type_model.dart';
+import 'package:astrobharataiuser/data_model/course_type_model.dart';
 import 'package:astrobharataiuser/screens/courses/controllers/courses_controller.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/course_type_bottom_sheet.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';

@@ -50,7 +50,11 @@ class DevotionalListWidget extends GetView<DevotionalLibraryController> {
               track: track,
               isPlaying: isPlaying,
               isCurrentTrack: isCurrentTrack,
-              onTap: () => controller.navigateToPlayer(trackIndex: index),
+              onTap: () {
+                // Tap anywhere on the card should switch playback too.
+                controller.togglePlayTrack(index);
+                controller.navigateToPlayer(trackIndex: index);
+              },
               onPlayTap: () => controller.togglePlayTrack(index),
             );
           });

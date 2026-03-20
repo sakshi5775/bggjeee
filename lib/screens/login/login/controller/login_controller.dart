@@ -6,8 +6,10 @@ import 'package:astrobharataiuser/core/services/analytics_service.dart';
 import 'package:astrobharataiuser/core/services/notification_service.dart';
 import 'package:astrobharataiuser/screens/login/login/service/login_service.dart';
 import 'package:country_code_picker/country_code_picker.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter/scheduler.dart';
 
 class LoginController extends BaseController {
   final LoginService _loginService = LoginService();
@@ -18,6 +20,14 @@ class LoginController extends BaseController {
 
   final RxBool isEmailMode = false.obs;
   final RxBool isTermsAccepted = false.obs;
+  /// true = login with OTP (phone + OTP), false = login with password (phone/email + password).
+  final RxBool isOtpMode = false.obs;
+  /// After sending OTP, we show OTP input and resend timer.
+  final RxBool otpSent = false.obs;
+  final RxInt resendSecondsRemaining = 0.obs;
+  final TextEditingController otpController = TextEditingController();
+  Timer? _resendTimer;
+
   final Rx<CountryCode> selectedCountryCode = CountryCode.fromCountryCode(
     'IN',
   ).obs;
@@ -37,29 +47,128 @@ class LoginController extends BaseController {
 
   @override
   void onClose() {
+    _resendTimer?.cancel();
     phoneController.removeListener(_checkInputType);
     emailController.removeListener(_checkInputType);
     phoneController.dispose();
     emailController.dispose();
     passwordController.dispose();
+    otpController.dispose();
     super.onClose();
   }
 
+  String get _fullPhoneNumber {
+    final phone = phoneController.text.trim().replaceAll(RegExp(r'[^\d]'), '');
+    final countryCode = selectedCountryCode.value.dialCode ?? '+91';
+    return '$countryCode$phone';
+  }
+
+  /// Send OTP for phone (OTP login). Starts 60s resend timer.
+  Future<void> sendOtpLogin() async {
+    if (!formKey.currentState!.validate()) return;
+    if (isEmailMode.value) {
+      showErrorMessage(title: 'Error', message: 'Use phone number for OTP login');
+      return;
+    }
+    final phone = _fullPhoneNumber;
+    final countryCode = selectedCountryCode.value.dialCode ?? '+91';
+
+    await runWithLoading(
+      () async {
+        await _loginService.sendOtpLogin(phone: phone, countryCode: countryCode);
+        otpSent.value = true;
+        _startResendTimer();
+      },
+      showBusy: true,
+      successMessage: 'OTP sent successfully',
+    );
+  }
+
+  void _startResendTimer() {
+    _resendTimer?.cancel();
+    resendSecondsRemaining.value = 60;
+    _resendTimer = Timer.periodic(const Duration(seconds: 1), (t) {
+      if (resendSecondsRemaining.value <= 1) {
+        t.cancel();
+        resendSecondsRemaining.value = 0;
+        return;
+      }
+      resendSecondsRemaining.value = resendSecondsRemaining.value - 1;
+    });
+  }
+
+  Future<void> resendOtpLogin() async {
+    if (resendSecondsRemaining.value > 0) return;
+    await sendOtpLogin();
+  }
+
+  Future<void> verifyOtpLogin() async {
+    final otp = otpController.text.trim();
+    if (otp.isEmpty || otp.length != 6) {
+      showErrorMessage(title: 'Invalid OTP', message: 'Please enter 6-digit OTP');
+      return;
+    }
+    final phone = _fullPhoneNumber;
+    final countryCode = selectedCountryCode.value.dialCode ?? '+91';
+
+    await runWithLoading(
+      () async {
+        final loginModel = await _loginService.verifyOtpLogin(
+          phone: phone,
+          countryCode: countryCode,
+          otp: otp,
+        );
+        if (loginModel != null) {
+          UserData().addLoginData(loginModel.toJson());
+          CrashlyticsService.trackAction('AUTH', 'LOGIN_SUCCESS');
+          AnalyticsService().setUserId(loginModel.user?.userId ?? 'unknown');
+          AnalyticsService().logLogin('Phone OTP');
+          CrashlyticsService.setUser(loginModel.user?.userId ?? 'unknown');
+          final userId = loginModel.user?.userId;
+          if (userId != null && userId.isNotEmpty) {
+            NotificationService.instance.setExternalUserId(userId);
+          }
+          await Future.delayed(const Duration(milliseconds: 500));
+          Get.offAllNamed(AppRoutes.userDashboard);
+        }
+      },
+      showBusy: true,
+      successMessage: 'Login successful!',
+    );
+  }
+
   void _checkInputType() {
+    // OTP login is phone-only; don't auto-toggle to email mode while OTP is enabled.
+    if (isOtpMode.value) return;
+
     final phoneText = phoneController.text.trim();
     final emailText = emailController.text.trim();
 
-    // Check if user is typing email in phone field or using email field
+    // Decide whether we should be in email mode.
+    bool shouldBeEmailMode = false;
     if (emailText.isNotEmpty ||
         (phoneText.isNotEmpty && GetUtils.isEmail(phoneText))) {
-      if (!isEmailMode.value) {
-        isEmailMode.value = true;
-      }
+      shouldBeEmailMode = true;
     } else if (phoneText.isNotEmpty && RegExp(r'^\d+$').hasMatch(phoneText)) {
-      if (isEmailMode.value) {
-        isEmailMode.value = false;
-      }
+      shouldBeEmailMode = false;
     }
+
+    // Check if user is typing email in phone field or using email field
+    if (shouldBeEmailMode == isEmailMode.value) return;
+
+    // Avoid scheduling rebuilds while Flutter is in the middle of a frame
+    // (prevents "Build scheduled during frame" assertions).
+    final inBuildFrame =
+        SchedulerBinding.instance.schedulerPhase != SchedulerPhase.idle;
+    if (inBuildFrame) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (isClosed) return;
+        isEmailMode.value = shouldBeEmailMode;
+      });
+    } else {
+      isEmailMode.value = shouldBeEmailMode;
+    }
+
     // Removed automatic reset to phone mode when empty to allow toggle button to work reliably
   }
 
@@ -132,8 +241,6 @@ class LoginController extends BaseController {
           }
 
           await Future.delayed(const Duration(milliseconds: 500));
-          // Avoid duplicate navigation during splash/login races.
-          if (Get.currentRoute == AppRoutes.userDashboard) return;
           Get.offAllNamed(AppRoutes.userDashboard);
         } else {
           CrashlyticsService.trackAction("AUTH", "LOGIN_FAIL");

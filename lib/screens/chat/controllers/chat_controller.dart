@@ -3,14 +3,14 @@ import 'package:astrobharataiuser/content_moderation/moderation_helper.dart';
 import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/services/chat_balance_monitor.dart';
 import 'package:astrobharataiuser/core/services/chat_minimize_manager.dart';
-import 'package:astrobharataiuser/core/services/insufficient_wallet_exception.dart';
+import 'package:astrobharataiuser/core/services/insufficient_balance_helper.dart';
+import 'package:astrobharataiuser/utils/profile_check_helper.dart';
 import 'package:astrobharataiuser/data_model/chat_model.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/data_model/user_profile_model.dart';
 import 'package:astrobharataiuser/screens/ai_chat/services/ai_chat_service.dart';
 import 'package:astrobharataiuser/screens/chat/services/chat_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
-import 'package:astrobharataiuser/widgets/wallet_recharge_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -23,6 +23,7 @@ class ChatController extends BaseController {
   final Map<String, dynamic>? restoreState;
 
   final ChatBalanceMonitor _balanceMonitor = ChatBalanceMonitor();
+  final ProfileCheckHelper _profileHelper = ProfileCheckHelper();
 
   ChatController({
     required this.persona,
@@ -56,6 +57,7 @@ class ChatController extends BaseController {
   // Pricing from voice-persona endpoint (visible to user)
   final RxDouble chatPricePerMinute = 0.0.obs;
   final RxDouble callPricePerMinute = 0.0.obs;
+  bool _isPricingLoaded = false;
 
   // Listener function reference
   void _onMessageTextChanged() {
@@ -100,7 +102,27 @@ class ChatController extends BaseController {
   @override
   void onReady() {
     super.onReady();
-    _loadPricing();
+    _initAfterPricingLoaded();
+  }
+
+  Future<void> _initAfterPricingLoaded() async {
+    await _loadPricing();
+
+    // Tap-time gating for paid persona chat: block immediately on screen open.
+    final requiredPerMinute = chatPricePerMinute.value;
+    if (requiredPerMinute > 0) {
+      final balance = await _profileHelper.getWalletBalance();
+      if (balance < requiredPerMinute) {
+        await InsufficientBalanceHelper.show(
+          currentBalance: balance,
+          requiredBalance: requiredPerMinute,
+          contextName: persona.displayName,
+        );
+        UserMainController.popCurrentTab();
+        return;
+      }
+    }
+
     if (conversationId.value.isEmpty && chatProfile != null) {
       _sendProfileMessageIfNeeded();
     } else if (conversationId.value.isNotEmpty && chatPricePerMinute.value > 0) {
@@ -143,6 +165,8 @@ class ChatController extends BaseController {
     } catch (_) {
       chatPricePerMinute.value = persona.chatPricePerMinute ?? persona.pricePerMin ?? 0;
       callPricePerMinute.value = persona.callPricePerMinute ?? 0;
+    } finally {
+      _isPricingLoaded = true;
     }
   }
 
@@ -187,6 +211,24 @@ class ChatController extends BaseController {
   Future<void> sendMessage() async {
     final messageText = messageController.text.trim();
     if (messageText.isEmpty || isLoading.value || isTyping.value) return;
+
+    // Tap-time gating for paid persona chat.
+    // If pricing is configured (>0) and wallet balance is insufficient, block here.
+    if (!_isPricingLoaded) {
+      await _loadPricing();
+    }
+    final requiredPerMinute = chatPricePerMinute.value;
+    if (requiredPerMinute > 0) {
+      final balance = await _profileHelper.getWalletBalance();
+      if (balance < requiredPerMinute) {
+        await InsufficientBalanceHelper.show(
+          currentBalance: balance,
+          requiredBalance: requiredPerMinute,
+          contextName: persona.displayName,
+        );
+        return;
+      }
+    }
 
     // Content moderation: block abusive words, phone numbers, and links
     final moderationHelper = ModerationHelper(minWordLength: 2);

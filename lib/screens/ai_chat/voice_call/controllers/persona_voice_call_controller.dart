@@ -181,15 +181,30 @@ class VoiceCallController extends BaseController {
       setLoadingState(false);
       // 402: Insufficient wallet - show recharge dialog
       if (e is InsufficientWalletException) {
-        await Get.dialog(
-          WalletRechargeDialog(
-            currentBalance: e.currentBalance,
-            requiredBalance: e.requiredAmount,
-            contextName: persona.displayName,
-            customMessage: e.message,
-          ),
-          barrierDismissible: false,
-        );
+        final callPricePerMinute =
+            (persona.callPricePerMinute ?? persona.pricePerMin ?? 0).toDouble();
+
+        // If UI/backend says call is free (price <= 0), do NOT show the
+        // insufficient-balance popup even if backend returns 402.
+        final bool shouldTreatAsFree =
+            callPricePerMinute <= 0 || e.requiredAmount <= 0;
+
+        if (!shouldTreatAsFree) {
+          await Get.dialog(
+            WalletRechargeDialog(
+              currentBalance: e.currentBalance,
+              requiredBalance: e.requiredAmount,
+              contextName: persona.displayName,
+              customMessage: e.message,
+            ),
+            barrierDismissible: false,
+          );
+          return;
+        }
+
+        // Free mode fallback: show a generic error and close.
+        showErrorMessage(message: 'Unable to start call. Please try again.');
+        UserMainController.popCurrentTab();
         return;
       }
       showErrorMessage(message: 'Failed to initiate call');
@@ -280,7 +295,7 @@ class VoiceCallController extends BaseController {
     final wsScheme = baseUri.scheme == 'https' ? 'wss' : 'ws';
 
     // Construct WebSocket URL for port 8000 WITH duplication: /api/users/api/users/voice/stream/{sessionId}
-    // Base URL: http://3.109.91.254:8000/api/
+    // Base URL: https://api.astrobharatai.com/api/
     // WebSocket path from API: /api/users/voice/stream/{sessionId}
     // For port 8000, we need: /api/users/api/users/voice/stream/{sessionId} (WITH duplication)
     String wsPath;
@@ -358,7 +373,7 @@ class VoiceCallController extends BaseController {
       );
     }
 
-    // Retry connection with exponential backoff and fallback to port 8002 (WITHOUT duplication)
+    // Retry connection with exponential backoff and fallback to port 8000 (WITHOUT duplication)
     await _connectWithRetryAndFallback(
       wsUri.toString(),
       baseUri,
@@ -366,7 +381,7 @@ class VoiceCallController extends BaseController {
     );
   }
 
-  /// Try to connect using multiple ports - tries last working port first, then others
+  // ignore: unused_element
   Future<void> _tryConnectWithPorts(
     Uri baseUri,
     String sessionId,
@@ -375,15 +390,15 @@ class VoiceCallController extends BaseController {
     final wsScheme = baseUri.scheme == 'https' ? 'wss' : 'ws';
 
     // Port configurations: (port, path, description)
-    // Port 8002 WITHOUT duplication is more reliable based on logs, so try it first
+    // Port 8000 WITHOUT duplication is more reliable based on logs, so try it first
     final portConfigs = <Map<String, dynamic>>[];
 
     // If we have a last working port, prioritize it
-    if (_lastWorkingPort == 8002) {
+    if (_lastWorkingPort == 8000) {
       portConfigs.add({
-        'port': 8002,
+        'port': 8000,
         'path': '/api/users/voice/stream/$sessionId',
-        'desc': 'port 8002 (last working, without duplication)',
+        'desc': 'port 8000 (last working, without duplication)',
       });
       portConfigs.add({
         'port': baseUri.hasPort ? baseUri.port : 8000,
@@ -397,16 +412,16 @@ class VoiceCallController extends BaseController {
         'desc': 'port 8000 (last working, with duplication)',
       });
       portConfigs.add({
-        'port': 8002,
+        'port': 8000,
         'path': '/api/users/voice/stream/$sessionId',
-        'desc': 'port 8002 (without duplication)',
+        'desc': 'port 8000 (without duplication)',
       });
     } else {
-      // No last working port - try 8002 first as it's more reliable in logs
+      // No last working port - try 8000 first as it's more reliable in logs
       portConfigs.add({
-        'port': 8002,
+        'port': 8000,
         'path': '/api/users/voice/stream/$sessionId',
-        'desc': 'port 8002 (without duplication)',
+        'desc': 'port 8000 (without duplication)',
       });
       portConfigs.add({
         'port': baseUri.hasPort ? baseUri.port : 8000,
@@ -486,26 +501,65 @@ class VoiceCallController extends BaseController {
 
   /// Connect to WebSocket with retry logic and fallback ports
   /// Port 8000: /api/users/api/users/voice/stream/{sessionId} (WITH duplication)
-  /// Port 8002: /api/users/voice/stream/{sessionId} (WITHOUT duplication)
+  /// Port 8000: /api/users/voice/stream/{sessionId} (WITHOUT duplication)
   Future<void> _connectWithRetryAndFallback(
     String wsUrl,
     Uri baseUri,
     String sessionId,
   ) async {
-    final token =
-        Uri.parse(wsUrl).queryParameters['token'] ??
-        UserData().accessToken ??
-        '';
+    Exception? lastError;
 
-    try {
-      await _tryConnectWithPorts(baseUri, sessionId, token);
-    } catch (e) {
-      if (kDebugMode) {
-        print('Voice WS all connection attempts failed: $e');
-      }
-      connectionStatus.value = 'Connection Failed';
-      showErrorMessage(message: 'Failed to connect. Please try again.');
+    // Try the given wsUrl first, then retry by toggling the "duplication"
+    // path variant. Do NOT change port (avoid WRONG_VERSION_NUMBER).
+    final uri = Uri.parse(wsUrl);
+    final candidatePaths = <String>[uri.path];
+
+    final altPath = _alternateVoiceStreamWsPath(uri.path);
+    if (altPath != uri.path) {
+      candidatePaths.add(altPath);
     }
+
+    for (final candidatePath in candidatePaths) {
+      final candidateUri = uri.replace(path: candidatePath);
+      try {
+        if (kDebugMode) {
+          print('Voice WS connect attempt: $candidateUri');
+        }
+
+        _ws = await WebSocket.connect(candidateUri.toString()).timeout(
+          const Duration(seconds: 8),
+          onTimeout: () {
+            throw Exception('WebSocket connection timeout');
+          },
+        );
+
+        connectionStatus.value = 'Connected';
+        _setupWebSocketListeners();
+        return;
+      } catch (e) {
+        lastError = e is Exception ? e : Exception(e.toString());
+      }
+    }
+
+    connectionStatus.value = 'Connection Failed';
+    if (kDebugMode) {
+      print('Voice WS all connection attempts failed: $lastError');
+    }
+    showErrorMessage(message: 'Failed to connect. Please try again.');
+    // Do not rethrow: caller already shows a user-facing message.
+  }
+
+  String _alternateVoiceStreamWsPath(String path) {
+    const withDup = '/api/users/api/users/voice/stream/';
+    const withoutDup = '/api/users/voice/stream/';
+
+    if (path.contains(withDup)) {
+      return path.replaceFirst(withDup, withoutDup);
+    }
+    if (path.contains(withoutDup)) {
+      return path.replaceFirst(withoutDup, withDup);
+    }
+    return path;
   }
 
   void _setupWebSocketListeners() {
@@ -600,12 +654,7 @@ class VoiceCallController extends BaseController {
 
     // Try to reconnect using the last working port if known
     try {
-      final token = UserData().accessToken ?? '';
-      final apiClient = Get.find<ApiClient>();
-      final baseUrl = apiClient.appBaseUrl ?? '';
-      final baseUri = Uri.parse(baseUrl);
-
-      await _tryConnectWithPorts(baseUri, sessionId.value, token);
+      await _tryConnectWs();
 
       // Reset reconnect attempts on success
       _reconnectAttempts = 0;

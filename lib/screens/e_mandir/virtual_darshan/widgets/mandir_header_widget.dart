@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 import 'package:astrobharataiuser/app_manager/my_text_field.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
@@ -100,7 +101,7 @@ class MandirHeaderWidget extends BasePage<VirtualDarshanController> {
                         return _AnimatedStoryAvatar(
                           imageUrl: imageUrl,
                           onTap: () {
-                            Get.toNamed(AppRoutes.divyaDarshan);
+                            UserMainController.pushInCurrentTab(AppRoutes.divyaDarshan);
                           },
                         );
                       }),
@@ -114,49 +115,9 @@ class MandirHeaderWidget extends BasePage<VirtualDarshanController> {
                     ),
                     SizedBox(width: 8.w),
                     Expanded(
-                      child: ListView.builder(
-                        controller: controller.scrollController,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: count,
-                        itemBuilder: (_, index) {
-                          // Category items
-                          final isSelected = selectedIdx == index;
-                          final catImage = controller.godCategories.isNotEmpty
-                              ? controller.godCategories[index].thumbnailImage
-                              : controller.fallbackGodsList[index].profileImage;
-                          // final isVideo = VirtualDarshanController.isVideoUrl(
-                          //   controller.godCategories[index].godImage,
-                          // );
-                          return Center(
-                            child: GestureDetector(
-                              onTap: () => controller.navigateToGod(
-                                index,
-                                controller.godCategories[index].id.toString(),
-                              ),
-                              child: Container(
-                                margin: EdgeInsets.symmetric(horizontal: 3.w),
-                                width: 40.w,
-                                height: 40.w,
-                                padding: EdgeInsets.all(1.w),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: isSelected
-                                      ? Border.all(
-                                          color: Colors.orange,
-                                          width: 2,
-                                        )
-                                      : null,
-                                ),
-
-                                child: NetworkImageWithLoader(
-                                  url: catImage ?? '',
-                                  fit: BoxFit.cover,
-                                  isCircular: true,
-                                ),
-                              ),
-                            ),
-                          );
-                        },
+                      child: _HeaderThumbnailList(
+                        controller: controller,
+                        count: count,
                       ),
                     ),
                   ],
@@ -360,6 +321,133 @@ class MandirHeaderWidget extends BasePage<VirtualDarshanController> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _HeaderThumbnailList extends StatefulWidget {
+  final VirtualDarshanController controller;
+  final int count;
+
+  const _HeaderThumbnailList({
+    required this.controller,
+    required this.count,
+  });
+
+  @override
+  State<_HeaderThumbnailList> createState() => _HeaderThumbnailListState();
+}
+
+class _HeaderThumbnailListState extends State<_HeaderThumbnailList> {
+  static const double _itemStep = 60.0;
+
+  late final ScrollController _scrollController;
+  late final StreamSubscription<int> _categoryIndexSub;
+
+  // Prevent feedback loops between "scroll -> swipeToCategory" and
+  // "currentCategoryIndex -> animate scroll".
+  bool _suppressNextIndexAnimation = false;
+  bool _isProgrammaticScroll = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+
+    _scrollController.addListener(_onThumbScroll);
+    _categoryIndexSub = widget.controller.currentCategoryIndex.listen(
+      (idx) {
+        if (_suppressNextIndexAnimation) {
+          _suppressNextIndexAnimation = false;
+          return;
+        }
+        if (!_scrollController.hasClients || widget.count <= 0) return;
+
+        final targetOffset = idx * _itemStep;
+        _isProgrammaticScroll = true;
+        _scrollController
+            .animateTo(
+              targetOffset,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            )
+            .whenComplete(() => _isProgrammaticScroll = false);
+      },
+    );
+  }
+
+  void _onThumbScroll() {
+    if (_isProgrammaticScroll) return;
+    if (!_scrollController.hasClients || widget.count <= 0) return;
+
+    final offset = _scrollController.offset;
+    final rawIndex = (offset / _itemStep).round();
+    final newIndex = rawIndex < 0
+        ? 0
+        : (rawIndex > widget.count - 1 ? widget.count - 1 : rawIndex);
+
+    if (newIndex != widget.controller.currentCategoryIndex.value) {
+      _suppressNextIndexAnimation = true;
+      widget.controller.swipeToCategory(newIndex);
+    }
+  }
+
+  @override
+  void dispose() {
+    _categoryIndexSub.cancel();
+    _scrollController.removeListener(_onThumbScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      controller: _scrollController,
+      scrollDirection: Axis.horizontal,
+      itemCount: widget.count,
+      itemBuilder: (_, index) {
+        final isSelected = widget.controller.currentCategoryIndex.value == index;
+        final catImage =
+            widget.controller.godCategories.isNotEmpty
+                ? widget.controller.godCategories[index].thumbnailImage
+                : widget.controller.fallbackGodsList[index].profileImage;
+
+        return Center(
+          child: GestureDetector(
+            onTap: () {
+              if (widget.controller.godCategories.isNotEmpty) {
+                widget.controller.navigateToGod(
+                  index,
+                  widget.controller.godCategories[index].id.toString(),
+                );
+              } else {
+                widget.controller.swipeToCategory(index);
+              }
+            },
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 3.w),
+              width: 40.w,
+              height: 40.w,
+              padding: EdgeInsets.all(1.w),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: isSelected
+                    ? Border.all(
+                        color: Colors.orange,
+                        width: 2,
+                      )
+                    : null,
+              ),
+              child: NetworkImageWithLoader(
+                url: catImage ?? '',
+                fit: BoxFit.cover,
+                isCircular: true,
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

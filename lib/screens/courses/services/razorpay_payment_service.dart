@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:astrobharataiuser/app_manager/user_data.dart';
+import 'package:astrobharataiuser/utils/user_friendly_error.dart';
 
 /// Service to handle Razorpay payment integration for course enrollment
 class RazorpayPaymentService {
@@ -49,6 +51,13 @@ class RazorpayPaymentService {
     String? razorpayKey,
     Map<String, dynamic>? notes,
   }) async {
+    final loginPhone = UserData().getLoginData.user?.phone;
+    final sanitizedLoginPhone = loginPhone?.replaceAll(RegExp(r'[^\d]'), '');
+    final contactToUse =
+        (sanitizedLoginPhone != null && sanitizedLoginPhone.isNotEmpty)
+        ? sanitizedLoginPhone
+        : prefillContact;
+
     if (_razorpay == null) {
       onError?.call('Razorpay not initialized');
       return;
@@ -66,7 +75,7 @@ class RazorpayPaymentService {
       'name': name,
       'description': description,
       'prefill': {
-        if (prefillContact.isNotEmpty) 'contact': prefillContact,
+        if (contactToUse.isNotEmpty) 'contact': contactToUse,
         if (prefillEmail.isNotEmpty) 'email': prefillEmail,
         if (prefillName != null && prefillName.isNotEmpty) 'name': prefillName,
       },
@@ -87,7 +96,12 @@ class RazorpayPaymentService {
     try {
       _razorpay!.open(options);
     } catch (e) {
-      onError?.call('Failed to open Razorpay: $e');
+      onError?.call(
+        UserFriendlyError.message(
+          e,
+          fallback: 'Unable to start payment. Please try again.',
+        ),
+      );
     }
   }
   
@@ -113,7 +127,12 @@ class RazorpayPaymentService {
   void _handlePaymentError(PaymentFailureResponse response) {
     debugPrint('Payment Error: ${response.code} - ${response.message}');
     onFailure?.call(response);
-    onError?.call('Payment failed: ${response.message}');
+    onError?.call(
+      UserFriendlyError.message(
+        response.message,
+        fallback: 'Payment failed. Please try again.',
+      ),
+    );
   }
   
   /// Handle external wallet

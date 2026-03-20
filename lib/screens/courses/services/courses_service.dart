@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/data_model/course_model.dart';
 import 'package:astrobharataiuser/data_model/course_type_model.dart';
 import 'package:astrobharataiuser/data_model/pillar_model.dart';
 import 'package:astrobharataiuser/data_model/payment_process_model.dart';
+import 'package:astrobharataiuser/utils/user_friendly_error.dart';
 import 'package:get/get.dart';
 
 class CoursesService {
@@ -19,8 +20,10 @@ class CoursesService {
       }
     }
 
-    throw response.body?['message']?.toString() ??
-        'Failed to fetch course types';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'Failed to fetch course types',
+    );
   }
 
   // Get pillars (spiritual pillars grid)
@@ -33,7 +36,10 @@ class CoursesService {
       }
     }
 
-    throw response.body?['message']?.toString() ?? 'Failed to fetch pillars';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'Failed to fetch pillars',
+    );
   }
 
   // Get courses with pagination and filters
@@ -82,7 +88,10 @@ class CoursesService {
       }
     }
 
-    throw response.body?['message']?.toString() ?? 'Failed to fetch courses';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'Failed to fetch courses',
+    );
   }
 
   // Get single course by ID
@@ -95,8 +104,10 @@ class CoursesService {
       }
     }
 
-    throw response.body?['message']?.toString() ??
-        'Failed to fetch course details';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'Failed to fetch course details',
+    );
   }
 
   // Get lectures by course ID
@@ -114,8 +125,10 @@ class CoursesService {
       }
     }
 
-    throw response.body?['message']?.toString() ??
-        'Failed to fetch course lectures';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'Failed to fetch course lectures',
+    );
   }
 
   // Get lecture by ID
@@ -129,8 +142,10 @@ class CoursesService {
       }
     }
 
-    throw response.body?['message']?.toString() ??
-        'Failed to fetch lecture details';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'Failed to fetch lecture details',
+    );
   }
 
   // Get content by ID
@@ -162,7 +177,10 @@ class CoursesService {
       }
     }
 
-    throw response.body?['message']?.toString() ?? 'Failed to fetch content';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'Failed to fetch content',
+    );
   }
 
   // Initiate order
@@ -181,7 +199,10 @@ class CoursesService {
       }
     }
 
-    throw response.body?['message']?.toString() ?? 'Failed to initiate order';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'Failed to initiate order',
+    );
   }
 
   // Process payment
@@ -211,7 +232,10 @@ class CoursesService {
       return PaymentProcessResponse.fromJson(response.body);
     }
 
-    throw response.body?['message']?.toString() ?? 'Failed to process payment';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'Failed to process payment',
+    );
   }
 
   // Get enrollments
@@ -233,8 +257,10 @@ class CoursesService {
       }
     }
 
-    throw response.body?['message']?.toString() ??
-        'Failed to fetch enrollments';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'Failed to fetch enrollments',
+    );
   }
 
   // Check enrollment
@@ -249,7 +275,10 @@ class CoursesService {
       }
     }
 
-    throw response.body?['message']?.toString() ?? 'Failed to check enrollment';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'Failed to check enrollment',
+    );
   }
 
   // Get progress overview
@@ -268,8 +297,10 @@ class CoursesService {
       }
     }
 
-    throw response.body?['message']?.toString() ??
-        'Failed to fetch progress overview';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'Failed to fetch progress overview',
+    );
   }
 
   // Get course progress
@@ -284,8 +315,10 @@ class CoursesService {
       }
     }
 
-    throw response.body?['message']?.toString() ??
-        'Failed to fetch course progress';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'Failed to fetch course progress',
+    );
   }
 
   // Update content progress
@@ -320,8 +353,10 @@ class CoursesService {
       }
     }
 
-    throw response.body?['message']?.toString() ??
-        'Failed to update content progress';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'Failed to update content progress',
+    );
   }
 
   // Update lecture progress
@@ -345,7 +380,9 @@ class CoursesService {
       }
     }
 
-    throw response.body?['message']?.toString() ??
-        'Failed to update lecture progress';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'Failed to update lecture progress',
+    );
   }
 }

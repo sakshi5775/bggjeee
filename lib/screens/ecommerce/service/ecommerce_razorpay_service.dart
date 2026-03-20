@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:astrobharataiuser/data_model/payment_model.dart';
+import 'package:astrobharataiuser/app_manager/user_data.dart';
+import 'package:astrobharataiuser/utils/user_friendly_error.dart';
 
 /// Service to handle Razorpay payment integration for ecommerce orders
 class EcommerceRazorpayService {
@@ -51,14 +53,21 @@ class EcommerceRazorpayService {
     // CRITICAL: Reset success handler flag when opening new checkout
     _paymentSuccessHandled = false;
 
+    final loginPhone = UserData().getLoginData.user?.phone;
+    final sanitizedLoginPhone = loginPhone?.replaceAll(RegExp(r'[^\d]'), '');
+    final contactToUse =
+        (sanitizedLoginPhone != null && sanitizedLoginPhone.isNotEmpty)
+        ? sanitizedLoginPhone
+        : razorpayData.prefill?.contact;
+
     final options = {
       'key': razorpayData.key,
       'amount': razorpayData.amount, // Data is already in paise from backend
       'name': razorpayData.name,
       'description': razorpayData.description,
       'prefill': {
-        if (razorpayData.prefill?.contact != null)
-          'contact': razorpayData.prefill!.contact,
+        if (contactToUse != null && contactToUse.isNotEmpty)
+          'contact': contactToUse,
         if (razorpayData.prefill?.email != null)
           'email': razorpayData.prefill!.email,
         if (razorpayData.prefill?.name != null)
@@ -79,7 +88,12 @@ class EcommerceRazorpayService {
       debugPrint('Razorpay: open() called successfully');
     } catch (e) {
       debugPrint('Razorpay: open() failed: $e');
-      onError?.call('Failed to open Razorpay: $e');
+      onError?.call(
+        UserFriendlyError.message(
+          e,
+          fallback: 'Unable to start payment. Please try again.',
+        ),
+      );
     }
   }
   
@@ -104,7 +118,12 @@ class EcommerceRazorpayService {
   void _handlePaymentError(PaymentFailureResponse response) {
     debugPrint('Payment Error: ${response.code} - ${response.message}');
     onFailure?.call(response);
-    onError?.call('Payment failed: ${response.message}');
+    onError?.call(
+      UserFriendlyError.message(
+        response.message,
+        fallback: 'Payment failed. Please try again.',
+      ),
+    );
   }
   
   /// Handle external wallet

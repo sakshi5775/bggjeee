@@ -2175,8 +2175,11 @@ class KundliResultController extends BaseController {
       // Balance Check
       if (Get.isRegistered<AiPricingController>()) {
         final pricingController = Get.find<AiPricingController>();
-        if (!pricingController.hasSufficientBalance('navtara')) {
-          pricingController.showInsufficientBalancePopup('navtara');
+        final canProceed = await pricingController.ensureHasSufficientBalance(
+          'navtara',
+          showPopup: true,
+        );
+        if (!canProceed) {
           return;
         }
       }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import '../data_model/collection_item_model.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 
@@ -17,7 +18,7 @@ void showCollectionBottomSheet(BuildContext context) {
       imageAsset: AppConstant.collectionPanchangIcon, // Assuming valid asset
       onTap: () {
         Get.back();
-        Get.toNamed(
+        UserMainController.ensureMandirTabThenPush(
           AppRoutes.eMandirWallpaper,
           arguments: {'initialFilter': 'Panchang'},
         );
@@ -29,7 +30,7 @@ void showCollectionBottomSheet(BuildContext context) {
       imageAsset: AppConstant.collectionRashifalIcon,
       onTap: () {
         Get.back();
-        Get.toNamed(
+        UserMainController.ensureMandirTabThenPush(
           AppRoutes.eMandirWallpaper,
           arguments: {'initialFilter': 'Rashifal'},
         );
@@ -42,7 +43,7 @@ void showCollectionBottomSheet(BuildContext context) {
           .collectionDivyaDarshanIcon, // Using standard icon as fallback
       onTap: () {
         Get.back();
-        Get.toNamed(AppRoutes.divyaDarshan);
+        UserMainController.ensureMandirTabThenPush(AppRoutes.divyaDarshan);
       },
     ),
     CollectionItemModel(
@@ -51,8 +52,11 @@ void showCollectionBottomSheet(BuildContext context) {
       imageAsset: AppConstant
           .collectionWallpaperIcon, // Using standard icon as fallback
       onTap: () {
-        Get.back(); // Close bottom sheet
-        Get.toNamed(AppRoutes.eMandirWallpaper); // Navigate to wallpaper
+        Get.back();
+        UserMainController.ensureMandirTabThenPush(
+          AppRoutes.eMandirWallpaper,
+          arguments: {'initialFilter': 'Today'},
+        );
       },
     ),
     CollectionItemModel(
@@ -62,7 +66,7 @@ void showCollectionBottomSheet(BuildContext context) {
           .collectionGreetingsIcon, // Using standard icon as fallback
       onTap: () {
         Get.back();
-        Get.toNamed(
+        UserMainController.ensureMandirTabThenPush(
           AppRoutes.eMandirWallpaper,
           arguments: {'initialFilter': 'Greetings'},
         );
@@ -75,9 +79,9 @@ void showCollectionBottomSheet(BuildContext context) {
           AppConstant.collectionFestivalIcon, // Using standard icon as fallback
       onTap: () {
         Get.back();
-        Get.toNamed(
+        UserMainController.ensureMandirTabThenPush(
           AppRoutes.eMandirWallpaper,
-          arguments: {'initialFilter': 'Library'},
+          arguments: {'initialFilter': 'Festivals'},
         );
       },
     ),
@@ -88,7 +92,10 @@ void showCollectionBottomSheet(BuildContext context) {
           AppConstant.collectionArtiIcon, // Using standard icon as fallback
       onTap: () {
         Get.back();
-        Get.toNamed(AppRoutes.chalisa, arguments: {'contentType': 'aarti'});
+        UserMainController.ensureMandirTabThenPush(
+          AppRoutes.chalisa,
+          arguments: {'contentType': 'aarti'},
+        );
       },
     ),
     CollectionItemModel(
@@ -98,7 +105,7 @@ void showCollectionBottomSheet(BuildContext context) {
           AppConstant.collectionChalisaIcon, // Using standard icon as fallback
       onTap: () {
         Get.back();
-        Get.toNamed(AppRoutes.chalisa);
+        UserMainController.ensureMandirTabThenPush(AppRoutes.chalisa);
       },
     ),
   ];

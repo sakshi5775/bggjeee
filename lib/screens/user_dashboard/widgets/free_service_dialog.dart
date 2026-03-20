@@ -9,10 +9,14 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:astrobharataiuser/services/global_free_service_manager.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class FreeServiceDialog extends StatelessWidget {
-  const FreeServiceDialog({super.key});
+  final String? imageUrl;
+
+  const FreeServiceDialog({super.key, this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +53,7 @@ class FreeServiceDialog extends StatelessWidget {
           height: 280.h,
           width: double.infinity,
           child: NetworkImageWithLoader(
-            url: AppConstant.freeservice,
+            url: imageUrl ?? AppConstant.aiGuruVedic,
             fit: BoxFit.cover,
           ),
         ),
@@ -122,7 +126,7 @@ class FreeServiceDialog extends StatelessWidget {
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: 'Get your First Chat\n',
+                  text: 'Get your First Consultation\n',
                   style: MyTextTheme.veryLargeBCB.copyWith(
                     fontSize: AppTypography.h1.fontSize?.sp,
                     fontWeight: FontWeight.bold,
@@ -163,6 +167,14 @@ class FreeServiceDialog extends StatelessWidget {
               color: Colors.transparent,
               child: InkWell(
                 onTap: () {
+                  // Mark the free consultation as claimed so this popup
+                  // stops showing automatically.
+                  final storage = GetStorage();
+                  storage.write('first_consultation_free_claimed', true);
+                  if (Get.isRegistered<GlobalFreeServiceManager>()) {
+                    Get.find<GlobalFreeServiceManager>().stop();
+                  }
+
                   Get.back(); // Close dialog
                   UserMainController.pushInCurrentTab(
                     AppRoutes.astrologyServices,
@@ -171,7 +183,7 @@ class FreeServiceDialog extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16.r),
                 child: Center(
                   child: AutoTranslateText(
-                    'START CHAT FREE NOW!',
+                    'START FREE CONSULTATION!',
                     style: MyTextTheme.mediumBCB.copyWith(
                       fontSize: AppTypography.h2.fontSize?.sp,
                       fontWeight: FontWeight.bold,

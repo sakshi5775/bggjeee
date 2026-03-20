@@ -124,10 +124,11 @@ class RamalShastraController extends GetxController {
     // Check balance
     if (Get.isRegistered<AiPricingController>()) {
       final pricingCtrl = Get.find<AiPricingController>();
-      if (!pricingCtrl.hasSufficientBalance('ramal_shastra')) {
-        pricingCtrl.showInsufficientBalancePopup('ramal_shastra');
-        return;
-      }
+      final canProceed = await pricingCtrl.ensureHasSufficientBalance(
+        'ramal_shastra',
+        showPopup: true,
+      );
+      if (!canProceed) return;
     }
 
     try {

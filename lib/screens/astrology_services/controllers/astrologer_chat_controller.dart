@@ -51,8 +51,8 @@ class AstrologerChatController extends BaseController
 
   // Socket.io connection
   io.Socket? _socket;
-  // Socket.io URL — port 8009 (direct micro-service; WebSocket proxying via 8000 not guaranteed)
-  static const String chatSocketUrl = 'http://3.109.91.254:8009/';
+  // Socket.io URL (gateway, no port/IP-based routing)
+  static const String chatSocketUrl = 'https://api.astrobharatai.com';
 
   // Session
   final Rx<AstrologerChatSession?> currentSession = Rx<AstrologerChatSession?>(

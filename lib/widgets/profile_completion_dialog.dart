@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:astrobharataiuser/utils/error_ui_utils.dart';
+import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
 
 /// Dialog to show profile completion form before starting chat/call
 class ProfileCompletionDialog extends StatefulWidget {
@@ -167,6 +168,33 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
         );
       });
     }
+  }
+
+  void _showLocationSheet(BuildContext context) {
+    final ctrl = _profileController;
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        height: MediaQuery.of(ctx).size.height * 0.7,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        ),
+        child: LocationBottomSheetWidget(
+          selectedCity: ctrl.birthCityController.text.trim().isEmpty
+              ? 'Select birth place'
+              : ctrl.birthCityController.text.trim(),
+          onCitySelected: (city, state, country, [lat, lng, tz]) async {
+            await ctrl.onBirthPlaceSelectedFromSheet(
+                city, state, country, lat, lng, tz);
+            if (ctx.mounted) Navigator.of(ctx).pop();
+            setState(() {});
+          },
+        ),
+      ),
+    );
   }
 
   Future<void> _saveProfile() async {
@@ -568,45 +596,45 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
                               ),
                             ),
                             Spacing.h(8),
-                            TextFormField(
-                              controller:
-                                  _profileController.birthCityController,
-                              decoration: InputDecoration(
-                                hintText: 'Birth Place',
-                                suffixIcon: Icon(
-                                  Icons.location_on,
-                                  size: 20.w,
-                                  color: const Color(0xFFDFB343),
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8.r),
-                                  borderSide: const BorderSide(
-                                    color: Color(0xFFE0E0E0),
+                            GestureDetector(
+                              onTap: () => _showLocationSheet(context),
+                              child: AbsorbPointer(
+                                child: TextFormField(
+                                  controller:
+                                      _profileController.birthCityController,
+                                  decoration: InputDecoration(
+                                    hintText: 'Tap to select birth place',
+                                    suffixIcon: Icon(
+                                      Icons.location_on,
+                                      size: 20.w,
+                                      color: const Color(0xFFDFB343),
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8.r),
+                                      borderSide: const BorderSide(
+                                        color: Color(0xFFE0E0E0),
+                                      ),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8.r),
+                                      borderSide: const BorderSide(
+                                        color: Color(0xFFDFB343),
+                                        width: 2,
+                                      ),
+                                    ),
+                                    contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 12.w,
+                                      vertical: 12.h,
+                                    ),
                                   ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8.r),
-                                  borderSide: const BorderSide(
-                                    color: Color(0xFFDFB343),
-                                    width: 2,
-                                  ),
-                                ),
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 12.w,
-                                  vertical: 12.h,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please select place of birth';
+                                    }
+                                    return null;
+                                  },
                                 ),
                               ),
-                              onChanged: (value) {
-                                if (value.trim().isNotEmpty) {
-                                  _profileController.onBirthCityChanged();
-                                }
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter place of birth';
-                                }
-                                return null;
-                              },
                             ),
 
                             Spacing.h(16),

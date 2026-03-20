@@ -58,7 +58,8 @@ class AstrologerVoiceCallController extends BaseController {
 
   // WebSocket for billing updates
   io.Socket? _socket;
-  static const String callSocketUrl = 'http://3.109.91.254:8009/';
+  // Socket.io URL (gateway, no port/IP-based routing)
+  static const String callSocketUrl = 'https://api.astrobharatai.com';
 
   // Reactive variables for billing
   final RxDouble walletBalance = 0.0.obs;

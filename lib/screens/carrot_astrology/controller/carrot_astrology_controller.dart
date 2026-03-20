@@ -482,10 +482,11 @@ class CarrotAstrologyController extends GetxController {
     // Check balance
     if (Get.isRegistered<AiPricingController>()) {
       final pricingCtrl = Get.find<AiPricingController>();
-      if (!pricingCtrl.hasSufficientBalance('carrot_astrology')) {
-        pricingCtrl.showInsufficientBalancePopup('carrot_astrology');
-        return;
-      }
+      final canProceed = await pricingCtrl.ensureHasSufficientBalance(
+        'carrot_astrology',
+        showPopup: true,
+      );
+      if (!canProceed) return;
     }
 
     try {

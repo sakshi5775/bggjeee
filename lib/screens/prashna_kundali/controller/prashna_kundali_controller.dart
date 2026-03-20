@@ -100,10 +100,11 @@ class PrashnaKundaliController extends BaseController {
     // Check balance
     if (Get.isRegistered<AiPricingController>()) {
       final pricingCtrl = Get.find<AiPricingController>();
-      if (!pricingCtrl.hasSufficientBalance('prashna_kundli')) {
-        pricingCtrl.showInsufficientBalancePopup('prashna_kundli');
-        return;
-      }
+      final canProceed = await pricingCtrl.ensureHasSufficientBalance(
+        'prashna_kundli',
+        showPopup: true,
+      );
+      if (!canProceed) return;
     }
 
     try {

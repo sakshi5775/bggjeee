@@ -2,9 +2,9 @@ import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/data_model/fest
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
 import '../../../../../app_manager/network_image.dart';
 
@@ -41,7 +41,7 @@ class _FestivalGridCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Get.toNamed(
+        UserMainController.pushInCurrentTab(
           AppRoutes.eMandirFestivalDetail,
           arguments: {'festival': festival},
         );

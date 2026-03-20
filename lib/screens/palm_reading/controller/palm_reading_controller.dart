@@ -348,10 +348,11 @@ class PalmReadingController extends GetxController {
     // Check balance
     if (Get.isRegistered<AiPricingController>()) {
       final pricingCtrl = Get.find<AiPricingController>();
-      if (!pricingCtrl.hasSufficientBalance('palmistry')) {
-        pricingCtrl.showInsufficientBalancePopup('palmistry');
-        return;
-      }
+      final canProceed = await pricingCtrl.ensureHasSufficientBalance(
+        'palmistry',
+        showPopup: true,
+      );
+      if (!canProceed) return;
     }
 
     isScanning.value = true;

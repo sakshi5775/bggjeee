@@ -22,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/services/analytics_service.dart';
 
 import '../../../../data_model/e_mandir_dataModels/e_mandir_home_model.dart';
@@ -282,6 +283,9 @@ class VirtualDarshanController extends BaseController
     getAllPunyaWallet();
     // Fetch god categories from API
     _loadGodCategories();
+    // Sync main container when user scrolls the header thumbnail list (so second visit / swipe header still updates content)
+    // Header thumbnails now manage their own ScrollController to avoid
+    // "ScrollController attached to multiple scroll views" crashes.
     // Fetch puja item categories from API
     _loadPujaItemCategories();
     // Fetch coin actions
@@ -470,6 +474,20 @@ class VirtualDarshanController extends BaseController
     }
   }
 
+  /// Approximate width of each header thumbnail (circle + margin) for scroll sync.
+  static const double _headerItemWidth = 50.0;
+  bool _skipNextHeaderScrollSync = false;
+
+  /// Sync selected category from header list scroll position so main container updates when user scrolls header (e.g. on second visit).
+  void _onHeaderScrollSync() {
+    if (_skipNextHeaderScrollSync || !scrollController.hasClients || categoriesCount == 0) return;
+    final offset = scrollController.offset;
+    final index = (offset / _headerItemWidth).round().clamp(0, categoriesCount - 1);
+    if (index != currentCategoryIndex.value) {
+      swipeToCategory(index);
+    }
+  }
+
   /// Called when user swipes horizontally to change category.
   void swipeToCategory(int newIndex) {
     if (newIndex < 0 || newIndex >= categoriesCount) return;
@@ -478,18 +496,26 @@ class VirtualDarshanController extends BaseController
     currentCategoryIndex.value = newIndex;
     currentGodIndex.value = 0;
 
-    // Reset vertical page to first image
-    if (verticalPageController.hasClients) {
-      verticalPageController.jumpToPage(0);
-    }
+    // Reset vertical page to first image after this frame so only one PageView is attached
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (verticalPageController.hasClients) {
+        try {
+          verticalPageController.jumpToPage(0);
+        } catch (_) {}
+      }
+    });
 
-    // Scroll the thumbnail list to the new category
+    // Scroll the thumbnail list to the new category (skip header sync during animation to avoid feedback loop)
     if (scrollController.hasClients) {
+      _skipNextHeaderScrollSync = true;
       scrollController.animateTo(
         newIndex * 60.0,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
+      Future.delayed(const Duration(milliseconds: 350), () {
+        _skipNextHeaderScrollSync = false;
+      });
     }
 
     // Load images for the new category
@@ -1120,7 +1146,7 @@ class VirtualDarshanController extends BaseController
   }
 
   void navigateToDevotionalLibrary() {
-    UserMainController.pushInCurrentTab('/devotional-library');
+    UserMainController.pushInCurrentTab(AppRoutes.devotionalLibrary);
   }
 
   /// Stops all active animations and audio when navigating away from the Virtual Darshan tab.

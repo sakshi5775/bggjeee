@@ -1,6 +1,7 @@
 import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
 import 'package:astrobharataiuser/core/base/api_helper_mixin.dart';
 import 'package:astrobharataiuser/data_model/signup_model.dart';
+import 'package:astrobharataiuser/utils/user_friendly_error.dart';
 import 'package:get/get.dart';
 import '../../../apihelper/api_provider/end_points.dart';
 
@@ -33,7 +34,9 @@ class SignUpService with ApiHelperMixin {
       }
     }
 
-    throw response.body?['message']?.toString() ??
-        'Registration failed. Please try again.';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'Registration failed. Please try again.',
+    );
   }
 }

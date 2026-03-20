@@ -193,6 +193,24 @@ class UserProfileController extends BaseController {
     }
   }
 
+  /// Called when user selects birth place from location bottom sheet.
+  Future<void> onBirthPlaceSelectedFromSheet(
+    String city,
+    String? state,
+    String? country, [
+    double? latitude,
+    double? longitude,
+    double? timezone,
+  ]) async {
+    birthCityController.text = city;
+    birthStateController.text = state ?? '';
+    birthCountryController.text = country ?? 'India';
+    if (latitude != null) birthLatitudeController.text = latitude.toString();
+    if (longitude != null) birthLongitudeController.text = longitude.toString();
+    if (timezone != null) birthTimezoneController.text = timezone.toString();
+    if (latitude == null || longitude == null) await onBirthCityChanged();
+  }
+
   /// Autofetch coordinates when birth city changes
   Future<void> onBirthCityChanged() async {
     if (birthCityController.text.trim().isEmpty) {

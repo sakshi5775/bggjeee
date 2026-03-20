@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:camera/camera.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
-import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/screens/vastu/controller/ar_controller.dart';
 import 'package:astrobharataiuser/screens/vastu/controller/vastu_reading_controller.dart';
 import 'package:astrobharataiuser/screens/vastu/model/vastu_room_config.dart';
@@ -68,6 +67,10 @@ class _ARVastuScreenState extends State<ARVastuScreen>
     WidgetsBinding.instance.removeObserver(this);
     // Stop AR mode before disposing (this will handle camera cleanup)
     _arController.stopARMode();
+    // Ensure controller is fully disposed when leaving the screen.
+    if (Get.isRegistered<ARController>(tag: 'ar_controller')) {
+      Get.delete<ARController>(tag: 'ar_controller');
+    }
     super.dispose();
   }
 

@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 class PanchangService {
   /// Base URL for panchang API (port 8000/api/numerology)
   static const String _panchangBaseUrl =
-      'http://3.109.91.254:8000/api/numerology/api';
+      'https://api.astrobharatai.com/api/numerology/api';
 
   /// Get daily panchang data
   Future<Map<String, dynamic>?> getDailyPanchang({

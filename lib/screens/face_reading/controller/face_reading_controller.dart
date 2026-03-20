@@ -358,10 +358,11 @@ class FaceReadingController extends GetxController {
     // Check balance
     if (Get.isRegistered<AiPricingController>()) {
       final pricingCtrl = Get.find<AiPricingController>();
-      if (!pricingCtrl.hasSufficientBalance('face_reading')) {
-        pricingCtrl.showInsufficientBalancePopup('face_reading');
-        return;
-      }
+      final canProceed = await pricingCtrl.ensureHasSufficientBalance(
+        'face_reading',
+        showPopup: true,
+      );
+      if (!canProceed) return;
     }
 
     if (selectedImage.value == null) {

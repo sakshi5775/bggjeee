@@ -1,6 +1,7 @@
 import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
 import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
 import 'package:astrobharataiuser/data_model/puja_model.dart';
+import 'package:astrobharataiuser/utils/user_friendly_error.dart';
 import 'package:get/get.dart';
 
 class PujaService {
@@ -46,7 +47,10 @@ class PujaService {
       }
     }
 
-    throw response.body?['message']?.toString() ?? 'Failed to load pujas';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'Failed to load pujas',
+    );
   }
 
   /// Get puja by ID
@@ -59,7 +63,9 @@ class PujaService {
       }
     }
 
-    throw response.body?['message']?.toString() ??
-        'Failed to load puja details';
+    throw UserFriendlyError.message(
+      response.body?['message']?.toString(),
+      fallback: 'Failed to load puja details',
+    );
   }
 }

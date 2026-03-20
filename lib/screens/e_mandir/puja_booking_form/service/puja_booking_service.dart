@@ -31,4 +31,26 @@ class PujaBookingService {
       return null;
     }
   }
+
+  /// Fetch latest payment status for a booking.
+  Future<String?> getBookingPaymentStatus(String bookingId) async {
+    try {
+      final response = await _apiRepository.getApi(
+        EndPoints.bookingDetail(bookingId),
+      );
+      final data = response.body['data'];
+      if (data is Map<String, dynamic>) {
+        final payment = data['payment'];
+        if (payment is Map<String, dynamic>) {
+          return payment['status']?.toString();
+        }
+      }
+      return null;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error fetching booking payment status: $e');
+      }
+      return null;
+    }
+  }
 }

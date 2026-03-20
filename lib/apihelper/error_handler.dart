@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/apihelper/api_response.dart';
 import 'package:astrobharataiuser/apihelper/api_provider/networkException/exception.dart';
+import 'package:astrobharataiuser/utils/user_friendly_error.dart';
 
 class ErrorHandler {
   /// Maps any error object to a user-friendly message.
@@ -31,22 +32,43 @@ class ErrorHandler {
     );
 
     if (error is SocketException) {
-      return "Network connection unavailable. Please check your internet.";
+      return UserFriendlyError.message(
+        error,
+        fallback: "Network connection unavailable. Please check your internet.",
+      );
     } else if (error is TimeoutException) {
-      return "Request timed out. Please check your connection and try again.";
+      return UserFriendlyError.message(
+        error,
+        fallback: "Request timed out. Please check your connection and try again.",
+      );
     } else if (error is FormatException) {
-      return "Something went wrong. Please try again later.";
+      return UserFriendlyError.message(
+        error,
+        fallback: "Something went wrong. Please try again later.",
+      );
     } else if (error is HttpException) {
-      return "Network error. Please try again.";
+      return UserFriendlyError.message(
+        error,
+        fallback: "Network error. Please try again.",
+      );
     } else if (error is NetworkException) {
-      return error.message.toString();
+      return UserFriendlyError.message(
+        error.message,
+        fallback: 'Unable to complete request right now. Please try again.',
+      );
     } else if (error is Response) {
-      return _handleResponseError(error);
+      return UserFriendlyError.message(
+        _handleResponseError(error),
+        fallback: "Could not connect to server.",
+      );
     } else if (error is String) {
-      return error;
+      return UserFriendlyError.message(error);
     }
 
-    return "An unexpected error occurred. Please try again.";
+    return UserFriendlyError.message(
+      error,
+      fallback: "An unexpected error occurred. Please try again.",
+    );
   }
 
   /// Categorizes errors for logic handling.

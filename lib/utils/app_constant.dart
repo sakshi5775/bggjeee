@@ -2,11 +2,13 @@ class AppConstant {
   AppConstant._();
 
   /// Minimum app version required. Users below this version are forced to update.
-  /// Set this to the current release version name (same as in pubspec before the +).
-  /// Example: when you release version 1.0.2+49, set minAppVersion = '1.0.2' to force
-  /// everyone on 1.0.1 or lower to update. Keep at '1.0.0' if you don't want to force update.
-  /// Also add "[Minimum supported app version: X.Y.Z]" in Play Store description for old installs.
-  static const String minAppVersion = '1.0.0';
+  /// Must match the version name in pubspec (part before +). Run scripts\bump_version.ps1 to sync.
+  static const String minAppVersion = '1.0.1';
+
+  /// Optional appcast URL for update check. When set, upgrader uses this instead of store scraping,
+  /// so the update popup works even when Play/App Store is unreachable. Host a Sparkle-format XML.
+  /// Leave null to use default Play Store / App Store lookup only.
+  static const String? upgraderAppcastUrl = null;
 
   // OneSignal App ID (from OneSignal Dashboard → Settings → Keys & IDs)
   static const String oneSignalAppId = '67ddfe0f-eadf-41fa-a1d2-7f9d35e8c766';

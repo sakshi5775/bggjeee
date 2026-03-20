@@ -36,7 +36,7 @@ class DevotionalLibraryView extends GetView<DevotionalLibraryController> {
                     child: BannerCarouselWidget(banners: controller.banners),
                   );
                 }),
-
+ SizedBox(height: 10.h),
                 // God category avatars
                 const DevotionalTabsWidget(),
                 SizedBox(height: 10.h),

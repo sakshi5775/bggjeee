@@ -20,7 +20,7 @@ class HandwritingAstrologyService {
   }) async {
     // Get base URL from ApiClient (baseUrl already includes trailing slash)
     final baseUrl =
-        _apiRepository.apiClient.baseUrl ?? 'http://3.109.91.254:8000/api/';
+        _apiRepository.apiClient.baseUrl ?? 'https://api.astrobharatai.com/api/';
     final endpoint = EndPoints.handwritingAnalyze;
     final url = Uri.parse('$baseUrl$endpoint');
     final request = http.MultipartRequest('POST', url);

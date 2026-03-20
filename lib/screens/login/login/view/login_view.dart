@@ -18,11 +18,14 @@ class LoginView extends BasePage<LoginController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          decoration: BoxDecoration(gradient: AppColors.gradientBackground),
-          child: Column(
-            children: [
+      body: ScrollConfiguration(
+        // Disable overscroll stretching to prevent `_StretchController` crash.
+        behavior: const ScrollBehavior().copyWith(overscroll: false),
+        child: SingleChildScrollView(
+          child: Container(
+            decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+            child: Column(
+              children: [
               // Container(
               //   width: double.infinity,
               //   height: 300,
@@ -37,7 +40,7 @@ class LoginView extends BasePage<LoginController> {
               // ),
               SizedBox(
                 width: double.infinity,
-                height: 350.h, // Increased height to accommodate padding
+                height: 300.h,
                 child: Padding(
                   padding: EdgeInsets.only(top: 0.h), // Added top spacing
                   child: Stack(
@@ -56,7 +59,7 @@ class LoginView extends BasePage<LoginController> {
                         left: 0,
                         right: 0,
                         child: Container(
-                          padding: EdgeInsets.only(bottom: 20.h),
+                          padding: EdgeInsets.only(bottom: 12.h),
                           child: Column(
                             children: [
                               Row(
@@ -167,7 +170,8 @@ class LoginView extends BasePage<LoginController> {
                   ),
                 ),
               ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

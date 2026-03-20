@@ -35,6 +35,10 @@
     <key>LSRequiresIPhoneOS</key>
     <true/>
 
+    <!-- App uses only standard encryption (HTTPS, etc.). Bypasses export compliance dialog in App Store Connect. -->
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
+
     <!-- UI Configuration -->
     <key>UILaunchStoryboardName</key>
     <string>LaunchScreen</string>

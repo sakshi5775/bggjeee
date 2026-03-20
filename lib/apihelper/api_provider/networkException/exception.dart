@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:get/get_connect.dart';
+import 'package:astrobharataiuser/utils/user_friendly_error.dart';
 
 dynamic returnException(Response response) {
   // For 403 errors, return a silent exception that won't trigger error display
@@ -8,11 +9,11 @@ dynamic returnException(Response response) {
     return FetchDataException('Access denied');
   }
 
-  String message = 'Error occurred while communicating with server';
+  String message = 'Unable to complete request right now. Please try again.';
 
   try {
     if (response.body == null) {
-      message = 'Server did not respond';
+      message = 'Server did not respond. Please try again.';
     } else if (response.body is String) {
       // Try to parse as JSON
       try {
@@ -32,7 +33,7 @@ dynamic returnException(Response response) {
     }
   } catch (e) {
     // If all else fails, use status code in message
-    message = 'Server error (${response.statusCode})';
+      message = 'Server error (${response.statusCode})';
   }
 
   // Filter out "account has been deactivated" messages
@@ -42,10 +43,15 @@ dynamic returnException(Response response) {
   }
 
   // Include status code in message for better debugging
-  if (message == 'Error occurred while communicating with server' ||
-      message == 'Server did not respond') {
+  if (message == 'Unable to complete request right now. Please try again.' ||
+      message == 'Server did not respond. Please try again.') {
     message = '$message (${response.statusCode})';
   }
+
+  message = UserFriendlyError.message(
+    message,
+    fallback: 'Unable to complete request right now. Please try again.',
+  );
 
   switch (response.statusCode) {
     case 400:

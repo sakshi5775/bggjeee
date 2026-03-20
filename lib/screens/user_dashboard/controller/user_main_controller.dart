@@ -188,6 +188,25 @@ class UserMainController extends GetxController {
   }
 
   // ─── Static helper for controllers without context ───────
+  /// Switch to Mandir tab (index 2) if needed, then push [route] on that tab.
+  /// Use from collection bottom sheet / sangrah FAB so all collection items open correctly.
+  /// Updates GlobalNav so the bottom bar shows the correct sub-tab (Library/Temple/Pooja/Music).
+  static void ensureMandirTabThenPush(String route, {Object? arguments}) {
+    final ctrl = Get.find<UserMainController>();
+    // Set the correct Mandir sub-tab highlight immediately so bottom nav reflects the target screen
+    if (Get.isRegistered<GlobalNavController>()) {
+      Get.find<GlobalNavController>().updateRoute(route, args: arguments);
+    }
+    if (ctrl.currentIndex.value != 2) {
+      ctrl.changeTab(2);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        pushInCurrentTab(route, arguments: arguments);
+      });
+    } else {
+      pushInCurrentTab(route, arguments: arguments);
+    }
+  }
+
   /// Push a named route onto the CURRENT tab's navigator.
   static Future<T?> pushInCurrentTab<T>(
     String route, {
@@ -306,7 +325,13 @@ class UserMainController extends GetxController {
       case AppRoutes.eMandirWallpaper:
         return GetPageRoute(
           settings: finalSettings,
-          page: () => const EMandirWallpaperView(),
+          page: () {
+            final args = finalSettings.arguments;
+            final initial = args is Map<String, dynamic>
+                ? args['initialFilter'] as String?
+                : null;
+            return EMandirWallpaperView(initialFilter: initial);
+          },
           binding: EMandirWallpaperBinding(),
         );
       case AppRoutes.ecommerceHome:

@@ -1,5 +1,7 @@
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/app_manager/user_data.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/data_model/address_model.dart';
 import 'package:astrobharataiuser/data_model/payment_model.dart';
 import 'package:astrobharataiuser/data_model/puja_booking_model.dart';
@@ -7,8 +9,10 @@ import 'package:astrobharataiuser/screens/e_mandir/puja_booking_form/service/puj
 import 'package:astrobharataiuser/screens/e_mandir/puja_booking_form/service/puja_payment_service.dart';
 import 'package:astrobharataiuser/core/services/analytics_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:astrobharataiuser/utils/user_friendly_error.dart';
 
 /// Controller for each participant form
 class ParticipantFormData {
@@ -52,7 +56,7 @@ class ParticipantFormData {
   }
 }
 
-class PujaBookingFormController extends BaseController {
+class PujaBookingFormController extends BaseController with WidgetsBindingObserver {
   final PujaBookingService _bookingService = PujaBookingService();
   final PujaPaymentService _paymentService = PujaPaymentService();
 
@@ -76,6 +80,7 @@ class PujaBookingFormController extends BaseController {
 
   // Current booking ID for payment
   String? _currentBookingId;
+  bool _isRecoveringPendingPayment = false;
 
   // Arguments from previous page
   String? pujaId;
@@ -151,9 +156,17 @@ class PujaBookingFormController extends BaseController {
   @override
   void onInit() {
     super.onInit();
+    WidgetsBinding.instance.addObserver(this);
     _parseArguments();
     _initializeParticipantForms();
     _initializeRazorpay();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _recoverPendingPaymentOnResume();
+    }
   }
 
   void _initializeRazorpay() {
@@ -262,7 +275,10 @@ class PujaBookingFormController extends BaseController {
     } catch (e) {
       Get.snackbar(
         'Error',
-        'An error occurred: ${e.toString()}',
+        UserFriendlyError.message(
+          e,
+          fallback: 'An error occurred while creating booking. Please try again.',
+        ),
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red.withValues(alpha: 0.9),
         colorText: Colors.white,
@@ -290,7 +306,10 @@ class PujaBookingFormController extends BaseController {
       } else {
         Get.snackbar(
           'Payment Initiation Failed',
-          response?.message ?? 'Unable to initiate payment. Please try again.',
+          UserFriendlyError.message(
+            response?.message,
+            fallback: 'Unable to initiate payment. Please try again.',
+          ),
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red.withValues(alpha: 0.9),
           colorText: Colors.white,
@@ -301,7 +320,10 @@ class PujaBookingFormController extends BaseController {
     } catch (e) {
       Get.snackbar(
         'Payment Error',
-        'An error occurred while initiating payment: ${e.toString()}',
+        UserFriendlyError.message(
+          e,
+          fallback: 'An error occurred while initiating payment.',
+        ),
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red.withValues(alpha: 0.9),
         colorText: Colors.white,
@@ -319,6 +341,11 @@ class PujaBookingFormController extends BaseController {
       'order_id': paymentData.order!.id,
       'name': 'AstroBharatai',
       'description': 'Pooja Booking Payment',
+      'prefill': {
+        'contact':
+            UserData().getLoginData.user?.phone?.replaceAll(RegExp(r'[^\d]'), '') ??
+            '',
+      },
       'theme': {
         'color': '#FF9933', // Saffron color
       },
@@ -329,7 +356,10 @@ class PujaBookingFormController extends BaseController {
     } catch (e) {
       Get.snackbar(
         'Error',
-        'Unable to open payment gateway: ${e.toString()}',
+        UserFriendlyError.message(
+          e,
+          fallback: 'Unable to open payment gateway.',
+        ),
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red.withValues(alpha: 0.9),
         colorText: Colors.white,
@@ -359,10 +389,10 @@ class PujaBookingFormController extends BaseController {
           price: price,
         );
 
-        Get.offNamedUntil(
-          AppRoutes.myBookings,
+        UserMainController.popUntilInCurrentTab(
           (route) => route.settings.name == AppRoutes.bookPuja,
         );
+        UserMainController.pushInCurrentTab(AppRoutes.myBookings);
         Get.snackbar(
           'Payment Successful! 🎉',
           'Your puja has been booked and payment completed successfully',
@@ -382,15 +412,18 @@ class PujaBookingFormController extends BaseController {
           duration: const Duration(seconds: 5),
         );
         // Navigate to bookings anyway - the booking is created
-        Get.offNamedUntil(
-          AppRoutes.myBookings,
+        UserMainController.popUntilInCurrentTab(
           (route) => route.settings.name == AppRoutes.bookPuja,
         );
+        UserMainController.pushInCurrentTab(AppRoutes.myBookings);
       }
     } catch (e) {
       Get.snackbar(
         'Error',
-        'An error occurred while verifying payment: ${e.toString()}',
+        UserFriendlyError.message(
+          e,
+          fallback: 'An error occurred while verifying payment.',
+        ),
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red.withValues(alpha: 0.9),
         colorText: Colors.white,
@@ -415,10 +448,10 @@ class PujaBookingFormController extends BaseController {
     );
 
     // Optionally navigate to my bookings to show pending payment
-    Get.offNamedUntil(
-      AppRoutes.myBookings,
+    UserMainController.popUntilInCurrentTab(
       (route) => route.settings.name == AppRoutes.bookPuja,
     );
+    UserMainController.pushInCurrentTab(AppRoutes.myBookings);
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
@@ -429,6 +462,44 @@ class PujaBookingFormController extends BaseController {
       backgroundColor: Colors.blue.withValues(alpha: 0.9),
       colorText: Colors.white,
     );
+  }
+
+  bool _isSuccessfulPaymentStatus(String? status) {
+    final normalized = status?.toLowerCase().trim();
+    return normalized == 'completed' ||
+        normalized == 'captured' ||
+        normalized == 'paid' ||
+        normalized == 'success' ||
+        normalized == 'succeeded';
+  }
+
+  Future<void> _recoverPendingPaymentOnResume() async {
+    if (_currentBookingId == null || _isRecoveringPendingPayment) return;
+    _isRecoveringPendingPayment = true;
+    try {
+      final status = await _bookingService.getBookingPaymentStatus(
+        _currentBookingId!,
+      );
+      if (_isSuccessfulPaymentStatus(status)) {
+        UserMainController.popUntilInCurrentTab(
+          (route) => route.settings.name == AppRoutes.bookPuja,
+        );
+        UserMainController.pushInCurrentTab(AppRoutes.myBookings);
+        Get.snackbar(
+          'Payment Successful! 🎉',
+          'Your puja has been booked and payment completed successfully',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.withValues(alpha: 0.9),
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+        _currentBookingId = null;
+      }
+    } catch (_) {
+      // Keep silent during lifecycle recovery checks.
+    } finally {
+      _isRecoveringPendingPayment = false;
+    }
   }
 
   // Validators
@@ -451,6 +522,7 @@ class PujaBookingFormController extends BaseController {
 
   @override
   void onClose() {
+    WidgetsBinding.instance.removeObserver(this);
     sankalpNotesController.dispose();
     for (var form in participantForms) {
       form.dispose();

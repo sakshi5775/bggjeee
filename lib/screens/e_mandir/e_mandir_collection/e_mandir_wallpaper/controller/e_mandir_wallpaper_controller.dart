@@ -21,9 +21,12 @@ class EMandirWallpaperController extends BaseController {
     'Panchang',
     'Greetings',
     'Today',
-    'Library',
+    'Festivals',
   ];
   final RxString selectedFilter = 'Today'.obs;
+
+  /// Tracks route-provided filter so we only apply once per navigation.
+  String? _routeRequestedFilter;
 
   final List<String> greetingFilters = ['Today', 'Morning', 'Evening', 'Night'];
   final RxString selectedGreetingFilter = 'Today'.obs;
@@ -33,7 +36,6 @@ class EMandirWallpaperController extends BaseController {
   final RxList<FestivalModel> festivals = <FestivalModel>[].obs;
   final RxList<BannerItem> banners = <BannerItem>[].obs;
   GodCategory? currentCategory;
-  final ScrollController filterScrollController = ScrollController();
 
   final EMandirHomeService _homeService = Get.put(EMandirHomeService());
   final BannerService _bannerService = BannerService();
@@ -41,18 +43,29 @@ class EMandirWallpaperController extends BaseController {
   @override
   void onInit() {
     super.onInit();
-    // Accept initial filter from route arguments
-    final args = Get.arguments;
+    // Accept initial filter from route arguments (e.g. when controller is first created)
+    final args = Get.arguments ?? Get.routing.args;
     if (args != null &&
         args is Map<String, dynamic> &&
         args['initialFilter'] != null) {
       final initial = args['initialFilter'] as String;
       if (filters.contains(initial)) {
         selectedFilter.value = initial;
+        _routeRequestedFilter = initial;
       }
     }
     fetchContent();
     loadBanners();
+  }
+
+  /// Apply filter from route (e.g. collection bottom sheet). Idempotent per value.
+  void applyRouteFilter(String? filter) {
+    if (filter == null || !filters.contains(filter)) return;
+    if (filter == _routeRequestedFilter) return;
+    _routeRequestedFilter = filter;
+    selectedFilter.value = filter;
+    fetchContent();
+    // Scrolling is handled by the view (local ScrollController)
   }
 
   Future<void> loadBanners() async {
@@ -63,11 +76,11 @@ class EMandirWallpaperController extends BaseController {
   @override
   void onReady() {
     super.onReady();
-    scrollToSelectedFilter();
+    // Scrolling is handled by the view (local ScrollController)
   }
 
   /// Scroll so the selected filter chip is centered in the viewport.
-  void scrollToSelectedFilter() {
+  void scrollToSelectedFilter(ScrollController filterScrollController) {
     final index = filters.indexOf(selectedFilter.value);
     if (index == -1 || !filterScrollController.hasClients) return;
     final position = filterScrollController.position;
@@ -90,7 +103,7 @@ class EMandirWallpaperController extends BaseController {
     selectedFilter.value = filter;
     fetchContent();
     // Center the selected tab in the horizontal list
-    WidgetsBinding.instance.addPostFrameCallback((_) => scrollToSelectedFilter());
+    // Scrolling is handled by the view (local ScrollController)
   }
 
   void onChangeGreetingFilter(String filter) {
@@ -104,11 +117,11 @@ class EMandirWallpaperController extends BaseController {
       fetchDailyThoughts();
     } else if (selectedFilter.value == 'Today') {
       fetchWallpapers();
-    } else if (selectedFilter.value == 'Library') {
+    } else if (selectedFilter.value == 'Festivals') {
       fetchFestivals();
     }
   }
-
+  
   Future<void> fetchDailyThoughts() async {
     setLoadingState(true);
     dailyThoughts.clear();

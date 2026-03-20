@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/login/login/controller/login_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
@@ -22,8 +23,104 @@ class LoginFormWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Phone/Email Field - Show phone field by default
+          // Toggle: Login with Password | Login with OTP
           Obx(() {
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: const [
+                  BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2)),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        if (controller.isClosed) return;
+                        controller.isOtpMode.value = false;
+                        controller.otpSent.value = false;
+                        controller.otpController.clear();
+                        controller.resendSecondsRemaining.value = 0;
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 10.h),
+                        decoration: BoxDecoration(
+                          gradient: !controller.isOtpMode.value
+                              ? AppColors.orangeGradient
+                              : null,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Center(
+                          child: AutoTranslateText(
+                            'Password',
+                            style: MyTextTheme.mediumBCB.copyWith(
+                              color: !controller.isOtpMode.value
+                                  ? Colors.white
+                                  : AppColors.saffron,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        if (controller.isClosed) return;
+                        controller.isOtpMode.value = true;
+                        controller.otpSent.value = false;
+                        controller.otpController.clear();
+                        // OTP login is phone-only.
+                        controller.isEmailMode.value = false;
+                        controller.emailController.clear();
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 10.h),
+                        decoration: BoxDecoration(
+                          gradient: controller.isOtpMode.value
+                              ? AppColors.orangeGradient
+                              : null,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Center(
+                          child: AutoTranslateText(
+                            'OTP',
+                            style: MyTextTheme.mediumBCB.copyWith(
+                              color: controller.isOtpMode.value
+                                  ? Colors.white
+                                  : AppColors.saffron,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+          Spacing.h(8),
+
+          // Phone/Email Field.
+          // In OTP mode we force phone-only even if isEmailMode was toggled before.
+          Obx(() {
+            if (controller.isOtpMode.value) {
+              return PhoneFieldWithCountryCode(
+                controller: controller.phoneController,
+                headerText: 'Phone Number',
+                hintText: 'Enter phone number',
+                validator: (value) {
+                  return controller.validatePhone(value);
+                },
+                onCountryChanged: controller.onCountryChanged,
+                initialCountry: controller.selectedCountryCode.value,
+              );
+            }
             if (controller.isEmailMode.value) {
               // Email Field
               return MyTextField(
@@ -51,38 +148,197 @@ class LoginFormWidget extends StatelessWidget {
           }),
           Spacing.h(8),
 
-          // Password Field - Always show
-          Column(
-            children: [
-              MyTextField(
-                controller: controller.passwordController,
-                headerText: 'Password',
-                hintText: 'Enter your password',
-                isPasswordField: true,
-                prefixIcon: const Icon(Icons.lock_outline),
-                validator: controller.validatePassword,
-              ),
-              Spacing.h(3),
-            ],
-          ),
+          // OTP flow: after Send OTP show OTP input + Resend + Verify
+          Obx(() {
+            if (controller.isOtpMode.value && controller.otpSent.value) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  MyTextField(
+                    controller: controller.otpController,
+                    headerText: 'Enter OTP',
+                    hintText: '6-digit OTP',
+                    maxLine: 1,
+                    prefixIcon: const Icon(Icons.sms_outlined),
+                    keyboardType: TextInputType.number,
+                    validator: (v) {
+                      if (v == null || v.trim().isEmpty) return 'Please enter OTP';
+                      if (v.trim().length != 6) return 'OTP must be 6 digits';
+                      return null;
+                    },
+                  ),
+                  Spacing.h(8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextButton(
+                        onPressed: controller.resendSecondsRemaining.value > 0
+                            ? null
+                            : controller.resendOtpLogin,
+                        child: AutoTranslateText(
+                          controller.resendSecondsRemaining.value > 0
+                              ? 'Resend OTP in ${controller.resendSecondsRemaining.value}s'
+                              : 'Resend OTP',
+                          style: MyTextTheme.smallBCB.copyWith(
+                            color: AppColors.saffron,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      Obx(() {
+                        final loading = controller.isLoading.value;
+                        return GestureDetector(
+                          onTap: loading ? null : controller.verifyOtpLogin,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(24),
+                              gradient: AppColors.orangeGradient,
+                            ),
+                            child: loading
+                                ? SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    ),
+                                  )
+                                : AutoTranslateText(
+                                    'Verify OTP',
+                                    style: MyTextTheme.mediumBCB.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
+                  Spacing.h(8),
+                ],
+              );
+            }
+            return const SizedBox.shrink();
+          }),
 
-          Align(
-            alignment: Alignment.bottomRight,
-            child: TextButton(
-              onPressed: () {
-                Get.toNamed(AppRoutes.forgotPassword);
-              },
-              child: AutoTranslateText(
-                'Forgot Password?',
-                style: MyTextTheme.smallBCB.copyWith(
-                  color: AppColors.saffron,
-                  fontWeight: FontWeight.normal,
+          // Password Field + Forgot - show only when password mode
+          Obx(() {
+            if (controller.isOtpMode.value) return const SizedBox.shrink();
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                MyTextField(
+                  controller: controller.passwordController,
+                  headerText: 'Password',
+                  hintText: 'Enter your password',
+                  isPasswordField: true,
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  validator: controller.validatePassword,
+                ),
+                Spacing.h(3),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () => Get.toNamed(AppRoutes.forgotPassword),
+                    child: AutoTranslateText(
+                      'Forgot Password?',
+                      style: MyTextTheme.smallBCB.copyWith(
+                        color: AppColors.saffron,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }),
+
+          Obx(() {
+            if (controller.isOtpMode.value && !controller.otpSent.value) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Spacing.h(8),
+                  GestureDetector(
+                    onTap: controller.isLoading.value ? null : controller.sendOtpLogin,
+                    child: Container(
+                      height: 52,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        gradient: AppColors.orangeGradient,
+                      ),
+                      child: Center(
+                        child: controller.isLoading.value
+                            ? const SizedBox(
+                                height: 22,
+                                width: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                ),
+                              )
+                            : const AutoTranslateText(
+                                'Send OTP',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                      ),
+                    ),
+                  ),
+                  Spacing.h(16),
+                ],
+              );
+            }
+            return const SizedBox.shrink();
+          }),
+
+          // Login Button - show only for password mode
+          Obx(() {
+            if (controller.isOtpMode.value) return const SizedBox.shrink();
+            final isLoading = controller.isLoading.value;
+            return GestureDetector(
+              onTap: isLoading ? null : controller.login,
+              child: Container(
+                height: 52,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  gradient: AppColors.orangeGradient,
+                ),
+                child: Center(
+                  child: isLoading
+                      ? const SizedBox(
+                          height: 22,
+                          width: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : const Text(
+                          'Continue',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                 ),
               ),
-            ),
-          ),
-          // Continue with Email Button (when in phone mode)
+            );
+          }),
+
+          Spacing.h(8),
+
+          // Continue with Email/Phone (only in password mode)
           Obx(() {
+            if (controller.isOtpMode.value) return const SizedBox.shrink();
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
               decoration: BoxDecoration(
@@ -133,46 +389,6 @@ class LoginFormWidget extends StatelessWidget {
                         ),
                       ),
                     ),
-            );
-          }),
-
-          Spacing.h(10),
-
-          // Login Button
-          Obx(() {
-            final isLoading = controller.isLoading.value;
-
-            return GestureDetector(
-              onTap: isLoading ? null : controller.login,
-              child: Container(
-                height: 52,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  gradient: AppColors.orangeGradient,
-                ),
-                child: Center(
-                  child: isLoading
-                      ? const SizedBox(
-                          height: 22,
-                          width: 22,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.white,
-                            ),
-                          ),
-                        )
-                      : const Text(
-                          "Continue",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                ),
-              ),
             );
           }),
 

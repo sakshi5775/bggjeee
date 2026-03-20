@@ -19,8 +19,8 @@ class AiPricingController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Delay slightly to ensure ApiRepository is ready
-    Future.delayed(const Duration(seconds: 2), () => fetchPricing());
+    // Fetch pricing immediately; CTA gating depends on this list.
+    fetchPricing();
   }
 
   Future<void> fetchPricing() async {
@@ -51,11 +51,38 @@ class AiPricingController extends GetxController {
   }
 
   AiPricingData? getPricingFor(String key) {
+    // 1) Exact match first
     try {
       return pricingData.firstWhere((element) => element.key == key);
-    } catch (e) {
-      return null;
+    } catch (_) {}
+
+    // 2) Fuzzy match: normalize common separators (e.g. '-' vs '_')
+    final normalizedKey = _normalizePricingKey(key);
+    try {
+      return pricingData.firstWhere(
+        (e) => _normalizePricingKey(e.key) == normalizedKey,
+      );
+    } catch (_) {}
+
+    // 3) Substring match fallback (handles cases like 'kundli' vs 'generate_kundli')
+    if (normalizedKey.isNotEmpty && normalizedKey.length >= 3) {
+      try {
+        return pricingData.firstWhere(
+          (e) {
+            final candidate = _normalizePricingKey(e.key);
+            return candidate.contains(normalizedKey) ||
+                normalizedKey.contains(candidate);
+          },
+        );
+      } catch (_) {}
     }
+
+    return null;
+  }
+
+  String _normalizePricingKey(String value) {
+    // Backend keys sometimes differ only by separators/case.
+    return value.trim().toLowerCase().replaceAll(RegExp(r'[\\s\\-]+'), '_');
   }
 
   bool isPaid(String key) {
@@ -80,8 +107,9 @@ class AiPricingController extends GetxController {
 
   bool hasSufficientBalance(String key) {
     final pricing = getPricingFor(key);
-    // If pricing entry is missing, treat as not configured (caller will show snackbar).
-    if (pricing == null) return false;
+    // If pricing entry is missing, treat the service as free.
+    // This matches product requirement: "If not set => free; don't block with popup".
+    if (pricing == null) return true;
     // Free or zero-priced services never require balance.
     if (pricing.priceOffer <= 0) return true;
 
@@ -89,23 +117,54 @@ class AiPricingController extends GetxController {
     return balance >= pricing.priceOffer;
   }
 
+  /// Ensures pricing list is loaded before balance checks.
+  ///
+  /// If pricing API fails or has no entry for [key], the caller will treat it
+  /// as "free" (no blocking popup), per product requirement.
+  Future<void> ensurePricingLoaded() async {
+    if (pricingData.isNotEmpty) return;
+    if (isLoadingPricing.value) return;
+    await fetchPricing();
+  }
+
+  /// Returns `true` if the service can proceed based on wallet balance.
+  ///
+  /// Rules:
+  /// - If pricing entry is missing => treated as free => returns true.
+  /// - If `priceOffer <= 0` => treated as free => returns true.
+  /// - Otherwise requires wallet balance >= priceOffer.
+  ///
+  /// When [showPopup] is true and balance is insufficient, it shows the
+  /// global insufficient-balance popup and returns false.
+  Future<bool> ensureHasSufficientBalance(
+    String key, {
+    bool showPopup = true,
+  }) async {
+    await ensurePricingLoaded();
+
+    final pricing = getPricingFor(key);
+    final balance = _walletController.walletBalance.value;
+
+    // Missing/zero pricing => free
+    if (pricing == null) return true;
+    if (pricing.priceOffer <= 0) return true;
+
+    if (balance >= pricing.priceOffer) return true;
+
+    if (showPopup) {
+      await showInsufficientBalancePopup(key);
+    }
+    return false;
+  }
+
   /// Shows the global insufficient balance popup; user cannot proceed without recharging.
   Future<void> showInsufficientBalancePopup(String key) async {
     final pricing = getPricingFor(key);
     final balance = _walletController.walletBalance.value;
 
-    // If pricing is missing, show a friendly snackbar instead of the
-    // generic insufficient-balance dialog.
+    // If pricing is missing, don't block the user.
+    // Service is treated as free, so no insufficient-balance popup.
     if (pricing == null) {
-      final serviceName = key;
-      Get.snackbar(
-        'Pricing not set',
-        '$serviceName pricing is not configured yet. Please check again later.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.orange,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 4),
-      );
       return;
     }
 

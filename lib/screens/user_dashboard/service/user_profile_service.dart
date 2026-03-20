@@ -119,13 +119,18 @@ class UserProfileService with ApiHelperMixin {
         'Failed to update birth chart';
   }
 
-  /// Delete user profile (account). Returns true if success.
-  Future<bool> deleteProfile(String userId) async {
-    final response = await _apiRepository.deleteRequest(
-      EndPoints.deleteUserProfile(userId),
-      null,
-      useAuthHeader: true,
+  /// Delete user profile (account) by email. Returns true if success.
+  Future<bool> deleteProfile(String email) async {
+    final response = await _apiRepository.deleteRequestWithBody(
+      EndPoints.deleteUserByEmail,
+      {'email': email},
+      useAuthHeader: false, // endpoint is public; matches your curl
     );
-    return response.body['success'] == true;
+
+    final body = response.body;
+    if (body is Map<String, dynamic>) {
+      return body['success'] == true;
+    }
+    return false;
   }
 }

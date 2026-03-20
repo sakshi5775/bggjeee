@@ -6,11 +6,13 @@ import 'package:astrobharataiuser/screens/courses/services/courses_service.dart'
 import 'package:astrobharataiuser/screens/courses/services/razorpay_payment_service.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/utils/user_friendly_error.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-class CourseDetailController extends BaseController {
+class CourseDetailController extends BaseController with WidgetsBindingObserver {
   final CoursesService _coursesService = CoursesService();
   final RazorpayPaymentService _razorpayService = RazorpayPaymentService();
   final String courseId;
@@ -24,6 +26,7 @@ class CourseDetailController extends BaseController {
 
   @override
   void onClose() {
+    WidgetsBinding.instance.removeObserver(this);
     scrollController.dispose();
     _razorpayService.dispose();
     super.onClose();
@@ -51,6 +54,7 @@ class CourseDetailController extends BaseController {
   // Pending payment data (for Razorpay callbacks)
   String? _pendingOrderId;
   String? _pendingGatewayOrderId;
+  bool _isRecoveringPendingPayment = false;
 
   void toggleDescription() {
     isDescriptionExpanded.value = !isDescriptionExpanded.value;
@@ -201,7 +205,10 @@ class CourseDetailController extends BaseController {
       _processPaymentLocked = false;
       showErrorMessage(
         title: "Error",
-        message: "Failed to process payment: $e",
+        message: UserFriendlyError.message(
+          e,
+          fallback: 'Failed to process payment. Please try again.',
+        ),
       );
     } finally {
       setLoadingState(false);
@@ -212,7 +219,13 @@ class CourseDetailController extends BaseController {
   void _handleRazorpayError(String error) {
     _processPaymentLocked = false;
     setLoadingState(false);
-    showErrorMessage(title: "Payment Error", message: error);
+    showErrorMessage(
+      title: "Payment Error",
+      message: UserFriendlyError.message(
+        error,
+        fallback: 'Payment failed. Please try again.',
+      ),
+    );
     _pendingOrderId = null;
     _pendingGatewayOrderId = null;
   }
@@ -226,7 +239,10 @@ class CourseDetailController extends BaseController {
         : 'Payment was cancelled';
     showErrorMessage(
       title: "Payment Failed",
-      message: message ?? "Payment was cancelled or failed. Please try again.",
+      message: UserFriendlyError.message(
+        message,
+        fallback: "Payment was cancelled or failed. Please try again.",
+      ),
     );
     _pendingOrderId = null;
     _pendingGatewayOrderId = null;
@@ -352,7 +368,39 @@ class CourseDetailController extends BaseController {
   @override
   void onInit() {
     super.onInit();
+    WidgetsBinding.instance.addObserver(this);
     loadCourseDetail();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _recoverPendingPaymentOnResume();
+    }
+  }
+
+  Future<void> _recoverPendingPaymentOnResume() async {
+    if (_pendingOrderId == null ||
+        _pendingGatewayOrderId == null ||
+        _isRecoveringPendingPayment) {
+      return;
+    }
+    _isRecoveringPendingPayment = true;
+    try {
+      final enrollmentStatus = await _coursesService.checkEnrollment(courseId);
+      final enrolled = enrollmentStatus?['isEnrolled'] as bool? ?? false;
+      if (enrolled) {
+        isEnrolled.value = true;
+        _pendingOrderId = null;
+        _pendingGatewayOrderId = null;
+        _processPaymentLocked = false;
+        _showPaymentSuccessModal();
+      }
+    } catch (_) {
+      // Keep silent during lifecycle recovery checks.
+    } finally {
+      _isRecoveringPendingPayment = false;
+    }
   }
 
   // Select content to play/view

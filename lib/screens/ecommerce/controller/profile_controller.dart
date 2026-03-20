@@ -820,16 +820,22 @@ class ProfileController extends BaseController {
   }
 
   /// Called when user selects birth place from location bottom sheet (city, state, country);
-  /// fills controllers and fetches lat/long/timezone.
+  /// optionally pass lat/lng/tz to avoid re-fetch.
   Future<void> onBirthPlaceSelectedFromSheet(
     String city,
     String? state,
-    String? country,
-  ) async {
+    String? country, [
+    double? latitude,
+    double? longitude,
+    double? timezone,
+  ]) async {
     birthCityController.text = city;
     birthStateController.text = state ?? '';
     birthCountryController.text = country ?? 'India';
-    await onBirthCityChanged();
+    if (latitude != null) birthLatitudeController.text = latitude.toString();
+    if (longitude != null) birthLongitudeController.text = longitude.toString();
+    if (timezone != null) birthTimezoneController.text = timezone.toString();
+    if (latitude == null || longitude == null) await onBirthCityChanged();
   }
 
   /// Set profile picture
@@ -918,15 +924,15 @@ class ProfileController extends BaseController {
     );
     if (confirmed != true) return;
 
-    final uid = userId;
-    if (uid == null || uid.isEmpty) {
-      showErrorMessage(message: 'Unable to identify account.');
+    final email = userEmail.value.trim();
+    if (email.isEmpty) {
+      showErrorMessage(message: 'Email not found for account deletion.');
       return;
     }
 
     isDeletingAccount.value = true;
     try {
-      final success = await _profileService.deleteProfile(uid);
+      final success = await _profileService.deleteProfile(email);
       if (success) {
         // Log Analytics
         AnalyticsService().logDeleteAccount();

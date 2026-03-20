@@ -1658,6 +1658,66 @@ class ApiClient extends GetConnect
     });
   }
 
+  /// DELETE request that sends a JSON body.
+  /// Some endpoints (like account deletion) require a body with `DELETE`.
+  Future<Response> deleteRequestWithBody(
+    String uri,
+    dynamic body, {
+    bool useAuthHeader = true,
+  }) async {
+    await _ensureAuthForWrite(useAuthHeader);
+
+    return _withRetry(() async {
+      final jsonBodyString = body is String ? body : jsonEncode(body);
+      final headers = _buildHeaders(useAuthHeader: useAuthHeader);
+      headers['Accept'] = 'application/json';
+      headers['Content-Type'] = 'application/json';
+
+      Future<Response> _sendRequest() async {
+        final url = Uri.parse(baseUrl! + uri);
+        final httpResponse = await http.delete(
+          url,
+          headers: headers,
+          body: jsonBodyString,
+          encoding: utf8,
+        );
+
+        // Convert http.Response to GetX Response.
+        dynamic responseBody;
+        try {
+          responseBody = jsonDecode(httpResponse.body);
+        } catch (_) {
+          responseBody = httpResponse.body;
+        }
+
+        return Response(
+          body: responseBody,
+          statusCode: httpResponse.statusCode,
+          statusText: httpResponse.reasonPhrase,
+          headers: httpResponse.headers,
+        );
+      }
+
+      Response response = await _sendRequest();
+
+      if (useAuthHeader &&
+          _isUnauthorized(response.statusCode) &&
+          await _tryRefreshToken()) {
+        response = await _sendRequest();
+      }
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response;
+      }
+
+      if (useAuthHeader && _isUnauthorized(response.statusCode)) {
+        _handleSessionExpired();
+      }
+
+      throw returnException(response);
+    });
+  }
+
   /// put api request
   Future<Response> putApi(
     String uri,

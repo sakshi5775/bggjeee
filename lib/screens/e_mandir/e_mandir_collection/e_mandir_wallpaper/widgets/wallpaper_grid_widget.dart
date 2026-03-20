@@ -1,8 +1,8 @@
 import 'package:astrobharataiuser/screens/e_mandir/e_mandir_collection/e_mandir_wallpaper/data_model/e_mandir_wallpaper_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'wallpaper_grid_card.dart';
@@ -72,7 +72,7 @@ class WallpaperGridWidget extends StatelessWidget {
               return WallpaperGridCard(
                 wallpaper: wallpaper,
                 onTap: () {
-                  Get.toNamed(
+                  UserMainController.pushInCurrentTab(
                     AppRoutes.eMandirWallpaperStory,
                     arguments: {
                       'initialIndex': index,

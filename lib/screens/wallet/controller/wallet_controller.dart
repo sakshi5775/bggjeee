@@ -5,11 +5,13 @@ import 'package:astrobharataiuser/screens/user_dashboard/service/user_profile_se
 import 'package:astrobharataiuser/screens/wallet/service/wallet_service.dart';
 import 'package:astrobharataiuser/screens/wallet/service/wallet_razorpay_service.dart';
 import 'package:astrobharataiuser/screens/wallet/widgets/wallet_success_dialog.dart';
+import 'package:astrobharataiuser/utils/user_friendly_error.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 import 'package:astrobharataiuser/core/services/analytics_service.dart';
 
-class WalletController extends BaseController {
+class WalletController extends BaseController with WidgetsBindingObserver {
   final WalletService _walletService = WalletService();
   final UserProfileService _profileService = UserProfileService();
 
@@ -60,10 +62,12 @@ class WalletController extends BaseController {
   // Razorpay Service
   final WalletRazorpayService _razorpayService = WalletRazorpayService();
   String? _pendingRechargeId;
+  double? _balanceBeforePayment;
 
   @override
   void onInit() {
     super.onInit();
+    WidgetsBinding.instance.addObserver(this);
     loadWalletBalance();
     // loadRechargeHistory();
     _initializeRazorpay();
@@ -71,8 +75,16 @@ class WalletController extends BaseController {
 
   @override
   void onClose() {
+    WidgetsBinding.instance.removeObserver(this);
     _razorpayService.dispose();
     super.onClose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _recoverPendingPaymentOnResume();
+    }
   }
 
   void _initializeRazorpay() {
@@ -84,7 +96,13 @@ class WalletController extends BaseController {
           "FAIL",
           data: "reason: $message",
         );
-        showErrorMessage(title: 'Recharge Failed', message: message);
+        showErrorMessage(
+          title: 'Recharge Failed',
+          message: UserFriendlyError.message(
+            message,
+            fallback: 'Recharge failed. Please try again.',
+          ),
+        );
       },
       onFailure: (response) {
         CrashlyticsService.trackAction(
@@ -92,11 +110,15 @@ class WalletController extends BaseController {
           "FAIL_GATEWAY",
           data: "code: ${response.code}, message: ${response.message}",
         );
-        showErrorMessage(
-          title: 'Recharge Failed',
-          message: '${response.code}: ${response.message}',
-        );
+        showErrorMessage(title: 'Recharge Failed', message: _paymentFailureText(response.message));
       },
+    );
+  }
+
+  String _paymentFailureText(dynamic raw) {
+    return UserFriendlyError.message(
+      raw,
+      fallback: 'Payment failed or was cancelled. If money is deducted, it will be auto-refunded.',
     );
   }
 
@@ -120,8 +142,9 @@ class WalletController extends BaseController {
       return;
     }
 
+    final pendingRechargeId = _pendingRechargeId!;
     final verified = await verifyRecharge(
-      rechargeId: _pendingRechargeId!,
+      rechargeId: pendingRechargeId,
       transactionId: paymentId,
       razorpayOrderId: orderId,
       razorpayPaymentId: paymentId,
@@ -136,7 +159,7 @@ class WalletController extends BaseController {
       CrashlyticsService.trackAction(
         "PAYMENT",
         "SUCCESS",
-        data: "rechargeId:$_pendingRechargeId",
+        data: "rechargeId:$pendingRechargeId",
       );
 
       // Log Analytics
@@ -151,6 +174,12 @@ class WalletController extends BaseController {
       // Refresh wallet balance and history
       await loadWalletBalance();
       await loadRechargeHistory(refresh: true);
+      _clearPendingRecharge();
+    } else {
+      showErrorMessage(
+        title: 'Recharge Failed',
+        message: 'Payment verification failed. If money is deducted, it will be auto-refunded.',
+      );
     }
   }
 
@@ -163,6 +192,7 @@ class WalletController extends BaseController {
 
   /// Start Razorpay Recharge Flow
   Future<void> startRazorpayRecharge(int amount) async {
+    _balanceBeforePayment = walletBalance.value;
     final response = await initiateRecharge(
       amount: amount,
       paymentMethod: 'online',
@@ -184,7 +214,31 @@ class WalletController extends BaseController {
         data: "amount:$amount",
       );
       showErrorMessage(title: "Error", message: "Failed to initiate recharge.");
+      _clearPendingRecharge();
     }
+  }
+
+  Future<void> _recoverPendingPaymentOnResume() async {
+    if (_pendingRechargeId == null) return;
+
+    final balanceBefore = _balanceBeforePayment ?? walletBalance.value;
+    await loadWalletBalance();
+    await loadRechargeHistory(refresh: true);
+
+    if (walletBalance.value > balanceBefore) {
+      CrashlyticsService.trackAction(
+        "PAYMENT",
+        "RESUME_RECOVERED",
+        data: "rechargeId:$_pendingRechargeId",
+      );
+      _showPaymentSuccessModal();
+      _clearPendingRecharge();
+    }
+  }
+
+  void _clearPendingRecharge() {
+    _pendingRechargeId = null;
+    _balanceBeforePayment = null;
   }
 
   /// Load wallet balance and transaction history from user profile

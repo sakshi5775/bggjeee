@@ -8,6 +8,8 @@ class EndPoints {
   static const String sendOtp = 'auth/send-otp';
   static const String verifyOtp = 'auth/verify-otp';
   static const String resendOtp = 'auth/resend-otp';
+  static const String otpLoginSend = 'auth/otp-login/send';
+  static const String otpLoginVerify = 'auth/otp-login/verify';
   static const String checkExists = 'auth/check-exists';
   static const String sendForgotPasswordOtp = 'auth/forgot-password';
   static String resetPassword = 'auth/reset-password';
@@ -186,6 +188,10 @@ class EndPoints {
   /// Delete user profile (account). Response: { success, message, data: { userId, timestamp } }
   static String deleteUserProfile(String userId) =>
       'users/api/users/internal/delete-profile/$userId';
+
+  /// Public account deletion by email.
+  /// Curl used: DELETE /api/auth/public/delete-by-email with body { "email": "..." }
+  static const String deleteUserByEmail = 'auth/public/delete-by-email';
 
   /// Navtara APIs
   static const String navtaraNakshatras = 'users/api/users/navtara/nakshatras';

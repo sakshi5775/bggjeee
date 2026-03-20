@@ -947,6 +947,7 @@ class TarotController extends BaseController {
         categoryName: 'Yes/No Reading',
         selectedCard: selectedCard,
         onShowUnsuitableMessage: (cardName, category) {
+          autoRetryCount.value = autoRetryCount.value + 1;
           unsuitableCardName.value = cardName;
           unsuitableCategoryName.value = category;
           showUnsuitableCardMessage.value = true;
@@ -1017,6 +1018,7 @@ class TarotController extends BaseController {
         categoryName: 'Career Reading',
         selectedCard: selectedCard,
         onShowUnsuitableMessage: (cardName, category) {
+          autoRetryCount.value = autoRetryCount.value + 1;
           unsuitableCardName.value = cardName;
           unsuitableCategoryName.value = category;
           showUnsuitableCardMessage.value = true;
@@ -1164,6 +1166,7 @@ class TarotController extends BaseController {
         categoryName: categoryName,
         selectedCard: selectedCard,
         onShowUnsuitableMessage: (cardName, category) {
+          autoRetryCount.value = autoRetryCount.value + 1;
           unsuitableCardName.value = cardName;
           unsuitableCategoryName.value = category;
           showUnsuitableCardMessage.value = true;
@@ -1205,6 +1208,7 @@ class TarotController extends BaseController {
         categoryName: 'Daily Reading',
         selectedCard: selectedCard,
         onShowUnsuitableMessage: (cardName, category) {
+          autoRetryCount.value = autoRetryCount.value + 1;
           unsuitableCardName.value = cardName;
           unsuitableCategoryName.value = category;
           showUnsuitableCardMessage.value = true;

@@ -353,8 +353,11 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
     if (tab == 'Navtara') {
       if (Get.isRegistered<AiPricingController>()) {
         final pricingCtrl = Get.find<AiPricingController>();
-        if (!pricingCtrl.hasSufficientBalance('navtara')) {
-          pricingCtrl.showInsufficientBalancePopup('navtara');
+        final canProceed = await pricingCtrl.ensureHasSufficientBalance(
+          'navtara',
+          showPopup: true,
+        );
+        if (!canProceed) {
           // Reset to previous tab if swiping
           if (fromSwipe && _pageController.hasClients) {
             final prevIndex = _tabs.indexWhere((t) => t == _activeTab);
@@ -505,8 +508,11 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
           // Check balance before proceeding
           if (Get.isRegistered<AiPricingController>()) {
             final pricingCtrl = Get.find<AiPricingController>();
-            if (!pricingCtrl.hasSufficientBalance('navtara')) {
-              pricingCtrl.showInsufficientBalancePopup('navtara');
+            final canProceed = await pricingCtrl.ensureHasSufficientBalance(
+              'navtara',
+              showPopup: true,
+            );
+            if (!canProceed) {
               res = null;
               break;
             }

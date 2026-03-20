@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Sample appcast for upgrader (Sparkle-style).
+  Host this file on your server (e.g. https://your-cdn.com/appcast.xml) and set
+  AppConstant.upgraderAppcastUrl to that URL. Update sparkle:version and the
+  enclosure url when you release a new version. The update popup will then work
+  even when Play Store / App Store lookup fails (e.g. no network to play.google.com).
+-->
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+  <channel>
+    <title>AstroBharatAI – Appcast</title>
+    <item>
+      <title>Version 1.0.1</title>
+      <description>Improvements and bug fixes.</description>
+      <pubDate>Thu, 19 Mar 2025 12:00:00 +0000</pubDate>
+      <enclosure
+          url="https://play.google.com/store/apps/details?id=com.astrobharatai.astrouser"
+          sparkle:version="1.0.1"
+          sparkle:os="android" />
+    </item>
+    <item>
+      <title>Version 1.0.1</title>
+      <description>Improvements and bug fixes.</description>
+      <pubDate>Thu, 19 Mar 2025 12:00:00 +0000</pubDate>
+      <enclosure
+          url="https://apps.apple.com/app/astrobharatai/idYOUR_APP_ID"
+          sparkle:version="1.0.1"
+          sparkle:os="ios" />
+    </item>
+  </channel>
+</rss>
