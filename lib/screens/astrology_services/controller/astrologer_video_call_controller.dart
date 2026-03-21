@@ -16,6 +16,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:astrobharataiuser/core/base/base_controller.dart';
+import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 
 class AstrologerVideoCallController extends BaseController {
   late AstrologerModel astrologer;
@@ -731,28 +732,41 @@ class AstrologerVideoCallController extends BaseController {
     };
 
     _agoraManager.onError = (error) {
-      errorMessage.value = error;
-      isLoading.value = false;
-      isRinging.value = false;
+      try {
+        errorMessage.value = error;
+        isLoading.value = false;
+        isRinging.value = false;
 
-      // Handle specific error messages
-      if (error == 'Busy') {
-        callStatus.value = 'Busy';
-        Future.delayed(const Duration(seconds: 1), () {
-          try { Get.offNamed(AppRoutes.userDashboard); } catch (_) {}
-        });
-      } else if (error == 'Call Ended') {
-        callStatus.value = 'Call Ended';
-        Future.delayed(const Duration(seconds: 1), () {
-          try { Get.offNamed(AppRoutes.userDashboard); } catch (_) {}
-        });
-      } else {
-        Get.snackbar(
-          'Call Error',
-          error,
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
+        if (error == 'Busy') {
+          callStatus.value = 'Busy';
+          Future.delayed(const Duration(seconds: 1), () {
+            try {
+              Get.offNamed(AppRoutes.userDashboard);
+            } catch (_) {}
+          });
+        } else if (error == 'Call Ended') {
+          callStatus.value = 'Call Ended';
+          Future.delayed(const Duration(seconds: 1), () {
+            try {
+              Get.offNamed(AppRoutes.userDashboard);
+            } catch (_) {}
+          });
+        } else {
+          Get.snackbar(
+            'Call Error',
+            error,
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+        }
+      } catch (e, s) {
+        CrashlyticsService.recordError(
+          e,
+          s,
+          fatal: false,
+          type: CrashErrorType.ui,
+          reason: 'VIDEO_CALL_ON_ERROR_UI',
         );
       }
     };

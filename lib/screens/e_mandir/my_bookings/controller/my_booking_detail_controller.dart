@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/data_model/my_booking_model.dart';
 import 'package:astrobharataiuser/data_model/payment_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/my_bookings/service/my_bookings_service.dart';
 import 'package:astrobharataiuser/screens/e_mandir/puja_booking_form/service/puja_payment_service.dart';
+import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -11,8 +12,8 @@ class MyBookingDetailController extends BaseController {
   final MyBookingsService _bookingsService = MyBookingsService();
   final PujaPaymentService _paymentService = PujaPaymentService();
 
-  // Razorpay instance
-  late Razorpay _razorpay;
+  // Razorpay instance (null if init failed)
+  Razorpay? _razorpay;
 
   final Rx<MyBookingDetailModel?> booking = Rx<MyBookingDetailModel?>(null);
   final RxString errorMessage = ''.obs;
@@ -32,10 +33,22 @@ class MyBookingDetailController extends BaseController {
   }
 
   void _initializeRazorpay() {
-    _razorpay = Razorpay();
-    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    try {
+      final razorpay = Razorpay();
+      razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+      razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+      razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+      _razorpay = razorpay;
+    } catch (e, s) {
+      CrashlyticsService.recordError(
+        e,
+        s,
+        fatal: false,
+        type: CrashErrorType.payment,
+        reason: 'RAZORPAY_MY_BOOKING_DETAIL_INIT',
+      );
+      _razorpay = null;
+    }
   }
 
   void _parseArguments() {
@@ -126,8 +139,20 @@ class MyBookingDetailController extends BaseController {
       },
     };
 
+    final rp = _razorpay;
+    if (rp == null) {
+      Get.snackbar(
+        'Payment Unavailable',
+        'Payment could not be started. Please restart the app and try again.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withValues(alpha: 0.9),
+        colorText: Colors.white,
+      );
+      isProcessingPayment.value = false;
+      return;
+    }
     try {
-      _razorpay.open(options);
+      rp.open(options);
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -242,7 +267,7 @@ class MyBookingDetailController extends BaseController {
 
   @override
   void onClose() {
-    _razorpay.clear();
+    _razorpay?.clear();
     super.onClose();
   }
 }

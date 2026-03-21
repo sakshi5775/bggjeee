@@ -1,6 +1,7 @@
 import 'package:astrobharataiuser/app_manager/my_text_field.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/widgets/phone_field_with_country_code.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/sign_up/controller/signup_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -116,7 +117,82 @@ class SignUpFormWidget extends StatelessWidget {
             prefixIcon: const Icon(Icons.lock_outline),
             validator: controller.validateConfirmPassword,
           ),
-          Spacing.h(32),
+          Spacing.h(20),
+
+          // Terms & Privacy Checkbox
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Obx(
+                  () => SizedBox(
+                    height: 24,
+                    width: 24,
+                    child: Checkbox(
+                      value: controller.isTermsAccepted.value,
+                      onChanged: (value) {
+                        controller.isTermsAccepted.value = value ?? false;
+                      },
+                      activeColor: AppColors.saffron,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8, top: 2),
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        AutoTranslateText(
+                          'By signing up, you agree to our ',
+                          style: TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 12,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => Get.toNamed(AppRoutes.userPrivacyPolicy),
+                          child: AutoTranslateText(
+                            'Terms of Service',
+                            style: TextStyle(
+                              color: AppColors.saffron,
+                              fontSize: 12,
+                              decoration: TextDecoration.underline,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        AutoTranslateText(
+                          ' and ',
+                          style: TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 12,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => Get.toNamed(AppRoutes.userPrivacyPolicy),
+                          child: AutoTranslateText(
+                            'Privacy Policy',
+                            style: TextStyle(
+                              color: AppColors.saffron,
+                              fontSize: 12,
+                              decoration: TextDecoration.underline,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Spacing.h(24),
 
           // Sign Up Button (matching login page style)
           Obx(() {

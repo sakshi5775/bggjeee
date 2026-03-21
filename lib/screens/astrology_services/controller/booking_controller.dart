@@ -115,15 +115,23 @@ class BookingController extends GetxController {
     selectedPaymentMethod.value = method;
   }
 
-  // Get price per minute based on call type
+  // Get price per minute based on call type — use 0.0 fallback so unavailable
+  // services are caught by the "not configured" guard in ChatCallPrecheckService.
   double getPricePerMinute() {
     switch (callType) {
       case CallType.voice:
-        return astrologer.voicePricePerMin ?? 299.0;
+        return astrologer.services.voice.pricePerMinute ??
+            astrologer.voicePricePerMin ??
+            0.0;
       case CallType.video:
-        return astrologer.videoPricePerMin ?? 299.0;
+        return astrologer.services.video.pricePerMinute ??
+            astrologer.videoPricePerMin ??
+            0.0;
       case CallType.chat:
-        return astrologer.chatPrice ?? 299.0;
+        return astrologer.services.chat.pricePerMinute ??
+            astrologer.chatPricePerMin ??
+            astrologer.chatPrice ??
+            0.0;
     }
   }
 

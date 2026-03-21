@@ -719,31 +719,40 @@ class AstrologerVoiceCallController extends BaseController {
     };
 
     _agoraManager.onError = (error) {
-      errorMessage.value = error;
-      isLoading.value = false;
-      isRinging.value = false;
+      try {
+        errorMessage.value = error;
+        isLoading.value = false;
+        isRinging.value = false;
 
-      // Handle specific error messages
-      if (error == 'Busy') {
-        callStatus.value = 'Busy';
-        Future.delayed(const Duration(seconds: 1), () => Get.back());
-      } else if (error == 'Call Ended') {
-        callStatus.value = 'Call Ended';
-        Future.delayed(const Duration(seconds: 1), () => Get.back());
-      } else {
-        Get.snackbar(
-          'Call Error',
-          error,
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-          duration: const Duration(seconds: 5),
-        );
-        if (_agoraManager.callState != CallState.timeout &&
-            _agoraManager.callState != CallState.notAnswered &&
-            _agoraManager.callState != CallState.endedByRemote) {
-          Future.delayed(const Duration(seconds: 2), () => Get.back());
+        if (error == 'Busy') {
+          callStatus.value = 'Busy';
+          Future.delayed(const Duration(seconds: 1), () => Get.back());
+        } else if (error == 'Call Ended') {
+          callStatus.value = 'Call Ended';
+          Future.delayed(const Duration(seconds: 1), () => Get.back());
+        } else {
+          Get.snackbar(
+            'Call Error',
+            error,
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            duration: const Duration(seconds: 5),
+          );
+          if (_agoraManager.callState != CallState.timeout &&
+              _agoraManager.callState != CallState.notAnswered &&
+              _agoraManager.callState != CallState.endedByRemote) {
+            Future.delayed(const Duration(seconds: 2), () => Get.back());
+          }
         }
+      } catch (e, s) {
+        CrashlyticsService.recordError(
+          e,
+          s,
+          fatal: false,
+          type: CrashErrorType.ui,
+          reason: 'VOICE_CALL_ON_ERROR_UI',
+        );
       }
     };
   }

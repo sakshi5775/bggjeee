@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:astrobharataiuser/data_model/wallet_model.dart';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
+import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
+import 'package:astrobharataiuser/utils/plugin_safe.dart';
 import 'package:astrobharataiuser/utils/user_friendly_error.dart';
 
 class WalletRazorpayService {
@@ -25,11 +27,27 @@ class WalletRazorpayService {
     this.onFailure = onFailure;
     _paymentSuccessHandled = false;
 
-    _razorpay?.clear();
-    _razorpay = Razorpay();
-    _razorpay!.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-    _razorpay!.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-    _razorpay!.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    try {
+      _razorpay?.clear();
+      _razorpay = Razorpay();
+      _razorpay!.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+      _razorpay!.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+      _razorpay!.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    } catch (e, s) {
+      CrashlyticsService.recordError(
+        e,
+        s,
+        fatal: false,
+        type: CrashErrorType.payment,
+        reason: 'RAZORPAY_WALLET_INIT',
+      );
+      onError?.call(
+        UserFriendlyError.message(
+          e,
+          fallback: 'Payment is temporarily unavailable. Please try again.',
+        ),
+      );
+    }
   }
 
   void openCheckout({
@@ -79,8 +97,15 @@ class WalletRazorpayService {
     try {
       _razorpay!.open(options);
       debugPrint('Razorpay: open() called successfully');
-    } catch (e) {
+    } catch (e, s) {
       debugPrint('Razorpay: open() failed: $e');
+      CrashlyticsService.recordError(
+        e,
+        s,
+        fatal: false,
+        type: CrashErrorType.payment,
+        reason: 'RAZORPAY_WALLET_OPEN',
+      );
       onError?.call(
         UserFriendlyError.message(
           e,
@@ -91,38 +116,64 @@ class WalletRazorpayService {
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    // CRITICAL: Prevent multiple callbacks (Razorpay can fire EVENT_PAYMENT_SUCCESS multiple times)
-    if (_paymentSuccessHandled) {
-      debugPrint('⚠️ Payment success already handled — ignoring duplicate Razorpay callback');
-      return;
-    }
-    _paymentSuccessHandled = true;
-    debugPrint('Payment Success: ${response.paymentId}');
-    onSuccess?.call({
-      'paymentId': response.paymentId,
-      'orderId': response.orderId,
-      'signature': response.signature,
-    });
+    guardPluginCallback(
+      'RAZORPAY_WALLET_SUCCESS',
+      () {
+        if (_paymentSuccessHandled) {
+          debugPrint(
+            '⚠️ Payment success already handled — ignoring duplicate Razorpay callback',
+          );
+          return;
+        }
+        _paymentSuccessHandled = true;
+        debugPrint('Payment Success: ${response.paymentId}');
+        onSuccess?.call({
+          'paymentId': response.paymentId,
+          'orderId': response.orderId,
+          'signature': response.signature,
+        });
+      },
+      type: CrashErrorType.payment,
+    );
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    debugPrint('Payment Error: ${response.code} - ${response.message}');
-    onFailure?.call(response);
-    onError?.call(
-      UserFriendlyError.message(
-        response.message,
-        fallback: 'Payment failed. Please try again.',
-      ),
+    guardPluginCallback(
+      'RAZORPAY_WALLET_ERROR',
+      () {
+        debugPrint('Payment Error: ${response.code} - ${response.message}');
+        onFailure?.call(response);
+        onError?.call(
+          UserFriendlyError.message(
+            response.message,
+            fallback: 'Payment failed. Please try again.',
+          ),
+        );
+      },
+      type: CrashErrorType.payment,
     );
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
-    debugPrint('External Wallet: ${response.walletName}');
-    // Handle external wallet if needed
+    guardPluginCallback(
+      'RAZORPAY_WALLET_EXT',
+      () => debugPrint('External Wallet: ${response.walletName}'),
+      type: CrashErrorType.payment,
+    );
   }
 
   void dispose() {
-    _razorpay?.clear();
+    try {
+      _razorpay?.clear();
+    } catch (e, s) {
+      CrashlyticsService.recordError(
+        e,
+        s,
+        fatal: false,
+        type: CrashErrorType.payment,
+        reason: 'RAZORPAY_WALLET_DISPOSE',
+      );
+    }
     _razorpay = null;
   }
 }

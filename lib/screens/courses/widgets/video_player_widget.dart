@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:chewie/chewie.dart';
+import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -146,8 +147,15 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           }
         }
       }
-    } catch (e) {
+    } catch (e, s) {
       debugPrint('Video player initialization error: $e');
+      CrashlyticsService.recordError(
+        e,
+        s,
+        fatal: false,
+        type: CrashErrorType.ui,
+        reason: 'VIDEO_PLAYER_INIT',
+      );
 
       if (!mounted || _isDisposed) {
         _safeDisposeVideoController();
@@ -201,8 +209,15 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
       _videoController!.addListener(_checkVideoCompletion);
       _activeListeners.add(_checkVideoCompletion);
-    } catch (e) {
+    } catch (e, s) {
       debugPrint('Error creating Chewie controller: $e');
+      CrashlyticsService.recordError(
+        e,
+        s,
+        fatal: false,
+        type: CrashErrorType.ui,
+        reason: 'VIDEO_CHEWIE_CREATE',
+      );
     }
   }
 

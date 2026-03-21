@@ -8,12 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 import 'package:astrobharataiuser/utils/user_friendly_error.dart';
 
 class RemedyBookingFormController extends BaseController
     with WidgetsBindingObserver {
   final RemediesService _remediesService = Get.find<RemediesService>();
-  late Razorpay _razorpay;
+  Razorpay? _razorpay;
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -101,10 +102,21 @@ class RemedyBookingFormController extends BaseController
   }
 
   void _initRazorpay() {
-    _razorpay = Razorpay();
-    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _onPaymentSuccess);
-    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _onPaymentError);
-    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _onExternalWallet);
+    try {
+      _razorpay = Razorpay();
+      _razorpay!.on(Razorpay.EVENT_PAYMENT_SUCCESS, _onPaymentSuccess);
+      _razorpay!.on(Razorpay.EVENT_PAYMENT_ERROR, _onPaymentError);
+      _razorpay!.on(Razorpay.EVENT_EXTERNAL_WALLET, _onExternalWallet);
+    } catch (e, s) {
+      CrashlyticsService.recordError(
+        e,
+        s,
+        fatal: false,
+        type: CrashErrorType.payment,
+        reason: 'RAZORPAY_REMEDY_FORM_INIT',
+      );
+      _razorpay = null;
+    }
   }
 
   void setPreferredDate(DateTime d) => preferredDate.value = d;
@@ -261,7 +273,16 @@ class RemedyBookingFormController extends BaseController
           },
           'theme': {'color': '#FF9933'},
         };
-        _razorpay.open(options);
+        final rp = _razorpay;
+        if (rp == null) {
+          showErrorMessage(
+            title: 'Payment Unavailable',
+            message:
+                'Payment could not be started. Please restart the app and try again.',
+          );
+        } else {
+          rp.open(options);
+        }
       } else {
         showErrorMessage(
           title: 'Payment Initiation Failed',
@@ -403,7 +424,7 @@ class RemedyBookingFormController extends BaseController
     gotraController.dispose();
     rashiController.dispose();
     nakshatraController.dispose();
-    _razorpay.clear();
+    _razorpay?.clear();
     super.onClose();
   }
 }

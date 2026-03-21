@@ -36,6 +36,9 @@ class _TarotDailyWidgetState extends State<TarotDailyWidget> {
 
       final response = controller.dailyResponse.value;
       if (response == null) {
+        if (controller.isFindingSuitableCard.value) {
+          return const SizedBox.shrink();
+        }
         // Show loading state
         return Container(
           color: Colors.black.withValues(alpha: 0.7),

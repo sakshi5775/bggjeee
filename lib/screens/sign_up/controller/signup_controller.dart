@@ -22,6 +22,8 @@ class SignUpController extends BaseController {
     'IN',
   ).obs;
 
+  final RxBool isTermsAccepted = false.obs;
+
   // User type is always 'USER' for this app
   static const String userType = 'USER';
 
@@ -52,6 +54,17 @@ class SignUpController extends BaseController {
 
   void signUp() async {
     if (!formKey.currentState!.validate()) {
+      return;
+    }
+
+    if (!isTermsAccepted.value) {
+      Get.snackbar(
+        'Required',
+        'Please accept Terms of Service and Privacy Policy to continue',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
       return;
     }
 

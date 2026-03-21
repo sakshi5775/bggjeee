@@ -41,8 +41,8 @@ class FaceReadingController extends GetxController {
   final RxBool isAnalyzing = false.obs;
   final Rx<FaceReadingData?> analysisResult = Rx<FaceReadingData?>(null);
 
-  // Face detector
-  late FaceDetector _faceDetector;
+  /// Null when ML Kit / Play services cannot initialize on this device.
+  FaceDetector? _faceDetector;
 
   @override
   void onInit() {
@@ -243,15 +243,22 @@ class FaceReadingController extends GetxController {
   }
 
   void _initializeFaceDetector() {
-    final options = FaceDetectorOptions(
-      enableContours: true,
-      enableLandmarks: true,
-      enableClassification: true,
-      enableTracking: false,
-      minFaceSize: 0.1,
-      performanceMode: FaceDetectorMode.accurate,
-    );
-    _faceDetector = FaceDetector(options: options);
+    try {
+      final options = FaceDetectorOptions(
+        enableContours: true,
+        enableLandmarks: true,
+        enableClassification: true,
+        enableTracking: false,
+        minFaceSize: 0.1,
+        performanceMode: FaceDetectorMode.accurate,
+      );
+      _faceDetector = FaceDetector(options: options);
+    } catch (e, st) {
+      debugPrint('Face detector init failed: $e\n$st');
+      _faceDetector = null;
+      errorMessage.value =
+          'Face scanning needs Google Play services. Please update Play services or try again later.';
+    }
   }
 
   /// Set selected image and start detection
@@ -268,6 +275,14 @@ class FaceReadingController extends GetxController {
 
   /// Detect face using ML Kit
   Future<void> _detectFace(File imageFile) async {
+    final detector = _faceDetector;
+    if (detector == null) {
+      errorMessage.value =
+          'Face scanning is unavailable on this device. Check Google Play services.';
+      isScanning.value = false;
+      isDetecting.value = false;
+      return;
+    }
     try {
       isDetecting.value = true;
       errorMessage.value = '';
@@ -276,7 +291,7 @@ class FaceReadingController extends GetxController {
       final inputImage = InputImage.fromFilePath(imageFile.path);
 
       // Detect faces
-      final List<Face> faces = await _faceDetector.processImage(inputImage);
+      final List<Face> faces = await detector.processImage(inputImage);
 
       if (faces.isEmpty) {
         errorMessage.value = 'No face detected. Please try another photo.';
@@ -446,7 +461,7 @@ class FaceReadingController extends GetxController {
   void onClose() {
     nameController.dispose();
     ageController.dispose();
-    _faceDetector.close();
+    _faceDetector?.close();
     super.onClose();
   }
 }

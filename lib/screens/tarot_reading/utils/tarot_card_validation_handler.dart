@@ -83,14 +83,24 @@ class TarotCardValidationHandler {
 
   /// Checks if the error is a status 400 unsuitable card error
   static bool _isUnsuitableCardError(String fullError, String errorMsg) {
-    return fullError.contains('Status: 400') ||
-        fullError.contains('status: 400') ||
-        fullError.contains('400') ||
-        errorMsg.contains('Status: 400') ||
-        errorMsg.contains('status: 400') ||
-        errorMsg.toLowerCase().contains('not suitable') ||
-        errorMsg.toLowerCase().contains('invalid card') ||
-        errorMsg.toLowerCase().contains('unsuitable');
+    final fe = fullError.toLowerCase();
+    final em = errorMsg.toLowerCase();
+    return fe.contains('status: 400') ||
+        em.contains('status: 400') ||
+        fe.contains('not suitable') ||
+        em.contains('not suitable') ||
+        fe.contains('invalid card') ||
+        em.contains('invalid card') ||
+        fe.contains('unsuitable') ||
+        em.contains('unsuitable') ||
+        fe.contains('no guidance available') ||
+        em.contains('no guidance available');
+  }
+
+  /// Public check for callers (e.g. auto-pick fallback without snackbar spam)
+  static bool isUnsuitableCardError(dynamic error) {
+    final s = error.toString();
+    return _isUnsuitableCardError(s, s.replaceAll('Exception: ', ''));
   }
 
   /// Checks if the error is a duplicate card error

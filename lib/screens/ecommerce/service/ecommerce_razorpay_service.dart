@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:astrobharataiuser/data_model/payment_model.dart';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
+import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
+import 'package:astrobharataiuser/utils/plugin_safe.dart';
 import 'package:astrobharataiuser/utils/user_friendly_error.dart';
 
 /// Service to handle Razorpay payment integration for ecommerce orders
@@ -29,13 +31,28 @@ class EcommerceRazorpayService {
     // Reset guard when initializing new payment
     _paymentSuccessHandled = false;
     
-    // Dispose existing instance if any
-    _razorpay?.clear();
-    
-    _razorpay = Razorpay();
-    _razorpay!.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-    _razorpay!.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-    _razorpay!.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    try {
+      _razorpay?.clear();
+
+      _razorpay = Razorpay();
+      _razorpay!.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+      _razorpay!.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+      _razorpay!.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    } catch (e, s) {
+      CrashlyticsService.recordError(
+        e,
+        s,
+        fatal: false,
+        type: CrashErrorType.payment,
+        reason: 'RAZORPAY_EC_INIT',
+      );
+      onError?.call(
+        UserFriendlyError.message(
+          e,
+          fallback: 'Payment is temporarily unavailable. Please try again.',
+        ),
+      );
+    }
   }
   
   /// Open Razorpay checkout
@@ -86,8 +103,15 @@ class EcommerceRazorpayService {
     try {
       _razorpay!.open(options);
       debugPrint('Razorpay: open() called successfully');
-    } catch (e) {
+    } catch (e, s) {
       debugPrint('Razorpay: open() failed: $e');
+      CrashlyticsService.recordError(
+        e,
+        s,
+        fatal: false,
+        type: CrashErrorType.payment,
+        reason: 'RAZORPAY_EC_OPEN',
+      );
       onError?.call(
         UserFriendlyError.message(
           e,
@@ -99,42 +123,70 @@ class EcommerceRazorpayService {
   
   /// Handle payment success
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    // CRITICAL: Prevent multiple callbacks (Razorpay can fire EVENT_PAYMENT_SUCCESS multiple times)
-    if (_paymentSuccessHandled) {
-      debugPrint('⚠️ Payment success already handled — ignoring duplicate Razorpay callback');
-      return;
-    }
-    
-    _paymentSuccessHandled = true;
-    debugPrint('Payment Success: ${response.paymentId}');
-    onSuccess?.call({
-      'paymentId': response.paymentId,
-      'orderId': response.orderId,
-      'signature': response.signature,
-    });
-  }
-  
-  /// Handle payment error
-  void _handlePaymentError(PaymentFailureResponse response) {
-    debugPrint('Payment Error: ${response.code} - ${response.message}');
-    onFailure?.call(response);
-    onError?.call(
-      UserFriendlyError.message(
-        response.message,
-        fallback: 'Payment failed. Please try again.',
-      ),
+    guardPluginCallback(
+      'RAZORPAY_EC_SUCCESS',
+      () {
+        if (_paymentSuccessHandled) {
+          debugPrint(
+            '⚠️ Payment success already handled — ignoring duplicate Razorpay callback',
+          );
+          return;
+        }
+
+        _paymentSuccessHandled = true;
+        debugPrint('Payment Success: ${response.paymentId}');
+        onSuccess?.call({
+          'paymentId': response.paymentId,
+          'orderId': response.orderId,
+          'signature': response.signature,
+        });
+      },
+      type: CrashErrorType.payment,
     );
   }
-  
+
+  /// Handle payment error
+  void _handlePaymentError(PaymentFailureResponse response) {
+    guardPluginCallback(
+      'RAZORPAY_EC_ERROR',
+      () {
+        debugPrint('Payment Error: ${response.code} - ${response.message}');
+        onFailure?.call(response);
+        onError?.call(
+          UserFriendlyError.message(
+            response.message,
+            fallback: 'Payment failed. Please try again.',
+          ),
+        );
+      },
+      type: CrashErrorType.payment,
+    );
+  }
+
   /// Handle external wallet
   void _handleExternalWallet(ExternalWalletResponse response) {
-    debugPrint('External Wallet: ${response.walletName}');
-    // Handle external wallet if needed
+    guardPluginCallback(
+      'RAZORPAY_EC_WALLET',
+      () {
+        debugPrint('External Wallet: ${response.walletName}');
+      },
+      type: CrashErrorType.payment,
+    );
   }
   
   /// Dispose Razorpay instance
   void dispose() {
-    _razorpay?.clear();
+    try {
+      _razorpay?.clear();
+    } catch (e, s) {
+      CrashlyticsService.recordError(
+        e,
+        s,
+        fatal: false,
+        type: CrashErrorType.payment,
+        reason: 'RAZORPAY_EC_DISPOSE',
+      );
+    }
     _razorpay = null;
   }
 }

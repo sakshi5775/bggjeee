@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:astrobharataiuser/apihelper/api_response.dart';
 import 'package:astrobharataiuser/apihelper/api_provider/networkException/exception.dart';
 import 'package:astrobharataiuser/utils/user_friendly_error.dart';
@@ -61,6 +62,17 @@ class ErrorHandler {
         _handleResponseError(error),
         fallback: "Could not connect to server.",
       );
+    } else if (error is http.Response) {
+      return UserFriendlyError.message(
+        _handleResponseError(
+          Response(
+            statusCode: error.statusCode,
+            bodyString: error.body,
+            statusText: error.reasonPhrase,
+          ),
+        ),
+        fallback: "Could not connect to server.",
+      );
     } else if (error is String) {
       return UserFriendlyError.message(error);
     }
@@ -75,6 +87,15 @@ class ErrorHandler {
   static ErrorType getErrorType(dynamic error) {
     if (error is SocketException) return ErrorType.network;
     if (error is TimeoutException) return ErrorType.timeout;
+    if (error is http.Response) {
+      final status = error.statusCode;
+      if (status == 401) return ErrorType.unauthorized;
+      if (status == 404) return ErrorType.notFound;
+      if (status == 409) return ErrorType.conflict;
+      if (status == 422) return ErrorType.validation;
+      if (status >= 500) return ErrorType.server;
+      if (status >= 400) return ErrorType.validation;
+    }
     if (error is Response) {
       final status = error.statusCode;
       if (status == 401) return ErrorType.unauthorized;

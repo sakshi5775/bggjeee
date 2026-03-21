@@ -137,6 +137,18 @@ class _AutoTranslateTextState extends State<AutoTranslateText> {
       _languageController = Get.find<LanguageControllerV2>();
     }
 
+    if (!Get.isRegistered<LanguageControllerV2>()) {
+      return Text(
+        widget.text,
+        style: widget.style,
+        textAlign: widget.textAlign,
+        maxLines: widget.maxLines,
+        overflow: widget.overflow,
+        softWrap: widget.softWrap,
+        textDirection: widget.textDirection,
+      );
+    }
+
     // Use GetBuilder to react to language changes (lightweight)
     return GetBuilder<LanguageControllerV2>(
       builder: (controller) {

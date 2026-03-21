@@ -1,10 +1,13 @@
+import 'package:astrobharataiuser/core/services/app_firebase_state.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 
 enum CrashErrorType { network, socket, payment, auth, ui, unknown }
 
 class CrashlyticsService {
-  static final FirebaseCrashlytics _crash = FirebaseCrashlytics.instance;
+  static FirebaseCrashlytics get _crash => FirebaseCrashlytics.instance;
+
+  static bool get _active => AppFirebaseState.coreReady;
   static final Map<String, DateTime> _errorCache = {};
 
   static bool enableVerboseLogs =
@@ -16,6 +19,7 @@ class CrashlyticsService {
     required String platform,
     required String buildMode,
   }) async {
+    if (!_active) return;
     await setKey("app_version", appVersion);
     await setKey("platform", platform);
     await setKey("build_mode", buildMode);
@@ -42,8 +46,11 @@ class CrashlyticsService {
 
   /// Log structured breadcrumbs
   static void log(String message) {
+    if (!_active) return;
     if (!enableVerboseLogs && message.startsWith("DEBUG:")) return;
-    _crash.log(message);
+    try {
+      _crash.log(message);
+    } catch (_) {}
   }
 
   /// Record error with classification
@@ -54,11 +61,25 @@ class CrashlyticsService {
     bool fatal = false,
     String? reason,
   }) {
+    if (!_active) {
+      if (kDebugMode) {
+        debugPrint(
+          '[CrashlyticsService] skipped (Firebase off): $reason — $error',
+        );
+      }
+      return;
+    }
     final fingerprint = _generateFingerprint(error);
     if (!_shouldLog(fingerprint)) return;
 
-    _crash.setCustomKey("error_type", type.name);
-    _crash.recordError(error, stack, fatal: fatal, reason: reason);
+    try {
+      _crash.setCustomKey("error_type", type.name);
+      _crash.recordError(error, stack, fatal: fatal, reason: reason);
+    } catch (e, st) {
+      if (kDebugMode) {
+        debugPrint('[CrashlyticsService] recordError failed: $e\n$st');
+      }
+    }
   }
 
   /// Flow tracing with correlation ID
@@ -76,19 +97,28 @@ class CrashlyticsService {
 
   /// Set user identity
   static void setUser(String userId) {
-    _crash.setUserIdentifier(userId);
-    setKey("user_state", "logged_in");
+    if (!_active) return;
+    try {
+      _crash.setUserIdentifier(userId);
+      setKey("user_state", "logged_in");
+    } catch (_) {}
   }
 
   /// Clear user identity
   static void clearUser() {
-    _crash.setUserIdentifier('');
-    setKey("user_state", "logged_out");
+    if (!_active) return;
+    try {
+      _crash.setUserIdentifier('');
+      setKey("user_state", "logged_out");
+    } catch (_) {}
   }
 
   /// Add custom metadata
   static Future<void> setKey(String key, dynamic value) async {
-    await _crash.setCustomKey(key, value);
+    if (!_active) return;
+    try {
+      await _crash.setCustomKey(key, value);
+    } catch (_) {}
   }
 
   /// Global utility to wrap async calls with automatic error reporting

@@ -25,6 +25,11 @@ class TarotYesNoPopup extends StatelessWidget {
 
       final response = controller.yesNoResponse.value;
       final isLoading = controller.isLoadingReading.value;
+      final finding = controller.isFindingSuitableCard.value;
+
+      if (response == null && isLoading && finding) {
+        return const SizedBox.shrink();
+      }
 
       // Only show loader if actually loading API, not when waiting for direction selection
       if (response == null && isLoading) {

@@ -507,6 +507,16 @@ class LoginFormWidget extends StatelessWidget {
 
           TextButton(
             onPressed: () async {
+              if (!controller.isTermsAccepted.value) {
+                Get.snackbar(
+                  'Required',
+                  'Please accept Terms of Service and Privacy Policy to continue',
+                  backgroundColor: Colors.red,
+                  colorText: Colors.white,
+                  snackPosition: SnackPosition.BOTTOM,
+                );
+                return;
+              }
               // Enable guest mode
               await GuestSessionManager.enableGuestMode();
 

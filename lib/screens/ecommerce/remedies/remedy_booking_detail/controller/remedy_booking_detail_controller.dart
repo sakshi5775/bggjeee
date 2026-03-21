@@ -1,14 +1,14 @@
 import 'package:astrobharataiuser/core/base/base_controller.dart';
-import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/remedy_booking_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/services/remedies_service.dart';
+import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class RemedyBookingDetailController extends BaseController {
   final RemediesService _remediesService = Get.find<RemediesService>();
-  late Razorpay _razorpay;
+  Razorpay? _razorpay;
 
   final Rx<RemedyBookingItem?> booking = Rx<RemedyBookingItem?>(null);
   final RxBool isLoading = true.obs;
@@ -35,10 +35,22 @@ class RemedyBookingDetailController extends BaseController {
   }
 
   void _initRazorpay() {
-    _razorpay = Razorpay();
-    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _onPaymentSuccess);
-    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _onPaymentError);
-    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _onExternalWallet);
+    try {
+      final razorpay = Razorpay();
+      razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _onPaymentSuccess);
+      razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _onPaymentError);
+      razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _onExternalWallet);
+      _razorpay = razorpay;
+    } catch (e, s) {
+      CrashlyticsService.recordError(
+        e,
+        s,
+        fatal: false,
+        type: CrashErrorType.payment,
+        reason: 'RAZORPAY_REMEDY_DETAIL_INIT',
+      );
+      _razorpay = null;
+    }
   }
 
   Future<void> _loadBooking() async {
@@ -92,7 +104,16 @@ class RemedyBookingDetailController extends BaseController {
           Get.snackbar('Payment Error', 'Invalid order id');
           return;
         }
-        _razorpay.open({
+        final rp = _razorpay;
+        if (rp == null) {
+          Get.snackbar(
+            'Payment Unavailable',
+            'Payment could not be started. Please restart the app and try again.',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+          return;
+        }
+        rp.open({
           'key': d.razorpayKeyId,
           'amount': amount,
           'currency': d.currency,
@@ -216,7 +237,7 @@ class RemedyBookingDetailController extends BaseController {
 
   @override
   void onClose() {
-    _razorpay.clear();
+    _razorpay?.clear();
     super.onClose();
   }
 }

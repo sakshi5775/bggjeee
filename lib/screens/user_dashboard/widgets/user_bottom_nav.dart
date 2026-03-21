@@ -14,6 +14,9 @@ class UserBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!Get.isRegistered<GlobalNavController>()) {
+      return const SizedBox.shrink();
+    }
     final c = Get.find<GlobalNavController>();
     return Obx(() {
       final activeSubIndex = c.activeSubMenuIndex.value;

@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
+import 'package:astrobharataiuser/utils/plugin_safe.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -49,6 +51,10 @@ class AgoraCallManager {
   Function(String error)? onError;
   Function(bool isMuted)? onRemoteVideoMuted;
 
+  void _notifyUi(String tag, void Function() fn) {
+    guardPluginCallback('AGORA_$tag', fn, type: CrashErrorType.ui);
+  }
+
   /// Initialize Agora RTC Engine
   Future<bool> initialize({
     required String appId,
@@ -59,7 +65,7 @@ class AgoraCallManager {
       _appId = appId;
       _timeoutSeconds = timeoutSeconds;
       _callState = CallState.initializing;
-      onCallStateChanged?.call(_callState);
+      _notifyUi('init_start', () => onCallStateChanged?.call(_callState));
 
       // Request permissions
       if (isVideoCall) {
@@ -87,13 +93,20 @@ class AgoraCallManager {
       _registerEventHandlers();
 
       _callState = CallState.idle;
-      onCallStateChanged?.call(_callState);
+      _notifyUi('init_done', () => onCallStateChanged?.call(_callState));
       return true;
-    } catch (e) {
+    } catch (e, stack) {
       debugPrint('Error initializing Agora: $e');
+      CrashlyticsService.recordError(
+        e,
+        stack,
+        fatal: false,
+        type: CrashErrorType.ui,
+        reason: 'AGORA_INIT',
+      );
       _callState = CallState.error;
-      onCallStateChanged?.call(_callState);
-      onError?.call(e.toString());
+      _notifyUi('init_state', () => onCallStateChanged?.call(_callState));
+      _notifyUi('init_err', () => onError?.call(e.toString()));
       return false;
     }
   }
@@ -118,78 +131,94 @@ class AgoraCallManager {
     _engine!.registerEventHandler(
       RtcEngineEventHandler(
         onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-          debugPrint('Local user joined channel: ${connection.channelId}');
-          _localUid = connection.localUid;
-          _callState = CallState.ringing; // User joined, waiting for remote
-          onCallStateChanged?.call(_callState);
-          _startTimeoutTimer(); // Start timeout timer
+          _notifyUi('join_local', () {
+            debugPrint('Local user joined channel: ${connection.channelId}');
+            _localUid = connection.localUid;
+            _callState = CallState.ringing;
+            onCallStateChanged?.call(_callState);
+            _startTimeoutTimer();
+          });
         },
         onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-          debugPrint('Remote user joined: $remoteUid');
-          _remoteUid = remoteUid;
-          _callState = CallState.joined; // Astrologer accepted
-          onCallStateChanged?.call(_callState);
-          _stopTimeoutTimer(); // Stop timeout timer
-          _startCallTimer(); // Start call duration timer
-          onUserJoined?.call(remoteUid);
+          _notifyUi('user_joined', () {
+            debugPrint('Remote user joined: $remoteUid');
+            _remoteUid = remoteUid;
+            _callState = CallState.joined;
+            onCallStateChanged?.call(_callState);
+            _stopTimeoutTimer();
+            _startCallTimer();
+            onUserJoined?.call(remoteUid);
+          });
         },
         onUserOffline: (RtcConnection connection, int remoteUid, UserOfflineReasonType reason) {
-          debugPrint('Remote user offline: $remoteUid, reason: $reason');
-          _remoteUid = null;
-          onUserOffline?.call(remoteUid);
-          _stopCallTimer();
-          _stopTimeoutTimer();
+          _notifyUi('user_offline', () {
+            debugPrint('Remote user offline: $remoteUid, reason: $reason');
+            _remoteUid = null;
+            onUserOffline?.call(remoteUid);
+            _stopCallTimer();
+            _stopTimeoutTimer();
 
-          if (_callState == CallState.ringing) {
-            _callState = CallState.notAnswered;
-            onCallStateChanged?.call(_callState);
-            onError?.call('Busy');
-          } else if (_callState == CallState.joined) {
-            _callState = CallState.endedByRemote;
-            onCallStateChanged?.call(_callState);
-            onError?.call('Call Ended');
-          }
+            if (_callState == CallState.ringing) {
+              _callState = CallState.notAnswered;
+              onCallStateChanged?.call(_callState);
+              onError?.call('Busy');
+            } else if (_callState == CallState.joined) {
+              _callState = CallState.endedByRemote;
+              onCallStateChanged?.call(_callState);
+              onError?.call('Call Ended');
+            }
+          });
         },
         onUserMuteVideo: (RtcConnection connection, int remoteUid, bool muted) {
-          debugPrint('Remote user video ${muted ? 'muted' : 'unmuted'}: $remoteUid');
-          onRemoteVideoMuted?.call(muted);
+          _notifyUi('mute_video', () {
+            debugPrint(
+              'Remote user video ${muted ? 'muted' : 'unmuted'}: $remoteUid',
+            );
+            onRemoteVideoMuted?.call(muted);
+          });
         },
         onLeaveChannel: (RtcConnection connection, RtcStats stats) {
-          debugPrint('Left channel');
-          _localUid = null;
-          _remoteUid = null;
-          _callState = CallState.idle;
-          onCallStateChanged?.call(_callState);
-          _stopCallTimer();
+          _notifyUi('leave_ch', () {
+            debugPrint('Left channel');
+            _localUid = null;
+            _remoteUid = null;
+            _callState = CallState.idle;
+            onCallStateChanged?.call(_callState);
+            _stopCallTimer();
+          });
         },
         onError: (ErrorCodeType err, String msg) {
-          final errorMsg = msg.isNotEmpty ? msg : err.toString();
-          debugPrint('Agora error: $err - $errorMsg');
-          debugPrint('Error details - Channel: $_channelName, LocalUID: $_localUid');
-          
-          // Provide user-friendly error messages
-          String userFriendlyError = errorMsg;
-          if (err == ErrorCodeType.errInvalidToken) {
-            userFriendlyError = 'Invalid token. Please check backend token generation:\n• Token must be generated for UID 0 (auto-assigned)\n• Token must match exact channel name\n• Token must use correct App ID\n• Token must not be expired';
-            debugPrint('=== TOKEN ERROR DEBUG INFO ===');
-            debugPrint('Channel Name: $_channelName');
-            debugPrint('Local UID: $_localUid');
-            debugPrint('Expected UID: 0 (auto-assigned)');
-            debugPrint('App ID: ${_appId ?? "not set"}');
-            debugPrint('');
-            debugPrint('Backend token generation requirements:');
-            debugPrint('1. UID must be 0 (for auto-assigned UID)');
-            debugPrint('2. Channel name must match exactly: $_channelName');
-            debugPrint('3. App ID must be: 0eccfe1cd2044ed8b781d40ad755e365');
-            debugPrint('4. Token must be generated using Agora Token Builder');
-            debugPrint('================================');
-          } else if (err == ErrorCodeType.errJoinChannelRejected) {
-            userFriendlyError = 'Failed to join channel. Please try again.';
-          }
-          
-          _callState = CallState.error;
-          onCallStateChanged?.call(_callState);
-          onError?.call(userFriendlyError);
+          _notifyUi('engine_err', () {
+            final errorMsg = msg.isNotEmpty ? msg : err.toString();
+            debugPrint('Agora error: $err - $errorMsg');
+            debugPrint(
+              'Error details - Channel: $_channelName, LocalUID: $_localUid',
+            );
+
+            String userFriendlyError = errorMsg;
+            if (err == ErrorCodeType.errInvalidToken) {
+              userFriendlyError =
+                  'Invalid token. Please check backend token generation:\n• Token must be generated for UID 0 (auto-assigned)\n• Token must match exact channel name\n• Token must use correct App ID\n• Token must not be expired';
+              debugPrint('=== TOKEN ERROR DEBUG INFO ===');
+              debugPrint('Channel Name: $_channelName');
+              debugPrint('Local UID: $_localUid');
+              debugPrint('Expected UID: 0 (auto-assigned)');
+              debugPrint('App ID: ${_appId ?? "not set"}');
+              debugPrint('');
+              debugPrint('Backend token generation requirements:');
+              debugPrint('1. UID must be 0 (for auto-assigned UID)');
+              debugPrint('2. Channel name must match exactly: $_channelName');
+              debugPrint('3. App ID must be: 0eccfe1cd2044ed8b781d40ad755e365');
+              debugPrint('4. Token must be generated using Agora Token Builder');
+              debugPrint('================================');
+            } else if (err == ErrorCodeType.errJoinChannelRejected) {
+              userFriendlyError = 'Failed to join channel. Please try again.';
+            }
+
+            _callState = CallState.error;
+            onCallStateChanged?.call(_callState);
+            onError?.call(userFriendlyError);
+          });
         },
       ),
     );
@@ -203,13 +232,19 @@ class AgoraCallManager {
   }) async {
     try {
       if (_engine == null) {
-        onError?.call('Engine not initialized');
+        _notifyUi(
+          'no_engine',
+          () => onError?.call('Engine not initialized'),
+        );
         return false;
       }
 
       // Validate inputs
       if (channelName.isEmpty) {
-        onError?.call('Channel name cannot be empty');
+        _notifyUi(
+          'empty_channel',
+          () => onError?.call('Channel name cannot be empty'),
+        );
         return false;
       }
       
@@ -223,7 +258,7 @@ class AgoraCallManager {
 
       _channelName = channelName;
       _callState = CallState.joining;
-      onCallStateChanged?.call(_callState);
+      _notifyUi('joining', () => onCallStateChanged?.call(_callState));
 
       debugPrint('Joining channel: $channelName');
       debugPrint('Token length: ${finalToken.length}');
@@ -242,11 +277,21 @@ class AgoraCallManager {
 
       debugPrint('Join channel request sent successfully');
       return true;
-    } catch (e) {
+    } catch (e, stack) {
       debugPrint('Exception joining channel: $e');
+      CrashlyticsService.recordError(
+        e,
+        stack,
+        fatal: false,
+        type: CrashErrorType.ui,
+        reason: 'AGORA_JOIN_CHANNEL',
+      );
       _callState = CallState.error;
-      onCallStateChanged?.call(_callState);
-      onError?.call('Failed to join channel: ${e.toString()}');
+      _notifyUi('join_ex_state', () => onCallStateChanged?.call(_callState));
+      _notifyUi(
+        'join_ex_err',
+        () => onError?.call('Failed to join channel: ${e.toString()}'),
+      );
       return false;
     }
   }
@@ -256,13 +301,20 @@ class AgoraCallManager {
     try {
       _stopCallTimer();
       _callState = CallState.leaving;
-      onCallStateChanged?.call(_callState);
+      _notifyUi('leaving', () => onCallStateChanged?.call(_callState));
 
       if (_engine != null) {
         await _engine!.leaveChannel();
       }
-    } catch (e) {
+    } catch (e, s) {
       debugPrint('Error leaving channel: $e');
+      CrashlyticsService.recordError(
+        e,
+        s,
+        fatal: false,
+        type: CrashErrorType.ui,
+        reason: 'AGORA_LEAVE',
+      );
     }
   }
 
@@ -319,7 +371,10 @@ class AgoraCallManager {
     _callTimer?.cancel();
     _callTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       _callDuration++;
-      onCallDurationChanged?.call(_callDuration);
+      _notifyUi(
+        'duration',
+        () => onCallDurationChanged?.call(_callDuration),
+      );
     });
   }
 
@@ -334,14 +389,17 @@ class AgoraCallManager {
   void _startTimeoutTimer() {
     _timeoutTimer?.cancel();
     _timeoutTimer = Timer(Duration(seconds: _timeoutSeconds), () {
-      // Only timeout if still in ringing state (astrologer hasn't accepted yet)
-      if (_callState == CallState.ringing) {
-        debugPrint('Call timed out after $_timeoutSeconds seconds - astrologer did not accept.');
-        _callState = CallState.timeout;
-        onCallStateChanged?.call(_callState);
-        onError?.call('Busy');
-        leaveChannel(); // Automatically leave channel on timeout
-      }
+      _notifyUi('timeout', () {
+        if (_callState == CallState.ringing) {
+          debugPrint(
+            'Call timed out after $_timeoutSeconds seconds - astrologer did not accept.',
+          );
+          _callState = CallState.timeout;
+          onCallStateChanged?.call(_callState);
+          onError?.call('Busy');
+          leaveChannel();
+        }
+      });
     });
   }
 
@@ -361,8 +419,15 @@ class AgoraCallManager {
           canvas: const VideoCanvas(uid: 0),
         ),
       );
-    } catch (e) {
+    } catch (e, s) {
       debugPrint('Error getting local video view: $e');
+      CrashlyticsService.recordError(
+        e,
+        s,
+        fatal: false,
+        type: CrashErrorType.ui,
+        reason: 'AGORA_LOCAL_VIEW',
+      );
       return null;
     }
   }
@@ -378,18 +443,35 @@ class AgoraCallManager {
           connection: RtcConnection(channelId: _channelName ?? '', localUid: _localUid!),
         ),
       );
-    } catch (e) {
+    } catch (e, s) {
       debugPrint('Error getting remote video view: $e');
+      CrashlyticsService.recordError(
+        e,
+        s,
+        fatal: false,
+        type: CrashErrorType.ui,
+        reason: 'AGORA_REMOTE_VIEW',
+      );
       return null;
     }
   }
 
   /// Dispose resources
   Future<void> dispose() async {
-    _stopCallTimer();
-    _stopTimeoutTimer();
-    await leaveChannel();
-    await _engine?.release();
+    try {
+      _stopCallTimer();
+      _stopTimeoutTimer();
+      await leaveChannel();
+      await _engine?.release();
+    } catch (e, s) {
+      CrashlyticsService.recordError(
+        e,
+        s,
+        fatal: false,
+        type: CrashErrorType.ui,
+        reason: 'AGORA_DISPOSE',
+      );
+    }
     _engine = null;
     _callState = CallState.idle;
   }

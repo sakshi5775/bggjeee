@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 import 'package:astrobharataiuser/screens/courses/controllers/courses_controller.dart';
+import 'package:astrobharataiuser/utils/plugin_safe.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -72,8 +74,15 @@ class _DigitalLearningBannerSliderState
       _videoPlayerController!.play(); // Auto-play immediately
 
       if (mounted) setState(() {});
-    } catch (e) {
+    } catch (e, s) {
       debugPrint("Error initializing video player: $e");
+      CrashlyticsService.recordError(
+        e,
+        s,
+        fatal: false,
+        type: CrashErrorType.ui,
+        reason: 'BANNER_VIDEO_INIT',
+      );
     }
   }
 
@@ -100,15 +109,19 @@ class _DigitalLearningBannerSliderState
               setState(() {
                 _currentIndex = index;
               });
-              // Manage video playback based on visibility
-              if (index == 0 &&
-                  _videoPlayerController != null &&
-                  _videoPlayerController!.value.isInitialized) {
-                _videoPlayerController!.play();
-              } else if (_videoPlayerController != null &&
-                  _videoPlayerController!.value.isPlaying) {
-                _videoPlayerController!.pause();
-              }
+              guardPluginCallback(
+                'BANNER_PAGE_VIDEO',
+                () {
+                  final c = _videoPlayerController;
+                  if (c == null || !c.value.isInitialized) return;
+                  if (index == 0) {
+                    c.play();
+                  } else if (c.value.isPlaying) {
+                    c.pause();
+                  }
+                },
+                type: CrashErrorType.ui,
+              );
             },
             itemBuilder: (context, index) {
               return Padding(

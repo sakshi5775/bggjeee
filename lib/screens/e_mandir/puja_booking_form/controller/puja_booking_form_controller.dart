@@ -9,9 +9,9 @@ import 'package:astrobharataiuser/screens/e_mandir/puja_booking_form/service/puj
 import 'package:astrobharataiuser/screens/e_mandir/puja_booking_form/service/puja_payment_service.dart';
 import 'package:astrobharataiuser/core/services/analytics_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 import 'package:astrobharataiuser/utils/user_friendly_error.dart';
 
 /// Controller for each participant form
@@ -60,8 +60,8 @@ class PujaBookingFormController extends BaseController with WidgetsBindingObserv
   final PujaBookingService _bookingService = PujaBookingService();
   final PujaPaymentService _paymentService = PujaPaymentService();
 
-  // Razorpay instance
-  late Razorpay _razorpay;
+  // Razorpay instance (null if init failed)
+  Razorpay? _razorpay;
 
   // Form key for validation
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -170,10 +170,22 @@ class PujaBookingFormController extends BaseController with WidgetsBindingObserv
   }
 
   void _initializeRazorpay() {
-    _razorpay = Razorpay();
-    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    try {
+      final razorpay = Razorpay();
+      razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+      razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+      razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+      _razorpay = razorpay;
+    } catch (e, s) {
+      CrashlyticsService.recordError(
+        e,
+        s,
+        fatal: false,
+        type: CrashErrorType.payment,
+        reason: 'RAZORPAY_PUJA_FORM_INIT',
+      );
+      _razorpay = null;
+    }
   }
 
   void _parseArguments() {
@@ -351,8 +363,19 @@ class PujaBookingFormController extends BaseController with WidgetsBindingObserv
       },
     };
 
+    final rp = _razorpay;
+    if (rp == null) {
+      Get.snackbar(
+        'Payment Unavailable',
+        'Payment could not be started. Please restart the app and try again.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withValues(alpha: 0.9),
+        colorText: Colors.white,
+      );
+      return;
+    }
     try {
-      _razorpay.open(options);
+      rp.open(options);
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -527,7 +550,7 @@ class PujaBookingFormController extends BaseController with WidgetsBindingObserv
     for (var form in participantForms) {
       form.dispose();
     }
-    _razorpay.clear();
+    _razorpay?.clear();
     super.onClose();
   }
 }

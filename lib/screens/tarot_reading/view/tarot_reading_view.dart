@@ -12,18 +12,17 @@ import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_daily_widg
 import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_fortune_cookie_widget.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_lottie_shuffle_widget.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_love_widget.dart';
-import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_reading_type_selector.dart';
+import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_settings_sheet.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_shuffle_button_widget.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_selection_progress_widget.dart';
+import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_type_grid_widget.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_yes_no_popup.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_card_unsuitable_widget.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
-import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class TarotReadingView extends BasePage<TarotController> {
   const TarotReadingView({super.key});
@@ -31,103 +30,248 @@ class TarotReadingView extends BasePage<TarotController> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<TarotController>();
+
     return PopScope(
-      canPop: controller.selectedReadingType.value == 'none',
+      canPop: false,
       onPopInvoked: (didPop) {
-        if (!didPop && controller.selectedReadingType.value != 'none') {
+        if (didPop) return;
+        if (controller.selectedReadingType.value != 'none') {
           controller.closeReading();
+        } else if (controller.readingTypeChosen.value) {
+          controller.resetToTypeSelection();
+        } else {
+          Get.back();
         }
       },
       child: Container(
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Scaffold(
           backgroundColor: Colors.transparent,
-          // endDrawer: const CommonEndDrawer(),
-          body: Column(
-            children: [
-              // Fixed Header
-              const CommonHeader(title: 'CARD READING'),
-              Expanded(
-                child: Stack(
-                  children: [
-                    SingleChildScrollView(child: _buildMainContentBody()),
-                    // Reading overlays
-                    const TarotYesNoPopup(),
-                    const TarotCareerWidget(),
-                    const TarotLoveWidget(),
-                    const TarotDailyWidget(),
-                    const TarotBreakupWidget(isRomantic: true),
-                    const TarotBreakupWidget(isRomantic: false),
-                    const TarotFortuneCookieWidget(),
-                    // Card unsuitable message overlay (should be on top)
-                    _buildUnsuitableCardMessage(),
+          body: Obx(() {
+            final typeChosen = controller.readingTypeChosen.value;
+            final label = controller.chosenReadingLabel.value;
+
+            return Column(
+              children: [
+                // Header — title updates based on chosen reading type
+                CommonHeader(
+                  title: _tarotHeaderTitle(
+                    typeChosen: typeChosen,
+                    label: label,
+                    fortuneActive:
+                        controller.selectedReadingType.value == 'fortune-cookie',
+                  ),
+                  showBackButton: typeChosen ||
+                      controller.selectedReadingType.value == 'fortune-cookie',
+                  onBackTap: () {
+                    if (controller.selectedReadingType.value != 'none') {
+                      controller.closeReading();
+                    } else {
+                      controller.resetToTypeSelection();
+                    }
+                  },
+                  customActions: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.tune,
+                        color: '#6F221E'.toColor(),
+                        size: 22.w,
+                      ),
+                      style: IconButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: Size(36.w, 36.h),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      onPressed: () => TarotSettingsSheet.show(context),
+                    ),
                   ],
                 ),
-              ),
-              Spacing.h(32),
-            ],
-          ),
+
+                // Body — switches between Step 1 and Step 2
+                Expanded(
+                  child: Stack(
+                    children: [
+                      // Step 1: Reading type selection grid
+                      if (!typeChosen) const TarotTypeGridWidget(),
+
+                      // Step 2: Shuffle & pick card
+                      if (typeChosen)
+                        SingleChildScrollView(
+                          child: _buildStep2Content(controller),
+                        ),
+
+                      // ─── Result overlays (unchanged) ─────────────────────
+                      const TarotYesNoPopup(),
+                      const TarotCareerWidget(),
+                      const TarotLoveWidget(),
+                      const TarotDailyWidget(),
+                      const TarotBreakupWidget(isRomantic: true),
+                      const TarotBreakupWidget(isRomantic: false),
+                      const TarotFortuneCookieWidget(),
+                      _buildUnsuitableCardMessage(controller),
+                      _buildFindingSuitableOverlay(controller),
+                    ],
+                  ),
+                ),
+
+                Spacing.h(32),
+              ],
+            );
+          }),
         ),
       ),
     );
   }
 
-  Widget _buildMainContentBody() {
+  String _tarotHeaderTitle({
+    required bool typeChosen,
+    required String label,
+    required bool fortuneActive,
+  }) {
+    if (fortuneActive) return 'FORTUNE COOKIE';
+    if (typeChosen && label.isNotEmpty) return label.toUpperCase();
+    return 'CARD READING';
+  }
+
+  // ─── Step 2: Shuffle & Pick ────────────────────────────────────────────────
+
+  Widget _buildStep2Content(TarotController controller) {
     return GetBuilder<TarotController>(
-      builder: (controller) {
+      builder: (ctrl) {
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Spacing.h(16),
+            Spacing.h(6),
 
-            // Consultation Card
-            _buildConsultationCard(),
+            // Step strip — clear “you are here”
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Obx(() {
+                final label = ctrl.chosenReadingLabel.value;
+                return Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 12.h,
+                  ),
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradient,
+                    borderRadius: BorderRadius.circular(14.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: '#68171E'.toColor().withValues(alpha: 0.25),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.auto_awesome, color: AppColors.templeGold, size: 22.w),
+                      SizedBox(width: 10.w),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AutoTranslateText(
+                              'Your reading',
+                              style: MyTextTheme.smallBCN.copyWith(
+                                color: Colors.white.withValues(alpha: 0.85),
+                                fontSize: 11.sp,
+                              ),
+                            ),
+                            AutoTranslateText(
+                              label.isNotEmpty ? label : 'Card reading',
+                              style: MyTextTheme.mediumBCB.copyWith(
+                                color: Colors.white,
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+            ),
 
-            Spacing.h(16),
+            Spacing.h(12),
 
-            // Global Theme Selector (MOVED TO TOP for better visibility)
-            _buildGlobalThemeSelector(),
-
-            Spacing.h(24),
-
-            // Card interaction section
-            _buildCardInteractionSection(),
-
-            Spacing.h(16), // Reduced gap from 32 to 16
-            // Selection progress widget (shows selected cards and next steps)
+            // Multi-card selection progress (Love Triangle / Breakup) — shown at TOP
             const TarotSelectionProgressWidget(),
 
+            Spacing.h(10),
+
+            // Card area — orange accent frame
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              child: Container(
+                padding: EdgeInsets.all(3.w),
+                decoration: BoxDecoration(
+                  gradient: AppColors.orangeGradient,
+                  borderRadius: BorderRadius.circular(22.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: "#F38B3B".toColor().withValues(alpha: 0.2),
+                      blurRadius: 14,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.92),
+                    borderRadius: BorderRadius.circular(19.r),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12.h),
+                    child: _buildCardInteractionSection(ctrl),
+                  ),
+                ),
+              ),
+            ),
+
             Spacing.h(16),
 
-            // Reading type selector (shown after cards are drawn)
-            const TarotReadingTypeSelector(),
-
-            Spacing.h(16),
-
-            // Three-part shuffle button
-            const TarotShuffleButtonWidget(),
-
-            Spacing.h(16),
-
-            // Instruction text
+            // Contextual instruction text
             Obx(() {
-              final controller = Get.find<TarotController>();
-              final isLoading =
-                  controller.isLoading.value || controller.isShuffling.value;
+              final isLoading = ctrl.isLoading.value || ctrl.isShuffling.value;
               if (isLoading) return const SizedBox.shrink();
 
+              final isMultiCard =
+                  (ctrl.selectedLoveType.value == 'triangle' &&
+                      ctrl.triangleSelectionStep.value != 'complete') ||
+                  ((ctrl.selectedReadingType.value == 'romantic-breakup' ||
+                          ctrl.selectedReadingType.value ==
+                              'business-breakup') &&
+                      ctrl.breakupSelectionStep.value != 'complete');
+
+              final text = ctrl.showCards.value
+                  ? (isMultiCard
+                      ? 'Tap the card that resonates with you'
+                      : 'Tap a card — your reading updates for each new pick')
+                  : 'Focus on your question, then tap the deck or use Shuffle below';
+
               return Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
                 child: AutoTranslateText(
-                  controller.showCards.value
-                      ? 'Tap a card to reveal your reading'
-                      : 'Tap the deck to begin your reading',
+                  text,
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: '#68171E'.toColor().withValues(alpha: 0.7),
+                    color: '#68171E'.toColor().withValues(alpha: 0.75),
+                    fontSize: 13.sp,
                   ),
                   textAlign: TextAlign.center,
                 ),
               );
             }),
+
+            Spacing.h(14),
+
+            // Shuffle type selector + shuffle button
+            const TarotShuffleButtonWidget(),
 
             Spacing.h(24),
           ],
@@ -136,464 +280,271 @@ class TarotReadingView extends BasePage<TarotController> {
     );
   }
 
-  Widget _buildConsultationCard() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: GestureDetector(
-        onTap: () => UserMainController.pushInCurrentTab(AppRoutes.astrologyServices),
-        child: Container(
-          padding: EdgeInsets.all(20.w),
-          decoration: BoxDecoration(
-            gradient: AppColors.primaryGradient,
-            borderRadius: BorderRadius.circular(20.r),
-            boxShadow: [
-              BoxShadow(
-                color: '#68171E'.toColor().withValues(alpha: 0.3),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-                spreadRadius: 0,
+  // ─── Card Interaction Area (deck / shuffle animation / card fan) ──────────
+
+  Widget _buildCardInteractionSection(TarotController controller) {
+    return Obx(() {
+      final isShuffling = controller.isShuffling.value;
+      final showCards = controller.showCards.value;
+      final isLoading = controller.isLoading.value;
+      final hasCards = controller.cards.isNotEmpty;
+
+      return Container(
+        height: 360.h,
+        width: double.infinity,
+        margin: EdgeInsets.symmetric(horizontal: 8.w),
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.center,
+          children: [
+            // Shuffle animation
+            if (isShuffling)
+              TarotLottieShuffleWidget(
+                progress: controller.shuffleProgress.value,
               ),
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-                spreadRadius: 0,
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              // Icon Container
-              Container(
-                width: 60.w,
-                height: 60.w,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.25),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: AppColors.templeGold.withValues(alpha: 0.3),
-                    width: 2,
+
+            // Card fan spread
+            if (showCards && !isShuffling && hasCards)
+              const TarotCardFanWidget(),
+
+            // Loading indicator (when loading but no cards visible)
+            if (isLoading && !isShuffling && !showCards)
+              Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    "#F38B3B".toColor(),
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  Icons.psychology,
-                  color: AppColors.templeGold,
-                  size: 32.w,
                 ),
               ),
-              SizedBox(width: 16.w),
-              // Content
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AutoTranslateText(
-                      'Need Expert Consultation?',
-                      style: MyTextTheme.mediumBCB.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16.sp,
-                      ),
-                    ),
-                    SizedBox(height: 6.h),
-                    AutoTranslateText(
-                      'Connect with our experienced astrologers for personalized guidance',
-                      style: MyTextTheme.smallBCN.copyWith(
-                        color: Colors.white.withValues(alpha: 0.9),
-                        fontSize: 12.sp,
-                        height: 1.3,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: 10.h),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 6.h,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: AppColors.orangeGradient,
-                        borderRadius: BorderRadius.circular(8.r),
-                        boxShadow: [
-                          BoxShadow(
-                            color: "#F38B3B".toColor().withValues(alpha: 0.4),
-                            blurRadius: 6,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          AutoTranslateText(
-                            'Book Now',
-                            style: MyTextTheme.smallBCB.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12.sp,
-                            ),
-                          ),
-                          SizedBox(width: 6.w),
-                          Icon(
-                            Icons.arrow_forward,
-                            color: Colors.white,
-                            size: 14.w,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
-  Widget _buildCardInteractionSection() {
-    return GetBuilder<TarotController>(
-      builder: (controller) {
-        return Obx(() {
-          final isShuffling = controller.isShuffling.value;
-          final showCards = controller.showCards.value;
-          final isLoading = controller.isLoading.value;
-          final hasCards = controller.cards.isNotEmpty;
+            // Card reveal overlay
+            Obx(() {
+              final selectedCard = controller.selectedCard;
+              final isRevealing = controller.isRevealing.value;
+              final isCardOpen = controller.isCardOpen.value;
 
-          debugPrint(
-            '🃏 UI State: isShuffling=$isShuffling, showCards=$showCards, isLoading=$isLoading, hasCards=$hasCards',
-          );
-
-          return Container(
-            height: 380.h, // Further reduced from 450.h to 380.h
-            width: double.infinity,
-            margin: EdgeInsets.symmetric(horizontal: 16.w),
-            child: Stack(
-              clipBehavior: Clip.none,
-              alignment: Alignment.center,
-              children: [
-                // Shuffle animation (when shuffling)
-                if (isShuffling)
-                  TarotLottieShuffleWidget(
-                    progress: controller.shuffleProgress.value,
-                  ),
-
-                // Card fan spread (when cards are shown and not shuffling)
-                if (showCards && !isShuffling && hasCards)
-                  const TarotCardFanWidget(),
-
-                // Loading indicator (when loading but not shuffling and no cards shown)
-                if (isLoading && !isShuffling && !showCards)
-                  Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        "#F38B3B".toColor(),
-                      ),
-                    ),
-                  ),
-
-                // Card reveal overlay (when card is being revealed)
-                Obx(() {
-                  final selectedCard = controller.selectedCard;
-                  final isRevealing = controller.isRevealing.value;
-
-                  final isCardOpen = controller.isCardOpen.value;
-                  if ((isRevealing || isCardOpen) && selectedCard != null) {
-                    return Positioned.fill(
-                      child: IgnorePointer(
-                        ignoring: false,
+              if ((isRevealing || isCardOpen) && selectedCard != null) {
+                return Positioned.fill(
+                  child: GestureDetector(
+                    onTap: () {
+                      if (isCardOpen) controller.closeCard();
+                    },
+                    child: Container(
+                      color: Colors.transparent,
+                      child: Center(
                         child: GestureDetector(
                           onTap: () {
-                            // Close on tap outside or retap
-                            if (isCardOpen) {
-                              controller.closeCard();
-                            }
+                            if (isCardOpen) controller.closeCard();
                           },
-                          child: Container(
-                            color: Colors.transparent, // No background
-                            child: Center(
-                              child: GestureDetector(
-                                onTap: () {
-                                  // Close card when tapping the open card itself
-                                  if (isCardOpen) {
-                                    controller.closeCard();
-                                  }
-                                },
-                                child: Hero(
-                                  tag: 'tarot_card_${selectedCard.id}',
-                                  flightShuttleBuilder:
-                                      (
-                                        BuildContext flightContext,
-                                        Animation<double> animation,
-                                        HeroFlightDirection flightDirection,
-                                        BuildContext fromHeroContext,
-                                        BuildContext toHeroContext,
-                                      ) {
-                                        return TarotCardRevealWidget(
-                                          card: selectedCard,
-                                          theme: controller.selectedTheme.value,
-                                          isOpen: isCardOpen,
-                                        );
-                                      },
-                                  child: TarotCardRevealWidget(
-                                    card: selectedCard,
-                                    theme: controller.selectedTheme.value,
-                                    isOpen: isCardOpen,
-                                    onAnimationComplete: () {
-                                      // Animation complete
-                                    },
-                                  ),
-                                ),
-                              ),
+                          child: Hero(
+                            tag: 'tarot_card_${selectedCard.id}',
+                            flightShuttleBuilder: (
+                              BuildContext flightContext,
+                              Animation<double> animation,
+                              HeroFlightDirection flightDirection,
+                              BuildContext fromHeroContext,
+                              BuildContext toHeroContext,
+                            ) {
+                              return TarotCardRevealWidget(
+                                card: selectedCard,
+                                theme: controller.selectedTheme.value,
+                                isOpen: isCardOpen,
+                              );
+                            },
+                            child: TarotCardRevealWidget(
+                              card: selectedCard,
+                              theme: controller.selectedTheme.value,
+                              isOpen: isCardOpen,
+                              onAnimationComplete: () {},
                             ),
                           ),
                         ),
                       ),
-                    );
-                  }
-                  return const SizedBox.shrink();
-                }),
+                    ),
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            }),
 
-                // Initial deck (when no cards)
-                if (!showCards && !isShuffling) _buildInitialDeck(),
-              ],
-            ),
-          );
-        });
-      },
-    );
+            // Initial deck (tap to shuffle)
+            if (!showCards && !isShuffling) _buildInitialDeck(controller),
+          ],
+        ),
+      );
+    });
   }
 
-  Widget _buildInitialDeck() {
+  Widget _buildInitialDeck(TarotController controller) {
     return GestureDetector(
-      onTap: () {
-        final controller = Get.find<TarotController>();
-        controller.shuffleCards();
-      },
+      onTap: () => controller.shuffleCards(),
       child: Container(
-        width: 160.w,
-        height: 240.h,
+        width: 150.w,
+        height: 225.h,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.r),
           gradient: AppColors.orangeGradient,
           boxShadow: [
             BoxShadow(
-              color: "#F38B3B".toColor().withValues(alpha: 0.4),
-              blurRadius: 20,
+              color: "#F38B3B".toColor().withValues(alpha: 0.45),
+              blurRadius: 24,
               spreadRadius: 2,
-              offset: const Offset(0, 8),
+              offset: const Offset(0, 10),
             ),
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
+              color: Colors.black.withValues(alpha: 0.25),
               blurRadius: 12,
               offset: const Offset(0, 6),
             ),
           ],
         ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.auto_awesome, color: Colors.white, size: 70.w),
-              Spacing.h(12),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        child: Stack(
+          children: [
+            // Subtle card stack illusion
+            Positioned(
+              top: -4,
+              left: -4,
+              right: 4,
+              bottom: 4,
+              child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: AutoTranslateText(
-                  'Tap to Shuffle',
-                  style: MyTextTheme.smallBCN.copyWith(color: Colors.white),
+                  borderRadius: BorderRadius.circular(16.r),
+                  color: "#DD6B20".toColor().withValues(alpha: 0.5),
                 ),
               ),
-            ],
-          ),
+            ),
+            Positioned(
+              top: -2,
+              left: -2,
+              right: 2,
+              bottom: 2,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16.r),
+                  color: "#E97E30".toColor().withValues(alpha: 0.7),
+                ),
+              ),
+            ),
+            // Main deck face
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16.r),
+                gradient: AppColors.orangeGradient,
+              ),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.auto_awesome,
+                      color: Colors.white,
+                      size: 56.w,
+                    ),
+                    Spacing.h(14),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 8.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.25),
+                        borderRadius: BorderRadius.circular(10.r),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.4),
+                          width: 1,
+                        ),
+                      ),
+                      child: AutoTranslateText(
+                        'Tap to Shuffle',
+                        style: MyTextTheme.smallBCN.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12.sp,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildGlobalThemeSelector() {
-    final controller = Get.find<TarotController>();
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Card Theme Selector
-          Row(
-            children: [
-              Icon(Icons.palette, color: '#68171E'.toColor(), size: 20.w),
-              Spacing.w(8),
-              AutoTranslateText(
-                'Card Theme',
-                style: MyTextTheme.mediumBCN.copyWith(
-                  color: '#68171E'.toColor(),
-                ),
-              ),
-            ],
-          ),
-          Spacing.h(8),
-          Obx(() {
-            return SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: ['classic', 'artwork', 'dark', 'ghibli'].map((theme) {
-                  final isSelected = controller.selectedTheme.value == theme;
-                  return GestureDetector(
-                    onTap: () => controller.setTheme(theme),
-                    child: Container(
-                      margin: EdgeInsets.only(right: 8.w),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 8.h,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: isSelected ? AppColors.orangeGradient : null,
-                        color: isSelected ? null : Colors.white,
-                        borderRadius: BorderRadius.circular(8.r),
-                        border: Border.all(
-                          color: isSelected
-                              ? Colors.transparent
-                              : '#68171E'.toColor().withValues(alpha: 0.3),
-                          width: 1.5,
-                        ),
-                        boxShadow: isSelected
-                            ? [
-                                BoxShadow(
-                                  color: "#F38B3B".toColor().withValues(
-                                    alpha: 0.3,
-                                  ),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ]
-                            : null,
-                      ),
-                      child: AutoTranslateText(
-                        theme.toUpperCase(),
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: isSelected
-                              ? Colors.white
-                              : '#68171E'.toColor(),
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                          fontFamily: 'Poppins',
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            );
-          }),
+  // ─── Unsuitable card message overlay ──────────────────────────────────────
 
-          Spacing.h(16),
-
-          // Card Back Selector
-          Row(
-            children: [
-              Icon(Icons.style, color: '#68171E'.toColor(), size: 20.w),
-              Spacing.w(8),
-              AutoTranslateText(
-                'Card Back',
-                style: MyTextTheme.mediumBCN.copyWith(
-                  color: '#68171E'.toColor(),
-                ),
+  /// Loader while we auto-pick a backend-valid card (Career / Yes-No / Daily)
+  Widget _buildFindingSuitableOverlay(TarotController controller) {
+    return Obx(() {
+      if (!controller.isFindingSuitableCard.value) {
+        return const SizedBox.shrink();
+      }
+      return Positioned.fill(
+        child: Material(
+          color: Colors.black.withValues(alpha: 0.75),
+          child: Center(
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 28.w),
+              padding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 26.h),
+              decoration: BoxDecoration(
+                gradient: AppColors.primaryGradient,
+                borderRadius: BorderRadius.circular(20.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: '#68171E'.toColor().withValues(alpha: 0.45),
+                    blurRadius: 24,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
               ),
-            ],
-          ),
-          Spacing.h(8),
-          Obx(() {
-            final backTypes = [
-              'classic',
-              'dark',
-              'indigo_star',
-              'playing_blue',
-              'playing_red',
-              'ghibli_sun',
-              'ghibli_tree',
-            ];
-            return SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: backTypes.map((backType) {
-                  final isSelected =
-                      controller.selectedBackType.value == backType;
-                  return GestureDetector(
-                    onTap: () => controller.setBackType(backType),
-                    child: Container(
-                      margin: EdgeInsets.only(right: 8.w),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 8.h,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: isSelected ? AppColors.orangeGradient : null,
-                        color: isSelected ? null : Colors.white,
-                        borderRadius: BorderRadius.circular(8.r),
-                        border: Border.all(
-                          color: isSelected
-                              ? Colors.transparent
-                              : '#68171E'.toColor().withValues(alpha: 0.3),
-                          width: 1.5,
-                        ),
-                        boxShadow: isSelected
-                            ? [
-                                BoxShadow(
-                                  color: "#F38B3B".toColor().withValues(
-                                    alpha: 0.3,
-                                  ),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ]
-                            : null,
-                      ),
-                      child: AutoTranslateText(
-                        backType.replaceAll('_', ' ').toUpperCase(),
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: isSelected
-                              ? Colors.white
-                              : '#68171E'.toColor(),
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                          fontFamily: 'Poppins',
-                        ),
-                      ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 44.w,
+                    height: 44.w,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 3,
+                      color: AppColors.templeGold,
                     ),
-                  );
-                }).toList(),
+                  ),
+                  Spacing.h(18),
+                  AutoTranslateText(
+                    controller.findingSuitableMessage.value.isNotEmpty
+                        ? controller.findingSuitableMessage.value
+                        : 'Finding the right card for your reading...',
+                    style: MyTextTheme.mediumBCB.copyWith(
+                      color: Colors.white,
+                      fontSize: 15.sp,
+                      height: 1.35,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  Spacing.h(10),
+                  AutoTranslateText(
+                    'This usually takes a few seconds.',
+                    style: MyTextTheme.smallBCN.copyWith(
+                      color: Colors.white.withValues(alpha: 0.85),
+                      fontSize: 12.sp,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
-            );
-          }),
-        ],
-      ),
-    );
+            ),
+          ),
+        ),
+      );
+    });
   }
 
-  Widget _buildUnsuitableCardMessage() {
-    final controller = Get.find<TarotController>();
+  Widget _buildUnsuitableCardMessage(TarotController controller) {
     return Obx(() {
       final showMessage = controller.showUnsuitableCardMessage.value;
       final cardName = controller.unsuitableCardName.value;
       final categoryName = controller.unsuitableCategoryName.value;
-
-      debugPrint(
-        '🔍 Unsuitable Card Widget - showMessage: $showMessage, cardName: $cardName, categoryName: $categoryName',
-      );
 
       if (!showMessage || cardName.isEmpty || categoryName.isEmpty) {
         return const SizedBox.shrink();
@@ -610,9 +561,6 @@ class TarotReadingView extends BasePage<TarotController> {
             cardName: cardName,
             categoryName: categoryName,
             onAnimationComplete: () {
-              debugPrint(
-                '✅ Unsuitable card animation complete, calling auto-retry',
-              );
               controller.handleUnsuitableCardAutoRetry();
             },
           ),

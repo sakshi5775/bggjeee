@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
 import 'package:astrobharataiuser/screens/ai_chat/services/ai_chat_service.dart';
+import 'package:astrobharataiuser/app_manager/user_data.dart';
+import 'package:astrobharataiuser/core/services/guest_session_manager.dart';
 
 import '../screens/user_dashboard/widgets/free_service_dialog.dart';
 
@@ -65,8 +67,17 @@ class GlobalFreeServiceManager extends GetxService {
   Future<void> _checkAndShowDialog() async {
     print("GlobalFreeServiceManager: _checkAndShowDialog called");
     try {
-      // It's a free first consultation: show even if user is not logged-in.
-      // (CTA navigation will be guarded by app routes if needed.)
+      // Only show the popup for authenticated users or guest mode users.
+      // Do not show on login, signup, OTP or any pre-auth page.
+      final isLoggedIn =
+          (UserData().accessToken?.isNotEmpty ?? false) ||
+          GuestSessionManager.isGuestMode;
+      if (!isLoggedIn) {
+        print(
+          "GlobalFreeServiceManager: User not authenticated, skipping popup",
+        );
+        return;
+      }
 
       // Don't show if dialog is already showing
       if (_isDialogShowing) {

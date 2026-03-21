@@ -845,9 +845,24 @@ import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/apihelper/api_provider/networkException/exception.dart';
 import 'package:astrobharataiuser/apihelper/error_handler.dart';
 import 'package:astrobharataiuser/apihelper/api_response.dart';
-import 'package:hive_ce/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+
+/// Never throw raw objects (e.g. [String] from a mistaken `throw ErrorHandler.handle`).
+Never _failApiRequest(Object e) {
+  if (e is NetworkException) throw e;
+  if (e is Response) throw returnException(e);
+  if (e is http.Response) {
+    throw returnException(
+      Response(
+        statusCode: e.statusCode,
+        bodyString: e.body,
+        statusText: e.reasonPhrase,
+      ),
+    );
+  }
+  throw FetchDataException(ErrorHandler.handle(e));
+}
 
 class ApiClient extends GetConnect
     with NavigationService
@@ -864,9 +879,7 @@ class ApiClient extends GetConnect
     timeout = const Duration(seconds: 30);
     token = UserData().getLoginData.accessToken;
   }
-  // Hive Box Reference (reserved for API caching; currently disabled)
-  // ignore: unused_field
-  final _cacheBox = Hive.box('api_cache');
+
   @override
   void onInit() {
     token = UserData().getLoginData.accessToken;
@@ -1204,7 +1217,8 @@ class ApiClient extends GetConnect
         final isRetryable =
             errorType == ErrorType.timeout ||
             errorType == ErrorType.server ||
-            (e is Response && e.statusCode != null && e.statusCode! >= 500);
+            (e is Response && e.statusCode != null && e.statusCode! >= 500) ||
+            (e is http.Response && e.statusCode >= 500);
 
         if (isRetryable && attempts <= maxRetries) {
           if (kDebugMode) print('Retrying request (attempt $attempts)...');
@@ -1212,13 +1226,7 @@ class ApiClient extends GetConnect
           continue;
         }
 
-        if (e is Response ||
-            e is NetworkException ||
-            e is SocketException ||
-            e is TimeoutException) {
-          throw ErrorHandler.handle(e);
-        }
-        rethrow;
+        _failApiRequest(e);
       }
     }
   }
@@ -1307,17 +1315,7 @@ class ApiClient extends GetConnect
         throw response;
       }
     } catch (e) {
-      if (e is http.Response) {
-        // Wrap http.Response to GetX Response for ErrorHandler
-        throw ErrorHandler.handle(
-          Response(
-            statusCode: e.statusCode,
-            bodyString: e.body,
-            statusText: e.reasonPhrase,
-          ),
-        );
-      }
-      throw ErrorHandler.handle(e);
+      _failApiRequest(e);
     }
   }
 
@@ -1409,16 +1407,7 @@ class ApiClient extends GetConnect
         throw response;
       }
     } catch (e) {
-      if (e is http.Response) {
-        throw ErrorHandler.handle(
-          Response(
-            statusCode: e.statusCode,
-            bodyString: e.body,
-            statusText: e.reasonPhrase,
-          ),
-        );
-      }
-      throw ErrorHandler.handle(e);
+      _failApiRequest(e);
     }
   }
 
@@ -1507,16 +1496,7 @@ class ApiClient extends GetConnect
         throw response;
       }
     } catch (e) {
-      if (e is http.Response) {
-        throw ErrorHandler.handle(
-          Response(
-            statusCode: e.statusCode,
-            bodyString: e.body,
-            statusText: e.reasonPhrase,
-          ),
-        );
-      }
-      throw ErrorHandler.handle(e);
+      _failApiRequest(e);
     }
   }
 

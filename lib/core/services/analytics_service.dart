@@ -1,3 +1,4 @@
+import 'package:astrobharataiuser/core/services/app_firebase_state.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 
@@ -6,12 +7,15 @@ class AnalyticsService {
   factory AnalyticsService() => _instance;
   AnalyticsService._internal();
 
-  final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
+  FirebaseAnalytics? get _analytics =>
+      AppFirebaseState.coreReady ? FirebaseAnalytics.instance : null;
 
   // Set User ID after successful login
   Future<void> setUserId(String userId) async {
+    final a = _analytics;
+    if (a == null) return;
     try {
-      await _analytics.setUserId(id: userId);
+      await a.setUserId(id: userId);
     } catch (e) {
       debugPrint("Analytics Error: $e");
     }
@@ -19,8 +23,10 @@ class AnalyticsService {
 
   // Set User Properties
   Future<void> setUserProperty(String name, String value) async {
+    final a = _analytics;
+    if (a == null) return;
     try {
-      await _analytics.setUserProperty(name: name, value: value);
+      await a.setUserProperty(name: name, value: value);
     } catch (e) {
       debugPrint("Analytics Error: $e");
     }
@@ -28,8 +34,10 @@ class AnalyticsService {
 
   // Log Generic Custom Event
   Future<void> logCustomEvent(String name, [Map<String, Object>? parameters]) async {
+    final a = _analytics;
+    if (a == null) return;
     try {
-      await _analytics.logEvent(name: name, parameters: parameters);
+      await a.logEvent(name: name, parameters: parameters);
     } catch (e) {
       debugPrint("Analytics Error: $e");
     }
@@ -38,32 +46,40 @@ class AnalyticsService {
   // --- Authentication Events ---
 
   Future<void> logLogin(String loginMethod) async {
+    final a = _analytics;
+    if (a == null) return;
     try {
-      await _analytics.logLogin(loginMethod: loginMethod);
+      await a.logLogin(loginMethod: loginMethod);
     } catch (e) {
       debugPrint("Analytics Error: $e");
     }
   }
 
   Future<void> logAppOpen() async {
+    final a = _analytics;
+    if (a == null) return;
     try {
-      await _analytics.logAppOpen();
+      await a.logAppOpen();
     } catch (e) {
       debugPrint("Analytics Error: $e");
     }
   }
 
   Future<void> logSignUp(String signUpMethod) async {
+    final a = _analytics;
+    if (a == null) return;
     try {
-      await _analytics.logSignUp(signUpMethod: signUpMethod);
+      await a.logSignUp(signUpMethod: signUpMethod);
     } catch (e) {
       debugPrint("Analytics Error: $e");
     }
   }
 
   Future<void> logLogout() async {
+    final a = _analytics;
+    if (a == null) return;
     try {
-      await _analytics.logEvent(name: 'logout');
+      await a.logEvent(name: 'logout');
     } catch (e) {
       debugPrint("Analytics Error: $e");
     }
@@ -77,8 +93,10 @@ class AnalyticsService {
     required String itemCategory,
     double? price,
   }) async {
+    final a = _analytics;
+    if (a == null) return;
     try {
-      await _analytics.logViewItem(
+      await a.logViewItem(
         currency: 'INR',
         value: price,
         items: [
@@ -102,8 +120,10 @@ class AnalyticsService {
     required int quantity,
     double? price,
   }) async {
+    final a = _analytics;
+    if (a == null) return;
     try {
-      await _analytics.logAddToCart(
+      await a.logAddToCart(
         currency: 'INR',
         value: (price ?? 0) * quantity,
         items: [
@@ -128,8 +148,10 @@ class AnalyticsService {
     required int quantity,
     double? price,
   }) async {
+    final a = _analytics;
+    if (a == null) return;
     try {
-      await _analytics.logRemoveFromCart(
+      await a.logRemoveFromCart(
         currency: 'INR',
         value: (price ?? 0) * quantity,
         items: [
@@ -152,8 +174,10 @@ class AnalyticsService {
     required double value,
     List<AnalyticsEventItem>? items,
   }) async {
+    final a = _analytics;
+    if (a == null) return;
     try {
-      await _analytics.logPurchase(
+      await a.logPurchase(
         currency: 'INR',
         transactionId: transactionId,
         value: value,
@@ -167,8 +191,10 @@ class AnalyticsService {
   // --- Services Events ---
 
   Future<void> logServiceClicked(String serviceName) async {
+    final a = _analytics;
+    if (a == null) return;
     try {
-      await _analytics.logEvent(
+      await a.logEvent(
         name: 'service_clicked',
         parameters: {
           'service_name': serviceName,
@@ -180,8 +206,10 @@ class AnalyticsService {
   }
 
   Future<void> logViewServiceCategory(String categoryName) async {
+    final a = _analytics;
+    if (a == null) return;
     try {
-      await _analytics.logEvent(
+      await a.logEvent(
         name: 'view_service_category',
         parameters: {
           'category_name': categoryName,
@@ -196,8 +224,10 @@ class AnalyticsService {
     required String serviceName,
     double? price,
   }) async {
+    final a = _analytics;
+    if (a == null) return;
     try {
-      await _analytics.logEvent(
+      await a.logEvent(
         name: 'book_service',
         parameters: {
           'service_name': serviceName,
@@ -214,8 +244,10 @@ class AnalyticsService {
     required double amount,
     required String transactionId,
   }) async {
+    final a = _analytics;
+    if (a == null) return;
     try {
-      await _analytics.logEvent(
+      await a.logEvent(
         name: 'wallet_recharge',
         parameters: {
           'value': amount,
@@ -229,24 +261,30 @@ class AnalyticsService {
   }
 
   Future<void> logSearch(String searchTerm) async {
+    final a = _analytics;
+    if (a == null) return;
     try {
-      await _analytics.logSearch(searchTerm: searchTerm);
+      await a.logSearch(searchTerm: searchTerm);
     } catch (e) {
       debugPrint("Analytics Error: $e");
     }
   }
 
   Future<void> logDeleteAccount() async {
+    final a = _analytics;
+    if (a == null) return;
     try {
-      await _analytics.logEvent(name: 'delete_account');
+      await a.logEvent(name: 'delete_account');
     } catch (e) {
       debugPrint("Analytics Error: $e");
     }
   }
 
   Future<void> logUpdateProfile() async {
+    final a = _analytics;
+    if (a == null) return;
     try {
-      await _analytics.logEvent(name: 'update_profile');
+      await a.logEvent(name: 'update_profile');
     } catch (e) {
       debugPrint("Analytics Error: $e");
     }
@@ -256,8 +294,10 @@ class AnalyticsService {
     required String actionType,
     required String itemName,
   }) async {
+    final a = _analytics;
+    if (a == null) return;
     try {
-      await _analytics.logEvent(
+      await a.logEvent(
         name: 'virtual_darshan_action',
         parameters: {
           'action_type': actionType,

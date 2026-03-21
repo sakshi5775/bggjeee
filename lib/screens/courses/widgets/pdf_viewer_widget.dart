@@ -1,3 +1,4 @@
+import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
@@ -69,6 +70,13 @@ class PdfViewerWidget extends StatelessWidget {
           },
           onDocumentLoadFailed: (PdfDocumentLoadFailedDetails details) {
             debugPrint('PDF load failed: ${details.error}');
+            CrashlyticsService.recordError(
+              details.error,
+              StackTrace.current,
+              fatal: false,
+              type: CrashErrorType.ui,
+              reason: 'PDF_NETWORK_LOAD',
+            );
           },
         );
       },

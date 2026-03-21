@@ -112,6 +112,7 @@ dependencies:
   hive_ce_flutter: ^2.3.4
   app_links: ^7.0.0
   firebase_analytics: ^11.6.0
+  google_api_availability: ^5.0.0
 dev_dependencies: 
   flutter_test:
     sdk: flutter

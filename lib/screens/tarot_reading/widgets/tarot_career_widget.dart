@@ -24,6 +24,12 @@ class TarotCareerWidget extends StatelessWidget {
 
       final response = controller.careerResponse.value;
       final isLoading = controller.isLoadingReading.value;
+      final finding = controller.isFindingSuitableCard.value;
+
+      // Full-screen “finding card” uses TarotReadingView overlay — avoid double dim
+      if (response == null && isLoading && finding) {
+        return const SizedBox.shrink();
+      }
 
       // Only show loader if actually loading API, not when waiting for direction selection
       if (response == null && isLoading) {

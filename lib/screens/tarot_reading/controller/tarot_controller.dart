@@ -97,6 +97,15 @@ class TarotController extends BaseController {
   final RxInt autoRetryCount = 0.obs;
   final RxInt maxAutoRetries = 3.obs; // Maximum retries before giving up
 
+  // Step-based wizard flow state
+  final RxBool readingTypeChosen = false.obs;
+  final RxString pendingReadingType = 'none'.obs;
+  final RxString chosenReadingLabel = ''.obs;
+
+  /// Full-screen loader while backend-safe card is being found (unsuitable card flow)
+  final RxBool isFindingSuitableCard = false.obs;
+  final RxString findingSuitableMessage = ''.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -146,6 +155,8 @@ class TarotController extends BaseController {
     errorMessage.value = '';
     shuffleProgress.value = 0.0;
     fanSpreadProgress.value = 0.0;
+    isFindingSuitableCard.value = false;
+    findingSuitableMessage.value = '';
     // Clear all reading responses
     _clearAllReadingResponses();
   }
@@ -392,6 +403,11 @@ class TarotController extends BaseController {
       return;
     }
 
+    // New card pick → drop cached reading so API runs again for this card
+    if (selectedCardIndex.value != null && selectedCardIndex.value != index) {
+      _invalidateCachesForNewCardPick();
+    }
+
     // If same card is tapped and it's open, close it
     if (selectedCardIndex.value == index && isCardOpen.value) {
       await closeCard();
@@ -415,6 +431,7 @@ class TarotController extends BaseController {
     await Future.delayed(const Duration(milliseconds: 400));
     isRevealing.value = false;
     isCardOpen.value = true; // Mark as open/sticky
+    _autoTriggerReading(); // In wizard flow: auto-start the chosen reading
   }
 
   /// Close the currently open card with smooth animation
@@ -494,6 +511,11 @@ class TarotController extends BaseController {
     shuffleProgress.value = 0.0;
     fanSpreadProgress.value = 0.0;
     selectedReadingType.value = 'none';
+    readingTypeChosen.value = false;
+    pendingReadingType.value = 'none';
+    chosenReadingLabel.value = '';
+    isFindingSuitableCard.value = false;
+    findingSuitableMessage.value = '';
     _clearAllReadingResponses();
   }
 
@@ -898,11 +920,6 @@ class TarotController extends BaseController {
     // Set reading type first
     selectedReadingType.value = 'yesno';
 
-    // If response already exists, don't call API again
-    if (yesNoResponse.value != null) {
-      return;
-    }
-
     // Show direction selector - API will be called when direction is selected or skipped
     // The direction selector widget will trigger performYesNoReading()
     return;
@@ -941,23 +958,25 @@ class TarotController extends BaseController {
       final errorMsg = e.toString().replaceAll('Exception: ', '');
       debugPrint('❌ Tarot Yes/No API Error: $errorMsg');
 
-      // Use centralized validation handler
-      final handled = await TarotCardValidationHandler.handleApiError(
-        error: e,
-        categoryName: 'Yes/No Reading',
-        selectedCard: selectedCard,
-        onShowUnsuitableMessage: (cardName, category) {
-          autoRetryCount.value = autoRetryCount.value + 1;
-          unsuitableCardName.value = cardName;
-          unsuitableCategoryName.value = category;
-          showUnsuitableCardMessage.value = true;
-        },
-        onRetry: () => performYesNoReading(),
-        currentRetryCount: autoRetryCount.value,
-      );
-
-      if (!handled) {
-        Get.snackbar('Error', errorMsg);
+      if (TarotCardValidationHandler.isUnsuitableCardError(e)) {
+        await _autoResolveYesNoReading();
+      } else {
+        final handled = await TarotCardValidationHandler.handleApiError(
+          error: e,
+          categoryName: 'Yes/No Reading',
+          selectedCard: selectedCard,
+          onShowUnsuitableMessage: (cardName, category) {
+            autoRetryCount.value = autoRetryCount.value + 1;
+            unsuitableCardName.value = cardName;
+            unsuitableCategoryName.value = category;
+            showUnsuitableCardMessage.value = true;
+          },
+          onRetry: () => performYesNoReading(),
+          currentRetryCount: autoRetryCount.value,
+        );
+        if (!handled && !showUnsuitableCardMessage.value) {
+          Get.snackbar('Error', errorMsg);
+        }
       }
     } finally {
       isLoadingReading.value = false;
@@ -968,11 +987,6 @@ class TarotController extends BaseController {
   Future<void> getCareerReading() async {
     // Set reading type first
     selectedReadingType.value = 'career';
-
-    // If response already exists, don't call API again
-    if (careerResponse.value != null) {
-      return;
-    }
 
     // Show direction selector - API will be called when direction is selected or skipped
     // The direction selector widget will trigger performCareerReading()
@@ -1012,23 +1026,25 @@ class TarotController extends BaseController {
       final errorMsg = e.toString().replaceAll('Exception: ', '');
       debugPrint('❌ Tarot Career API Error: $errorMsg');
 
-      // Use centralized validation handler
-      final handled = await TarotCardValidationHandler.handleApiError(
-        error: e,
-        categoryName: 'Career Reading',
-        selectedCard: selectedCard,
-        onShowUnsuitableMessage: (cardName, category) {
-          autoRetryCount.value = autoRetryCount.value + 1;
-          unsuitableCardName.value = cardName;
-          unsuitableCategoryName.value = category;
-          showUnsuitableCardMessage.value = true;
-        },
-        onRetry: () => performCareerReading(),
-        currentRetryCount: autoRetryCount.value,
-      );
-
-      if (!handled) {
-        Get.snackbar('Error', errorMsg);
+      if (TarotCardValidationHandler.isUnsuitableCardError(e)) {
+        await _autoResolveCareerReading();
+      } else {
+        final handled = await TarotCardValidationHandler.handleApiError(
+          error: e,
+          categoryName: 'Career Reading',
+          selectedCard: selectedCard,
+          onShowUnsuitableMessage: (cardName, category) {
+            autoRetryCount.value = autoRetryCount.value + 1;
+            unsuitableCardName.value = cardName;
+            unsuitableCategoryName.value = category;
+            showUnsuitableCardMessage.value = true;
+          },
+          onRetry: () => performCareerReading(),
+          currentRetryCount: autoRetryCount.value,
+        );
+        if (!handled && !showUnsuitableCardMessage.value) {
+          Get.snackbar('Error', errorMsg);
+        }
       }
     } finally {
       isLoadingReading.value = false;
@@ -1202,23 +1218,25 @@ class TarotController extends BaseController {
       final errorMsg = e.toString().replaceAll('Exception: ', '');
       debugPrint('❌ Tarot Daily API Error: $errorMsg');
 
-      // Use centralized validation handler
-      final handled = await TarotCardValidationHandler.handleApiError(
-        error: e,
-        categoryName: 'Daily Reading',
-        selectedCard: selectedCard,
-        onShowUnsuitableMessage: (cardName, category) {
-          autoRetryCount.value = autoRetryCount.value + 1;
-          unsuitableCardName.value = cardName;
-          unsuitableCategoryName.value = category;
-          showUnsuitableCardMessage.value = true;
-        },
-        onRetry: () => getDailyReading(),
-        currentRetryCount: autoRetryCount.value,
-      );
-
-      if (!handled && !showUnsuitableCardMessage.value) {
-        Get.snackbar('Error', errorMsg);
+      if (TarotCardValidationHandler.isUnsuitableCardError(e)) {
+        await _autoResolveDailyReading();
+      } else {
+        final handled = await TarotCardValidationHandler.handleApiError(
+          error: e,
+          categoryName: 'Daily Reading',
+          selectedCard: selectedCard,
+          onShowUnsuitableMessage: (cardName, category) {
+            autoRetryCount.value = autoRetryCount.value + 1;
+            unsuitableCardName.value = cardName;
+            unsuitableCategoryName.value = category;
+            showUnsuitableCardMessage.value = true;
+          },
+          onRetry: () => getDailyReading(),
+          currentRetryCount: autoRetryCount.value,
+        );
+        if (!handled && !showUnsuitableCardMessage.value) {
+          Get.snackbar('Error', errorMsg);
+        }
       }
     } finally {
       isLoadingReading.value = false;
@@ -1627,11 +1645,11 @@ class TarotController extends BaseController {
     } else if (category.contains('Love Triangle')) {
       await getLoveTriangleReading();
     } else if (category.contains('Yes/No')) {
-      await performYesNoReading();
+      await _autoResolveYesNoReading();
     } else if (category.contains('Career')) {
-      await performCareerReading();
+      await _autoResolveCareerReading();
     } else if (category.contains('Daily')) {
-      await getDailyReading();
+      await _autoResolveDailyReading();
     } else {
       // For other love types, retry with null card
       await getLoveReading();
@@ -1833,10 +1851,11 @@ class TarotController extends BaseController {
     }
   }
 
-  /// Get Fortune Cookie
+  /// Fortune Cookie — API only (no tarot card). Called from type grid.
   Future<void> getFortuneCookie() async {
     try {
       isLoadingReading.value = true;
+      selectedReadingType.value = 'fortune-cookie';
       final response = await _tarotService.getFortuneCookie(
         language: selectedLanguage.value,
       );
@@ -1844,20 +1863,250 @@ class TarotController extends BaseController {
       if (response.remainingApiCalls != null) {
         remainingApiCalls.value = response.remainingApiCalls;
       }
-      selectedReadingType.value = 'fortune-cookie';
     } catch (e) {
       final errorMsg = e.toString().replaceAll('Exception: ', '');
       debugPrint('❌ Tarot Fortune Cookie API Error: $errorMsg');
       debugPrint('❌ Full Exception: $e');
+      selectedReadingType.value = 'none';
+      fortuneCookieResponse.value = null;
       Get.snackbar('Error', errorMsg);
     } finally {
       isLoadingReading.value = false;
     }
   }
 
+  // ─── Cache invalidation & API “unsuitable card” recovery ───────────────────
+
+  void _invalidateCachesForNewCardPick() {
+    autoRetryCount.value = 0;
+    showUnsuitableCardMessage.value = false;
+    yesNoResponse.value = null;
+    careerResponse.value = null;
+    dailyResponse.value = null;
+    inDepthLoveResponse.value = null;
+    eroticLoveResponse.value = null;
+    madeForEachOtherResponse.value = null;
+    flirtReadingResponse.value = null;
+    fortuneCookieResponse.value = null;
+  }
+
+  void _syncSelectedCardIndexToCardId(String cardId) {
+    final idx = cards.indexWhere((c) => c.id == cardId);
+    if (idx >= 0) {
+      selectedCardIndex.value = idx;
+      isCardOpen.value = false;
+    }
+  }
+
+  /// Try other cards / fresh shuffles until career API accepts one (loader on UI)
+  Future<void> _autoResolveCareerReading() async {
+    if (isFindingSuitableCard.value) return;
+    isFindingSuitableCard.value = true;
+    findingSuitableMessage.value =
+        'Finding a card that fits your career reading...';
+    isLoadingReading.value = true;
+    showUnsuitableCardMessage.value = false;
+    autoRetryCount.value = 0;
+
+    try {
+      for (var round = 0; round < 5; round++) {
+        if (cards.isEmpty) break;
+        if (round > 0) {
+          await shuffleCards(preserveSelectionState: true);
+        }
+        final batch = List<TarotCardModel>.from(cards)..shuffle();
+        for (final c in batch) {
+          for (final dir in <String?>[null, 'upright', 'reversed']) {
+            try {
+              final response = await _tarotService.getCareerReading(
+                cardName: c.id,
+                direction: dir,
+                language: selectedLanguage.value,
+              );
+              careerResponse.value = response;
+              if (response.remainingApiCalls != null) {
+                remainingApiCalls.value = response.remainingApiCalls;
+              }
+              selectedReadingType.value = 'career';
+              if (dir != null && dir.isNotEmpty) {
+                selectedDirection.value = dir;
+              } else if (response.direction != null &&
+                  response.direction!.isNotEmpty) {
+                selectedDirection.value =
+                    response.direction!.toLowerCase().contains('reverse')
+                    ? 'reversed'
+                    : 'upright';
+              }
+              _syncSelectedCardIndexToCardId(c.id);
+              return;
+            } catch (_) {
+              continue;
+            }
+          }
+        }
+      }
+      Get.snackbar(
+        'Career reading',
+        'We could not match a card right now. Tap Shuffle and try again.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.deepOrange.shade700,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 4),
+      );
+    } finally {
+      isFindingSuitableCard.value = false;
+      findingSuitableMessage.value = '';
+      isLoadingReading.value = false;
+    }
+  }
+
+  Future<void> _autoResolveYesNoReading() async {
+    if (isFindingSuitableCard.value) return;
+    isFindingSuitableCard.value = true;
+    findingSuitableMessage.value =
+        'Finding a card for your Yes / No reading...';
+    isLoadingReading.value = true;
+    showUnsuitableCardMessage.value = false;
+    autoRetryCount.value = 0;
+
+    try {
+      for (var round = 0; round < 5; round++) {
+        if (cards.isEmpty) break;
+        if (round > 0) {
+          await shuffleCards(preserveSelectionState: true);
+        }
+        final batch = List<TarotCardModel>.from(cards)..shuffle();
+        for (final c in batch) {
+          for (final dir in <String?>[null, 'upright', 'reversed']) {
+            try {
+              final response = await _tarotService.getYesNoReading(
+                cardName: c.id,
+                direction: dir,
+                language: selectedLanguage.value,
+              );
+              yesNoResponse.value = response;
+              if (response.remainingApiCalls != null) {
+                remainingApiCalls.value = response.remainingApiCalls;
+              }
+              selectedReadingType.value = 'yesno';
+              if (dir != null && dir.isNotEmpty) {
+                selectedDirection.value = dir;
+              } else if (response.direction != null &&
+                  response.direction!.isNotEmpty) {
+                selectedDirection.value =
+                    response.direction!.toLowerCase().contains('reverse')
+                    ? 'reversed'
+                    : 'upright';
+              }
+              _syncSelectedCardIndexToCardId(c.id);
+              return;
+            } catch (_) {
+              continue;
+            }
+          }
+        }
+      }
+      Get.snackbar(
+        'Yes / No reading',
+        'We could not get an answer right now. Tap Shuffle and try again.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.deepOrange.shade700,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 4),
+      );
+    } finally {
+      isFindingSuitableCard.value = false;
+      findingSuitableMessage.value = '';
+      isLoadingReading.value = false;
+    }
+  }
+
+  Future<void> _autoResolveDailyReading() async {
+    if (isFindingSuitableCard.value) return;
+    isFindingSuitableCard.value = true;
+    findingSuitableMessage.value =
+        'Finding a card for your daily guidance...';
+    isLoadingReading.value = true;
+    showUnsuitableCardMessage.value = false;
+    autoRetryCount.value = 0;
+
+    try {
+      for (var round = 0; round < 5; round++) {
+        if (cards.isEmpty) break;
+        if (round > 0) {
+          await shuffleCards(preserveSelectionState: true);
+        }
+        final batch = List<TarotCardModel>.from(cards)..shuffle();
+        for (final c in batch) {
+          try {
+            final response = await _tarotService.getDailyReading(
+              cardName: c.id,
+              language: selectedLanguage.value,
+            );
+            dailyResponse.value = response;
+            if (response.remainingApiCalls != null) {
+              remainingApiCalls.value = response.remainingApiCalls;
+            }
+            selectedReadingType.value = 'daily';
+            _syncSelectedCardIndexToCardId(c.id);
+            return;
+          } catch (_) {
+            continue;
+          }
+        }
+      }
+      Get.snackbar(
+        'Daily guidance',
+        'We could not load guidance right now. Tap Shuffle and try again.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.deepOrange.shade700,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 4),
+      );
+    } finally {
+      isFindingSuitableCard.value = false;
+      findingSuitableMessage.value = '';
+      isLoadingReading.value = false;
+    }
+  }
+
   /// Close reading overlay
   void closeReading() {
+    final closedType = selectedReadingType.value;
     selectedReadingType.value = 'none';
+    isLoadingReading.value = false;
+    isFindingSuitableCard.value = false;
+    findingSuitableMessage.value = '';
+
+    // Drop cached result for the reading that was on screen (stay on tarot deck)
+    switch (closedType) {
+      case 'yesno':
+        yesNoResponse.value = null;
+        break;
+      case 'career':
+        careerResponse.value = null;
+        break;
+      case 'daily':
+        dailyResponse.value = null;
+        break;
+      case 'love':
+        inDepthLoveResponse.value = null;
+        eroticLoveResponse.value = null;
+        madeForEachOtherResponse.value = null;
+        flirtReadingResponse.value = null;
+        loveTriangleResponse.value = null;
+        break;
+      case 'fortune-cookie':
+        fortuneCookieResponse.value = null;
+        break;
+      case 'romantic-breakup':
+        romanticBreakupResponse.value = null;
+        break;
+      case 'business-breakup':
+        businessBreakupResponse.value = null;
+        break;
+    }
+
     // Reset triangle and breakup steps to prevent stale state
     if (triangleSelectionStep.value != 'complete') {
       triangleSelectionStep.value = 'self';
@@ -1865,8 +2114,133 @@ class TarotController extends BaseController {
     if (breakupSelectionStep.value != 'complete') {
       breakupSelectionStep.value = 'cause';
     }
-    // Don't clear responses here - keep them so user can reopen
-    // Only clear when starting a new shuffle
+    autoRetryCount.value = 0;
+    selectedDirection.value = 'upright';
+  }
+
+  // ─── Wizard Flow (Step-Based) ───────────────────────────────────────────────
+
+  /// Choose reading type from the grid (Step 1 → Step 2 transition)
+  void chooseReadingType(String type, {String? loveSubType}) {
+    // Reset card state for a fresh start
+    _clearAllReadingResponses();
+    selectedCardIndex.value = null;
+    isCardOpen.value = false;
+    showCards.value = false;
+    cards.clear();
+    shuffleProgress.value = 0.0;
+    fanSpreadProgress.value = 0.0;
+    errorMessage.value = '';
+    autoRetryCount.value = 0;
+    pendingReadingType.value = type;
+
+    if (type == 'love') {
+      if (loveSubType != null) {
+        selectedLoveType.value = loveSubType;
+      }
+      if (selectedLoveType.value == 'triangle') {
+        triangleCardSelf.value = null;
+        triangleCardLover1.value = null;
+        triangleCardLover2.value = null;
+        triangleSelectionStep.value = 'self';
+        selectedReadingType.value = 'love';
+      } else {
+        selectedReadingType.value = 'none';
+      }
+    } else if (type == 'romantic-breakup') {
+      selectedBreakupType.value = 'romantic';
+      breakupCardCause.value = null;
+      breakupCardAdvise.value = null;
+      breakupSelectionStep.value = 'cause';
+      selectedReadingType.value = 'romantic-breakup';
+      if (selectedLoveType.value == 'triangle') selectedLoveType.value = 'in-depth';
+    } else if (type == 'business-breakup') {
+      selectedBreakupType.value = 'business';
+      breakupCardCause.value = null;
+      breakupCardAdvise.value = null;
+      breakupSelectionStep.value = 'cause';
+      selectedReadingType.value = 'business-breakup';
+      if (selectedLoveType.value == 'triangle') selectedLoveType.value = 'in-depth';
+    } else if (type == 'fortune-cookie') {
+      // API does not use a tarot card — skip deck entirely to avoid confusion
+      chosenReadingLabel.value = 'Fortune Cookie';
+      readingTypeChosen.value = false;
+      getFortuneCookie();
+      return;
+    } else {
+      selectedReadingType.value = 'none';
+    }
+
+    chosenReadingLabel.value = _getTypeLabel(type);
+    readingTypeChosen.value = true;
+  }
+
+  String _getTypeLabel(String type) {
+    switch (type) {
+      case 'yesno':
+        return 'Yes / No Oracle';
+      case 'career':
+        return 'Career Reading';
+      case 'love':
+        switch (selectedLoveType.value) {
+          case 'triangle':
+            return 'Love Triangle';
+          case 'erotic':
+            return 'Erotic Love';
+          case 'made-for-each-other':
+            return 'Made for Each Other';
+          case 'flirt':
+            return 'Flirt Reading';
+          default:
+            return 'Love Reading';
+        }
+      case 'daily':
+        return 'Daily Guidance';
+      case 'romantic-breakup':
+        return 'Romantic Breakup';
+      case 'business-breakup':
+        return 'Business Breakup';
+      case 'fortune-cookie':
+        return 'Fortune Cookie';
+      default:
+        return 'Card Reading';
+    }
+  }
+
+  /// Auto-trigger the chosen reading after a single card is revealed.
+  /// Multi-card flows (triangle, breakup) handle routing inside selectCard() itself.
+  void _autoTriggerReading() {
+    if (!readingTypeChosen.value) return;
+    // Triangle & breakup route early in selectCard() — skip here
+    if (pendingReadingType.value == 'love' &&
+        selectedLoveType.value == 'triangle' &&
+        triangleSelectionStep.value != 'complete') return;
+    if ((pendingReadingType.value == 'romantic-breakup' ||
+            pendingReadingType.value == 'business-breakup') &&
+        breakupSelectionStep.value != 'complete') return;
+
+    switch (pendingReadingType.value) {
+      case 'yesno':
+        getYesNoReading();
+        break;
+      case 'career':
+        getCareerReading();
+        break;
+      case 'love':
+        getLoveReading();
+        break;
+      case 'daily':
+        getDailyReading();
+        break;
+    }
+  }
+
+  /// Reset back to reading type selection (Step 1)
+  void resetToTypeSelection() {
+    readingTypeChosen.value = false;
+    pendingReadingType.value = 'none';
+    chosenReadingLabel.value = '';
+    reset();
   }
 
   Future<void> exportToPdf() async {
